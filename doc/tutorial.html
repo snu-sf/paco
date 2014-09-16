@@ -1,0 +1,1094 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<link href="coqdoc.css" rel="stylesheet" type="text/css"/>
+<title>paco Tutorial</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4/stdlib/Coq.Setoids.Setoid.html#"><span class="id" type="library">Setoid</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4/stdlib/Coq.Program.Program.html#"><span class="id" type="library">Program</span></a>.<br/>
+<span class="id" type="keyword">Require</span> <span class="id" type="keyword">Import</span> <a class="idref" href="paco.html#"><span class="id" type="library">paco</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab50"></a><h1 class="section">Illustrating the <span class="inlinecode"><span class="id" type="var">paco</span></span> library</h1>
+
+
+<div class="paragraph"> </div>
+
+    This tutorial shows how to use our <span class="inlinecode"><span class="id" type="var">paco</span></span> library to reason about
+    coinductive predicates in Coq.  By coinductive predicates we mean
+    objects that one can define using <span class="inlinecode"><span class="id" type="keyword">CoInductive</span></span> and whose type
+    ends in <span class="inlinecode"><span class="id" type="keyword">Prop</span></span>.  The library implements <i>parameterized
+    coinduction</i>, as described in our draft paper entitled <a
+    href=" http://plv.mpi-sws.org/paco/"> <i>The Power of
+    Parameterization in Coinductive Proof</i> </a>.
+
+<div class="paragraph"> </div>
+
+    How does parameterized coinduction compare to Coq's existing
+    support for coinductive proofs?
+
+<div class="paragraph"> </div>
+
+    For proofs by <i>induction</i>, Coq provides a tactic called <span class="inlinecode"><span class="id" type="keyword">fix</span></span>, but
+    proofs done directly with <span class="inlinecode"><span class="id" type="keyword">fix</span></span> are required to satisfy a
+    <i>syntactic guardedness</i> criterion.  Fortunately, Coq also
+    generates induction <i>lemmas</i> for every inductive definition, which
+    eliminate the need to ever use the low-level <span class="inlinecode"><span class="id" type="keyword">fix</span></span> tactic and
+    worry about guardedness.  For proofs by coinduction, Coq provides
+    a tactic <span class="inlinecode"><span class="id" type="keyword">cofix</span></span> analogous to <span class="inlinecode"><span class="id" type="keyword">fix</span></span>, i.e., also based on a
+    syntactic guardedness criterion.  However, Coq does not generate
+    any lemmas for coinductive definitions.  Consequently, to reason
+    about such definitions, the user must use the low-level <span class="inlinecode"><span class="id" type="keyword">cofix</span></span>
+    tactic.  Due to its syntactic nature, <span class="inlinecode"><span class="id" type="keyword">cofix</span></span> is problematic in
+    several ways (please see the paper linked above for detailed
+    discussion of these points):
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> It is non-compositional.
+
+</li>
+<li> It is inefficient.
+
+</li>
+<li> It is not user-friendly.
+
+</li>
+<li> It interacts poorly with builtin automation tactics.
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+    The <span class="inlinecode"><span class="id" type="var">paco</span></span> library provides a tactic, <span class="inlinecode"><span class="id" type="var">pcofix</span></span>, which can be seen
+    as a replacement for Coq's builtin <span class="inlinecode"><span class="id" type="keyword">cofix</span></span> tactic (in the case of
+    predicates) that does not involve any syntactic guardedness
+    criterion and thus avoids all of these problems.  In addition,
+    like Coq's <span class="inlinecode"><span class="id" type="keyword">cofix</span></span>, <span class="inlinecode"><span class="id" type="var">pcofix</span></span> provides built-in support for
+    <i>incremental</i> proofs, i.e., proofs in which the coinduction
+    hypothesis is extended gradually as the proof progresses.
+
+<div class="paragraph"> </div>
+
+    We believe this combination of compositionality, incrementality,
+    robustness, and ease of use makes <span class="inlinecode"><span class="id" type="var">pcofix</span></span> a superior alternative
+    to <span class="inlinecode"><span class="id" type="keyword">cofix</span></span> for proofs about coinductive predicates.
+
+<div class="paragraph"> </div>
+
+    The rest of this tutorial illustrates the use of the <span class="inlinecode"><span class="id" type="var">paco</span></span>
+    library with the help of three examples.
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab51"></a><h2 class="section">Example: stream equality</h2>
+
+
+<div class="paragraph"> </div>
+
+    The first example involves streams of natural numbers and an
+    equality thereon.  We prove a particular equality via <span class="inlinecode"><span class="id" type="keyword">cofix</span></span>, and
+    then explain how that proof can be turned into one via <span class="inlinecode"><span class="id" type="var">pcofix</span></span>.
+
+<div class="paragraph"> </div>
+
+ We start by defining a type of streams of natural numbers.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">CoInductive</span> <a name="stream"><span class="id" type="inductive">stream</span></a> :=<br/>
+&nbsp;&nbsp;| <a name="cons"><span class="id" type="constructor">cons</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/8.4/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" type="inductive">nat</span></a> &rarr; <a class="idref" href="tutorial.html#stream"><span class="id" type="inductive">stream</span></a> &rarr; <a class="idref" href="tutorial.html#stream"><span class="id" type="inductive">stream</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The following, seemingly useless, lemma is a common trick for
+    working with corecursive terms such as our streams.  (It will be
+    used in the example proofs.)  For details, see for instance <a
+    href="http://adam.chlipala.net/cpdt/html/Coinductive.html">Adam
+    Chlipala's book on Certified Programming with Dependent
+    Types</a>.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <a name="sunf"><span class="id" type="definition">sunf</span></a> <span class="id" type="var">s</span> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <a class="idref" href="tutorial.html#s"><span class="id" type="variable">s</span></a> <span class="id" type="keyword">with</span> <a class="idref" href="tutorial.html#cons"><span class="id" type="constructor">cons</span></a> <span class="id" type="var">n</span> <span class="id" type="var">s'</span> =&gt; <a class="idref" href="tutorial.html#cons"><span class="id" type="constructor">cons</span></a> <span class="id" type="var">n</span> <span class="id" type="var">s'</span> <span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <a name="sunf_eq"><span class="id" type="lemma">sunf_eq</span></a> : <span class="id" type="keyword">&forall;</span> <span class="id" type="var">s</span>, <a class="idref" href="tutorial.html#s"><span class="id" type="variable">s</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4/stdlib/Coq.Init.Logic.html#:type_scope:x_'='_x"><span class="id" type="notation">=</span></a> <a class="idref" href="tutorial.html#sunf"><span class="id" type="definition">sunf</span></a> <a class="idref" href="tutorial.html#s"><span class="id" type="variable">s</span></a>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">destruct</span> <span class="id" type="var">s</span>; <span class="id" type="tactic">auto</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+In order to state our example equality, we define an enumeration
+    stream and a map operation for streams.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">CoFixpoint</span> <a name="enumerate"><span class="id" type="definition">enumerate</span></a> <span class="id" type="var">n</span> : <a class="idref" href="tutorial.html#stream"><span class="id" type="inductive">stream</span></a> :=<br/>
+&nbsp;&nbsp;<a class="idref" href="tutorial.html#cons"><span class="id" type="constructor">cons</span></a> <a class="idref" href="tutorial.html#n"><span class="id" type="variable">n</span></a> (<a class="idref" href="tutorial.html#enumerate"><span class="id" type="definition">enumerate</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/8.4/stdlib/Coq.Init.Datatypes.html#S"><span class="id" type="constructor">S</span></a> <a class="idref" href="tutorial.html#n"><span class="id" type="variable">n</span></a>)).<br/>
+
+<br/>
+<span class="id" type="keyword">CoFixpoint</span> <a name="map"><span class="id" type="definition">map</span></a> <span class="id" type="var">f</span> <span class="id" type="var">s</span> : <a class="idref" href="tutorial.html#stream"><span class="id" type="inductive">stream</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <a class="idref" href="tutorial.html#s"><span class="id" type="variable">s</span></a> <span class="id" type="keyword">with</span> <a class="idref" href="tutorial.html#cons"><span class="id" type="constructor">cons</span></a> <span class="id" type="var">n</span> <span class="id" type="var">s'</span> =&gt; <a class="idref" href="tutorial.html#cons"><span class="id" type="constructor">cons</span></a> (<a class="idref" href="tutorial.html#f"><span class="id" type="variable">f</span></a> <span class="id" type="var">n</span>) (<a class="idref" href="tutorial.html#map"><span class="id" type="definition">map</span></a> <a class="idref" href="tutorial.html#f"><span class="id" type="variable">f</span></a> <span class="id" type="var">s'</span>) <span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab52"></a><h3 class="section">A proof using <span class="inlinecode"><span class="id" type="keyword">cofix</span></span></h3>
+
+
+<div class="paragraph"> </div>
+
+    We will now prove, using <span class="inlinecode"><span class="id" type="keyword">cofix</span></span>, that for any <span class="inlinecode"><span class="id" type="var">n</span></span> the stream
+    <span class="inlinecode"><span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> is equal to the stream <span class="inlinecode"><span class="id" type="var">cons</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">(<span class="id" type="var">map</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>))</span>.
+
+<div class="paragraph"> </div>
+
+ First, we define an equality <span class="inlinecode"><span class="id" type="var">seq</span></span> on streams.  Usually, one would
+    do this as follows.
+
+<div class="paragraph"> </div>
+
+    <span class="inlinecode"><span class="id" type="keyword">CoInductive</span></span> <span class="inlinecode"><span class="id" type="var">seq</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">stream</span></span> <span class="inlinecode">&rarr;</span> <span class="inlinecode"><span class="id" type="var">stream</span></span> <span class="inlinecode">&rarr;</span> <span class="inlinecode"><span class="id" type="keyword">Prop</span></span> <span class="inlinecode">:=</span> <br>
+    <span class="inlinecode"></span>  <span class="inlinecode">|</span> <span class="inlinecode"><span class="id" type="var">seq_fold</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="keyword">&forall;</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode"><span class="id" type="var">s1</span></span> <span class="inlinecode"><span class="id" type="var">s2</span></span> <span class="inlinecode">(<span class="id" type="var">R</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">seq</span></span> <span class="inlinecode"><span class="id" type="var">s1</span></span> <span class="inlinecode"><span class="id" type="var">s2</span>),</span> <span class="inlinecode"><span class="id" type="var">seq</span></span> <span class="inlinecode">(<span class="id" type="var">cons</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode"><span class="id" type="var">s1</span>)</span> <span class="inlinecode">(<span class="id" type="var">cons</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode"><span class="id" type="var">s2</span>).</span>
+
+<div class="paragraph"> </div>
+
+    Instead, we define the generating function, <span class="inlinecode"><span class="id" type="var">seq_gen</span></span>, beforehand,
+    and then define <span class="inlinecode"><span class="id" type="var">seq</span></span> as its greatest fixed point using
+    <span class="inlinecode"><span class="id" type="keyword">CoInductive</span></span>.  The reason is simply that we need <span class="inlinecode"><span class="id" type="var">seq_gen</span></span> later
+    when using <span class="inlinecode"><span class="id" type="var">paco</span></span>.  If applying parameterized coinduction to an
+    existing development where the generating function is not
+    explicit, it can always easily be made explicit.
+
+<div class="paragraph"> </div>
+
+    Note that, albeit the use of <span class="inlinecode"><span class="id" type="keyword">Inductive</span></span>, the definition
+    of <span class="inlinecode"><span class="id" type="var">seq_gen</span></span> is not recursive.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <a name="seq_gen"><span class="id" type="inductive">seq_gen</span></a> <span class="id" type="var">seq</span> : <a class="idref" href="tutorial.html#stream"><span class="id" type="inductive">stream</span></a> &rarr; <a class="idref" href="tutorial.html#stream"><span class="id" type="inductive">stream</span></a> &rarr; <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;| <a name="_seq_gen"><span class="id" type="constructor">_seq_gen</span></a> : <span class="id" type="keyword">&forall;</span> <span class="id" type="var">n</span> <span class="id" type="var">s1</span> <span class="id" type="var">s2</span> (<span class="id" type="var">R</span> : <span class="id" type="var">seq</span> <a class="idref" href="tutorial.html#s1"><span class="id" type="variable">s1</span></a> <a class="idref" href="tutorial.html#s2"><span class="id" type="variable">s2</span></a> : <span class="id" type="keyword">Prop</span>), <a class="idref" href="tutorial.html#seq_gen"><span class="id" type="inductive">seq_gen</span></a> <span class="id" type="var">seq</span> (<a class="idref" href="tutorial.html#cons"><span class="id" type="constructor">cons</span></a> <a class="idref" href="tutorial.html#n"><span class="id" type="variable">n</span></a> <a class="idref" href="tutorial.html#s1"><span class="id" type="variable">s1</span></a>) (<a class="idref" href="tutorial.html#cons"><span class="id" type="constructor">cons</span></a> <a class="idref" href="tutorial.html#n"><span class="id" type="variable">n</span></a> <a class="idref" href="tutorial.html#s2"><span class="id" type="variable">s2</span></a>).<br/>
+<span class="id" type="keyword">Hint Constructors</span> <a class="idref" href="tutorial.html#seq_gen"><span class="id" type="inductive">seq_gen</span></a>.<br/>
+
+<br/>
+<span class="id" type="keyword">CoInductive</span> <a name="seq"><span class="id" type="inductive">seq</span></a> : <a class="idref" href="tutorial.html#stream"><span class="id" type="inductive">stream</span></a> &rarr; <a class="idref" href="tutorial.html#stream"><span class="id" type="inductive">stream</span></a> &rarr; <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;| <a name="seq_fold"><span class="id" type="constructor">seq_fold</span></a> : <span class="id" type="keyword">&forall;</span> <span class="id" type="var">s1</span> <span class="id" type="var">s2</span>, <a class="idref" href="tutorial.html#seq_gen"><span class="id" type="inductive">seq_gen</span></a> <a class="idref" href="tutorial.html#seq"><span class="id" type="inductive">seq</span></a> <a class="idref" href="tutorial.html#s1"><span class="id" type="variable">s1</span></a> <a class="idref" href="tutorial.html#s2"><span class="id" type="variable">s2</span></a> &rarr; <a class="idref" href="tutorial.html#seq"><span class="id" type="inductive">seq</span></a> <a class="idref" href="tutorial.html#s1"><span class="id" type="variable">s1</span></a> <a class="idref" href="tutorial.html#s2"><span class="id" type="variable">s2</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Second, we do the actual proof.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <a name="example"><span class="id" type="lemma">example</span></a> : <span class="id" type="keyword">&forall;</span> <span class="id" type="var">n</span>, <a class="idref" href="tutorial.html#seq"><span class="id" type="inductive">seq</span></a> (<a class="idref" href="tutorial.html#enumerate"><span class="id" type="definition">enumerate</span></a> <a class="idref" href="tutorial.html#n"><span class="id" type="variable">n</span></a>) (<a class="idref" href="tutorial.html#cons"><span class="id" type="constructor">cons</span></a> <a class="idref" href="tutorial.html#n"><span class="id" type="variable">n</span></a> (<a class="idref" href="tutorial.html#map"><span class="id" type="definition">map</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4/stdlib/Coq.Init.Datatypes.html#S"><span class="id" type="constructor">S</span></a> (<a class="idref" href="tutorial.html#enumerate"><span class="id" type="definition">enumerate</span></a> <a class="idref" href="tutorial.html#n"><span class="id" type="variable">n</span></a>))).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">cofix</span> <span class="id" type="var">CIH</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span>; <span class="id" type="tactic">apply</span> <a class="idref" href="tutorial.html#seq_fold"><span class="id" type="constructor">seq_fold</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">pattern</span> (<a class="idref" href="tutorial.html#enumerate"><span class="id" type="definition">enumerate</span></a> <span class="id" type="var">n</span>) <span class="id" type="tactic">at</span> 1; <span class="id" type="tactic">rewrite</span> <a class="idref" href="tutorial.html#sunf_eq"><span class="id" type="lemma">sunf_eq</span></a>; <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#sunf_eq"><span class="id" type="lemma">sunf_eq</span></a> (<a class="idref" href="tutorial.html#enumerate"><span class="id" type="definition">enumerate</span></a> <span class="id" type="var">n</span>)); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#sunf_eq"><span class="id" type="lemma">sunf_eq</span></a> (<a class="idref" href="tutorial.html#map"><span class="id" type="definition">map</span></a> <span class="id" type="var">_</span> <span class="id" type="var">_</span>)); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">CIH</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<i>Note</i>: One might want to eliminate the use of <span class="inlinecode"><span class="id" type="tactic">pattern</span></span> in the
+    proof script by replacing the corresponding line with the
+    following:
+
+<div class="paragraph"> </div>
+
+    <span class="inlinecode"><span class="id" type="tactic">rewrite</span></span> <span class="inlinecode"><span class="id" type="var">sunf_eq</span></span> <span class="inlinecode"><span class="id" type="tactic">at</span></span> <span class="inlinecode">1;</span> <span class="inlinecode"><span class="id" type="tactic">simpl</span>.</span>
+
+<div class="paragraph"> </div>
+
+    However, doing so will result in an invalid proof (rejected at
+    <span class="inlinecode"><span class="id" type="keyword">Qed</span></span>-time).  The reason is that the proof term created by
+    <span class="inlinecode"><span class="id" type="tactic">rewrite</span></span> ... <span class="inlinecode"><span class="id" type="tactic">at</span></span> <span class="inlinecode">1</span> involves some lemmas from the <span class="inlinecode"><span class="id" type="var">Setoid</span></span>
+    library.  Like most lemmas, these are opaque, so guardedness
+    checking cannot inspect their proofs and thus fails.  This is a
+    great example of two of the previously mentioned problems with the
+    <span class="inlinecode"><span class="id" type="keyword">cofix</span></span> approach, namely lack of compositionality and poor
+    interaction with standard tactics.  
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab53"></a><h3 class="section">A proof using our <span class="inlinecode"><span class="id" type="var">pcofix</span></span></h3>
+
+
+<div class="paragraph"> </div>
+
+    We will now do the same proof, but using the <span class="inlinecode"><span class="id" type="var">paco</span></span> library.  We
+    first simply show the new (but equivalent) definition of stream
+    equality and the new proof of the example, and then explain what
+    is going on behind the scenes.  In both, we use <span class="inlinecode"><span class="id" type="var">paco</span></span> constructs
+    with suffix "2" because we are dealing with predicates of arity 2
+    here. 
+
+<div class="paragraph"> </div>
+
+    <i>Note</i>: <span class="inlinecode"><span class="id" type="var">Paco</span></span> supports predicates of arity up to 8.  Also, it
+    supports up to three mutually coinductive predicates (see the last
+    example of this tutorial).  In either case, extending this is just
+    a matter of copy and paste.
+
+<div class="paragraph"> </div>
+
+    We also have to prove monotonicity of the generating function
+    <span class="inlinecode"><span class="id" type="var">seq_gen</span></span>, which can be discharged by the tactic <span class="inlinecode"><span class="id" type="var">pmonauto</span></span>, and
+    register it in the Hint databse <span class="inlinecode"><span class="id" type="var">paco</span></span>.
+
+<div class="paragraph"> </div>
+
+    <i>Remark</i>: Unlike <span class="inlinecode"><span class="id" type="keyword">CoInductive</span></span>, <span class="inlinecode"><span class="id" type="var">paco</span></span> does not care whether the
+    generating function is given in a <i>strictly positive</i> syntactic
+    form; all that matters is that the function is monotone. More
+    specifically, <span class="inlinecode"><span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> is well defined for an arbitrary generating
+    function <span class="inlinecode"><span class="id" type="var">f</span></span> regardless of whether it is monotone or not. However,
+    in order to ensure that <span class="inlinecode"><span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode"><span class="id" type="var">bot2</span></span> is the greatest fixed point
+    of <span class="inlinecode"><span class="id" type="var">f</span></span>, we need monotonicity of <span class="inlinecode"><span class="id" type="var">f</span></span>. 
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <a name="seq'"><span class="id" type="definition">seq'</span></a> <span class="id" type="var">s1</span> <span class="id" type="var">s2</span> := <a class="idref" href="pacodef.html#paco2"><span class="id" type="inductive">paco2</span></a> <a class="idref" href="tutorial.html#seq_gen"><span class="id" type="inductive">seq_gen</span></a> <a class="idref" href="paconotation.html#bot2"><span class="id" type="abbreviation">bot2</span></a> <a class="idref" href="tutorial.html#s1"><span class="id" type="variable">s1</span></a> <a class="idref" href="tutorial.html#s2"><span class="id" type="variable">s2</span></a>.<br/>
+<span class="id" type="keyword">Hint Unfold</span> <a class="idref" href="tutorial.html#seq'"><span class="id" type="definition">seq'</span></a>.<br/>
+<span class="id" type="keyword">Lemma</span> <a name="seq_gen_mon"><span class="id" type="lemma">seq_gen_mon</span></a>: <a class="idref" href="paco2.html#monotone2"><span class="id" type="definition">monotone2</span></a> <a class="idref" href="tutorial.html#seq_gen"><span class="id" type="inductive">seq_gen</span></a>. <span class="id" type="keyword">Proof</span>. <span class="id" type="var">pmonauto</span>. <span class="id" type="keyword">Qed</span>.<br/>
+<span class="id" type="keyword">Hint Resolve</span> <a class="idref" href="tutorial.html#seq_gen_mon"><span class="id" type="lemma">seq_gen_mon</span></a> : <span class="id" type="var">paco</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <a name="example'"><span class="id" type="lemma">example'</span></a> : <span class="id" type="keyword">&forall;</span> <span class="id" type="var">n</span>, <a class="idref" href="tutorial.html#seq'"><span class="id" type="definition">seq'</span></a> (<a class="idref" href="tutorial.html#enumerate"><span class="id" type="definition">enumerate</span></a> <a class="idref" href="tutorial.html#n"><span class="id" type="variable">n</span></a>) (<a class="idref" href="tutorial.html#cons"><span class="id" type="constructor">cons</span></a> <a class="idref" href="tutorial.html#n"><span class="id" type="variable">n</span></a> (<a class="idref" href="tutorial.html#map"><span class="id" type="definition">map</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4/stdlib/Coq.Init.Datatypes.html#S"><span class="id" type="constructor">S</span></a> (<a class="idref" href="tutorial.html#enumerate"><span class="id" type="definition">enumerate</span></a> <a class="idref" href="tutorial.html#n"><span class="id" type="variable">n</span></a>))).<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">pcofix</span> <span class="id" type="var">CIH</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span>; <span class="id" type="var">pfold</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> <a class="idref" href="tutorial.html#sunf_eq"><span class="id" type="lemma">sunf_eq</span></a> <span class="id" type="tactic">at</span> 1; <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#sunf_eq"><span class="id" type="lemma">sunf_eq</span></a> (<a class="idref" href="tutorial.html#enumerate"><span class="id" type="definition">enumerate</span></a> <span class="id" type="var">n</span>)); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#sunf_eq"><span class="id" type="lemma">sunf_eq</span></a> (<a class="idref" href="tutorial.html#map"><span class="id" type="definition">map</span></a> <span class="id" type="var">_</span> <span class="id" type="var">_</span>)); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">right</span>; <span class="id" type="tactic">apply</span> <span class="id" type="var">CIH</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Observe that the proof script is essentially the same as before
+    (this is no accident).  The main change is the use of <span class="inlinecode"><span class="id" type="var">pcofix</span></span>
+    instead of <span class="inlinecode"><span class="id" type="keyword">cofix</span></span>, which allows us to avoid any syntactic
+    guardedness checking at <span class="inlinecode"><span class="id" type="keyword">Qed</span></span>-time.  As a minor benefit of that,
+    we are able to use <span class="inlinecode"><span class="id" type="tactic">rewrite</span></span> ... <span class="inlinecode"><span class="id" type="tactic">at</span></span> <span class="inlinecode">1</span>, which we could not do
+    before.  
+<div class="paragraph"> </div>
+
+<a name="lab54"></a><h4 class="section">How it works:</h4>
+
+
+<div class="paragraph"> </div>
+
+    To understand <span class="inlinecode"><span class="id" type="var">seq'</span></span> and the proof of <span class="inlinecode"><span class="id" type="var">example'</span></span>, we have to
+    explain some background.  Given a monotone function <span class="inlinecode"><span class="id" type="var">f</span></span>, we call
+    <span class="inlinecode"><span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> the <i>parameterized</i> greatest fixed point of <span class="inlinecode"><span class="id" type="var">f</span></span>.  For a
+    relation <span class="inlinecode"><span class="id" type="var">r</span></span>, <span class="inlinecode"><span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode"><span class="id" type="var">r</span></span> is defined as the greatest fixed point
+    of the function <span class="inlinecode"><span class="id" type="keyword">fun</span></span> <span class="inlinecode"><span class="id" type="var">x</span></span> <span class="inlinecode">=&gt;</span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode">(<span class="id" type="var">x</span></span> <span class="inlinecode">&cup;</span> <span class="inlinecode"><span class="id" type="var">r</span>)</span>.  Clearly, <span class="inlinecode"><span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode"><span class="id" type="var">bot2</span></span>
+    (where <span class="inlinecode"><span class="id" type="var">bot2</span></span> is the empty relation) is just the ordinary greatest
+    fixed point of <span class="inlinecode"><span class="id" type="var">f</span></span>.
+
+<div class="paragraph"> </div>
+
+    Let us look at our example domain to understand better.  A proof
+    of <span class="inlinecode"><span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">seq_gen</span></span> <span class="inlinecode"><span class="id" type="var">r</span></span> <span class="inlinecode"><span class="id" type="var">s1</span></span> <span class="inlinecode"><span class="id" type="var">s2</span></span> can be seen as a proof of <span class="inlinecode"><span class="id" type="var">r</span></span> <span class="inlinecode">&sube;</span> <span class="inlinecode"><span class="id" type="var">seq</span></span> <span class="inlinecode">&rarr;</span>
+    <span class="inlinecode"><span class="id" type="var">seq</span></span> <span class="inlinecode"><span class="id" type="var">s1</span></span> <span class="inlinecode"><span class="id" type="var">s2</span></span>, where the use of the premise is guarded
+    <i>semantically</i>, rather than syntactically.  More precisely, <span class="inlinecode"><span class="id" type="var">paco2</span></span>
+    <span class="inlinecode"><span class="id" type="var">seq_gen</span></span> <span class="inlinecode"><span class="id" type="var">r</span></span> relates two streams iff their heads are equal and their
+    tails are either related by <span class="inlinecode"><span class="id" type="var">r</span></span> or again related by <span class="inlinecode"><span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">seq_gen</span></span>
+    <span class="inlinecode"><span class="id" type="var">r</span></span>.  Compare this to <span class="inlinecode"><span class="id" type="var">seq</span></span>, the ordinary greatest fixed point of
+    <span class="inlinecode"><span class="id" type="var">seq_gen</span></span>, which relates two streams iff their heads are equal and
+    their tails are again related by <span class="inlinecode"><span class="id" type="var">seq</span></span>.  This should also make it
+    clear why our definition of <span class="inlinecode"><span class="id" type="var">seq'</span></span> is equivalent to <span class="inlinecode"><span class="id" type="var">seq</span></span>.
+
+<div class="paragraph"> </div>
+
+    To fold and unfold parameterized fixed points, we provide two
+    tactics:
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> <span class="inlinecode"><span class="id" type="var">pfold</span></span> : when the conclusion is <span class="inlinecode"><span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode"><span class="id" type="var">r</span></span> for some <span class="inlinecode"><span class="id" type="var">f</span></span> and
+      <span class="inlinecode"><span class="id" type="var">r</span></span>, <span class="inlinecode"><span class="id" type="var">pfold</span></span> converts it to <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode">(<span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode"><span class="id" type="var">r</span></span> <span class="inlinecode">&cup;</span> <span class="inlinecode"><span class="id" type="var">r</span>)</span>
+
+</li>
+<li> <span class="inlinecode"><span class="id" type="var">punfold</span></span> <span class="inlinecode"><span class="id" type="var">H</span></span> : when the hypothesis <span class="inlinecode"><span class="id" type="var">H</span></span> is <span class="inlinecode"><span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode"><span class="id" type="var">r</span></span> for some
+      <span class="inlinecode"><span class="id" type="var">f</span></span> and <span class="inlinecode"><span class="id" type="var">r</span></span>, <span class="inlinecode"><span class="id" type="var">punfold</span></span> <span class="inlinecode"><span class="id" type="var">H</span></span> converts it to <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode">(<span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode"><span class="id" type="var">r</span></span> <span class="inlinecode">&cup;</span> <span class="inlinecode"><span class="id" type="var">r</span>)</span>
+
+</li>
+</ul>
+    Other useful lemmas are:
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> <span class="inlinecode"><span class="id" type="var">paco2_mon</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">monotone2</span></span> <span class="inlinecode">(<span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">f</span>)</span>
+
+</li>
+<li> <span class="inlinecode"><span class="id" type="var">paco2_mult</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="keyword">&forall;</span></span> <span class="inlinecode"><span class="id" type="var">r</span>,</span> <span class="inlinecode"><span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode">(<span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode"><span class="id" type="var">r</span>)</span> <span class="inlinecode">&sube;</span> <span class="inlinecode"><span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode"><span class="id" type="var">r</span></span>
+
+</li>
+<li> <span class="inlinecode"><span class="id" type="var">paco2_mult_strong</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="keyword">&forall;</span></span> <span class="inlinecode"><span class="id" type="var">r</span>,</span> <span class="inlinecode"><span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode">(<span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode"><span class="id" type="var">r</span></span> <span class="inlinecode">&cup;</span> <span class="inlinecode"><span class="id" type="var">r</span>)</span> <span class="inlinecode">&sube;</span> <span class="inlinecode"><span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode"><span class="id" type="var">r</span></span>
+
+</li>
+</ul>
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+    We will see an example involving <span class="inlinecode"><span class="id" type="var">paco2_mult</span></span> in a moment.  But
+    first let us have another look at the proof scripts of <span class="inlinecode"><span class="id" type="var">example</span></span>
+    and <span class="inlinecode"><span class="id" type="var">example'</span></span>.  In the former, after calling <span class="inlinecode"><span class="id" type="keyword">cofix</span></span>, the proof
+    state is as follows:
+
+<div class="paragraph"> </div>
+
+    <span class="inlinecode"><span class="id" type="var">CIH</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="keyword">&forall;</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">nat</span>,</span> <span class="inlinecode"><span class="id" type="var">seq</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> <span class="inlinecode">(<span class="id" type="var">cons</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">(<span class="id" type="var">map</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)))</span> <br>
+    <span class="inlinecode">============================</span> <br>
+    <span class="inlinecode"><span class="id" type="keyword">&forall;</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">nat</span>,</span> <span class="inlinecode"><span class="id" type="var">seq</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> <span class="inlinecode">(<span class="id" type="var">cons</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">(<span class="id" type="var">map</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)))</span> <br>
+
+<div class="paragraph"> </div>
+
+    In this state, the hypothesis precisely matches the conclusion,
+    and there is nothing preventing one from simply concluding the
+    goal directly.  Of course, if one were to do that, one's "proof"
+    would be subsequently rejected by <span class="inlinecode"><span class="id" type="keyword">Qed</span></span> for failing to obey
+    syntactic guardedness.
+
+<div class="paragraph"> </div>
+
+    Calling <span class="inlinecode"><span class="id" type="var">pcofix</span></span> results in a similar state, except that the added
+    hypothesis <span class="inlinecode"><span class="id" type="var">CIH</span></span> now governs a fresh relation variable <span class="inlinecode"><span class="id" type="var">r</span></span>, which
+    represents the current coinduction hypothesis relating <span class="inlinecode"><span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> 
+    and <span class="inlinecode"><span class="id" type="var">cons</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">(<span class="id" type="var">map</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>))</span> for all <span class="inlinecode"><span class="id" type="var">n</span></span>.  The new goal
+    then says that, in proving the two streams equal, we can use <span class="inlinecode"><span class="id" type="var">r</span></span>
+    coinductively, but only in a semantically guarded position,
+    i.e. after unfolding <span class="inlinecode"><span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">seq_gen</span></span> <span class="inlinecode"><span class="id" type="var">r</span></span>.  In particular, one
+    <i>cannot</i> apply <span class="inlinecode"><span class="id" type="var">CIH</span></span> immediately to "solve" the goal:
+
+<div class="paragraph"> </div>
+
+    <span class="inlinecode"><span class="id" type="var">r</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">stream</span></span> <span class="inlinecode">&rarr;</span> <span class="inlinecode"><span class="id" type="var">stream</span></span> <span class="inlinecode">&rarr;</span> <span class="inlinecode"><span class="id" type="keyword">Prop</span></span> <br>
+    <span class="inlinecode"><span class="id" type="var">CIH</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="keyword">&forall;</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">nat</span>,</span> <span class="inlinecode"><span class="id" type="var">r</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> <span class="inlinecode">(<span class="id" type="var">cons</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">(<span class="id" type="var">map</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)))</span> <br>
+    <span class="inlinecode">============================</span> <br>
+    <span class="inlinecode"><span class="id" type="keyword">&forall;</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">nat</span>,</span> <span class="inlinecode"><span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">seq_gen</span></span> <span class="inlinecode"><span class="id" type="var">r</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> <span class="inlinecode">(<span class="id" type="var">cons</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">(<span class="id" type="var">map</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)))</span> <br>
+
+<div class="paragraph"> </div>
+
+    The remaining differences between the proof scripts of <span class="inlinecode"><span class="id" type="var">example</span></span>
+    and <span class="inlinecode"><span class="id" type="var">example'</span></span> are as follows.  First, let us examine <span class="inlinecode"><span class="id" type="var">example</span></span>.
+    After applying <span class="inlinecode"><span class="id" type="var">seq_fold</span></span> and unfolding <span class="inlinecode"><span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> in the proof
+    of <span class="inlinecode"><span class="id" type="var">example</span></span>, we have the following goal:
+
+<div class="paragraph"> </div>
+
+    <span class="inlinecode"><span class="id" type="var">CIH</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="keyword">&forall;</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">nat</span>,</span> <span class="inlinecode"><span class="id" type="var">seq</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> <span class="inlinecode">(<span class="id" type="var">cons</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">(<span class="id" type="var">map</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)))</span> <br>
+    <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">nat</span></span> <br>
+    <span class="inlinecode">============================</span> <br>
+    <span class="inlinecode"><span class="id" type="var">seq_gen</span></span> <span class="inlinecode"><span class="id" type="var">seq</span></span> <span class="inlinecode">(<span class="id" type="var">cons</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)))</span> <span class="inlinecode">(<span class="id" type="var">cons</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">(<span class="id" type="var">map</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)))</span> <br>
+
+<div class="paragraph"> </div>
+
+    By the definition of <span class="inlinecode"><span class="id" type="var">seq_gen</span></span> and unfolding <span class="inlinecode"><span class="id" type="var">map</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span>, 
+    this reduces to showing
+
+<div class="paragraph"> </div>
+
+    <span class="inlinecode"><span class="id" type="var">CIH</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="keyword">&forall;</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">nat</span>,</span> <span class="inlinecode"><span class="id" type="var">seq</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> <span class="inlinecode">(<span class="id" type="var">cons</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">(<span class="id" type="var">map</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)))</span> <br>
+    <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">nat</span></span> <br>
+    <span class="inlinecode">============================</span> <br>
+    <span class="inlinecode"><span class="id" type="var">seq</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>))</span> <span class="inlinecode">(<span class="id" type="var">cons</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> <span class="inlinecode">(<span class="id" type="var">map</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>))))</span> <br>
+
+<div class="paragraph"> </div>
+
+    which follows directly by applying the coinduction hypothesis <span class="inlinecode"><span class="id" type="var">CIH</span></span>.
+
+<div class="paragraph"> </div>
+
+    In the case of <span class="inlinecode"><span class="id" type="var">example'</span></span>, the proof is slightly different.
+    First, we use the tactic <span class="inlinecode"><span class="id" type="var">pfold</span></span> rather than <span class="inlinecode"><span class="id" type="tactic">apply</span></span> <span class="inlinecode"><span class="id" type="var">seq_fold</span></span>,
+    simply because we now reason about <span class="inlinecode"><span class="id" type="var">seq'</span></span> rather than <span class="inlinecode"><span class="id" type="var">seq</span></span>.
+    After applying <span class="inlinecode"><span class="id" type="var">pfold</span></span> and unfolding <span class="inlinecode"><span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span>, we have:
+
+<div class="paragraph"> </div>
+
+    <span class="inlinecode"><span class="id" type="var">r</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">stream</span></span> <span class="inlinecode">&rarr;</span> <span class="inlinecode"><span class="id" type="var">stream</span></span> <span class="inlinecode">&rarr;</span> <span class="inlinecode"><span class="id" type="keyword">Prop</span></span> <br>
+    <span class="inlinecode"><span class="id" type="var">CIH</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="keyword">&forall;</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">nat</span>,</span> <span class="inlinecode"><span class="id" type="var">r</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> <span class="inlinecode">(<span class="id" type="var">cons</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">(<span class="id" type="var">map</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)))</span> <br>
+    <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">nat</span></span> <br>
+    <span class="inlinecode">============================</span> <br>
+    <span class="inlinecode"><span class="id" type="var">seq_gen</span></span> <span class="inlinecode">(<span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">seq_gen</span></span> <span class="inlinecode"><span class="id" type="var">r</span></span> <span class="inlinecode">&cup;</span> <span class="inlinecode"><span class="id" type="var">r</span>)</span> <span class="inlinecode">(<span class="id" type="var">cons</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)))</span> <span class="inlinecode">(<span class="id" type="var">cons</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">(<span class="id" type="var">map</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)))</span> <br>
+
+<div class="paragraph"> </div>
+
+    As you see, the relation <span class="inlinecode"><span class="id" type="var">r</span></span> appears in the argument of
+    <span class="inlinecode"><span class="id" type="var">seq_gen</span></span>. Thus by definition of <span class="inlinecode"><span class="id" type="var">seq_gen</span></span> and unfolding <span class="inlinecode"><span class="id" type="var">map</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span>
+    <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span>, we need to show <span class="inlinecode"><span class="id" type="var">enumerate</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> and <span class="inlinecode"><span class="id" type="var">cons</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span>
+    <span class="inlinecode">(<span class="id" type="var">map</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)))</span> are related by either <span class="inlinecode"><span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">seq_gen</span></span> <span class="inlinecode"><span class="id" type="var">r</span></span>
+    or <span class="inlinecode"><span class="id" type="var">r</span></span>:
+
+<div class="paragraph"> </div>
+
+    <span class="inlinecode"><span class="id" type="var">r</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">stream</span></span> <span class="inlinecode">&rarr;</span> <span class="inlinecode"><span class="id" type="var">stream</span></span> <span class="inlinecode">&rarr;</span> <span class="inlinecode"><span class="id" type="keyword">Prop</span></span> <br>
+    <span class="inlinecode"><span class="id" type="var">CIH</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="keyword">&forall;</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">nat</span>,</span> <span class="inlinecode"><span class="id" type="var">r</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> <span class="inlinecode">(<span class="id" type="var">cons</span></span> <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">(<span class="id" type="var">map</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)))</span> <br>
+    <span class="inlinecode"><span class="id" type="var">n</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">nat</span></span> <br>
+    <span class="inlinecode">============================</span> <br>
+    <span class="inlinecode"><span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">seq_gen</span></span> <span class="inlinecode"><span class="id" type="var">r</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>))</span> <span class="inlinecode">(<span class="id" type="var">cons</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> <span class="inlinecode">(<span class="id" type="var">map</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>))))</span> <br>
+    <span class="inlinecode"></span> <span class="inlinecode">\/</span> <span class="inlinecode"><span class="id" type="var">r</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>))</span> <span class="inlinecode">(<span class="id" type="var">cons</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>)</span> <span class="inlinecode">(<span class="id" type="var">map</span></span> <span class="inlinecode"><span class="id" type="var">S</span></span> <span class="inlinecode">(<span class="id" type="var">enumerate</span></span> <span class="inlinecode">(<span class="id" type="var">S</span></span> <span class="inlinecode"><span class="id" type="var">n</span>))))</span> <br>
+
+<div class="paragraph"> </div>
+
+    As the coinduction hypothesis gives us that they are related by <span class="inlinecode"><span class="id" type="var">r</span></span>,
+    we first have to select the <span class="inlinecode"><span class="id" type="tactic">right</span></span> disjunct, before we apply
+    <span class="inlinecode"><span class="id" type="var">CIH</span></span>.
+
+<div class="paragraph"> </div>
+
+    Summing up, the two proofs are very similar, but in the one using
+    <span class="inlinecode"><span class="id" type="var">paco</span></span>, the guardedness of the coinduction is guaranteed at every
+    step by the way the proof is constructed, rather than by a
+    syntactic check of the whole proof term after the fact.
+ 
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab55"></a><h3 class="section">Another example</h3>
+
+
+<div class="paragraph"> </div>
+
+    Before moving on to the second part, we briefly demonstrate the
+    use of the tactics <span class="inlinecode"><span class="id" type="var">punfold</span></span> and <span class="inlinecode"><span class="id" type="var">pclearbot</span></span>.
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+Here is a proof for <span class="inlinecode"><span class="id" type="var">seq</span></span>.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <a name="seq_cons"><span class="id" type="lemma">seq_cons</span></a> : <span class="id" type="keyword">&forall;</span> <span class="id" type="var">n1</span> <span class="id" type="var">n2</span> <span class="id" type="var">s1</span> <span class="id" type="var">s2</span> (<span class="id" type="var">SEQ</span> : <a class="idref" href="tutorial.html#seq"><span class="id" type="inductive">seq</span></a> (<a class="idref" href="tutorial.html#cons"><span class="id" type="constructor">cons</span></a> <a class="idref" href="tutorial.html#n1"><span class="id" type="variable">n1</span></a> <a class="idref" href="tutorial.html#s1"><span class="id" type="variable">s1</span></a>) (<a class="idref" href="tutorial.html#cons"><span class="id" type="constructor">cons</span></a> <a class="idref" href="tutorial.html#n2"><span class="id" type="variable">n2</span></a> <a class="idref" href="tutorial.html#s2"><span class="id" type="variable">s2</span></a>)),<br/>
+&nbsp;&nbsp;<a class="idref" href="tutorial.html#n1"><span class="id" type="variable">n1</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4/stdlib/Coq.Init.Logic.html#:type_scope:x_'='_x"><span class="id" type="notation">=</span></a> <a class="idref" href="tutorial.html#n2"><span class="id" type="variable">n2</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4/stdlib/Coq.Init.Logic.html#:type_scope:x_'/\'_x"><span class="id" type="notation">&and;</span></a> <a class="idref" href="tutorial.html#seq"><span class="id" type="inductive">seq</span></a> <a class="idref" href="tutorial.html#s1"><span class="id" type="variable">s1</span></a> <a class="idref" href="tutorial.html#s2"><span class="id" type="variable">s2</span></a>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion_clear</span> <span class="id" type="var">SEQ</span>; <span class="id" type="tactic">rename</span> <span class="id" type="var">H</span> <span class="id" type="var">into</span> <span class="id" type="var">SEQ</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion_clear</span> <span class="id" type="var">SEQ</span>; <span class="id" type="tactic">auto</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+And here is the corresponding proof for <span class="inlinecode"><span class="id" type="var">seq'</span></span>.
+
+<div class="paragraph"> </div>
+
+  Note that the tactic <span class="inlinecode"><span class="id" type="var">pclearbot</span></span> simplifies all hypotheses of the form <span class="inlinecode"><span class="id" type="var">P</span></span> <span class="inlinecode">\/</span>
+  <span class="inlinecode"><span class="id" type="var">bot</span>{<span class="id" type="var">n</span>}</span> to <span class="inlinecode"><span class="id" type="var">P</span></span>.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <a name="seq'_cons"><span class="id" type="lemma">seq'_cons</span></a> : <span class="id" type="keyword">&forall;</span> <span class="id" type="var">n1</span> <span class="id" type="var">n2</span> <span class="id" type="var">s1</span> <span class="id" type="var">s2</span> (<span class="id" type="var">SEQ</span> : <a class="idref" href="tutorial.html#seq'"><span class="id" type="definition">seq'</span></a> (<a class="idref" href="tutorial.html#cons"><span class="id" type="constructor">cons</span></a> <a class="idref" href="tutorial.html#n1"><span class="id" type="variable">n1</span></a> <a class="idref" href="tutorial.html#s1"><span class="id" type="variable">s1</span></a>) (<a class="idref" href="tutorial.html#cons"><span class="id" type="constructor">cons</span></a> <a class="idref" href="tutorial.html#n2"><span class="id" type="variable">n2</span></a> <a class="idref" href="tutorial.html#s2"><span class="id" type="variable">s2</span></a>)),<br/>
+&nbsp;&nbsp;<a class="idref" href="tutorial.html#n1"><span class="id" type="variable">n1</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4/stdlib/Coq.Init.Logic.html#:type_scope:x_'='_x"><span class="id" type="notation">=</span></a> <a class="idref" href="tutorial.html#n2"><span class="id" type="variable">n2</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4/stdlib/Coq.Init.Logic.html#:type_scope:x_'/\'_x"><span class="id" type="notation">&and;</span></a> <a class="idref" href="tutorial.html#seq'"><span class="id" type="definition">seq'</span></a> <a class="idref" href="tutorial.html#s1"><span class="id" type="variable">s1</span></a> <a class="idref" href="tutorial.html#s2"><span class="id" type="variable">s2</span></a>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">punfold</span> <span class="id" type="var">SEQ</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">inversion_clear</span> <span class="id" type="var">SEQ</span>; <span class="id" type="var">pclearbot</span>; <span class="id" type="tactic">auto</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We also provide two tactics <span class="inlinecode"><span class="id" type="var">pdestruct</span></span> and <span class="inlinecode"><span class="id" type="var">pinversion</span></span>.
+    They are simply defined as follows:
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> <span class="inlinecode"><span class="id" type="var">pdestruct</span></span> <span class="inlinecode"><span class="id" type="var">H</span></span> := <span class="inlinecode"><span class="id" type="var">punfold</span></span> <span class="inlinecode"><span class="id" type="var">H</span>;</span> <span class="inlinecode"><span class="id" type="tactic">destruct</span></span> <span class="inlinecode"><span class="id" type="var">H</span>;</span> <span class="inlinecode"><span class="id" type="var">pclearbot</span></span>
+
+</li>
+<li> <span class="inlinecode"><span class="id" type="var">pinversion</span></span> <span class="inlinecode"><span class="id" type="var">H</span></span> := <span class="inlinecode"><span class="id" type="var">punfold</span></span> <span class="inlinecode"><span class="id" type="var">H</span>;</span> <span class="inlinecode"><span class="id" type="tactic">inversion</span></span> <span class="inlinecode"><span class="id" type="var">H</span>;</span> <span class="inlinecode"><span class="id" type="var">pclearbot</span></span>
+
+</li>
+</ul>
+    Using this the proof of the above theorem <span class="inlinecode"><span class="id" type="var">seq'_cons</span></span> can be 
+    simplified as <span class="inlinecode"><span class="id" type="tactic">intros</span>;</span> <span class="inlinecode"><span class="id" type="var">pinversion</span></span> <span class="inlinecode"><span class="id" type="var">SEQ</span>;</span> <span class="inlinecode"><span class="id" type="tactic">auto</span>.</span>
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab56"></a><h2 class="section">Example: infinite tree equality</h2>
+
+
+<div class="paragraph"> </div>
+
+    The second example involves infinite binary trees of natural
+    numbers and an equality thereon.  We prove two particular
+    equalities via <span class="inlinecode"><span class="id" type="keyword">cofix</span></span> in an incremental fashion, and then show
+    how these proofs can be done just as easily via <span class="inlinecode"><span class="id" type="var">pcofix</span></span>.
+    We then show how, using <span class="inlinecode"><span class="id" type="var">pcofix</span></span>, the proofs can additionally
+    be modularly decomposed.
+
+<div class="paragraph"> </div>
+
+
+<div class="paragraph"> </div>
+
+ As before, we first define the coinductive type and the unfolding
+    trick.  
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">CoInductive</span> <a name="inftree"><span class="id" type="inductive">inftree</span></a> :=<br/>
+&nbsp;&nbsp;| <a name="node"><span class="id" type="constructor">node</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/8.4/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" type="inductive">nat</span></a> &rarr; <a class="idref" href="tutorial.html#inftree"><span class="id" type="inductive">inftree</span></a> &rarr; <a class="idref" href="tutorial.html#inftree"><span class="id" type="inductive">inftree</span></a> &rarr; <a class="idref" href="tutorial.html#inftree"><span class="id" type="inductive">inftree</span></a>.<br/>
+
+<br/>
+<span class="id" type="keyword">Definition</span> <a name="tunf"><span class="id" type="definition">tunf</span></a> <span class="id" type="var">t</span> : <a class="idref" href="tutorial.html#inftree"><span class="id" type="inductive">inftree</span></a> := <br/>
+&nbsp;&nbsp;<span class="id" type="keyword">match</span> <a class="idref" href="tutorial.html#t"><span class="id" type="variable">t</span></a> <span class="id" type="keyword">with</span> <a class="idref" href="tutorial.html#node"><span class="id" type="constructor">node</span></a> <span class="id" type="var">n</span> <span class="id" type="var">tl</span> <span class="id" type="var">tr</span> =&gt; <a class="idref" href="tutorial.html#node"><span class="id" type="constructor">node</span></a> <span class="id" type="var">n</span> <span class="id" type="var">tl</span> <span class="id" type="var">tr</span> <span class="id" type="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <a name="tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> : <span class="id" type="keyword">&forall;</span> <span class="id" type="var">t</span>, <a class="idref" href="tutorial.html#t"><span class="id" type="variable">t</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4/stdlib/Coq.Init.Logic.html#:type_scope:x_'='_x"><span class="id" type="notation">=</span></a> <a class="idref" href="tutorial.html#tunf"><span class="id" type="definition">tunf</span></a> <a class="idref" href="tutorial.html#t"><span class="id" type="variable">t</span></a>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">destruct</span> <span class="id" type="var">t</span>; <span class="id" type="tactic">auto</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+In order to state our example equalities, we define the following
+    four trees.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">CoFixpoint</span> <a name="one"><span class="id" type="definition">one</span></a> : <a class="idref" href="tutorial.html#inftree"><span class="id" type="inductive">inftree</span></a> := <a class="idref" href="tutorial.html#node"><span class="id" type="constructor">node</span></a> 1 <a class="idref" href="tutorial.html#one"><span class="id" type="definition">one</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a><br/>
+<span class="id" type="keyword">with</span>       <a name="two"><span class="id" type="definition">two</span></a> : <a class="idref" href="tutorial.html#inftree"><span class="id" type="inductive">inftree</span></a> := <a class="idref" href="tutorial.html#node"><span class="id" type="constructor">node</span></a> 2 <a class="idref" href="tutorial.html#one"><span class="id" type="definition">one</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a>.<br/>
+
+<br/>
+<span class="id" type="keyword">CoFixpoint</span> <a name="eins"><span class="id" type="definition">eins</span></a> : <a class="idref" href="tutorial.html#inftree"><span class="id" type="inductive">inftree</span></a> := <a class="idref" href="tutorial.html#node"><span class="id" type="constructor">node</span></a> 1 <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a> (<a class="idref" href="tutorial.html#node"><span class="id" type="constructor">node</span></a> 2 <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a> <a class="idref" href="tutorial.html#zwei"><span class="id" type="definition">zwei</span></a>)<br/>
+<span class="id" type="keyword">with</span>       <a name="zwei"><span class="id" type="definition">zwei</span></a> : <a class="idref" href="tutorial.html#inftree"><span class="id" type="inductive">inftree</span></a> := <a class="idref" href="tutorial.html#node"><span class="id" type="constructor">node</span></a> 2 <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a> <a class="idref" href="tutorial.html#zwei"><span class="id" type="definition">zwei</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab57"></a><h3 class="section">Incremental proofs using <span class="inlinecode"><span class="id" type="keyword">cofix</span></span></h3>
+
+
+<div class="paragraph"> </div>
+
+    As before, we define the tree equality as the greatest fixed point
+    of its generating function.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <a name="teq_gen"><span class="id" type="inductive">teq_gen</span></a> <span class="id" type="var">teq</span> : <a class="idref" href="tutorial.html#inftree"><span class="id" type="inductive">inftree</span></a> &rarr; <a class="idref" href="tutorial.html#inftree"><span class="id" type="inductive">inftree</span></a> &rarr; <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;| <a name="_teq_gen"><span class="id" type="constructor">_teq_gen</span></a> : <span class="id" type="keyword">&forall;</span> <span class="id" type="var">n</span> <span class="id" type="var">t1l</span> <span class="id" type="var">t1r</span> <span class="id" type="var">t2l</span> <span class="id" type="var">t2r</span> (<span class="id" type="var">Rl</span> : <span class="id" type="var">teq</span> <a class="idref" href="tutorial.html#t1l"><span class="id" type="variable">t1l</span></a> <a class="idref" href="tutorial.html#t2l"><span class="id" type="variable">t2l</span></a> : <span class="id" type="keyword">Prop</span>) (<span class="id" type="var">Rr</span> : <span class="id" type="var">teq</span> <a class="idref" href="tutorial.html#t1r"><span class="id" type="variable">t1r</span></a> <a class="idref" href="tutorial.html#t2r"><span class="id" type="variable">t2r</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="tutorial.html#teq_gen"><span class="id" type="inductive">teq_gen</span></a> <span class="id" type="var">teq</span> (<a class="idref" href="tutorial.html#node"><span class="id" type="constructor">node</span></a> <a class="idref" href="tutorial.html#n"><span class="id" type="variable">n</span></a> <a class="idref" href="tutorial.html#t1l"><span class="id" type="variable">t1l</span></a> <a class="idref" href="tutorial.html#t1r"><span class="id" type="variable">t1r</span></a>) (<a class="idref" href="tutorial.html#node"><span class="id" type="constructor">node</span></a> <a class="idref" href="tutorial.html#n"><span class="id" type="variable">n</span></a> <a class="idref" href="tutorial.html#t2l"><span class="id" type="variable">t2l</span></a> <a class="idref" href="tutorial.html#t2r"><span class="id" type="variable">t2r</span></a>).<br/>
+<span class="id" type="keyword">Hint Constructors</span> <a class="idref" href="tutorial.html#teq_gen"><span class="id" type="inductive">teq_gen</span></a>.<br/>
+
+<br/>
+<span class="id" type="keyword">CoInductive</span> <a name="teq"><span class="id" type="inductive">teq</span></a> <span class="id" type="var">t1</span> <span class="id" type="var">t2</span> : <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;| <a name="teq_fold"><span class="id" type="constructor">teq_fold</span></a> (<span class="id" type="var">IN</span> : <a class="idref" href="tutorial.html#teq_gen"><span class="id" type="inductive">teq_gen</span></a> <a class="idref" href="tutorial.html#teq"><span class="id" type="inductive">teq</span></a> <span class="id" type="var">t1</span> <span class="id" type="var">t2</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We now prove, using <span class="inlinecode"><span class="id" type="keyword">cofix</span></span>, that <span class="inlinecode"><span class="id" type="var">one</span></span> equals <span class="inlinecode"><span class="id" type="var">eins</span></span> and,
+    separately, that <span class="inlinecode"><span class="id" type="var">two</span></span> equals <span class="inlinecode"><span class="id" type="var">zwei</span></span>.  Note the nested use of
+    <span class="inlinecode"><span class="id" type="keyword">cofix</span></span> in either proof script, which lets us strengthen the
+    coinductive hypothesis in the middle of the proof.  For instance,
+    in the proof <span class="inlinecode"><span class="id" type="var">teq_one</span></span>, we start out with the coinductive
+    hypothesis that <span class="inlinecode"><span class="id" type="var">one</span></span> and <span class="inlinecode"><span class="id" type="var">eins</span></span> are equal (<span class="inlinecode"><span class="id" type="var">CIH</span></span>).  Later on, we
+    use <span class="inlinecode"><span class="id" type="keyword">cofix</span></span> again to additionally assume that <span class="inlinecode"><span class="id" type="var">two</span></span> and <span class="inlinecode"><span class="id" type="var">zwei</span></span> are
+    equal (<span class="inlinecode"><span class="id" type="var">CIH'</span></span>).  This is a prime example of <i>incremental</i> proof:
+    we start with no coinductive assumptions, and we progressively add
+    more coinductive assumptions as the proof progresses.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <a name="teq_one"><span class="id" type="lemma">teq_one</span></a> : <a class="idref" href="tutorial.html#teq"><span class="id" type="inductive">teq</span></a> <a class="idref" href="tutorial.html#one"><span class="id" type="definition">one</span></a> <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">cofix</span> <span class="id" type="var">CIH</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <a class="idref" href="tutorial.html#teq_fold"><span class="id" type="constructor">teq_fold</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#one"><span class="id" type="definition">one</span></a>), (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a>); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>; <span class="id" type="tactic">auto</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <a class="idref" href="tutorial.html#teq_fold"><span class="id" type="constructor">teq_fold</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a>); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>; <span class="id" type="tactic">auto</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">cofix</span> <span class="id" type="var">CIH'</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <a class="idref" href="tutorial.html#teq_fold"><span class="id" type="constructor">teq_fold</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a>), (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#zwei"><span class="id" type="definition">zwei</span></a>); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>; <span class="id" type="tactic">auto</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <a name="teq_two"><span class="id" type="lemma">teq_two</span></a> : <a class="idref" href="tutorial.html#teq"><span class="id" type="inductive">teq</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a> <a class="idref" href="tutorial.html#zwei"><span class="id" type="definition">zwei</span></a>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">cofix</span> <span class="id" type="var">CIH</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <a class="idref" href="tutorial.html#teq_fold"><span class="id" type="constructor">teq_fold</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a>), (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#zwei"><span class="id" type="definition">zwei</span></a>); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>; <span class="id" type="tactic">auto</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">cofix</span> <span class="id" type="var">CIH'</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <a class="idref" href="tutorial.html#teq_fold"><span class="id" type="constructor">teq_fold</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#one"><span class="id" type="definition">one</span></a>), (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a>); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>; <span class="id" type="tactic">auto</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <a class="idref" href="tutorial.html#teq_fold"><span class="id" type="constructor">teq_fold</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a>); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>; <span class="id" type="tactic">auto</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab58"></a><h3 class="section">Incremental proofs using our <span class="inlinecode"><span class="id" type="var">pcofix</span></span></h3>
+
+
+<div class="paragraph"> </div>
+
+    As before, we can easily turn the above <span class="inlinecode"><span class="id" type="keyword">cofix</span></span>-proofs into
+    <span class="inlinecode"><span class="id" type="var">pcofix</span></span>-proofs.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <a name="teq'"><span class="id" type="definition">teq'</span></a> <span class="id" type="var">t1</span> <span class="id" type="var">t2</span> := <a class="idref" href="pacodef.html#paco2"><span class="id" type="inductive">paco2</span></a> <a class="idref" href="tutorial.html#teq_gen"><span class="id" type="inductive">teq_gen</span></a> <a class="idref" href="paconotation.html#bot2"><span class="id" type="abbreviation">bot2</span></a> <a class="idref" href="tutorial.html#t1"><span class="id" type="variable">t1</span></a> <a class="idref" href="tutorial.html#t2"><span class="id" type="variable">t2</span></a>.<br/>
+<span class="id" type="keyword">Hint Unfold</span> <a class="idref" href="tutorial.html#teq'"><span class="id" type="definition">teq'</span></a>.<br/>
+<span class="id" type="keyword">Lemma</span> <a name="teq_gen_mon"><span class="id" type="lemma">teq_gen_mon</span></a>: <a class="idref" href="paco2.html#monotone2"><span class="id" type="definition">monotone2</span></a> <a class="idref" href="tutorial.html#teq_gen"><span class="id" type="inductive">teq_gen</span></a>. <span class="id" type="keyword">Proof</span>. <span class="id" type="var">pmonauto</span>. <span class="id" type="keyword">Qed</span>.<br/>
+<span class="id" type="keyword">Hint Resolve</span> <a class="idref" href="tutorial.html#teq_gen_mon"><span class="id" type="lemma">teq_gen_mon</span></a> : <span class="id" type="var">paco</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <a name="teq'_one"><span class="id" type="lemma">teq'_one</span></a> : <a class="idref" href="tutorial.html#teq'"><span class="id" type="definition">teq'</span></a> <a class="idref" href="tutorial.html#one"><span class="id" type="definition">one</span></a> <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">pcofix</span> <span class="id" type="var">CIH</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">pfold</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#one"><span class="id" type="definition">one</span></a>), (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a>); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>; <span class="id" type="tactic">auto</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">left</span>; <span class="id" type="var">pfold</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a>); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>; <span class="id" type="tactic">auto</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">left</span>; <span class="id" type="var">pcofix</span> <span class="id" type="var">CIH'</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">pfold</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a>), (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#zwei"><span class="id" type="definition">zwei</span></a>); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>; <span class="id" type="tactic">auto</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <a name="teq'_two"><span class="id" type="lemma">teq'_two</span></a> : <a class="idref" href="tutorial.html#teq'"><span class="id" type="definition">teq'</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a> <a class="idref" href="tutorial.html#zwei"><span class="id" type="definition">zwei</span></a>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">pcofix</span> <span class="id" type="var">CIH</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">pfold</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a>), (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#zwei"><span class="id" type="definition">zwei</span></a>); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>; <span class="id" type="tactic">auto</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">left</span>; <span class="id" type="var">pcofix</span> <span class="id" type="var">CIH'</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">pfold</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#one"><span class="id" type="definition">one</span></a>), (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a>); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>; <span class="id" type="tactic">auto</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">left</span>; <span class="id" type="var">pfold</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a>); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>; <span class="id" type="tactic">auto</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab59"></a><h3 class="section">Pseudo-compositional proofs using <span class="inlinecode"><span class="id" type="keyword">cofix</span></span></h3>
+
+
+<div class="paragraph"> </div>
+
+    It is easy to see that the proofs of <span class="inlinecode"><span class="id" type="var">teq_one</span></span> and <span class="inlinecode"><span class="id" type="var">teq_two</span></span> are
+    essentially the same.  We can avoid duplicating some work by
+    decomposing the proofs as follows.
+
+<div class="paragraph"> </div>
+
+    First we prove that <span class="inlinecode"><span class="id" type="var">teq</span></span> <span class="inlinecode"><span class="id" type="var">two</span></span> <span class="inlinecode"><span class="id" type="var">zwei</span></span> holds under the coinductive
+    assumption <span class="inlinecode"><span class="id" type="var">teq</span></span> <span class="inlinecode"><span class="id" type="var">one</span></span> <span class="inlinecode"><span class="id" type="var">eins</span></span>.  This is basically the second part of
+    the proof of <span class="inlinecode"><span class="id" type="var">teq_one</span></span> (and the first part of the proof of
+    <span class="inlinecode"><span class="id" type="var">teq_two</span></span>).  Then we prove the converse, i.e., that <span class="inlinecode"><span class="id" type="var">teq</span></span> <span class="inlinecode"><span class="id" type="var">one</span></span>
+    <span class="inlinecode"><span class="id" type="var">eins</span></span> holds under the coinductive assumption <span class="inlinecode"><span class="id" type="var">teq</span></span> <span class="inlinecode"><span class="id" type="var">two</span></span> <span class="inlinecode"><span class="id" type="var">zwei</span></span>.
+    This is basically the first part of the proof of <span class="inlinecode"><span class="id" type="var">teq_one</span></span> (and
+    the second part of the proof of <span class="inlinecode"><span class="id" type="var">teq_two</span></span>).
+
+<div class="paragraph"> </div>
+
+    The issue is that there seems to be no way to express these two
+    properties.  The best we can do is prove <span class="inlinecode"><span class="id" type="var">teq</span></span> <span class="inlinecode"><span class="id" type="var">two</span></span> <span class="inlinecode"><span class="id" type="var">zwei</span></span> <span class="inlinecode">&rarr;</span> <span class="inlinecode"><span class="id" type="var">teq</span></span> <span class="inlinecode"><span class="id" type="var">one</span></span>
+    <span class="inlinecode"><span class="id" type="var">eins</span></span> and <span class="inlinecode"><span class="id" type="var">teq</span></span> <span class="inlinecode"><span class="id" type="var">one</span></span> <span class="inlinecode"><span class="id" type="var">eins</span></span> <span class="inlinecode">&rarr;</span> <span class="inlinecode"><span class="id" type="var">teq</span></span> <span class="inlinecode"><span class="id" type="var">two</span></span> <span class="inlinecode"><span class="id" type="var">zwei</span></span>, and make sure that in
+    these proofs any use of the assumption is syntactically guarded.
+    For instance, we are not allowed to prove <span class="inlinecode"><span class="id" type="var">teq</span></span> <span class="inlinecode"><span class="id" type="var">two</span></span> <span class="inlinecode"><span class="id" type="var">zwei</span></span> <span class="inlinecode">&rarr;</span> <span class="inlinecode"><span class="id" type="var">teq</span></span>
+    <span class="inlinecode"><span class="id" type="var">one</span></span> <span class="inlinecode"><span class="id" type="var">eins</span></span> by inspecting <span class="inlinecode"><span class="id" type="var">teq</span></span> <span class="inlinecode"><span class="id" type="var">two</span></span> <span class="inlinecode"><span class="id" type="var">zwei</span></span> and extracting <span class="inlinecode"><span class="id" type="var">teq</span></span> <span class="inlinecode"><span class="id" type="var">one</span></span>
+    <span class="inlinecode"><span class="id" type="var">eins</span></span> from that (see the proof of <span class="inlinecode"><span class="id" type="var">teq_two_one_bad</span></span> below).
+    Although a valid proof of that goal by itself, it could not be
+    composed later to yield a proof of <span class="inlinecode"><span class="id" type="var">teq</span></span> <span class="inlinecode"><span class="id" type="var">one</span></span> <span class="inlinecode"><span class="id" type="var">eins</span></span> or <span class="inlinecode"><span class="id" type="var">teq</span></span> <span class="inlinecode"><span class="id" type="var">two</span></span>
+    <span class="inlinecode"><span class="id" type="var">zwei</span></span> (see the aborted theorem <span class="inlinecode"><span class="id" type="var">teq_eins_bad</span></span> below).
+
+<div class="paragraph"> </div>
+
+    Moreover, both lemmas must then be made transparent by using
+    <span class="inlinecode"><span class="id" type="keyword">Defined</span></span> instead of <span class="inlinecode"><span class="id" type="keyword">Qed</span></span> at the end, such that, when composing
+    them to prove <span class="inlinecode"><span class="id" type="var">teq</span></span> <span class="inlinecode"><span class="id" type="var">one</span></span> <span class="inlinecode"><span class="id" type="var">eins</span></span> or <span class="inlinecode"><span class="id" type="var">teq</span></span> <span class="inlinecode"><span class="id" type="var">two</span></span> <span class="inlinecode"><span class="id" type="var">zwei</span></span>, guardedness
+    checking can inspect their proof terms.  In other words, <span class="inlinecode"><span class="id" type="keyword">cofix</span></span>
+    is not properly compositional.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <a name="teq_two_one_bad"><span class="id" type="lemma">teq_two_one_bad</span></a> : <a class="idref" href="tutorial.html#teq"><span class="id" type="inductive">teq</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a> <a class="idref" href="tutorial.html#zwei"><span class="id" type="definition">zwei</span></a> &rarr; <a class="idref" href="tutorial.html#teq"><span class="id" type="inductive">teq</span></a> <a class="idref" href="tutorial.html#one"><span class="id" type="definition">one</span></a> <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span>; <span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a>), (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#zwei"><span class="id" type="definition">zwei</span></a>) <span class="id" type="keyword">in</span> <span class="id" type="var">H</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">destruct</span> <span class="id" type="var">H</span>; <span class="id" type="tactic">inversion</span> <span class="id" type="var">IN</span>; <span class="id" type="tactic">auto</span>.<br/>
+<span class="id" type="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <a name="teq_two_one"><span class="id" type="lemma">teq_two_one</span></a> : <a class="idref" href="tutorial.html#teq"><span class="id" type="inductive">teq</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a> <a class="idref" href="tutorial.html#zwei"><span class="id" type="definition">zwei</span></a> &rarr; <a class="idref" href="tutorial.html#teq"><span class="id" type="inductive">teq</span></a> <a class="idref" href="tutorial.html#one"><span class="id" type="definition">one</span></a> <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span>; <span class="id" type="keyword">cofix</span> <span class="id" type="var">CIH</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <a class="idref" href="tutorial.html#teq_fold"><span class="id" type="constructor">teq_fold</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#one"><span class="id" type="definition">one</span></a>), (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a>); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>; <span class="id" type="tactic">auto</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <a class="idref" href="tutorial.html#teq_fold"><span class="id" type="constructor">teq_fold</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a>); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>; <span class="id" type="tactic">auto</span>.<br/>
+<span class="id" type="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <a name="teq_one_two"><span class="id" type="lemma">teq_one_two</span></a> : <a class="idref" href="tutorial.html#teq"><span class="id" type="inductive">teq</span></a> <a class="idref" href="tutorial.html#one"><span class="id" type="definition">one</span></a> <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a> &rarr; <a class="idref" href="tutorial.html#teq"><span class="id" type="inductive">teq</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a> <a class="idref" href="tutorial.html#zwei"><span class="id" type="definition">zwei</span></a>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span>; <span class="id" type="keyword">cofix</span> <span class="id" type="var">CIH</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <a class="idref" href="tutorial.html#teq_fold"><span class="id" type="constructor">teq_fold</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a>), (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#zwei"><span class="id" type="definition">zwei</span></a>); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>; <span class="id" type="tactic">auto</span>.<br/>
+<span class="id" type="keyword">Defined</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <a name="teq_eins"><span class="id" type="lemma">teq_eins</span></a> : <a class="idref" href="tutorial.html#teq"><span class="id" type="inductive">teq</span></a> <a class="idref" href="tutorial.html#one"><span class="id" type="definition">one</span></a> <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">cofix</span> <span class="id" type="var">CIH</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <a class="idref" href="tutorial.html#teq_two_one"><span class="id" type="lemma">teq_two_one</span></a>, <a class="idref" href="tutorial.html#teq_one_two"><span class="id" type="lemma">teq_one_two</span></a>, <span class="id" type="var">CIH</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <a name="teq_zwei"><span class="id" type="lemma">teq_zwei</span></a> : <a class="idref" href="tutorial.html#teq"><span class="id" type="inductive">teq</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a> <a class="idref" href="tutorial.html#zwei"><span class="id" type="definition">zwei</span></a>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">cofix</span> <span class="id" type="var">CIH</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <a class="idref" href="tutorial.html#teq_one_two"><span class="id" type="lemma">teq_one_two</span></a>, <a class="idref" href="tutorial.html#teq_two_one"><span class="id" type="lemma">teq_two_one</span></a>, <span class="id" type="var">CIH</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The following proof would fail guardedness checking at <span class="inlinecode"><span class="id" type="keyword">Qed</span></span>-time,
+    because in the proof of the lemma <span class="inlinecode"><span class="id" type="var">teq_two_one_bad</span></span> the
+    assumption is used "too early".
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <a name="teq_eins_bad"><span class="id" type="lemma">teq_eins_bad</span></a> : <a class="idref" href="tutorial.html#teq"><span class="id" type="inductive">teq</span></a> <a class="idref" href="tutorial.html#one"><span class="id" type="definition">one</span></a> <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">cofix</span> <span class="id" type="var">CIH</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <a class="idref" href="tutorial.html#teq_two_one_bad"><span class="id" type="lemma">teq_two_one_bad</span></a>, <a class="idref" href="tutorial.html#teq_one_two"><span class="id" type="lemma">teq_one_two</span></a>, <span class="id" type="var">CIH</span>.<br/>
+<span class="id" type="keyword">Abort</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab60"></a><h3 class="section">Compositional proofs using our <span class="inlinecode"><span class="id" type="var">pcofix</span></span></h3>
+
+
+<div class="paragraph"> </div>
+
+    Using parameterized coinduction, we can state the actual desired
+    lemmas as follows and prove them using <span class="inlinecode"><span class="id" type="var">pcofix</span></span> (again, only
+    minimal changes to the previous proof scripts are required).
+    Observe that (i) the earlier "wrong" proof of <span class="inlinecode"><span class="id" type="var">teq</span></span> <span class="inlinecode"><span class="id" type="var">two</span></span> <span class="inlinecode"><span class="id" type="var">zwei</span></span> <span class="inlinecode">&rarr;</span> <span class="inlinecode"><span class="id" type="var">teq</span></span>
+    <span class="inlinecode"><span class="id" type="var">one</span></span> <span class="inlinecode"><span class="id" type="var">eins</span></span> (<span class="inlinecode"><span class="id" type="var">teq_two_one_bad</span></span>) is <i>not</i> a proof of the
+    corresponding lemma here, and (ii) we are not forced to make the
+    lemmas transparent.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <a name="teq'_two_one"><span class="id" type="lemma">teq'_two_one</span></a> : <span class="id" type="keyword">&forall;</span> <span class="id" type="var">r</span>,<br/>
+&nbsp;&nbsp;(<a class="idref" href="tutorial.html#r"><span class="id" type="variable">r</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a> <a class="idref" href="tutorial.html#zwei"><span class="id" type="definition">zwei</span></a> : <span class="id" type="keyword">Prop</span>) &rarr; <a class="idref" href="pacodef.html#paco2"><span class="id" type="inductive">paco2</span></a> <a class="idref" href="tutorial.html#teq_gen"><span class="id" type="inductive">teq_gen</span></a> <a class="idref" href="tutorial.html#r"><span class="id" type="variable">r</span></a> <a class="idref" href="tutorial.html#one"><span class="id" type="definition">one</span></a> <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span>; <span class="id" type="var">pcofix</span> <span class="id" type="var">CIH</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">pfold</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#one"><span class="id" type="definition">one</span></a>), (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a>); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>; <span class="id" type="tactic">auto</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">left</span>; <span class="id" type="var">pfold</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a>); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>; <span class="id" type="tactic">auto</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <a name="teq'_one_two"><span class="id" type="lemma">teq'_one_two</span></a> : <span class="id" type="keyword">&forall;</span> <span class="id" type="var">r</span>,<br/>
+&nbsp;&nbsp;(<a class="idref" href="tutorial.html#r"><span class="id" type="variable">r</span></a> <a class="idref" href="tutorial.html#one"><span class="id" type="definition">one</span></a> <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a> : <span class="id" type="keyword">Prop</span>) &rarr; <a class="idref" href="pacodef.html#paco2"><span class="id" type="inductive">paco2</span></a> <a class="idref" href="tutorial.html#teq_gen"><span class="id" type="inductive">teq_gen</span></a> <a class="idref" href="tutorial.html#r"><span class="id" type="variable">r</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a> <a class="idref" href="tutorial.html#zwei"><span class="id" type="definition">zwei</span></a>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">intros</span>; <span class="id" type="var">pcofix</span> <span class="id" type="var">CIH</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">pfold</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a>), (<a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a> <a class="idref" href="tutorial.html#zwei"><span class="id" type="definition">zwei</span></a>); <span class="id" type="tactic">simpl</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>; <span class="id" type="tactic">auto</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+We now compose them with the help of the lemma <span class="inlinecode"><span class="id" type="var">paco2_mult</span></span>:
+
+<div class="paragraph"> </div>
+
+<ul class="doclist">
+<li> <span class="inlinecode"><span class="id" type="var">paco2_mult</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode">:</span> <span class="inlinecode"><span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode">(<span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode"><span class="id" type="var">r</span>)</span> <span class="inlinecode">&sube;</span> <span class="inlinecode"><span class="id" type="var">paco2</span></span> <span class="inlinecode"><span class="id" type="var">f</span></span> <span class="inlinecode"><span class="id" type="var">r</span></span>
+
+</li>
+</ul>
+    The tactic <span class="inlinecode"><span class="id" type="var">pmult</span></span> applies <span class="inlinecode"><span class="id" type="var">paco</span>{<span class="id" type="var">n</span>}<span class="id" type="var">_mult</span></span> to the conclusion 
+    for an appropriate <span class="inlinecode"><span class="id" type="var">n</span></span>.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <a name="teq'_eins"><span class="id" type="lemma">teq'_eins</span></a> : <a class="idref" href="tutorial.html#teq'"><span class="id" type="definition">teq'</span></a> <a class="idref" href="tutorial.html#one"><span class="id" type="definition">one</span></a> <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">pcofix</span> <span class="id" type="var">CIH</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">pmult</span>; <span class="id" type="tactic">apply</span> <a class="idref" href="tutorial.html#teq'_two_one"><span class="id" type="lemma">teq'_two_one</span></a>, <a class="idref" href="tutorial.html#teq'_one_two"><span class="id" type="lemma">teq'_one_two</span></a>, <span class="id" type="var">CIH</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Theorem</span> <a name="teq'_zwei"><span class="id" type="lemma">teq'_zwei</span></a> : <a class="idref" href="tutorial.html#teq'"><span class="id" type="definition">teq'</span></a> <a class="idref" href="tutorial.html#two"><span class="id" type="definition">two</span></a> <a class="idref" href="tutorial.html#zwei"><span class="id" type="definition">zwei</span></a>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">pcofix</span> <span class="id" type="var">CIH</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">pmult</span>; <span class="id" type="tactic">apply</span> <a class="idref" href="tutorial.html#teq'_one_two"><span class="id" type="lemma">teq'_one_two</span></a>, <a class="idref" href="tutorial.html#teq'_two_one"><span class="id" type="lemma">teq'_two_one</span></a>, <span class="id" type="var">CIH</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab61"></a><h2 class="section">Example: mutual coinduction</h2>
+
+
+<div class="paragraph"> </div>
+
+    The third and last example shows that <span class="inlinecode"><span class="id" type="var">paco</span></span> also works for mutual
+    coinduction.  Here, the mutuality involves two predicates.
+
+</div>
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+We define two generating functions (using the <span class="inlinecode"><span class="id" type="var">inftree</span></span> type from
+    before).
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <a name="eqone_gen"><span class="id" type="inductive">eqone_gen</span></a> <span class="id" type="var">eqone</span> <span class="id" type="var">eqtwo</span> : <a class="idref" href="tutorial.html#inftree"><span class="id" type="inductive">inftree</span></a> &rarr; <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;| <a name="_eqone_gen"><span class="id" type="constructor">_eqone_gen</span></a> : <span class="id" type="keyword">&forall;</span> <span class="id" type="var">tl</span> <span class="id" type="var">tr</span> (<span class="id" type="var">EQL</span> : <span class="id" type="var">eqone</span> <a class="idref" href="tutorial.html#tl"><span class="id" type="variable">tl</span></a> : <span class="id" type="keyword">Prop</span>) (<span class="id" type="var">EQR</span> : <span class="id" type="var">eqtwo</span> <a class="idref" href="tutorial.html#tr"><span class="id" type="variable">tr</span></a> : <span class="id" type="keyword">Prop</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="tutorial.html#eqone_gen"><span class="id" type="inductive">eqone_gen</span></a> <span class="id" type="var">eqone</span> <span class="id" type="var">eqtwo</span> (<a class="idref" href="tutorial.html#node"><span class="id" type="constructor">node</span></a> 1 <a class="idref" href="tutorial.html#tl"><span class="id" type="variable">tl</span></a> <a class="idref" href="tutorial.html#tr"><span class="id" type="variable">tr</span></a>).<br/>
+
+<br/>
+<span class="id" type="keyword">Inductive</span> <a name="eqtwo_gen"><span class="id" type="inductive">eqtwo_gen</span></a> <span class="id" type="var">eqone</span> <span class="id" type="var">eqtwo</span> : <a class="idref" href="tutorial.html#inftree"><span class="id" type="inductive">inftree</span></a> &rarr; <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;| <a name="_eqtwo_gen"><span class="id" type="constructor">_eqtwo_gen</span></a> : <span class="id" type="keyword">&forall;</span> <span class="id" type="var">tl</span> <span class="id" type="var">tr</span> (<span class="id" type="var">EQL</span> : <span class="id" type="var">eqone</span> <a class="idref" href="tutorial.html#tl"><span class="id" type="variable">tl</span></a> : <span class="id" type="keyword">Prop</span>) (<span class="id" type="var">EQR</span> : <span class="id" type="var">eqtwo</span> <a class="idref" href="tutorial.html#tr"><span class="id" type="variable">tr</span></a> : <span class="id" type="keyword">Prop</span>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="tutorial.html#eqtwo_gen"><span class="id" type="inductive">eqtwo_gen</span></a> <span class="id" type="var">eqone</span> <span class="id" type="var">eqtwo</span> (<a class="idref" href="tutorial.html#node"><span class="id" type="constructor">node</span></a> 2 <a class="idref" href="tutorial.html#tl"><span class="id" type="variable">tl</span></a> <a class="idref" href="tutorial.html#tr"><span class="id" type="variable">tr</span></a>).<br/>
+
+<br/>
+<span class="id" type="keyword">Hint Constructors</span> <a class="idref" href="tutorial.html#eqone_gen"><span class="id" type="inductive">eqone_gen</span></a> <a class="idref" href="tutorial.html#eqtwo_gen"><span class="id" type="inductive">eqtwo_gen</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab62"></a><h3 class="section">A proof via <span class="inlinecode"><span class="id" type="keyword">cofix</span></span></h3>
+
+
+<div class="paragraph"> </div>
+
+    Using these, we now define two mutually coinductive predicates
+    <span class="inlinecode"><span class="id" type="var">eqone</span></span> and <span class="inlinecode"><span class="id" type="var">eqtwo</span></span>.  It is easy to see intuitively that they
+    contain all trees that are equal to <span class="inlinecode"><span class="id" type="var">one</span></span> and <span class="inlinecode"><span class="id" type="var">two</span></span> from above,
+    respectively.  We then prove that <span class="inlinecode"><span class="id" type="var">eqone</span></span> contains <span class="inlinecode"><span class="id" type="var">eins</span></span>.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">CoInductive</span> <a name="eqone"><span class="id" type="inductive">eqone</span></a> (<span class="id" type="var">t</span> : <a class="idref" href="tutorial.html#inftree"><span class="id" type="inductive">inftree</span></a>) : <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;| <a name="eqone_fold"><span class="id" type="constructor">eqone_fold</span></a> (<span class="id" type="var">EQ</span> : <a class="idref" href="tutorial.html#eqone_gen"><span class="id" type="inductive">eqone_gen</span></a> <a class="idref" href="tutorial.html#eqone"><span class="id" type="inductive">eqone</span></a> <a class="idref" href="tutorial.html#eqtwo"><span class="id" type="inductive">eqtwo</span></a> <span class="id" type="var">t</span>)<br/>
+<span class="id" type="keyword">with</span> <a name="eqtwo"><span class="id" type="inductive">eqtwo</span></a> (<span class="id" type="var">t</span> : <span class="id" type="var">inftree</span>) : <span class="id" type="keyword">Prop</span> :=<br/>
+&nbsp;&nbsp;| <a name="eqtwo_fold"><span class="id" type="constructor">eqtwo_fold</span></a> (<span class="id" type="var">EQ</span> : <a class="idref" href="tutorial.html#eqtwo_gen"><span class="id" type="inductive">eqtwo_gen</span></a> <a class="idref" href="tutorial.html#eqone"><span class="id" type="inductive">eqone</span></a> <a class="idref" href="tutorial.html#eqtwo"><span class="id" type="inductive">eqtwo</span></a> <span class="id" type="var">t</span>).<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <a name="eqone_eins"><span class="id" type="lemma">eqone_eins</span></a> : <a class="idref" href="tutorial.html#eqone"><span class="id" type="inductive">eqone</span></a> <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">cofix</span> <span class="id" type="var">CIH0</span>; <span class="id" type="tactic">apply</span> <a class="idref" href="tutorial.html#eqone_fold"><span class="id" type="constructor">eqone_fold</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> <a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a>; <span class="id" type="tactic">simpl</span>; <span class="id" type="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">CIH0</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="keyword">cofix</span> <span class="id" type="var">CIH1</span>; <span class="id" type="tactic">apply</span> <a class="idref" href="tutorial.html#eqtwo_fold"><span class="id" type="constructor">eqtwo_fold</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">apply</span> <span class="id" type="var">CIH0</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> <a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a>; <span class="id" type="tactic">apply</span> <span class="id" type="var">CIH1</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab63"></a><h3 class="section">A proof via <span class="inlinecode"><span class="id" type="var">pcofix</span></span></h3>
+
+
+<div class="paragraph"> </div>
+
+    To define the <span class="inlinecode"><span class="id" type="var">paco</span></span> versions of <span class="inlinecode"><span class="id" type="var">eqone</span></span> and <span class="inlinecode"><span class="id" type="var">eqtwo</span></span>, we apply
+    the two constructors <span class="inlinecode"><span class="id" type="var">paco1_2_0</span></span> and <span class="inlinecode"><span class="id" type="var">paco1_2_1</span></span>, respectively ("1"
+    because we are dealing with unary predicates).  Again, the
+    translation of the lemma and of its proof is almost trivial.
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" type="keyword">Definition</span> <a name="eqone'"><span class="id" type="definition">eqone'</span></a> <span class="id" type="var">t</span> := <a class="idref" href="pacodef.html#paco1_2_0"><span class="id" type="inductive">paco1_2_0</span></a> <a class="idref" href="tutorial.html#eqone_gen"><span class="id" type="inductive">eqone_gen</span></a> <a class="idref" href="tutorial.html#eqtwo_gen"><span class="id" type="inductive">eqtwo_gen</span></a> <a class="idref" href="paconotation.html#bot1"><span class="id" type="abbreviation">bot1</span></a> <a class="idref" href="paconotation.html#bot1"><span class="id" type="abbreviation">bot1</span></a> <a class="idref" href="tutorial.html#t"><span class="id" type="variable">t</span></a>.<br/>
+<span class="id" type="keyword">Definition</span> <a name="eqtwo'"><span class="id" type="definition">eqtwo'</span></a> <span class="id" type="var">t</span> := <a class="idref" href="pacodef.html#paco1_2_1"><span class="id" type="inductive">paco1_2_1</span></a> <a class="idref" href="tutorial.html#eqone_gen"><span class="id" type="inductive">eqone_gen</span></a> <a class="idref" href="tutorial.html#eqtwo_gen"><span class="id" type="inductive">eqtwo_gen</span></a> <a class="idref" href="paconotation.html#bot1"><span class="id" type="abbreviation">bot1</span></a> <a class="idref" href="paconotation.html#bot1"><span class="id" type="abbreviation">bot1</span></a> <a class="idref" href="tutorial.html#t"><span class="id" type="variable">t</span></a>.<br/>
+<span class="id" type="keyword">Hint Unfold</span> <a class="idref" href="tutorial.html#eqone'"><span class="id" type="definition">eqone'</span></a> <a class="idref" href="tutorial.html#eqtwo'"><span class="id" type="definition">eqtwo'</span></a>.<br/>
+<span class="id" type="keyword">Lemma</span> <a name="eqone_gen_mon"><span class="id" type="lemma">eqone_gen_mon</span></a>: <a class="idref" href="paco1.html#monotone1_2"><span class="id" type="definition">monotone1_2</span></a> <a class="idref" href="tutorial.html#eqone_gen"><span class="id" type="inductive">eqone_gen</span></a>. <span class="id" type="keyword">Proof</span>. <span class="id" type="var">pmonauto</span>. <span class="id" type="keyword">Qed</span>.<br/>
+<span class="id" type="keyword">Lemma</span> <a name="eqtwo_gen_mon"><span class="id" type="lemma">eqtwo_gen_mon</span></a>: <a class="idref" href="paco1.html#monotone1_2"><span class="id" type="definition">monotone1_2</span></a> <a class="idref" href="tutorial.html#eqtwo_gen"><span class="id" type="inductive">eqtwo_gen</span></a>. <span class="id" type="keyword">Proof</span>. <span class="id" type="var">pmonauto</span>. <span class="id" type="keyword">Qed</span>.<br/>
+<span class="id" type="keyword">Hint Resolve</span> <a class="idref" href="tutorial.html#eqone_gen_mon"><span class="id" type="lemma">eqone_gen_mon</span></a> <a class="idref" href="tutorial.html#eqtwo_gen_mon"><span class="id" type="lemma">eqtwo_gen_mon</span></a> : <span class="id" type="var">paco</span>.<br/>
+
+<br/>
+<span class="id" type="keyword">Lemma</span> <a name="eqone'_eins"><span class="id" type="lemma">eqone'_eins</span></a>: <a class="idref" href="tutorial.html#eqone'"><span class="id" type="definition">eqone'</span></a> <a class="idref" href="tutorial.html#eins"><span class="id" type="definition">eins</span></a>.<br/>
+<span class="id" type="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="var">pcofix</span> <span class="id" type="var">CIH0</span>; <span class="id" type="var">pfold</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">rewrite</span> <a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a>; <span class="id" type="tactic">simpl</span>; <span class="id" type="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">right</span>; <span class="id" type="tactic">apply</span> <span class="id" type="var">CIH0</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">left</span>; <span class="id" type="var">pcofix</span> <span class="id" type="var">CIH1</span>; <span class="id" type="var">pfold</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" type="tactic">right</span>; <span class="id" type="tactic">apply</span> <span class="id" type="var">CIH0</span>.<br/>
+&nbsp;&nbsp;<span class="id" type="tactic">right</span>; <span class="id" type="tactic">rewrite</span> <a class="idref" href="tutorial.html#tunf_eq"><span class="id" type="lemma">tunf_eq</span></a>; <span class="id" type="tactic">apply</span> <span class="id" type="var">CIH1</span>.<br/>
+<span class="id" type="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<i>Remark</i>: For three mutually coinductive predicates, the
+    constructors are <span class="inlinecode"><span class="id" type="var">paco</span>{<span class="id" type="var">n</span>}<span class="id" type="var">_3_0</span></span>, <span class="inlinecode"><span class="id" type="var">paco</span>{<span class="id" type="var">n</span>}<span class="id" type="var">_3_1</span></span>, and <span class="inlinecode"><span class="id" type="var">paco</span>{<span class="id" type="var">n</span>}<span class="id" type="var">_3_2</span></span>.
+
+</div>
+<div class="code">
+</div>
+<hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
