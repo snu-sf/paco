@@ -250,3 +250,68 @@ Notation "p \15/ q" :=
   (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 \/ q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14)
   (at level 50, no associativity).
 
+(** ** Intersection *)
+
+Notation "p /0\ q" :=
+  (p /\ q)
+  (at level 50, no associativity, only parsing).
+
+Notation "p /1\ q" :=
+  (fun x0 => p x0 /\ q x0)
+  (at level 50, no associativity).
+
+Notation "p /2\ q" :=
+  (fun x0 x1 => p x0 x1 /\ q x0 x1)
+  (at level 50, no associativity).
+
+Notation "p /3\ q" :=
+  (fun x0 x1 x2 => p x0 x1 x2 /\ q x0 x1 x2)
+  (at level 50, no associativity).
+
+Notation "p /4\ q" :=
+  (fun x0 x1 x2 x3 => p x0 x1 x2 x3 /\ q x0 x1 x2 x3)
+  (at level 50, no associativity).
+
+Notation "p /5\ q" :=
+  (fun x0 x1 x2 x3 x4 => p x0 x1 x2 x3 x4 /\ q x0 x1 x2 x3 x4)
+  (at level 50, no associativity).
+
+Notation "p /6\ q" :=
+  (fun x0 x1 x2 x3 x4 x5 => p x0 x1 x2 x3 x4 x5 /\ q x0 x1 x2 x3 x4 x5)
+  (at level 50, no associativity).
+
+Notation "p /7\ q" :=
+  (fun x0 x1 x2 x3 x4 x5 x6 => p x0 x1 x2 x3 x4 x5 x6 /\ q x0 x1 x2 x3 x4 x5 x6)
+  (at level 50, no associativity).
+
+Notation "p /8\ q" :=
+  (fun x0 x1 x2 x3 x4 x5 x6 x7 => p x0 x1 x2 x3 x4 x5 x6 x7 /\ q x0 x1 x2 x3 x4 x5 x6 x7)
+  (at level 50, no associativity).
+
+Notation "p /9\ q" :=
+  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 /\ q x0 x1 x2 x3 x4 x5 x6 x7 x8)
+  (at level 50, no associativity).
+
+Notation "p /10\ q" :=
+  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 /\ q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
+  (at level 50, no associativity).
+
+Notation "p /11\ q" :=
+  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 /\ q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
+  (at level 50, no associativity).
+
+Notation "p /12\ q" :=
+  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 /\ q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
+  (at level 50, no associativity).
+
+Notation "p /13\ q" :=
+  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 /\ q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12)
+  (at level 50, no associativity).
+
+Notation "p /14\ q" :=
+  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 /\ q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13)
+  (at level 50, no associativity).
+
+Notation "p /15\ q" :=
+  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 /\ q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14)
+  (at level 50, no associativity).
