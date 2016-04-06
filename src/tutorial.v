@@ -244,18 +244,18 @@ Qed.
     clear why our definition of [seq'] is equivalent to [seq].
 
     To fold and unfold parameterized fixed points, we provide two
-    tactics:
+    tactics, where [upaco2 f r := paco2 f r \2/ r]:
 
     - [pfold] : when the conclusion is [paco2 f r] for some [f] and
-      [r], [pfold] converts it to [f (paco2 f r \2/ r)]
+      [r], [pfold] converts it to [f (upaco2 f r)]
     - [punfold H] : when the hypothesis [H] is [paco2 f r] for some
-      [f] and [r], [punfold H] converts it to [f (paco2 f r \2/ r)]
+      [f] and [r], [punfold H] converts it to [f (upaco2 f r)]
 
     Other useful lemmas are:
 
     - [paco2_mon f : monotone2 (paco2 f)]
     - [paco2_mult f : forall r, paco2 f (paco2 f r) <2= paco2 f r]
-    - [paco2_mult_strong f : forall r, paco2 f (paco2 f r \2/ r) <2= paco2 f r]
+    - [paco2_mult_strong f : forall r, paco2 f (upaco2 f r) <2= paco2 f r]
 
 
     We will see an example involving [paco2_mult] in a moment.  But
@@ -364,8 +364,7 @@ Qed.
 
 (** And here is the corresponding proof for [seq'].
 
-  Note that the tactic [pclearbot] simplifies all hypotheses of the form [P \/
-  bot{n}] to [P].
+  Note that the tactic [pclearbot] simplifies all hypotheses of the form [upaco{n} gf bot{n}] to [paco{n} gf bot{n}].
 *)
 
 Theorem seq'_cons : forall n1 n2 s1 s2 (SEQ : seq' (cons n1 s1) (cons n2 s2)),
