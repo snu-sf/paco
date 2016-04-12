@@ -8,6 +8,7 @@ sed -i "s,<title>tutorial</title>,<title>$title</title>," tutorial.html
 
 mkdir -p paco paco/src paco/doc 
 chmod 644 *.css *.html *.v
-cp main.css coqdoc.css paco*.html tutorial.html paco/doc/
+cp main.css coqdoc.css paco*.html tutorial.html index.html paco/doc/
 cp hpattern.v paco*.v tutorial.v paco/src/
+cp Makefile.src paco/src/Makefile
 cp README CHANGES LICENSE paco/

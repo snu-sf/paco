@@ -70,12 +70,12 @@ h4.section {
                    padding-top: 5px; 
                    padding-bottom: 5px; 
 */
-                   background-color: #f0f0f0;
+                   background-color: white;
                    padding-left: 0px; 
                    padding-top: 0px; 
                    padding-bottom: 0px; 
                    font-size : 100%;
-                   font-style : bold;
+                   font-weight : bold;
                    text-decoration : underline;
  }
 
@@ -83,11 +83,10 @@ h4.section {
              font-family: sans-serif;
              font-size: 100%;
 	     line-height: 125%;
-	     max-width: 55em;
+             max-width: 40em;
              color: black;
-	     padding: 5px 5px 5px 5px;
-	     background-color: #f0f0f0;
-             border-style: plain}
+	     padding: 10px;
+             background-color: #90bdff }
 
 .inlinecode { 
     display: inline;
@@ -97,7 +96,7 @@ h4.section {
 
 .doc .inlinecode { 
     display: inline;
-    font-size: 110%; 
+    font-size: 120%; 
     color: rgb(30%,30%,70%);
     font-family: monospace } 
 
@@ -112,7 +111,7 @@ h4.section {
 
 .doc .code { 
     display: inline;
-    font-size: 110%; 
+    font-size: 120%; 
     color: rgb(30%,30%,70%); 
     font-family: monospace } 
 
@@ -124,7 +123,7 @@ h4.section {
 
 .code { 
     display: block;
-    padding-left: 15px;
+/*  padding-left: 15px; */
     font-size: 110%; 
     font-family: monospace;
  } 
@@ -160,7 +159,64 @@ tr.infrulemiddle hr {
 #footer { font-size: 65%;
           font-family: sans-serif; }
 
+/* Identifiers: <span class="id" title="...">) */
+
 .id { display: inline; }
+
+.id[title="constructor"] {
+    color: rgb(60%,0%,0%);
+}
+
+.id[title="var"] {
+    color: rgb(40%,0%,40%);
+}
+
+.id[title="variable"] {
+    color: rgb(40%,0%,40%);
+}
+
+.id[title="definition"] {
+    color: rgb(0%,40%,0%);
+}
+
+.id[title="abbreviation"] {
+    color: rgb(0%,40%,0%);
+}
+
+.id[title="lemma"] {
+    color: rgb(0%,40%,0%);
+}
+
+.id[title="instance"] {
+    color: rgb(0%,40%,0%);
+}
+
+.id[title="projection"] {
+    color: rgb(0%,40%,0%);
+}
+
+.id[title="method"] {
+    color: rgb(0%,40%,0%);
+}
+
+.id[title="inductive"] {
+    color: rgb(0%,0%,80%);
+}
+
+.id[title="record"] {
+    color: rgb(0%,0%,80%);
+}
+
+.id[title="class"] {
+    color: rgb(0%,0%,80%);
+}
+
+.id[title="keyword"] {
+ color : #cf1d1d;
+/*     color: black; */
+}
+
+/* Deprecated rules using the 'type' attribute of <span> (not xhtml valid) */
 
 .id[type="constructor"] { 
     color: rgb(60%,0%,0%);
@@ -261,7 +317,6 @@ tr.infrulemiddle hr {
 #index #footer {
     position: absolute;
     bottom: 0;
-    text-align: bottom;
 }
 
 .paragraph {
@@ -272,5 +327,3 @@ ul.doclist {
     margin-top: 0em;
     margin-bottom: 0em;
 }
-
-
