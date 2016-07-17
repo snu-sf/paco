@@ -1,4 +1,6 @@
+*.aux
 *.vo
+*.vio
 *.v.d
 *.glob
 *.aux
