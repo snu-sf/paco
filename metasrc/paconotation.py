@@ -47,3 +47,11 @@ for n in range (relsize+1):
     print ("  (at level 50, no associativity"+ifzstr(n,", only parsing")+").")
     print ()
 
+print ("(** ** Intersection *)")
+print ()
+for n in range (relsize+1):
+    print ("Notation \"p /"+str(n)+"\\ q\" :=")
+    print ("  ("+ifpstr(n,"fun")+itrstr(" x",n)+ifpstr(n," => ")+"p"+itrstr(" x",n)+" /\\ q"+itrstr(" x",n)+")")
+    print ("  (at level 50, no associativity"+ifzstr(n,", only parsing")+").")
+    print ()
+
