@@ -18,6 +18,6 @@ Makefile.coq: Makefile $(COQTHEORIES)
 %: Makefile.coq
 	$(MAKE) -f Makefile.coq "$@"
 
-clean:
+clean: Makefile.coq
 	$(MAKE) -f Makefile.coq clean
 	rm -f _CoqProject Makefile.coq
