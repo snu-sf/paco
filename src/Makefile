@@ -15,9 +15,9 @@ Makefile.coq: Makefile $(COQTHEORIES)
    echo $(COQTHEORIES)) > _CoqProject
 	coq_makefile -f _CoqProject -o Makefile.coq
 
-%.vo: Makefile.coq
+%: Makefile.coq
 	$(MAKE) -f Makefile.coq "$@"
 
-clean:
+clean: Makefile.coq
 	$(MAKE) -f Makefile.coq clean
 	rm -f _CoqProject Makefile.coq
