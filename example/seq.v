@@ -67,10 +67,8 @@ Proof.
   pfold.
   punfold H.
   induction H; try constructor; auto.
-  - pclearbot. right. apply CIH. punfold R.
+  pclearbot. right. apply CIH. punfold R.
 Qed.    
-
-(* HELP! *)
 
 Require Import Program Classical.
 
