@@ -9,7 +9,7 @@ if len(sys.argv) < 3:
 relsize = int(sys.argv[1])
 mutsize = int(sys.argv[2])
 
-print ('Require Export paconotation pacotac pacodef pacotacuser.')
+print ('Require Export paconotation pacotac pacotacuser.')
 print ('Set Implicit Arguments.')
 print ('')
 
@@ -18,6 +18,37 @@ n = relsize
 print ('(** ** Predicates of Arity '+str(n))
 print ('*)')
 print ('')
+
+for m in range(1,mutsize+1):
+    print ('Section Arg'+str(n)+lev(m)+'_def.')
+    for i in range(n):
+        print ('Variable T'+str(i)+' : '+ifpstr(i,'forall'),end='')
+        for j in range(i):
+            print (' (x'+str(j)+': @T'+str(j)+itrstr(" x",j)+')',end='')
+        print (ifpstr(i,', ')+'Type.')
+    print ('Variable'+itridx(" gf",m)+' : '+m*('rel'+str(n)+itrstr(" T",n)+' -> ')+'rel'+str(n)+itrstr(" T",n)+'.')
+    for i in range(m):
+        print ('Implicit Arguments gf'+idx(m,i)+' [].')
+    print ('')
+    print ('CoInductive ',end='')
+    for i in range(m):
+        print (ifpstr(i,"with ")+'paco'+str(n)+lev(m)+idx(m,i)+'('+itridx(' r',m)+': rel'+str(n)+itrstr(' T',n)+')'+itrstr(" x",n)+' : Prop :=')
+        print ('| paco'+str(n)+lev(m)+idx(m,i)+'_pfold'+itridx(' pco',m))
+        for j in range(m):
+            print ('    (LE : pco'+idx(m,j)+' <'+str(n)+'= (paco'+str(n)+lev(m)+idx(m,j)+itridx(' r',m)+' \\'+str(n)+'/ r'+idx(m,j)+'))')
+        print ('    (SIM: gf'+idx(m,i)+itridx(' pco',m)+itrstr(" x",n)+')')
+    print ('.')
+    for i in range(m):
+        print ('Definition ',end='')
+        print ('upaco'+str(n)+lev(m)+idx(m,i)+'('+itridx(' r',m)+': rel'+str(n)+itrstr(' T',n)+')'+' := '+'paco'+str(n)+lev(m)+idx(m,i)+itridx(' r',m)+' \\'+str(n)+'/ r'+idx(m,i),end='')
+        print ('.')
+    print ('End Arg'+str(n)+lev(m)+'_def.')
+    for i in range(m):
+        print ('Implicit Arguments paco'+str(n)+lev(m)+idx(m,i)+' ['+itrstr(" T",n)+' ].')
+        print ('Implicit Arguments upaco'+str(n)+lev(m)+idx(m,i)+' ['+itrstr(" T",n)+' ].')
+        print ('Hint Unfold upaco'+str(n)+lev(m)+idx(m,i)+'.')
+    print ('')
+
 for m in range (1,mutsize+1):
     print ('(** '+str(m)+' Mutual Coinduction *)')
     print ('')

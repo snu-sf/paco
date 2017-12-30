@@ -1,8 +1,88 @@
-Require Export paconotation pacotac pacodef pacotacuser.
+Require Export paconotation pacotac pacotacuser.
 Set Implicit Arguments.
 
 (** ** Predicates of Arity 0
 *)
+
+Section Arg0_def.
+Variable gf : rel0 -> rel0.
+Implicit Arguments gf [].
+
+CoInductive paco0( r: rel0) : Prop :=
+| paco0_pfold pco
+    (LE : pco <0= (paco0 r \0/ r))
+    (SIM: gf pco)
+.
+Definition upaco0( r: rel0) := paco0 r \0/ r.
+End Arg0_def.
+Implicit Arguments paco0 [ ].
+Implicit Arguments upaco0 [ ].
+Hint Unfold upaco0.
+
+Section Arg0_2_def.
+Variable gf_0 gf_1 : rel0 -> rel0 -> rel0.
+Implicit Arguments gf_0 [].
+Implicit Arguments gf_1 [].
+
+CoInductive paco0_2_0( r_0 r_1: rel0) : Prop :=
+| paco0_2_0_pfold pco_0 pco_1
+    (LE : pco_0 <0= (paco0_2_0 r_0 r_1 \0/ r_0))
+    (LE : pco_1 <0= (paco0_2_1 r_0 r_1 \0/ r_1))
+    (SIM: gf_0 pco_0 pco_1)
+with paco0_2_1( r_0 r_1: rel0) : Prop :=
+| paco0_2_1_pfold pco_0 pco_1
+    (LE : pco_0 <0= (paco0_2_0 r_0 r_1 \0/ r_0))
+    (LE : pco_1 <0= (paco0_2_1 r_0 r_1 \0/ r_1))
+    (SIM: gf_1 pco_0 pco_1)
+.
+Definition upaco0_2_0( r_0 r_1: rel0) := paco0_2_0 r_0 r_1 \0/ r_0.
+Definition upaco0_2_1( r_0 r_1: rel0) := paco0_2_1 r_0 r_1 \0/ r_1.
+End Arg0_2_def.
+Implicit Arguments paco0_2_0 [ ].
+Implicit Arguments upaco0_2_0 [ ].
+Hint Unfold upaco0_2_0.
+Implicit Arguments paco0_2_1 [ ].
+Implicit Arguments upaco0_2_1 [ ].
+Hint Unfold upaco0_2_1.
+
+Section Arg0_3_def.
+Variable gf_0 gf_1 gf_2 : rel0 -> rel0 -> rel0 -> rel0.
+Implicit Arguments gf_0 [].
+Implicit Arguments gf_1 [].
+Implicit Arguments gf_2 [].
+
+CoInductive paco0_3_0( r_0 r_1 r_2: rel0) : Prop :=
+| paco0_3_0_pfold pco_0 pco_1 pco_2
+    (LE : pco_0 <0= (paco0_3_0 r_0 r_1 r_2 \0/ r_0))
+    (LE : pco_1 <0= (paco0_3_1 r_0 r_1 r_2 \0/ r_1))
+    (LE : pco_2 <0= (paco0_3_2 r_0 r_1 r_2 \0/ r_2))
+    (SIM: gf_0 pco_0 pco_1 pco_2)
+with paco0_3_1( r_0 r_1 r_2: rel0) : Prop :=
+| paco0_3_1_pfold pco_0 pco_1 pco_2
+    (LE : pco_0 <0= (paco0_3_0 r_0 r_1 r_2 \0/ r_0))
+    (LE : pco_1 <0= (paco0_3_1 r_0 r_1 r_2 \0/ r_1))
+    (LE : pco_2 <0= (paco0_3_2 r_0 r_1 r_2 \0/ r_2))
+    (SIM: gf_1 pco_0 pco_1 pco_2)
+with paco0_3_2( r_0 r_1 r_2: rel0) : Prop :=
+| paco0_3_2_pfold pco_0 pco_1 pco_2
+    (LE : pco_0 <0= (paco0_3_0 r_0 r_1 r_2 \0/ r_0))
+    (LE : pco_1 <0= (paco0_3_1 r_0 r_1 r_2 \0/ r_1))
+    (LE : pco_2 <0= (paco0_3_2 r_0 r_1 r_2 \0/ r_2))
+    (SIM: gf_2 pco_0 pco_1 pco_2)
+.
+Definition upaco0_3_0( r_0 r_1 r_2: rel0) := paco0_3_0 r_0 r_1 r_2 \0/ r_0.
+Definition upaco0_3_1( r_0 r_1 r_2: rel0) := paco0_3_1 r_0 r_1 r_2 \0/ r_1.
+Definition upaco0_3_2( r_0 r_1 r_2: rel0) := paco0_3_2 r_0 r_1 r_2 \0/ r_2.
+End Arg0_3_def.
+Implicit Arguments paco0_3_0 [ ].
+Implicit Arguments upaco0_3_0 [ ].
+Hint Unfold upaco0_3_0.
+Implicit Arguments paco0_3_1 [ ].
+Implicit Arguments upaco0_3_1 [ ].
+Hint Unfold upaco0_3_1.
+Implicit Arguments paco0_3_2 [ ].
+Implicit Arguments upaco0_3_2 [ ].
+Hint Unfold upaco0_3_2.
 
 (** 1 Mutual Coinduction *)
 

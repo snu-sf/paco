@@ -1,8 +1,121 @@
-Require Export paconotation pacotac pacodef pacotacuser.
+Require Export paconotation pacotac pacotacuser.
 Set Implicit Arguments.
 
 (** ** Predicates of Arity 11
 *)
+
+Section Arg11_def.
+Variable T0 : Type.
+Variable T1 : forall (x0: @T0), Type.
+Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
+Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
+Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), Type.
+Variable T5 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3), Type.
+Variable T6 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4), Type.
+Variable T7 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5), Type.
+Variable T8 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6), Type.
+Variable T9 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6) (x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7), Type.
+Variable T10 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6) (x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8), Type.
+Variable gf : rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10.
+Implicit Arguments gf [].
+
+CoInductive paco11( r: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 : Prop :=
+| paco11_pfold pco
+    (LE : pco <11= (paco11 r \11/ r))
+    (SIM: gf pco x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
+.
+Definition upaco11( r: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) := paco11 r \11/ r.
+End Arg11_def.
+Implicit Arguments paco11 [ T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 ].
+Implicit Arguments upaco11 [ T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 ].
+Hint Unfold upaco11.
+
+Section Arg11_2_def.
+Variable T0 : Type.
+Variable T1 : forall (x0: @T0), Type.
+Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
+Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
+Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), Type.
+Variable T5 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3), Type.
+Variable T6 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4), Type.
+Variable T7 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5), Type.
+Variable T8 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6), Type.
+Variable T9 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6) (x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7), Type.
+Variable T10 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6) (x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8), Type.
+Variable gf_0 gf_1 : rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10.
+Implicit Arguments gf_0 [].
+Implicit Arguments gf_1 [].
+
+CoInductive paco11_2_0( r_0 r_1: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 : Prop :=
+| paco11_2_0_pfold pco_0 pco_1
+    (LE : pco_0 <11= (paco11_2_0 r_0 r_1 \11/ r_0))
+    (LE : pco_1 <11= (paco11_2_1 r_0 r_1 \11/ r_1))
+    (SIM: gf_0 pco_0 pco_1 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
+with paco11_2_1( r_0 r_1: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 : Prop :=
+| paco11_2_1_pfold pco_0 pco_1
+    (LE : pco_0 <11= (paco11_2_0 r_0 r_1 \11/ r_0))
+    (LE : pco_1 <11= (paco11_2_1 r_0 r_1 \11/ r_1))
+    (SIM: gf_1 pco_0 pco_1 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
+.
+Definition upaco11_2_0( r_0 r_1: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) := paco11_2_0 r_0 r_1 \11/ r_0.
+Definition upaco11_2_1( r_0 r_1: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) := paco11_2_1 r_0 r_1 \11/ r_1.
+End Arg11_2_def.
+Implicit Arguments paco11_2_0 [ T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 ].
+Implicit Arguments upaco11_2_0 [ T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 ].
+Hint Unfold upaco11_2_0.
+Implicit Arguments paco11_2_1 [ T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 ].
+Implicit Arguments upaco11_2_1 [ T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 ].
+Hint Unfold upaco11_2_1.
+
+Section Arg11_3_def.
+Variable T0 : Type.
+Variable T1 : forall (x0: @T0), Type.
+Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
+Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
+Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), Type.
+Variable T5 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3), Type.
+Variable T6 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4), Type.
+Variable T7 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5), Type.
+Variable T8 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6), Type.
+Variable T9 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6) (x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7), Type.
+Variable T10 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6) (x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8), Type.
+Variable gf_0 gf_1 gf_2 : rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10.
+Implicit Arguments gf_0 [].
+Implicit Arguments gf_1 [].
+Implicit Arguments gf_2 [].
+
+CoInductive paco11_3_0( r_0 r_1 r_2: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 : Prop :=
+| paco11_3_0_pfold pco_0 pco_1 pco_2
+    (LE : pco_0 <11= (paco11_3_0 r_0 r_1 r_2 \11/ r_0))
+    (LE : pco_1 <11= (paco11_3_1 r_0 r_1 r_2 \11/ r_1))
+    (LE : pco_2 <11= (paco11_3_2 r_0 r_1 r_2 \11/ r_2))
+    (SIM: gf_0 pco_0 pco_1 pco_2 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
+with paco11_3_1( r_0 r_1 r_2: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 : Prop :=
+| paco11_3_1_pfold pco_0 pco_1 pco_2
+    (LE : pco_0 <11= (paco11_3_0 r_0 r_1 r_2 \11/ r_0))
+    (LE : pco_1 <11= (paco11_3_1 r_0 r_1 r_2 \11/ r_1))
+    (LE : pco_2 <11= (paco11_3_2 r_0 r_1 r_2 \11/ r_2))
+    (SIM: gf_1 pco_0 pco_1 pco_2 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
+with paco11_3_2( r_0 r_1 r_2: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 : Prop :=
+| paco11_3_2_pfold pco_0 pco_1 pco_2
+    (LE : pco_0 <11= (paco11_3_0 r_0 r_1 r_2 \11/ r_0))
+    (LE : pco_1 <11= (paco11_3_1 r_0 r_1 r_2 \11/ r_1))
+    (LE : pco_2 <11= (paco11_3_2 r_0 r_1 r_2 \11/ r_2))
+    (SIM: gf_2 pco_0 pco_1 pco_2 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
+.
+Definition upaco11_3_0( r_0 r_1 r_2: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) := paco11_3_0 r_0 r_1 r_2 \11/ r_0.
+Definition upaco11_3_1( r_0 r_1 r_2: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) := paco11_3_1 r_0 r_1 r_2 \11/ r_1.
+Definition upaco11_3_2( r_0 r_1 r_2: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) := paco11_3_2 r_0 r_1 r_2 \11/ r_2.
+End Arg11_3_def.
+Implicit Arguments paco11_3_0 [ T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 ].
+Implicit Arguments upaco11_3_0 [ T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 ].
+Hint Unfold upaco11_3_0.
+Implicit Arguments paco11_3_1 [ T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 ].
+Implicit Arguments upaco11_3_1 [ T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 ].
+Hint Unfold upaco11_3_1.
+Implicit Arguments paco11_3_2 [ T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 ].
+Implicit Arguments upaco11_3_2 [ T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 ].
+Hint Unfold upaco11_3_2.
 
 (** 1 Mutual Coinduction *)
 

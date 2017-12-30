@@ -1,8 +1,109 @@
-Require Export paconotation pacotac pacodef pacotacuser.
+Require Export paconotation pacotac pacotacuser.
 Set Implicit Arguments.
 
 (** ** Predicates of Arity 7
 *)
+
+Section Arg7_def.
+Variable T0 : Type.
+Variable T1 : forall (x0: @T0), Type.
+Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
+Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
+Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), Type.
+Variable T5 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3), Type.
+Variable T6 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4), Type.
+Variable gf : rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6.
+Implicit Arguments gf [].
+
+CoInductive paco7( r: rel7 T0 T1 T2 T3 T4 T5 T6) x0 x1 x2 x3 x4 x5 x6 : Prop :=
+| paco7_pfold pco
+    (LE : pco <7= (paco7 r \7/ r))
+    (SIM: gf pco x0 x1 x2 x3 x4 x5 x6)
+.
+Definition upaco7( r: rel7 T0 T1 T2 T3 T4 T5 T6) := paco7 r \7/ r.
+End Arg7_def.
+Implicit Arguments paco7 [ T0 T1 T2 T3 T4 T5 T6 ].
+Implicit Arguments upaco7 [ T0 T1 T2 T3 T4 T5 T6 ].
+Hint Unfold upaco7.
+
+Section Arg7_2_def.
+Variable T0 : Type.
+Variable T1 : forall (x0: @T0), Type.
+Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
+Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
+Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), Type.
+Variable T5 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3), Type.
+Variable T6 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4), Type.
+Variable gf_0 gf_1 : rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6.
+Implicit Arguments gf_0 [].
+Implicit Arguments gf_1 [].
+
+CoInductive paco7_2_0( r_0 r_1: rel7 T0 T1 T2 T3 T4 T5 T6) x0 x1 x2 x3 x4 x5 x6 : Prop :=
+| paco7_2_0_pfold pco_0 pco_1
+    (LE : pco_0 <7= (paco7_2_0 r_0 r_1 \7/ r_0))
+    (LE : pco_1 <7= (paco7_2_1 r_0 r_1 \7/ r_1))
+    (SIM: gf_0 pco_0 pco_1 x0 x1 x2 x3 x4 x5 x6)
+with paco7_2_1( r_0 r_1: rel7 T0 T1 T2 T3 T4 T5 T6) x0 x1 x2 x3 x4 x5 x6 : Prop :=
+| paco7_2_1_pfold pco_0 pco_1
+    (LE : pco_0 <7= (paco7_2_0 r_0 r_1 \7/ r_0))
+    (LE : pco_1 <7= (paco7_2_1 r_0 r_1 \7/ r_1))
+    (SIM: gf_1 pco_0 pco_1 x0 x1 x2 x3 x4 x5 x6)
+.
+Definition upaco7_2_0( r_0 r_1: rel7 T0 T1 T2 T3 T4 T5 T6) := paco7_2_0 r_0 r_1 \7/ r_0.
+Definition upaco7_2_1( r_0 r_1: rel7 T0 T1 T2 T3 T4 T5 T6) := paco7_2_1 r_0 r_1 \7/ r_1.
+End Arg7_2_def.
+Implicit Arguments paco7_2_0 [ T0 T1 T2 T3 T4 T5 T6 ].
+Implicit Arguments upaco7_2_0 [ T0 T1 T2 T3 T4 T5 T6 ].
+Hint Unfold upaco7_2_0.
+Implicit Arguments paco7_2_1 [ T0 T1 T2 T3 T4 T5 T6 ].
+Implicit Arguments upaco7_2_1 [ T0 T1 T2 T3 T4 T5 T6 ].
+Hint Unfold upaco7_2_1.
+
+Section Arg7_3_def.
+Variable T0 : Type.
+Variable T1 : forall (x0: @T0), Type.
+Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
+Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
+Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), Type.
+Variable T5 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3), Type.
+Variable T6 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4), Type.
+Variable gf_0 gf_1 gf_2 : rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6.
+Implicit Arguments gf_0 [].
+Implicit Arguments gf_1 [].
+Implicit Arguments gf_2 [].
+
+CoInductive paco7_3_0( r_0 r_1 r_2: rel7 T0 T1 T2 T3 T4 T5 T6) x0 x1 x2 x3 x4 x5 x6 : Prop :=
+| paco7_3_0_pfold pco_0 pco_1 pco_2
+    (LE : pco_0 <7= (paco7_3_0 r_0 r_1 r_2 \7/ r_0))
+    (LE : pco_1 <7= (paco7_3_1 r_0 r_1 r_2 \7/ r_1))
+    (LE : pco_2 <7= (paco7_3_2 r_0 r_1 r_2 \7/ r_2))
+    (SIM: gf_0 pco_0 pco_1 pco_2 x0 x1 x2 x3 x4 x5 x6)
+with paco7_3_1( r_0 r_1 r_2: rel7 T0 T1 T2 T3 T4 T5 T6) x0 x1 x2 x3 x4 x5 x6 : Prop :=
+| paco7_3_1_pfold pco_0 pco_1 pco_2
+    (LE : pco_0 <7= (paco7_3_0 r_0 r_1 r_2 \7/ r_0))
+    (LE : pco_1 <7= (paco7_3_1 r_0 r_1 r_2 \7/ r_1))
+    (LE : pco_2 <7= (paco7_3_2 r_0 r_1 r_2 \7/ r_2))
+    (SIM: gf_1 pco_0 pco_1 pco_2 x0 x1 x2 x3 x4 x5 x6)
+with paco7_3_2( r_0 r_1 r_2: rel7 T0 T1 T2 T3 T4 T5 T6) x0 x1 x2 x3 x4 x5 x6 : Prop :=
+| paco7_3_2_pfold pco_0 pco_1 pco_2
+    (LE : pco_0 <7= (paco7_3_0 r_0 r_1 r_2 \7/ r_0))
+    (LE : pco_1 <7= (paco7_3_1 r_0 r_1 r_2 \7/ r_1))
+    (LE : pco_2 <7= (paco7_3_2 r_0 r_1 r_2 \7/ r_2))
+    (SIM: gf_2 pco_0 pco_1 pco_2 x0 x1 x2 x3 x4 x5 x6)
+.
+Definition upaco7_3_0( r_0 r_1 r_2: rel7 T0 T1 T2 T3 T4 T5 T6) := paco7_3_0 r_0 r_1 r_2 \7/ r_0.
+Definition upaco7_3_1( r_0 r_1 r_2: rel7 T0 T1 T2 T3 T4 T5 T6) := paco7_3_1 r_0 r_1 r_2 \7/ r_1.
+Definition upaco7_3_2( r_0 r_1 r_2: rel7 T0 T1 T2 T3 T4 T5 T6) := paco7_3_2 r_0 r_1 r_2 \7/ r_2.
+End Arg7_3_def.
+Implicit Arguments paco7_3_0 [ T0 T1 T2 T3 T4 T5 T6 ].
+Implicit Arguments upaco7_3_0 [ T0 T1 T2 T3 T4 T5 T6 ].
+Hint Unfold upaco7_3_0.
+Implicit Arguments paco7_3_1 [ T0 T1 T2 T3 T4 T5 T6 ].
+Implicit Arguments upaco7_3_1 [ T0 T1 T2 T3 T4 T5 T6 ].
+Hint Unfold upaco7_3_1.
+Implicit Arguments paco7_3_2 [ T0 T1 T2 T3 T4 T5 T6 ].
+Implicit Arguments upaco7_3_2 [ T0 T1 T2 T3 T4 T5 T6 ].
+Hint Unfold upaco7_3_2.
 
 (** 1 Mutual Coinduction *)
 

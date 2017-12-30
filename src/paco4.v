@@ -1,8 +1,100 @@
-Require Export paconotation pacotac pacodef pacotacuser.
+Require Export paconotation pacotac pacotacuser.
 Set Implicit Arguments.
 
 (** ** Predicates of Arity 4
 *)
+
+Section Arg4_def.
+Variable T0 : Type.
+Variable T1 : forall (x0: @T0), Type.
+Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
+Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
+Variable gf : rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3.
+Implicit Arguments gf [].
+
+CoInductive paco4( r: rel4 T0 T1 T2 T3) x0 x1 x2 x3 : Prop :=
+| paco4_pfold pco
+    (LE : pco <4= (paco4 r \4/ r))
+    (SIM: gf pco x0 x1 x2 x3)
+.
+Definition upaco4( r: rel4 T0 T1 T2 T3) := paco4 r \4/ r.
+End Arg4_def.
+Implicit Arguments paco4 [ T0 T1 T2 T3 ].
+Implicit Arguments upaco4 [ T0 T1 T2 T3 ].
+Hint Unfold upaco4.
+
+Section Arg4_2_def.
+Variable T0 : Type.
+Variable T1 : forall (x0: @T0), Type.
+Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
+Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
+Variable gf_0 gf_1 : rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3.
+Implicit Arguments gf_0 [].
+Implicit Arguments gf_1 [].
+
+CoInductive paco4_2_0( r_0 r_1: rel4 T0 T1 T2 T3) x0 x1 x2 x3 : Prop :=
+| paco4_2_0_pfold pco_0 pco_1
+    (LE : pco_0 <4= (paco4_2_0 r_0 r_1 \4/ r_0))
+    (LE : pco_1 <4= (paco4_2_1 r_0 r_1 \4/ r_1))
+    (SIM: gf_0 pco_0 pco_1 x0 x1 x2 x3)
+with paco4_2_1( r_0 r_1: rel4 T0 T1 T2 T3) x0 x1 x2 x3 : Prop :=
+| paco4_2_1_pfold pco_0 pco_1
+    (LE : pco_0 <4= (paco4_2_0 r_0 r_1 \4/ r_0))
+    (LE : pco_1 <4= (paco4_2_1 r_0 r_1 \4/ r_1))
+    (SIM: gf_1 pco_0 pco_1 x0 x1 x2 x3)
+.
+Definition upaco4_2_0( r_0 r_1: rel4 T0 T1 T2 T3) := paco4_2_0 r_0 r_1 \4/ r_0.
+Definition upaco4_2_1( r_0 r_1: rel4 T0 T1 T2 T3) := paco4_2_1 r_0 r_1 \4/ r_1.
+End Arg4_2_def.
+Implicit Arguments paco4_2_0 [ T0 T1 T2 T3 ].
+Implicit Arguments upaco4_2_0 [ T0 T1 T2 T3 ].
+Hint Unfold upaco4_2_0.
+Implicit Arguments paco4_2_1 [ T0 T1 T2 T3 ].
+Implicit Arguments upaco4_2_1 [ T0 T1 T2 T3 ].
+Hint Unfold upaco4_2_1.
+
+Section Arg4_3_def.
+Variable T0 : Type.
+Variable T1 : forall (x0: @T0), Type.
+Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
+Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
+Variable gf_0 gf_1 gf_2 : rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3.
+Implicit Arguments gf_0 [].
+Implicit Arguments gf_1 [].
+Implicit Arguments gf_2 [].
+
+CoInductive paco4_3_0( r_0 r_1 r_2: rel4 T0 T1 T2 T3) x0 x1 x2 x3 : Prop :=
+| paco4_3_0_pfold pco_0 pco_1 pco_2
+    (LE : pco_0 <4= (paco4_3_0 r_0 r_1 r_2 \4/ r_0))
+    (LE : pco_1 <4= (paco4_3_1 r_0 r_1 r_2 \4/ r_1))
+    (LE : pco_2 <4= (paco4_3_2 r_0 r_1 r_2 \4/ r_2))
+    (SIM: gf_0 pco_0 pco_1 pco_2 x0 x1 x2 x3)
+with paco4_3_1( r_0 r_1 r_2: rel4 T0 T1 T2 T3) x0 x1 x2 x3 : Prop :=
+| paco4_3_1_pfold pco_0 pco_1 pco_2
+    (LE : pco_0 <4= (paco4_3_0 r_0 r_1 r_2 \4/ r_0))
+    (LE : pco_1 <4= (paco4_3_1 r_0 r_1 r_2 \4/ r_1))
+    (LE : pco_2 <4= (paco4_3_2 r_0 r_1 r_2 \4/ r_2))
+    (SIM: gf_1 pco_0 pco_1 pco_2 x0 x1 x2 x3)
+with paco4_3_2( r_0 r_1 r_2: rel4 T0 T1 T2 T3) x0 x1 x2 x3 : Prop :=
+| paco4_3_2_pfold pco_0 pco_1 pco_2
+    (LE : pco_0 <4= (paco4_3_0 r_0 r_1 r_2 \4/ r_0))
+    (LE : pco_1 <4= (paco4_3_1 r_0 r_1 r_2 \4/ r_1))
+    (LE : pco_2 <4= (paco4_3_2 r_0 r_1 r_2 \4/ r_2))
+    (SIM: gf_2 pco_0 pco_1 pco_2 x0 x1 x2 x3)
+.
+Definition upaco4_3_0( r_0 r_1 r_2: rel4 T0 T1 T2 T3) := paco4_3_0 r_0 r_1 r_2 \4/ r_0.
+Definition upaco4_3_1( r_0 r_1 r_2: rel4 T0 T1 T2 T3) := paco4_3_1 r_0 r_1 r_2 \4/ r_1.
+Definition upaco4_3_2( r_0 r_1 r_2: rel4 T0 T1 T2 T3) := paco4_3_2 r_0 r_1 r_2 \4/ r_2.
+End Arg4_3_def.
+Implicit Arguments paco4_3_0 [ T0 T1 T2 T3 ].
+Implicit Arguments upaco4_3_0 [ T0 T1 T2 T3 ].
+Hint Unfold upaco4_3_0.
+Implicit Arguments paco4_3_1 [ T0 T1 T2 T3 ].
+Implicit Arguments upaco4_3_1 [ T0 T1 T2 T3 ].
+Hint Unfold upaco4_3_1.
+Implicit Arguments paco4_3_2 [ T0 T1 T2 T3 ].
+Implicit Arguments upaco4_3_2 [ T0 T1 T2 T3 ].
+Hint Unfold upaco4_3_2.
 
 (** 1 Mutual Coinduction *)
 

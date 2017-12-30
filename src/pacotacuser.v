@@ -1,4 +1,4 @@
-Require Export paconotation pacotac pacodef.
+Require Export paconotation pacotac.
 Set Implicit Arguments.
 
 (** ** Type Class for acc, mult, fold and unfold
