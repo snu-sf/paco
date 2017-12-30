@@ -2,7 +2,7 @@
 
 PACOSRCDIR=../src
 
-maxsize=30
+maxsize=15
 relsize=15
 mutsize=3
 
