@@ -1056,6 +1056,1521 @@ let INC := fresh "_paco_inc_" in
 paco_post_match15 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
 let CIH' := fresh CIH in try rename INC into CIH'.
 
+(** *** Arity 16
+*)
+
+Ltac paco_cont16 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 := 
+let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
+let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
+let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
+let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
+let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
+let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
+let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
+let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
+let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
+let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
+let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
+let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
+let x12 := fresh "_paco_v_" in let EQ12 := fresh "_paco_EQ_" in
+let x13 := fresh "_paco_v_" in let EQ13 := fresh "_paco_EQ_" in
+let x14 := fresh "_paco_v_" in let EQ14 := fresh "_paco_EQ_" in
+let x15 := fresh "_paco_v_" in let EQ15 := fresh "_paco_EQ_" in
+paco_convert e15 x15 EQ15;
+paco_convert e14 x14 EQ14;
+paco_convert e13 x13 EQ13;
+paco_convert e12 x12 EQ12;
+paco_convert e11 x11 EQ11;
+paco_convert e10 x10 EQ10;
+paco_convert e9 x9 EQ9;
+paco_convert e8 x8 EQ8;
+paco_convert e7 x7 EQ7;
+paco_convert e6 x6 EQ6;
+paco_convert e5 x5 EQ5;
+paco_convert e4 x4 EQ4;
+paco_convert e3 x3 EQ3;
+paco_convert e2 x2 EQ2;
+paco_convert e1 x1 EQ1;
+paco_convert e0 x0 EQ0;
+intros x0 EQ0;
+intros x1 EQ1;
+intros x2 EQ2;
+intros x3 EQ3;
+intros x4 EQ4;
+intros x5 EQ5;
+intros x6 EQ6;
+intros x7 EQ7;
+intros x8 EQ8;
+intros x9 EQ9;
+intros x10 EQ10;
+intros x11 EQ11;
+intros x12 EQ12;
+intros x13 EQ13;
+intros x14 EQ14;
+intros x15 EQ15;
+generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 (conj EQ9 (conj EQ10 (conj EQ11 (conj EQ12 (conj EQ13 (conj EQ14 EQ15))))))))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9 EQ10 EQ11 EQ12 EQ13 EQ14 EQ15;
+move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top; move x10 at top; move x11 at top; move x12 at top; move x13 at top; move x14 at top; move x15 at top; 
+paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15.
+
+Lemma _paco_pre16: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 (gf: rel16 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15
+(X: let gf' := gf in gf' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15), gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15.
+Proof. intros; apply X. Defined.
+
+Ltac paco_pre16 := let X := fresh "_paco_X_" in
+generalize _paco_mark_cons; repeat intro;
+apply _paco_pre16; intro X;
+match goal with
+| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 ?e12 ?e13 ?e14 ?e15 => unfold X; clear X; paco_cont16 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15
+end.
+
+Ltac paco_post_match16 INC tac1 tac2 :=
+let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
+match goal with [H: ?x |- _] => match x with
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
+| _ => tac1 cr
+end end.
+
+Tactic Notation "paco_post16" ident(CIH) "with" ident(nr) :=
+let INC := fresh "_paco_inc_" in
+paco_post_match16 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+let CIH' := fresh CIH in try rename INC into CIH'.
+
+(** *** Arity 17
+*)
+
+Ltac paco_cont17 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 := 
+let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
+let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
+let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
+let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
+let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
+let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
+let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
+let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
+let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
+let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
+let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
+let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
+let x12 := fresh "_paco_v_" in let EQ12 := fresh "_paco_EQ_" in
+let x13 := fresh "_paco_v_" in let EQ13 := fresh "_paco_EQ_" in
+let x14 := fresh "_paco_v_" in let EQ14 := fresh "_paco_EQ_" in
+let x15 := fresh "_paco_v_" in let EQ15 := fresh "_paco_EQ_" in
+let x16 := fresh "_paco_v_" in let EQ16 := fresh "_paco_EQ_" in
+paco_convert e16 x16 EQ16;
+paco_convert e15 x15 EQ15;
+paco_convert e14 x14 EQ14;
+paco_convert e13 x13 EQ13;
+paco_convert e12 x12 EQ12;
+paco_convert e11 x11 EQ11;
+paco_convert e10 x10 EQ10;
+paco_convert e9 x9 EQ9;
+paco_convert e8 x8 EQ8;
+paco_convert e7 x7 EQ7;
+paco_convert e6 x6 EQ6;
+paco_convert e5 x5 EQ5;
+paco_convert e4 x4 EQ4;
+paco_convert e3 x3 EQ3;
+paco_convert e2 x2 EQ2;
+paco_convert e1 x1 EQ1;
+paco_convert e0 x0 EQ0;
+intros x0 EQ0;
+intros x1 EQ1;
+intros x2 EQ2;
+intros x3 EQ3;
+intros x4 EQ4;
+intros x5 EQ5;
+intros x6 EQ6;
+intros x7 EQ7;
+intros x8 EQ8;
+intros x9 EQ9;
+intros x10 EQ10;
+intros x11 EQ11;
+intros x12 EQ12;
+intros x13 EQ13;
+intros x14 EQ14;
+intros x15 EQ15;
+intros x16 EQ16;
+generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 (conj EQ9 (conj EQ10 (conj EQ11 (conj EQ12 (conj EQ13 (conj EQ14 (conj EQ15 EQ16)))))))))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9 EQ10 EQ11 EQ12 EQ13 EQ14 EQ15 EQ16;
+move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top; move x10 at top; move x11 at top; move x12 at top; move x13 at top; move x14 at top; move x15 at top; move x16 at top; 
+paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16.
+
+Lemma _paco_pre17: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 (gf: rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16
+(X: let gf' := gf in gf' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16), gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16.
+Proof. intros; apply X. Defined.
+
+Ltac paco_pre17 := let X := fresh "_paco_X_" in
+generalize _paco_mark_cons; repeat intro;
+apply _paco_pre17; intro X;
+match goal with
+| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 ?e12 ?e13 ?e14 ?e15 ?e16 => unfold X; clear X; paco_cont17 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16
+end.
+
+Ltac paco_post_match17 INC tac1 tac2 :=
+let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
+match goal with [H: ?x |- _] => match x with
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
+| _ => tac1 cr
+end end.
+
+Tactic Notation "paco_post17" ident(CIH) "with" ident(nr) :=
+let INC := fresh "_paco_inc_" in
+paco_post_match17 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+let CIH' := fresh CIH in try rename INC into CIH'.
+
+(** *** Arity 18
+*)
+
+Ltac paco_cont18 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 := 
+let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
+let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
+let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
+let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
+let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
+let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
+let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
+let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
+let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
+let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
+let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
+let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
+let x12 := fresh "_paco_v_" in let EQ12 := fresh "_paco_EQ_" in
+let x13 := fresh "_paco_v_" in let EQ13 := fresh "_paco_EQ_" in
+let x14 := fresh "_paco_v_" in let EQ14 := fresh "_paco_EQ_" in
+let x15 := fresh "_paco_v_" in let EQ15 := fresh "_paco_EQ_" in
+let x16 := fresh "_paco_v_" in let EQ16 := fresh "_paco_EQ_" in
+let x17 := fresh "_paco_v_" in let EQ17 := fresh "_paco_EQ_" in
+paco_convert e17 x17 EQ17;
+paco_convert e16 x16 EQ16;
+paco_convert e15 x15 EQ15;
+paco_convert e14 x14 EQ14;
+paco_convert e13 x13 EQ13;
+paco_convert e12 x12 EQ12;
+paco_convert e11 x11 EQ11;
+paco_convert e10 x10 EQ10;
+paco_convert e9 x9 EQ9;
+paco_convert e8 x8 EQ8;
+paco_convert e7 x7 EQ7;
+paco_convert e6 x6 EQ6;
+paco_convert e5 x5 EQ5;
+paco_convert e4 x4 EQ4;
+paco_convert e3 x3 EQ3;
+paco_convert e2 x2 EQ2;
+paco_convert e1 x1 EQ1;
+paco_convert e0 x0 EQ0;
+intros x0 EQ0;
+intros x1 EQ1;
+intros x2 EQ2;
+intros x3 EQ3;
+intros x4 EQ4;
+intros x5 EQ5;
+intros x6 EQ6;
+intros x7 EQ7;
+intros x8 EQ8;
+intros x9 EQ9;
+intros x10 EQ10;
+intros x11 EQ11;
+intros x12 EQ12;
+intros x13 EQ13;
+intros x14 EQ14;
+intros x15 EQ15;
+intros x16 EQ16;
+intros x17 EQ17;
+generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 (conj EQ9 (conj EQ10 (conj EQ11 (conj EQ12 (conj EQ13 (conj EQ14 (conj EQ15 (conj EQ16 EQ17))))))))))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9 EQ10 EQ11 EQ12 EQ13 EQ14 EQ15 EQ16 EQ17;
+move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top; move x10 at top; move x11 at top; move x12 at top; move x13 at top; move x14 at top; move x15 at top; move x16 at top; move x17 at top; 
+paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17.
+
+Lemma _paco_pre18: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 (gf: rel18 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17
+(X: let gf' := gf in gf' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17), gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17.
+Proof. intros; apply X. Defined.
+
+Ltac paco_pre18 := let X := fresh "_paco_X_" in
+generalize _paco_mark_cons; repeat intro;
+apply _paco_pre18; intro X;
+match goal with
+| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 ?e12 ?e13 ?e14 ?e15 ?e16 ?e17 => unfold X; clear X; paco_cont18 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17
+end.
+
+Ltac paco_post_match18 INC tac1 tac2 :=
+let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
+match goal with [H: ?x |- _] => match x with
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
+| _ => tac1 cr
+end end.
+
+Tactic Notation "paco_post18" ident(CIH) "with" ident(nr) :=
+let INC := fresh "_paco_inc_" in
+paco_post_match18 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+let CIH' := fresh CIH in try rename INC into CIH'.
+
+(** *** Arity 19
+*)
+
+Ltac paco_cont19 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 := 
+let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
+let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
+let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
+let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
+let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
+let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
+let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
+let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
+let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
+let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
+let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
+let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
+let x12 := fresh "_paco_v_" in let EQ12 := fresh "_paco_EQ_" in
+let x13 := fresh "_paco_v_" in let EQ13 := fresh "_paco_EQ_" in
+let x14 := fresh "_paco_v_" in let EQ14 := fresh "_paco_EQ_" in
+let x15 := fresh "_paco_v_" in let EQ15 := fresh "_paco_EQ_" in
+let x16 := fresh "_paco_v_" in let EQ16 := fresh "_paco_EQ_" in
+let x17 := fresh "_paco_v_" in let EQ17 := fresh "_paco_EQ_" in
+let x18 := fresh "_paco_v_" in let EQ18 := fresh "_paco_EQ_" in
+paco_convert e18 x18 EQ18;
+paco_convert e17 x17 EQ17;
+paco_convert e16 x16 EQ16;
+paco_convert e15 x15 EQ15;
+paco_convert e14 x14 EQ14;
+paco_convert e13 x13 EQ13;
+paco_convert e12 x12 EQ12;
+paco_convert e11 x11 EQ11;
+paco_convert e10 x10 EQ10;
+paco_convert e9 x9 EQ9;
+paco_convert e8 x8 EQ8;
+paco_convert e7 x7 EQ7;
+paco_convert e6 x6 EQ6;
+paco_convert e5 x5 EQ5;
+paco_convert e4 x4 EQ4;
+paco_convert e3 x3 EQ3;
+paco_convert e2 x2 EQ2;
+paco_convert e1 x1 EQ1;
+paco_convert e0 x0 EQ0;
+intros x0 EQ0;
+intros x1 EQ1;
+intros x2 EQ2;
+intros x3 EQ3;
+intros x4 EQ4;
+intros x5 EQ5;
+intros x6 EQ6;
+intros x7 EQ7;
+intros x8 EQ8;
+intros x9 EQ9;
+intros x10 EQ10;
+intros x11 EQ11;
+intros x12 EQ12;
+intros x13 EQ13;
+intros x14 EQ14;
+intros x15 EQ15;
+intros x16 EQ16;
+intros x17 EQ17;
+intros x18 EQ18;
+generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 (conj EQ9 (conj EQ10 (conj EQ11 (conj EQ12 (conj EQ13 (conj EQ14 (conj EQ15 (conj EQ16 (conj EQ17 EQ18)))))))))))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9 EQ10 EQ11 EQ12 EQ13 EQ14 EQ15 EQ16 EQ17 EQ18;
+move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top; move x10 at top; move x11 at top; move x12 at top; move x13 at top; move x14 at top; move x15 at top; move x16 at top; move x17 at top; move x18 at top; 
+paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18.
+
+Lemma _paco_pre19: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 (gf: rel19 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18
+(X: let gf' := gf in gf' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18), gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18.
+Proof. intros; apply X. Defined.
+
+Ltac paco_pre19 := let X := fresh "_paco_X_" in
+generalize _paco_mark_cons; repeat intro;
+apply _paco_pre19; intro X;
+match goal with
+| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 ?e12 ?e13 ?e14 ?e15 ?e16 ?e17 ?e18 => unfold X; clear X; paco_cont19 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18
+end.
+
+Ltac paco_post_match19 INC tac1 tac2 :=
+let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
+match goal with [H: ?x |- _] => match x with
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
+| _ => tac1 cr
+end end.
+
+Tactic Notation "paco_post19" ident(CIH) "with" ident(nr) :=
+let INC := fresh "_paco_inc_" in
+paco_post_match19 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+let CIH' := fresh CIH in try rename INC into CIH'.
+
+(** *** Arity 20
+*)
+
+Ltac paco_cont20 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 := 
+let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
+let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
+let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
+let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
+let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
+let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
+let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
+let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
+let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
+let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
+let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
+let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
+let x12 := fresh "_paco_v_" in let EQ12 := fresh "_paco_EQ_" in
+let x13 := fresh "_paco_v_" in let EQ13 := fresh "_paco_EQ_" in
+let x14 := fresh "_paco_v_" in let EQ14 := fresh "_paco_EQ_" in
+let x15 := fresh "_paco_v_" in let EQ15 := fresh "_paco_EQ_" in
+let x16 := fresh "_paco_v_" in let EQ16 := fresh "_paco_EQ_" in
+let x17 := fresh "_paco_v_" in let EQ17 := fresh "_paco_EQ_" in
+let x18 := fresh "_paco_v_" in let EQ18 := fresh "_paco_EQ_" in
+let x19 := fresh "_paco_v_" in let EQ19 := fresh "_paco_EQ_" in
+paco_convert e19 x19 EQ19;
+paco_convert e18 x18 EQ18;
+paco_convert e17 x17 EQ17;
+paco_convert e16 x16 EQ16;
+paco_convert e15 x15 EQ15;
+paco_convert e14 x14 EQ14;
+paco_convert e13 x13 EQ13;
+paco_convert e12 x12 EQ12;
+paco_convert e11 x11 EQ11;
+paco_convert e10 x10 EQ10;
+paco_convert e9 x9 EQ9;
+paco_convert e8 x8 EQ8;
+paco_convert e7 x7 EQ7;
+paco_convert e6 x6 EQ6;
+paco_convert e5 x5 EQ5;
+paco_convert e4 x4 EQ4;
+paco_convert e3 x3 EQ3;
+paco_convert e2 x2 EQ2;
+paco_convert e1 x1 EQ1;
+paco_convert e0 x0 EQ0;
+intros x0 EQ0;
+intros x1 EQ1;
+intros x2 EQ2;
+intros x3 EQ3;
+intros x4 EQ4;
+intros x5 EQ5;
+intros x6 EQ6;
+intros x7 EQ7;
+intros x8 EQ8;
+intros x9 EQ9;
+intros x10 EQ10;
+intros x11 EQ11;
+intros x12 EQ12;
+intros x13 EQ13;
+intros x14 EQ14;
+intros x15 EQ15;
+intros x16 EQ16;
+intros x17 EQ17;
+intros x18 EQ18;
+intros x19 EQ19;
+generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 (conj EQ9 (conj EQ10 (conj EQ11 (conj EQ12 (conj EQ13 (conj EQ14 (conj EQ15 (conj EQ16 (conj EQ17 (conj EQ18 EQ19))))))))))))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9 EQ10 EQ11 EQ12 EQ13 EQ14 EQ15 EQ16 EQ17 EQ18 EQ19;
+move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top; move x10 at top; move x11 at top; move x12 at top; move x13 at top; move x14 at top; move x15 at top; move x16 at top; move x17 at top; move x18 at top; move x19 at top; 
+paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19.
+
+Lemma _paco_pre20: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 (gf: rel20 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19
+(X: let gf' := gf in gf' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19), gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19.
+Proof. intros; apply X. Defined.
+
+Ltac paco_pre20 := let X := fresh "_paco_X_" in
+generalize _paco_mark_cons; repeat intro;
+apply _paco_pre20; intro X;
+match goal with
+| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 ?e12 ?e13 ?e14 ?e15 ?e16 ?e17 ?e18 ?e19 => unfold X; clear X; paco_cont20 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19
+end.
+
+Ltac paco_post_match20 INC tac1 tac2 :=
+let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
+match goal with [H: ?x |- _] => match x with
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
+| _ => tac1 cr
+end end.
+
+Tactic Notation "paco_post20" ident(CIH) "with" ident(nr) :=
+let INC := fresh "_paco_inc_" in
+paco_post_match20 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+let CIH' := fresh CIH in try rename INC into CIH'.
+
+(** *** Arity 21
+*)
+
+Ltac paco_cont21 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 := 
+let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
+let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
+let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
+let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
+let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
+let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
+let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
+let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
+let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
+let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
+let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
+let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
+let x12 := fresh "_paco_v_" in let EQ12 := fresh "_paco_EQ_" in
+let x13 := fresh "_paco_v_" in let EQ13 := fresh "_paco_EQ_" in
+let x14 := fresh "_paco_v_" in let EQ14 := fresh "_paco_EQ_" in
+let x15 := fresh "_paco_v_" in let EQ15 := fresh "_paco_EQ_" in
+let x16 := fresh "_paco_v_" in let EQ16 := fresh "_paco_EQ_" in
+let x17 := fresh "_paco_v_" in let EQ17 := fresh "_paco_EQ_" in
+let x18 := fresh "_paco_v_" in let EQ18 := fresh "_paco_EQ_" in
+let x19 := fresh "_paco_v_" in let EQ19 := fresh "_paco_EQ_" in
+let x20 := fresh "_paco_v_" in let EQ20 := fresh "_paco_EQ_" in
+paco_convert e20 x20 EQ20;
+paco_convert e19 x19 EQ19;
+paco_convert e18 x18 EQ18;
+paco_convert e17 x17 EQ17;
+paco_convert e16 x16 EQ16;
+paco_convert e15 x15 EQ15;
+paco_convert e14 x14 EQ14;
+paco_convert e13 x13 EQ13;
+paco_convert e12 x12 EQ12;
+paco_convert e11 x11 EQ11;
+paco_convert e10 x10 EQ10;
+paco_convert e9 x9 EQ9;
+paco_convert e8 x8 EQ8;
+paco_convert e7 x7 EQ7;
+paco_convert e6 x6 EQ6;
+paco_convert e5 x5 EQ5;
+paco_convert e4 x4 EQ4;
+paco_convert e3 x3 EQ3;
+paco_convert e2 x2 EQ2;
+paco_convert e1 x1 EQ1;
+paco_convert e0 x0 EQ0;
+intros x0 EQ0;
+intros x1 EQ1;
+intros x2 EQ2;
+intros x3 EQ3;
+intros x4 EQ4;
+intros x5 EQ5;
+intros x6 EQ6;
+intros x7 EQ7;
+intros x8 EQ8;
+intros x9 EQ9;
+intros x10 EQ10;
+intros x11 EQ11;
+intros x12 EQ12;
+intros x13 EQ13;
+intros x14 EQ14;
+intros x15 EQ15;
+intros x16 EQ16;
+intros x17 EQ17;
+intros x18 EQ18;
+intros x19 EQ19;
+intros x20 EQ20;
+generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 (conj EQ9 (conj EQ10 (conj EQ11 (conj EQ12 (conj EQ13 (conj EQ14 (conj EQ15 (conj EQ16 (conj EQ17 (conj EQ18 (conj EQ19 EQ20)))))))))))))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9 EQ10 EQ11 EQ12 EQ13 EQ14 EQ15 EQ16 EQ17 EQ18 EQ19 EQ20;
+move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top; move x10 at top; move x11 at top; move x12 at top; move x13 at top; move x14 at top; move x15 at top; move x16 at top; move x17 at top; move x18 at top; move x19 at top; move x20 at top; 
+paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20.
+
+Lemma _paco_pre21: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T20 (gf: rel21 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T20) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20
+(X: let gf' := gf in gf' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20), gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20.
+Proof. intros; apply X. Defined.
+
+Ltac paco_pre21 := let X := fresh "_paco_X_" in
+generalize _paco_mark_cons; repeat intro;
+apply _paco_pre21; intro X;
+match goal with
+| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 ?e12 ?e13 ?e14 ?e15 ?e16 ?e17 ?e18 ?e19 ?e20 => unfold X; clear X; paco_cont21 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20
+end.
+
+Ltac paco_post_match21 INC tac1 tac2 :=
+let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
+match goal with [H: ?x |- _] => match x with
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
+| _ => tac1 cr
+end end.
+
+Tactic Notation "paco_post21" ident(CIH) "with" ident(nr) :=
+let INC := fresh "_paco_inc_" in
+paco_post_match21 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+let CIH' := fresh CIH in try rename INC into CIH'.
+
+(** *** Arity 22
+*)
+
+Ltac paco_cont22 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 := 
+let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
+let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
+let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
+let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
+let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
+let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
+let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
+let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
+let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
+let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
+let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
+let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
+let x12 := fresh "_paco_v_" in let EQ12 := fresh "_paco_EQ_" in
+let x13 := fresh "_paco_v_" in let EQ13 := fresh "_paco_EQ_" in
+let x14 := fresh "_paco_v_" in let EQ14 := fresh "_paco_EQ_" in
+let x15 := fresh "_paco_v_" in let EQ15 := fresh "_paco_EQ_" in
+let x16 := fresh "_paco_v_" in let EQ16 := fresh "_paco_EQ_" in
+let x17 := fresh "_paco_v_" in let EQ17 := fresh "_paco_EQ_" in
+let x18 := fresh "_paco_v_" in let EQ18 := fresh "_paco_EQ_" in
+let x19 := fresh "_paco_v_" in let EQ19 := fresh "_paco_EQ_" in
+let x20 := fresh "_paco_v_" in let EQ20 := fresh "_paco_EQ_" in
+let x21 := fresh "_paco_v_" in let EQ21 := fresh "_paco_EQ_" in
+paco_convert e21 x21 EQ21;
+paco_convert e20 x20 EQ20;
+paco_convert e19 x19 EQ19;
+paco_convert e18 x18 EQ18;
+paco_convert e17 x17 EQ17;
+paco_convert e16 x16 EQ16;
+paco_convert e15 x15 EQ15;
+paco_convert e14 x14 EQ14;
+paco_convert e13 x13 EQ13;
+paco_convert e12 x12 EQ12;
+paco_convert e11 x11 EQ11;
+paco_convert e10 x10 EQ10;
+paco_convert e9 x9 EQ9;
+paco_convert e8 x8 EQ8;
+paco_convert e7 x7 EQ7;
+paco_convert e6 x6 EQ6;
+paco_convert e5 x5 EQ5;
+paco_convert e4 x4 EQ4;
+paco_convert e3 x3 EQ3;
+paco_convert e2 x2 EQ2;
+paco_convert e1 x1 EQ1;
+paco_convert e0 x0 EQ0;
+intros x0 EQ0;
+intros x1 EQ1;
+intros x2 EQ2;
+intros x3 EQ3;
+intros x4 EQ4;
+intros x5 EQ5;
+intros x6 EQ6;
+intros x7 EQ7;
+intros x8 EQ8;
+intros x9 EQ9;
+intros x10 EQ10;
+intros x11 EQ11;
+intros x12 EQ12;
+intros x13 EQ13;
+intros x14 EQ14;
+intros x15 EQ15;
+intros x16 EQ16;
+intros x17 EQ17;
+intros x18 EQ18;
+intros x19 EQ19;
+intros x20 EQ20;
+intros x21 EQ21;
+generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 (conj EQ9 (conj EQ10 (conj EQ11 (conj EQ12 (conj EQ13 (conj EQ14 (conj EQ15 (conj EQ16 (conj EQ17 (conj EQ18 (conj EQ19 (conj EQ20 EQ21))))))))))))))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9 EQ10 EQ11 EQ12 EQ13 EQ14 EQ15 EQ16 EQ17 EQ18 EQ19 EQ20 EQ21;
+move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top; move x10 at top; move x11 at top; move x12 at top; move x13 at top; move x14 at top; move x15 at top; move x16 at top; move x17 at top; move x18 at top; move x19 at top; move x20 at top; move x21 at top; 
+paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21.
+
+Lemma _paco_pre22: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T20 T21 (gf: rel22 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T20 T21) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21
+(X: let gf' := gf in gf' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21), gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21.
+Proof. intros; apply X. Defined.
+
+Ltac paco_pre22 := let X := fresh "_paco_X_" in
+generalize _paco_mark_cons; repeat intro;
+apply _paco_pre22; intro X;
+match goal with
+| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 ?e12 ?e13 ?e14 ?e15 ?e16 ?e17 ?e18 ?e19 ?e20 ?e21 => unfold X; clear X; paco_cont22 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21
+end.
+
+Ltac paco_post_match22 INC tac1 tac2 :=
+let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
+match goal with [H: ?x |- _] => match x with
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
+| _ => tac1 cr
+end end.
+
+Tactic Notation "paco_post22" ident(CIH) "with" ident(nr) :=
+let INC := fresh "_paco_inc_" in
+paco_post_match22 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+let CIH' := fresh CIH in try rename INC into CIH'.
+
+(** *** Arity 23
+*)
+
+Ltac paco_cont23 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22 := 
+let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
+let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
+let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
+let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
+let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
+let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
+let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
+let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
+let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
+let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
+let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
+let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
+let x12 := fresh "_paco_v_" in let EQ12 := fresh "_paco_EQ_" in
+let x13 := fresh "_paco_v_" in let EQ13 := fresh "_paco_EQ_" in
+let x14 := fresh "_paco_v_" in let EQ14 := fresh "_paco_EQ_" in
+let x15 := fresh "_paco_v_" in let EQ15 := fresh "_paco_EQ_" in
+let x16 := fresh "_paco_v_" in let EQ16 := fresh "_paco_EQ_" in
+let x17 := fresh "_paco_v_" in let EQ17 := fresh "_paco_EQ_" in
+let x18 := fresh "_paco_v_" in let EQ18 := fresh "_paco_EQ_" in
+let x19 := fresh "_paco_v_" in let EQ19 := fresh "_paco_EQ_" in
+let x20 := fresh "_paco_v_" in let EQ20 := fresh "_paco_EQ_" in
+let x21 := fresh "_paco_v_" in let EQ21 := fresh "_paco_EQ_" in
+let x22 := fresh "_paco_v_" in let EQ22 := fresh "_paco_EQ_" in
+paco_convert e22 x22 EQ22;
+paco_convert e21 x21 EQ21;
+paco_convert e20 x20 EQ20;
+paco_convert e19 x19 EQ19;
+paco_convert e18 x18 EQ18;
+paco_convert e17 x17 EQ17;
+paco_convert e16 x16 EQ16;
+paco_convert e15 x15 EQ15;
+paco_convert e14 x14 EQ14;
+paco_convert e13 x13 EQ13;
+paco_convert e12 x12 EQ12;
+paco_convert e11 x11 EQ11;
+paco_convert e10 x10 EQ10;
+paco_convert e9 x9 EQ9;
+paco_convert e8 x8 EQ8;
+paco_convert e7 x7 EQ7;
+paco_convert e6 x6 EQ6;
+paco_convert e5 x5 EQ5;
+paco_convert e4 x4 EQ4;
+paco_convert e3 x3 EQ3;
+paco_convert e2 x2 EQ2;
+paco_convert e1 x1 EQ1;
+paco_convert e0 x0 EQ0;
+intros x0 EQ0;
+intros x1 EQ1;
+intros x2 EQ2;
+intros x3 EQ3;
+intros x4 EQ4;
+intros x5 EQ5;
+intros x6 EQ6;
+intros x7 EQ7;
+intros x8 EQ8;
+intros x9 EQ9;
+intros x10 EQ10;
+intros x11 EQ11;
+intros x12 EQ12;
+intros x13 EQ13;
+intros x14 EQ14;
+intros x15 EQ15;
+intros x16 EQ16;
+intros x17 EQ17;
+intros x18 EQ18;
+intros x19 EQ19;
+intros x20 EQ20;
+intros x21 EQ21;
+intros x22 EQ22;
+generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 (conj EQ9 (conj EQ10 (conj EQ11 (conj EQ12 (conj EQ13 (conj EQ14 (conj EQ15 (conj EQ16 (conj EQ17 (conj EQ18 (conj EQ19 (conj EQ20 (conj EQ21 EQ22)))))))))))))))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9 EQ10 EQ11 EQ12 EQ13 EQ14 EQ15 EQ16 EQ17 EQ18 EQ19 EQ20 EQ21 EQ22;
+move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top; move x10 at top; move x11 at top; move x12 at top; move x13 at top; move x14 at top; move x15 at top; move x16 at top; move x17 at top; move x18 at top; move x19 at top; move x20 at top; move x21 at top; move x22 at top; 
+paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22.
+
+Lemma _paco_pre23: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T20 T21 T22 (gf: rel23 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T20 T21 T22) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22
+(X: let gf' := gf in gf' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22), gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22.
+Proof. intros; apply X. Defined.
+
+Ltac paco_pre23 := let X := fresh "_paco_X_" in
+generalize _paco_mark_cons; repeat intro;
+apply _paco_pre23; intro X;
+match goal with
+| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 ?e12 ?e13 ?e14 ?e15 ?e16 ?e17 ?e18 ?e19 ?e20 ?e21 ?e22 => unfold X; clear X; paco_cont23 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22
+end.
+
+Ltac paco_post_match23 INC tac1 tac2 :=
+let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
+match goal with [H: ?x |- _] => match x with
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
+| _ => tac1 cr
+end end.
+
+Tactic Notation "paco_post23" ident(CIH) "with" ident(nr) :=
+let INC := fresh "_paco_inc_" in
+paco_post_match23 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+let CIH' := fresh CIH in try rename INC into CIH'.
+
+(** *** Arity 24
+*)
+
+Ltac paco_cont24 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22 e23 := 
+let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
+let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
+let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
+let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
+let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
+let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
+let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
+let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
+let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
+let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
+let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
+let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
+let x12 := fresh "_paco_v_" in let EQ12 := fresh "_paco_EQ_" in
+let x13 := fresh "_paco_v_" in let EQ13 := fresh "_paco_EQ_" in
+let x14 := fresh "_paco_v_" in let EQ14 := fresh "_paco_EQ_" in
+let x15 := fresh "_paco_v_" in let EQ15 := fresh "_paco_EQ_" in
+let x16 := fresh "_paco_v_" in let EQ16 := fresh "_paco_EQ_" in
+let x17 := fresh "_paco_v_" in let EQ17 := fresh "_paco_EQ_" in
+let x18 := fresh "_paco_v_" in let EQ18 := fresh "_paco_EQ_" in
+let x19 := fresh "_paco_v_" in let EQ19 := fresh "_paco_EQ_" in
+let x20 := fresh "_paco_v_" in let EQ20 := fresh "_paco_EQ_" in
+let x21 := fresh "_paco_v_" in let EQ21 := fresh "_paco_EQ_" in
+let x22 := fresh "_paco_v_" in let EQ22 := fresh "_paco_EQ_" in
+let x23 := fresh "_paco_v_" in let EQ23 := fresh "_paco_EQ_" in
+paco_convert e23 x23 EQ23;
+paco_convert e22 x22 EQ22;
+paco_convert e21 x21 EQ21;
+paco_convert e20 x20 EQ20;
+paco_convert e19 x19 EQ19;
+paco_convert e18 x18 EQ18;
+paco_convert e17 x17 EQ17;
+paco_convert e16 x16 EQ16;
+paco_convert e15 x15 EQ15;
+paco_convert e14 x14 EQ14;
+paco_convert e13 x13 EQ13;
+paco_convert e12 x12 EQ12;
+paco_convert e11 x11 EQ11;
+paco_convert e10 x10 EQ10;
+paco_convert e9 x9 EQ9;
+paco_convert e8 x8 EQ8;
+paco_convert e7 x7 EQ7;
+paco_convert e6 x6 EQ6;
+paco_convert e5 x5 EQ5;
+paco_convert e4 x4 EQ4;
+paco_convert e3 x3 EQ3;
+paco_convert e2 x2 EQ2;
+paco_convert e1 x1 EQ1;
+paco_convert e0 x0 EQ0;
+intros x0 EQ0;
+intros x1 EQ1;
+intros x2 EQ2;
+intros x3 EQ3;
+intros x4 EQ4;
+intros x5 EQ5;
+intros x6 EQ6;
+intros x7 EQ7;
+intros x8 EQ8;
+intros x9 EQ9;
+intros x10 EQ10;
+intros x11 EQ11;
+intros x12 EQ12;
+intros x13 EQ13;
+intros x14 EQ14;
+intros x15 EQ15;
+intros x16 EQ16;
+intros x17 EQ17;
+intros x18 EQ18;
+intros x19 EQ19;
+intros x20 EQ20;
+intros x21 EQ21;
+intros x22 EQ22;
+intros x23 EQ23;
+generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 (conj EQ9 (conj EQ10 (conj EQ11 (conj EQ12 (conj EQ13 (conj EQ14 (conj EQ15 (conj EQ16 (conj EQ17 (conj EQ18 (conj EQ19 (conj EQ20 (conj EQ21 (conj EQ22 EQ23))))))))))))))))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9 EQ10 EQ11 EQ12 EQ13 EQ14 EQ15 EQ16 EQ17 EQ18 EQ19 EQ20 EQ21 EQ22 EQ23;
+move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top; move x10 at top; move x11 at top; move x12 at top; move x13 at top; move x14 at top; move x15 at top; move x16 at top; move x17 at top; move x18 at top; move x19 at top; move x20 at top; move x21 at top; move x22 at top; move x23 at top; 
+paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23.
+
+Lemma _paco_pre24: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T20 T21 T22 T23 (gf: rel24 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T20 T21 T22 T23) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23
+(X: let gf' := gf in gf' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23), gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23.
+Proof. intros; apply X. Defined.
+
+Ltac paco_pre24 := let X := fresh "_paco_X_" in
+generalize _paco_mark_cons; repeat intro;
+apply _paco_pre24; intro X;
+match goal with
+| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 ?e12 ?e13 ?e14 ?e15 ?e16 ?e17 ?e18 ?e19 ?e20 ?e21 ?e22 ?e23 => unfold X; clear X; paco_cont24 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22 e23
+end.
+
+Ltac paco_post_match24 INC tac1 tac2 :=
+let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
+match goal with [H: ?x |- _] => match x with
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
+| _ => tac1 cr
+end end.
+
+Tactic Notation "paco_post24" ident(CIH) "with" ident(nr) :=
+let INC := fresh "_paco_inc_" in
+paco_post_match24 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+let CIH' := fresh CIH in try rename INC into CIH'.
+
+(** *** Arity 25
+*)
+
+Ltac paco_cont25 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22 e23 e24 := 
+let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
+let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
+let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
+let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
+let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
+let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
+let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
+let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
+let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
+let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
+let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
+let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
+let x12 := fresh "_paco_v_" in let EQ12 := fresh "_paco_EQ_" in
+let x13 := fresh "_paco_v_" in let EQ13 := fresh "_paco_EQ_" in
+let x14 := fresh "_paco_v_" in let EQ14 := fresh "_paco_EQ_" in
+let x15 := fresh "_paco_v_" in let EQ15 := fresh "_paco_EQ_" in
+let x16 := fresh "_paco_v_" in let EQ16 := fresh "_paco_EQ_" in
+let x17 := fresh "_paco_v_" in let EQ17 := fresh "_paco_EQ_" in
+let x18 := fresh "_paco_v_" in let EQ18 := fresh "_paco_EQ_" in
+let x19 := fresh "_paco_v_" in let EQ19 := fresh "_paco_EQ_" in
+let x20 := fresh "_paco_v_" in let EQ20 := fresh "_paco_EQ_" in
+let x21 := fresh "_paco_v_" in let EQ21 := fresh "_paco_EQ_" in
+let x22 := fresh "_paco_v_" in let EQ22 := fresh "_paco_EQ_" in
+let x23 := fresh "_paco_v_" in let EQ23 := fresh "_paco_EQ_" in
+let x24 := fresh "_paco_v_" in let EQ24 := fresh "_paco_EQ_" in
+paco_convert e24 x24 EQ24;
+paco_convert e23 x23 EQ23;
+paco_convert e22 x22 EQ22;
+paco_convert e21 x21 EQ21;
+paco_convert e20 x20 EQ20;
+paco_convert e19 x19 EQ19;
+paco_convert e18 x18 EQ18;
+paco_convert e17 x17 EQ17;
+paco_convert e16 x16 EQ16;
+paco_convert e15 x15 EQ15;
+paco_convert e14 x14 EQ14;
+paco_convert e13 x13 EQ13;
+paco_convert e12 x12 EQ12;
+paco_convert e11 x11 EQ11;
+paco_convert e10 x10 EQ10;
+paco_convert e9 x9 EQ9;
+paco_convert e8 x8 EQ8;
+paco_convert e7 x7 EQ7;
+paco_convert e6 x6 EQ6;
+paco_convert e5 x5 EQ5;
+paco_convert e4 x4 EQ4;
+paco_convert e3 x3 EQ3;
+paco_convert e2 x2 EQ2;
+paco_convert e1 x1 EQ1;
+paco_convert e0 x0 EQ0;
+intros x0 EQ0;
+intros x1 EQ1;
+intros x2 EQ2;
+intros x3 EQ3;
+intros x4 EQ4;
+intros x5 EQ5;
+intros x6 EQ6;
+intros x7 EQ7;
+intros x8 EQ8;
+intros x9 EQ9;
+intros x10 EQ10;
+intros x11 EQ11;
+intros x12 EQ12;
+intros x13 EQ13;
+intros x14 EQ14;
+intros x15 EQ15;
+intros x16 EQ16;
+intros x17 EQ17;
+intros x18 EQ18;
+intros x19 EQ19;
+intros x20 EQ20;
+intros x21 EQ21;
+intros x22 EQ22;
+intros x23 EQ23;
+intros x24 EQ24;
+generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 (conj EQ9 (conj EQ10 (conj EQ11 (conj EQ12 (conj EQ13 (conj EQ14 (conj EQ15 (conj EQ16 (conj EQ17 (conj EQ18 (conj EQ19 (conj EQ20 (conj EQ21 (conj EQ22 (conj EQ23 EQ24)))))))))))))))))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9 EQ10 EQ11 EQ12 EQ13 EQ14 EQ15 EQ16 EQ17 EQ18 EQ19 EQ20 EQ21 EQ22 EQ23 EQ24;
+move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top; move x10 at top; move x11 at top; move x12 at top; move x13 at top; move x14 at top; move x15 at top; move x16 at top; move x17 at top; move x18 at top; move x19 at top; move x20 at top; move x21 at top; move x22 at top; move x23 at top; move x24 at top; 
+paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24.
+
+Lemma _paco_pre25: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T20 T21 T22 T23 T24 (gf: rel25 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T20 T21 T22 T23 T24) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24
+(X: let gf' := gf in gf' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24), gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24.
+Proof. intros; apply X. Defined.
+
+Ltac paco_pre25 := let X := fresh "_paco_X_" in
+generalize _paco_mark_cons; repeat intro;
+apply _paco_pre25; intro X;
+match goal with
+| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 ?e12 ?e13 ?e14 ?e15 ?e16 ?e17 ?e18 ?e19 ?e20 ?e21 ?e22 ?e23 ?e24 => unfold X; clear X; paco_cont25 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22 e23 e24
+end.
+
+Ltac paco_post_match25 INC tac1 tac2 :=
+let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
+match goal with [H: ?x |- _] => match x with
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
+| _ => tac1 cr
+end end.
+
+Tactic Notation "paco_post25" ident(CIH) "with" ident(nr) :=
+let INC := fresh "_paco_inc_" in
+paco_post_match25 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+let CIH' := fresh CIH in try rename INC into CIH'.
+
+(** *** Arity 26
+*)
+
+Ltac paco_cont26 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22 e23 e24 e25 := 
+let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
+let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
+let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
+let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
+let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
+let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
+let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
+let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
+let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
+let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
+let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
+let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
+let x12 := fresh "_paco_v_" in let EQ12 := fresh "_paco_EQ_" in
+let x13 := fresh "_paco_v_" in let EQ13 := fresh "_paco_EQ_" in
+let x14 := fresh "_paco_v_" in let EQ14 := fresh "_paco_EQ_" in
+let x15 := fresh "_paco_v_" in let EQ15 := fresh "_paco_EQ_" in
+let x16 := fresh "_paco_v_" in let EQ16 := fresh "_paco_EQ_" in
+let x17 := fresh "_paco_v_" in let EQ17 := fresh "_paco_EQ_" in
+let x18 := fresh "_paco_v_" in let EQ18 := fresh "_paco_EQ_" in
+let x19 := fresh "_paco_v_" in let EQ19 := fresh "_paco_EQ_" in
+let x20 := fresh "_paco_v_" in let EQ20 := fresh "_paco_EQ_" in
+let x21 := fresh "_paco_v_" in let EQ21 := fresh "_paco_EQ_" in
+let x22 := fresh "_paco_v_" in let EQ22 := fresh "_paco_EQ_" in
+let x23 := fresh "_paco_v_" in let EQ23 := fresh "_paco_EQ_" in
+let x24 := fresh "_paco_v_" in let EQ24 := fresh "_paco_EQ_" in
+let x25 := fresh "_paco_v_" in let EQ25 := fresh "_paco_EQ_" in
+paco_convert e25 x25 EQ25;
+paco_convert e24 x24 EQ24;
+paco_convert e23 x23 EQ23;
+paco_convert e22 x22 EQ22;
+paco_convert e21 x21 EQ21;
+paco_convert e20 x20 EQ20;
+paco_convert e19 x19 EQ19;
+paco_convert e18 x18 EQ18;
+paco_convert e17 x17 EQ17;
+paco_convert e16 x16 EQ16;
+paco_convert e15 x15 EQ15;
+paco_convert e14 x14 EQ14;
+paco_convert e13 x13 EQ13;
+paco_convert e12 x12 EQ12;
+paco_convert e11 x11 EQ11;
+paco_convert e10 x10 EQ10;
+paco_convert e9 x9 EQ9;
+paco_convert e8 x8 EQ8;
+paco_convert e7 x7 EQ7;
+paco_convert e6 x6 EQ6;
+paco_convert e5 x5 EQ5;
+paco_convert e4 x4 EQ4;
+paco_convert e3 x3 EQ3;
+paco_convert e2 x2 EQ2;
+paco_convert e1 x1 EQ1;
+paco_convert e0 x0 EQ0;
+intros x0 EQ0;
+intros x1 EQ1;
+intros x2 EQ2;
+intros x3 EQ3;
+intros x4 EQ4;
+intros x5 EQ5;
+intros x6 EQ6;
+intros x7 EQ7;
+intros x8 EQ8;
+intros x9 EQ9;
+intros x10 EQ10;
+intros x11 EQ11;
+intros x12 EQ12;
+intros x13 EQ13;
+intros x14 EQ14;
+intros x15 EQ15;
+intros x16 EQ16;
+intros x17 EQ17;
+intros x18 EQ18;
+intros x19 EQ19;
+intros x20 EQ20;
+intros x21 EQ21;
+intros x22 EQ22;
+intros x23 EQ23;
+intros x24 EQ24;
+intros x25 EQ25;
+generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 (conj EQ9 (conj EQ10 (conj EQ11 (conj EQ12 (conj EQ13 (conj EQ14 (conj EQ15 (conj EQ16 (conj EQ17 (conj EQ18 (conj EQ19 (conj EQ20 (conj EQ21 (conj EQ22 (conj EQ23 (conj EQ24 EQ25))))))))))))))))))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9 EQ10 EQ11 EQ12 EQ13 EQ14 EQ15 EQ16 EQ17 EQ18 EQ19 EQ20 EQ21 EQ22 EQ23 EQ24 EQ25;
+move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top; move x10 at top; move x11 at top; move x12 at top; move x13 at top; move x14 at top; move x15 at top; move x16 at top; move x17 at top; move x18 at top; move x19 at top; move x20 at top; move x21 at top; move x22 at top; move x23 at top; move x24 at top; move x25 at top; 
+paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25.
+
+Lemma _paco_pre26: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T20 T21 T22 T23 T24 T25 (gf: rel26 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T20 T21 T22 T23 T24 T25) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25
+(X: let gf' := gf in gf' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25), gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25.
+Proof. intros; apply X. Defined.
+
+Ltac paco_pre26 := let X := fresh "_paco_X_" in
+generalize _paco_mark_cons; repeat intro;
+apply _paco_pre26; intro X;
+match goal with
+| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 ?e12 ?e13 ?e14 ?e15 ?e16 ?e17 ?e18 ?e19 ?e20 ?e21 ?e22 ?e23 ?e24 ?e25 => unfold X; clear X; paco_cont26 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22 e23 e24 e25
+end.
+
+Ltac paco_post_match26 INC tac1 tac2 :=
+let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
+match goal with [H: ?x |- _] => match x with
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
+| _ => tac1 cr
+end end.
+
+Tactic Notation "paco_post26" ident(CIH) "with" ident(nr) :=
+let INC := fresh "_paco_inc_" in
+paco_post_match26 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+let CIH' := fresh CIH in try rename INC into CIH'.
+
+(** *** Arity 27
+*)
+
+Ltac paco_cont27 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22 e23 e24 e25 e26 := 
+let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
+let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
+let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
+let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
+let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
+let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
+let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
+let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
+let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
+let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
+let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
+let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
+let x12 := fresh "_paco_v_" in let EQ12 := fresh "_paco_EQ_" in
+let x13 := fresh "_paco_v_" in let EQ13 := fresh "_paco_EQ_" in
+let x14 := fresh "_paco_v_" in let EQ14 := fresh "_paco_EQ_" in
+let x15 := fresh "_paco_v_" in let EQ15 := fresh "_paco_EQ_" in
+let x16 := fresh "_paco_v_" in let EQ16 := fresh "_paco_EQ_" in
+let x17 := fresh "_paco_v_" in let EQ17 := fresh "_paco_EQ_" in
+let x18 := fresh "_paco_v_" in let EQ18 := fresh "_paco_EQ_" in
+let x19 := fresh "_paco_v_" in let EQ19 := fresh "_paco_EQ_" in
+let x20 := fresh "_paco_v_" in let EQ20 := fresh "_paco_EQ_" in
+let x21 := fresh "_paco_v_" in let EQ21 := fresh "_paco_EQ_" in
+let x22 := fresh "_paco_v_" in let EQ22 := fresh "_paco_EQ_" in
+let x23 := fresh "_paco_v_" in let EQ23 := fresh "_paco_EQ_" in
+let x24 := fresh "_paco_v_" in let EQ24 := fresh "_paco_EQ_" in
+let x25 := fresh "_paco_v_" in let EQ25 := fresh "_paco_EQ_" in
+let x26 := fresh "_paco_v_" in let EQ26 := fresh "_paco_EQ_" in
+paco_convert e26 x26 EQ26;
+paco_convert e25 x25 EQ25;
+paco_convert e24 x24 EQ24;
+paco_convert e23 x23 EQ23;
+paco_convert e22 x22 EQ22;
+paco_convert e21 x21 EQ21;
+paco_convert e20 x20 EQ20;
+paco_convert e19 x19 EQ19;
+paco_convert e18 x18 EQ18;
+paco_convert e17 x17 EQ17;
+paco_convert e16 x16 EQ16;
+paco_convert e15 x15 EQ15;
+paco_convert e14 x14 EQ14;
+paco_convert e13 x13 EQ13;
+paco_convert e12 x12 EQ12;
+paco_convert e11 x11 EQ11;
+paco_convert e10 x10 EQ10;
+paco_convert e9 x9 EQ9;
+paco_convert e8 x8 EQ8;
+paco_convert e7 x7 EQ7;
+paco_convert e6 x6 EQ6;
+paco_convert e5 x5 EQ5;
+paco_convert e4 x4 EQ4;
+paco_convert e3 x3 EQ3;
+paco_convert e2 x2 EQ2;
+paco_convert e1 x1 EQ1;
+paco_convert e0 x0 EQ0;
+intros x0 EQ0;
+intros x1 EQ1;
+intros x2 EQ2;
+intros x3 EQ3;
+intros x4 EQ4;
+intros x5 EQ5;
+intros x6 EQ6;
+intros x7 EQ7;
+intros x8 EQ8;
+intros x9 EQ9;
+intros x10 EQ10;
+intros x11 EQ11;
+intros x12 EQ12;
+intros x13 EQ13;
+intros x14 EQ14;
+intros x15 EQ15;
+intros x16 EQ16;
+intros x17 EQ17;
+intros x18 EQ18;
+intros x19 EQ19;
+intros x20 EQ20;
+intros x21 EQ21;
+intros x22 EQ22;
+intros x23 EQ23;
+intros x24 EQ24;
+intros x25 EQ25;
+intros x26 EQ26;
+generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 (conj EQ9 (conj EQ10 (conj EQ11 (conj EQ12 (conj EQ13 (conj EQ14 (conj EQ15 (conj EQ16 (conj EQ17 (conj EQ18 (conj EQ19 (conj EQ20 (conj EQ21 (conj EQ22 (conj EQ23 (conj EQ24 (conj EQ25 EQ26)))))))))))))))))))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9 EQ10 EQ11 EQ12 EQ13 EQ14 EQ15 EQ16 EQ17 EQ18 EQ19 EQ20 EQ21 EQ22 EQ23 EQ24 EQ25 EQ26;
+move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top; move x10 at top; move x11 at top; move x12 at top; move x13 at top; move x14 at top; move x15 at top; move x16 at top; move x17 at top; move x18 at top; move x19 at top; move x20 at top; move x21 at top; move x22 at top; move x23 at top; move x24 at top; move x25 at top; move x26 at top; 
+paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26.
+
+Lemma _paco_pre27: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T20 T21 T22 T23 T24 T25 T26 (gf: rel27 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T20 T21 T22 T23 T24 T25 T26) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26
+(X: let gf' := gf in gf' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26), gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26.
+Proof. intros; apply X. Defined.
+
+Ltac paco_pre27 := let X := fresh "_paco_X_" in
+generalize _paco_mark_cons; repeat intro;
+apply _paco_pre27; intro X;
+match goal with
+| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 ?e12 ?e13 ?e14 ?e15 ?e16 ?e17 ?e18 ?e19 ?e20 ?e21 ?e22 ?e23 ?e24 ?e25 ?e26 => unfold X; clear X; paco_cont27 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22 e23 e24 e25 e26
+end.
+
+Ltac paco_post_match27 INC tac1 tac2 :=
+let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
+match goal with [H: ?x |- _] => match x with
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
+| _ => tac1 cr
+end end.
+
+Tactic Notation "paco_post27" ident(CIH) "with" ident(nr) :=
+let INC := fresh "_paco_inc_" in
+paco_post_match27 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+let CIH' := fresh CIH in try rename INC into CIH'.
+
+(** *** Arity 28
+*)
+
+Ltac paco_cont28 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22 e23 e24 e25 e26 e27 := 
+let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
+let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
+let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
+let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
+let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
+let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
+let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
+let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
+let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
+let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
+let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
+let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
+let x12 := fresh "_paco_v_" in let EQ12 := fresh "_paco_EQ_" in
+let x13 := fresh "_paco_v_" in let EQ13 := fresh "_paco_EQ_" in
+let x14 := fresh "_paco_v_" in let EQ14 := fresh "_paco_EQ_" in
+let x15 := fresh "_paco_v_" in let EQ15 := fresh "_paco_EQ_" in
+let x16 := fresh "_paco_v_" in let EQ16 := fresh "_paco_EQ_" in
+let x17 := fresh "_paco_v_" in let EQ17 := fresh "_paco_EQ_" in
+let x18 := fresh "_paco_v_" in let EQ18 := fresh "_paco_EQ_" in
+let x19 := fresh "_paco_v_" in let EQ19 := fresh "_paco_EQ_" in
+let x20 := fresh "_paco_v_" in let EQ20 := fresh "_paco_EQ_" in
+let x21 := fresh "_paco_v_" in let EQ21 := fresh "_paco_EQ_" in
+let x22 := fresh "_paco_v_" in let EQ22 := fresh "_paco_EQ_" in
+let x23 := fresh "_paco_v_" in let EQ23 := fresh "_paco_EQ_" in
+let x24 := fresh "_paco_v_" in let EQ24 := fresh "_paco_EQ_" in
+let x25 := fresh "_paco_v_" in let EQ25 := fresh "_paco_EQ_" in
+let x26 := fresh "_paco_v_" in let EQ26 := fresh "_paco_EQ_" in
+let x27 := fresh "_paco_v_" in let EQ27 := fresh "_paco_EQ_" in
+paco_convert e27 x27 EQ27;
+paco_convert e26 x26 EQ26;
+paco_convert e25 x25 EQ25;
+paco_convert e24 x24 EQ24;
+paco_convert e23 x23 EQ23;
+paco_convert e22 x22 EQ22;
+paco_convert e21 x21 EQ21;
+paco_convert e20 x20 EQ20;
+paco_convert e19 x19 EQ19;
+paco_convert e18 x18 EQ18;
+paco_convert e17 x17 EQ17;
+paco_convert e16 x16 EQ16;
+paco_convert e15 x15 EQ15;
+paco_convert e14 x14 EQ14;
+paco_convert e13 x13 EQ13;
+paco_convert e12 x12 EQ12;
+paco_convert e11 x11 EQ11;
+paco_convert e10 x10 EQ10;
+paco_convert e9 x9 EQ9;
+paco_convert e8 x8 EQ8;
+paco_convert e7 x7 EQ7;
+paco_convert e6 x6 EQ6;
+paco_convert e5 x5 EQ5;
+paco_convert e4 x4 EQ4;
+paco_convert e3 x3 EQ3;
+paco_convert e2 x2 EQ2;
+paco_convert e1 x1 EQ1;
+paco_convert e0 x0 EQ0;
+intros x0 EQ0;
+intros x1 EQ1;
+intros x2 EQ2;
+intros x3 EQ3;
+intros x4 EQ4;
+intros x5 EQ5;
+intros x6 EQ6;
+intros x7 EQ7;
+intros x8 EQ8;
+intros x9 EQ9;
+intros x10 EQ10;
+intros x11 EQ11;
+intros x12 EQ12;
+intros x13 EQ13;
+intros x14 EQ14;
+intros x15 EQ15;
+intros x16 EQ16;
+intros x17 EQ17;
+intros x18 EQ18;
+intros x19 EQ19;
+intros x20 EQ20;
+intros x21 EQ21;
+intros x22 EQ22;
+intros x23 EQ23;
+intros x24 EQ24;
+intros x25 EQ25;
+intros x26 EQ26;
+intros x27 EQ27;
+generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 (conj EQ9 (conj EQ10 (conj EQ11 (conj EQ12 (conj EQ13 (conj EQ14 (conj EQ15 (conj EQ16 (conj EQ17 (conj EQ18 (conj EQ19 (conj EQ20 (conj EQ21 (conj EQ22 (conj EQ23 (conj EQ24 (conj EQ25 (conj EQ26 EQ27))))))))))))))))))))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9 EQ10 EQ11 EQ12 EQ13 EQ14 EQ15 EQ16 EQ17 EQ18 EQ19 EQ20 EQ21 EQ22 EQ23 EQ24 EQ25 EQ26 EQ27;
+move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top; move x10 at top; move x11 at top; move x12 at top; move x13 at top; move x14 at top; move x15 at top; move x16 at top; move x17 at top; move x18 at top; move x19 at top; move x20 at top; move x21 at top; move x22 at top; move x23 at top; move x24 at top; move x25 at top; move x26 at top; move x27 at top; 
+paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27.
+
+Lemma _paco_pre28: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T20 T21 T22 T23 T24 T25 T26 T27 (gf: rel28 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T20 T21 T22 T23 T24 T25 T26 T27) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27
+(X: let gf' := gf in gf' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27), gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27.
+Proof. intros; apply X. Defined.
+
+Ltac paco_pre28 := let X := fresh "_paco_X_" in
+generalize _paco_mark_cons; repeat intro;
+apply _paco_pre28; intro X;
+match goal with
+| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 ?e12 ?e13 ?e14 ?e15 ?e16 ?e17 ?e18 ?e19 ?e20 ?e21 ?e22 ?e23 ?e24 ?e25 ?e26 ?e27 => unfold X; clear X; paco_cont28 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22 e23 e24 e25 e26 e27
+end.
+
+Ltac paco_post_match28 INC tac1 tac2 :=
+let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
+match goal with [H: ?x |- _] => match x with
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
+| _ => tac1 cr
+end end.
+
+Tactic Notation "paco_post28" ident(CIH) "with" ident(nr) :=
+let INC := fresh "_paco_inc_" in
+paco_post_match28 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+let CIH' := fresh CIH in try rename INC into CIH'.
+
+(** *** Arity 29
+*)
+
+Ltac paco_cont29 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22 e23 e24 e25 e26 e27 e28 := 
+let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
+let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
+let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
+let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
+let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
+let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
+let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
+let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
+let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
+let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
+let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
+let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
+let x12 := fresh "_paco_v_" in let EQ12 := fresh "_paco_EQ_" in
+let x13 := fresh "_paco_v_" in let EQ13 := fresh "_paco_EQ_" in
+let x14 := fresh "_paco_v_" in let EQ14 := fresh "_paco_EQ_" in
+let x15 := fresh "_paco_v_" in let EQ15 := fresh "_paco_EQ_" in
+let x16 := fresh "_paco_v_" in let EQ16 := fresh "_paco_EQ_" in
+let x17 := fresh "_paco_v_" in let EQ17 := fresh "_paco_EQ_" in
+let x18 := fresh "_paco_v_" in let EQ18 := fresh "_paco_EQ_" in
+let x19 := fresh "_paco_v_" in let EQ19 := fresh "_paco_EQ_" in
+let x20 := fresh "_paco_v_" in let EQ20 := fresh "_paco_EQ_" in
+let x21 := fresh "_paco_v_" in let EQ21 := fresh "_paco_EQ_" in
+let x22 := fresh "_paco_v_" in let EQ22 := fresh "_paco_EQ_" in
+let x23 := fresh "_paco_v_" in let EQ23 := fresh "_paco_EQ_" in
+let x24 := fresh "_paco_v_" in let EQ24 := fresh "_paco_EQ_" in
+let x25 := fresh "_paco_v_" in let EQ25 := fresh "_paco_EQ_" in
+let x26 := fresh "_paco_v_" in let EQ26 := fresh "_paco_EQ_" in
+let x27 := fresh "_paco_v_" in let EQ27 := fresh "_paco_EQ_" in
+let x28 := fresh "_paco_v_" in let EQ28 := fresh "_paco_EQ_" in
+paco_convert e28 x28 EQ28;
+paco_convert e27 x27 EQ27;
+paco_convert e26 x26 EQ26;
+paco_convert e25 x25 EQ25;
+paco_convert e24 x24 EQ24;
+paco_convert e23 x23 EQ23;
+paco_convert e22 x22 EQ22;
+paco_convert e21 x21 EQ21;
+paco_convert e20 x20 EQ20;
+paco_convert e19 x19 EQ19;
+paco_convert e18 x18 EQ18;
+paco_convert e17 x17 EQ17;
+paco_convert e16 x16 EQ16;
+paco_convert e15 x15 EQ15;
+paco_convert e14 x14 EQ14;
+paco_convert e13 x13 EQ13;
+paco_convert e12 x12 EQ12;
+paco_convert e11 x11 EQ11;
+paco_convert e10 x10 EQ10;
+paco_convert e9 x9 EQ9;
+paco_convert e8 x8 EQ8;
+paco_convert e7 x7 EQ7;
+paco_convert e6 x6 EQ6;
+paco_convert e5 x5 EQ5;
+paco_convert e4 x4 EQ4;
+paco_convert e3 x3 EQ3;
+paco_convert e2 x2 EQ2;
+paco_convert e1 x1 EQ1;
+paco_convert e0 x0 EQ0;
+intros x0 EQ0;
+intros x1 EQ1;
+intros x2 EQ2;
+intros x3 EQ3;
+intros x4 EQ4;
+intros x5 EQ5;
+intros x6 EQ6;
+intros x7 EQ7;
+intros x8 EQ8;
+intros x9 EQ9;
+intros x10 EQ10;
+intros x11 EQ11;
+intros x12 EQ12;
+intros x13 EQ13;
+intros x14 EQ14;
+intros x15 EQ15;
+intros x16 EQ16;
+intros x17 EQ17;
+intros x18 EQ18;
+intros x19 EQ19;
+intros x20 EQ20;
+intros x21 EQ21;
+intros x22 EQ22;
+intros x23 EQ23;
+intros x24 EQ24;
+intros x25 EQ25;
+intros x26 EQ26;
+intros x27 EQ27;
+intros x28 EQ28;
+generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 (conj EQ9 (conj EQ10 (conj EQ11 (conj EQ12 (conj EQ13 (conj EQ14 (conj EQ15 (conj EQ16 (conj EQ17 (conj EQ18 (conj EQ19 (conj EQ20 (conj EQ21 (conj EQ22 (conj EQ23 (conj EQ24 (conj EQ25 (conj EQ26 (conj EQ27 EQ28)))))))))))))))))))))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9 EQ10 EQ11 EQ12 EQ13 EQ14 EQ15 EQ16 EQ17 EQ18 EQ19 EQ20 EQ21 EQ22 EQ23 EQ24 EQ25 EQ26 EQ27 EQ28;
+move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top; move x10 at top; move x11 at top; move x12 at top; move x13 at top; move x14 at top; move x15 at top; move x16 at top; move x17 at top; move x18 at top; move x19 at top; move x20 at top; move x21 at top; move x22 at top; move x23 at top; move x24 at top; move x25 at top; move x26 at top; move x27 at top; move x28 at top; 
+paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27 x28.
+
+Lemma _paco_pre29: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T20 T21 T22 T23 T24 T25 T26 T27 T28 (gf: rel29 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T20 T21 T22 T23 T24 T25 T26 T27 T28) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27 x28
+(X: let gf' := gf in gf' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27 x28), gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27 x28.
+Proof. intros; apply X. Defined.
+
+Ltac paco_pre29 := let X := fresh "_paco_X_" in
+generalize _paco_mark_cons; repeat intro;
+apply _paco_pre29; intro X;
+match goal with
+| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 ?e12 ?e13 ?e14 ?e15 ?e16 ?e17 ?e18 ?e19 ?e20 ?e21 ?e22 ?e23 ?e24 ?e25 ?e26 ?e27 ?e28 => unfold X; clear X; paco_cont29 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22 e23 e24 e25 e26 e27 e28
+end.
+
+Ltac paco_post_match29 INC tac1 tac2 :=
+let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
+match goal with [H: ?x |- _] => match x with
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
+| _ => tac1 cr
+end end.
+
+Tactic Notation "paco_post29" ident(CIH) "with" ident(nr) :=
+let INC := fresh "_paco_inc_" in
+paco_post_match29 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+let CIH' := fresh CIH in try rename INC into CIH'.
+
+(** *** Arity 30
+*)
+
+Ltac paco_cont30 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22 e23 e24 e25 e26 e27 e28 e29 := 
+let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
+let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
+let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
+let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
+let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
+let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
+let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
+let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
+let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
+let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
+let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
+let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
+let x12 := fresh "_paco_v_" in let EQ12 := fresh "_paco_EQ_" in
+let x13 := fresh "_paco_v_" in let EQ13 := fresh "_paco_EQ_" in
+let x14 := fresh "_paco_v_" in let EQ14 := fresh "_paco_EQ_" in
+let x15 := fresh "_paco_v_" in let EQ15 := fresh "_paco_EQ_" in
+let x16 := fresh "_paco_v_" in let EQ16 := fresh "_paco_EQ_" in
+let x17 := fresh "_paco_v_" in let EQ17 := fresh "_paco_EQ_" in
+let x18 := fresh "_paco_v_" in let EQ18 := fresh "_paco_EQ_" in
+let x19 := fresh "_paco_v_" in let EQ19 := fresh "_paco_EQ_" in
+let x20 := fresh "_paco_v_" in let EQ20 := fresh "_paco_EQ_" in
+let x21 := fresh "_paco_v_" in let EQ21 := fresh "_paco_EQ_" in
+let x22 := fresh "_paco_v_" in let EQ22 := fresh "_paco_EQ_" in
+let x23 := fresh "_paco_v_" in let EQ23 := fresh "_paco_EQ_" in
+let x24 := fresh "_paco_v_" in let EQ24 := fresh "_paco_EQ_" in
+let x25 := fresh "_paco_v_" in let EQ25 := fresh "_paco_EQ_" in
+let x26 := fresh "_paco_v_" in let EQ26 := fresh "_paco_EQ_" in
+let x27 := fresh "_paco_v_" in let EQ27 := fresh "_paco_EQ_" in
+let x28 := fresh "_paco_v_" in let EQ28 := fresh "_paco_EQ_" in
+let x29 := fresh "_paco_v_" in let EQ29 := fresh "_paco_EQ_" in
+paco_convert e29 x29 EQ29;
+paco_convert e28 x28 EQ28;
+paco_convert e27 x27 EQ27;
+paco_convert e26 x26 EQ26;
+paco_convert e25 x25 EQ25;
+paco_convert e24 x24 EQ24;
+paco_convert e23 x23 EQ23;
+paco_convert e22 x22 EQ22;
+paco_convert e21 x21 EQ21;
+paco_convert e20 x20 EQ20;
+paco_convert e19 x19 EQ19;
+paco_convert e18 x18 EQ18;
+paco_convert e17 x17 EQ17;
+paco_convert e16 x16 EQ16;
+paco_convert e15 x15 EQ15;
+paco_convert e14 x14 EQ14;
+paco_convert e13 x13 EQ13;
+paco_convert e12 x12 EQ12;
+paco_convert e11 x11 EQ11;
+paco_convert e10 x10 EQ10;
+paco_convert e9 x9 EQ9;
+paco_convert e8 x8 EQ8;
+paco_convert e7 x7 EQ7;
+paco_convert e6 x6 EQ6;
+paco_convert e5 x5 EQ5;
+paco_convert e4 x4 EQ4;
+paco_convert e3 x3 EQ3;
+paco_convert e2 x2 EQ2;
+paco_convert e1 x1 EQ1;
+paco_convert e0 x0 EQ0;
+intros x0 EQ0;
+intros x1 EQ1;
+intros x2 EQ2;
+intros x3 EQ3;
+intros x4 EQ4;
+intros x5 EQ5;
+intros x6 EQ6;
+intros x7 EQ7;
+intros x8 EQ8;
+intros x9 EQ9;
+intros x10 EQ10;
+intros x11 EQ11;
+intros x12 EQ12;
+intros x13 EQ13;
+intros x14 EQ14;
+intros x15 EQ15;
+intros x16 EQ16;
+intros x17 EQ17;
+intros x18 EQ18;
+intros x19 EQ19;
+intros x20 EQ20;
+intros x21 EQ21;
+intros x22 EQ22;
+intros x23 EQ23;
+intros x24 EQ24;
+intros x25 EQ25;
+intros x26 EQ26;
+intros x27 EQ27;
+intros x28 EQ28;
+intros x29 EQ29;
+generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 (conj EQ9 (conj EQ10 (conj EQ11 (conj EQ12 (conj EQ13 (conj EQ14 (conj EQ15 (conj EQ16 (conj EQ17 (conj EQ18 (conj EQ19 (conj EQ20 (conj EQ21 (conj EQ22 (conj EQ23 (conj EQ24 (conj EQ25 (conj EQ26 (conj EQ27 (conj EQ28 EQ29))))))))))))))))))))))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9 EQ10 EQ11 EQ12 EQ13 EQ14 EQ15 EQ16 EQ17 EQ18 EQ19 EQ20 EQ21 EQ22 EQ23 EQ24 EQ25 EQ26 EQ27 EQ28 EQ29;
+move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top; move x10 at top; move x11 at top; move x12 at top; move x13 at top; move x14 at top; move x15 at top; move x16 at top; move x17 at top; move x18 at top; move x19 at top; move x20 at top; move x21 at top; move x22 at top; move x23 at top; move x24 at top; move x25 at top; move x26 at top; move x27 at top; move x28 at top; move x29 at top; 
+paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27 x28 x29.
+
+Lemma _paco_pre30: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T20 T21 T22 T23 T24 T25 T26 T27 T28 T29 (gf: rel30 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 T18 T19 T20 T21 T22 T23 T24 T25 T26 T27 T28 T29) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27 x28 x29
+(X: let gf' := gf in gf' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27 x28 x29), gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 x26 x27 x28 x29.
+Proof. intros; apply X. Defined.
+
+Ltac paco_pre30 := let X := fresh "_paco_X_" in
+generalize _paco_mark_cons; repeat intro;
+apply _paco_pre30; intro X;
+match goal with
+| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 ?e12 ?e13 ?e14 ?e15 ?e16 ?e17 ?e18 ?e19 ?e20 ?e21 ?e22 ?e23 ?e24 ?e25 ?e26 ?e27 ?e28 ?e29 => unfold X; clear X; paco_cont30 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22 e23 e24 e25 e26 e27 e28 e29
+end.
+
+Ltac paco_post_match30 INC tac1 tac2 :=
+let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
+match goal with [H: ?x |- _] => match x with
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
+| _ => tac1 cr
+end end.
+
+Tactic Notation "paco_post30" ident(CIH) "with" ident(nr) :=
+let INC := fresh "_paco_inc_" in
+paco_post_match30 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+let CIH' := fresh CIH in try rename INC into CIH'.
+
 (** ** External interface *)
 
 (** We provide our main tactics:
@@ -1116,6 +2631,51 @@ paco_pre14; eapply lem; paco_post14 CIH with r.
 Tactic Notation "pcofix15" ident(CIH) "using" constr(lem) "with" ident(r) :=
 paco_pre15; eapply lem; paco_post15 CIH with r.
 
+Tactic Notation "pcofix16" ident(CIH) "using" constr(lem) "with" ident(r) :=
+paco_pre16; eapply lem; paco_post16 CIH with r.
+
+Tactic Notation "pcofix17" ident(CIH) "using" constr(lem) "with" ident(r) :=
+paco_pre17; eapply lem; paco_post17 CIH with r.
+
+Tactic Notation "pcofix18" ident(CIH) "using" constr(lem) "with" ident(r) :=
+paco_pre18; eapply lem; paco_post18 CIH with r.
+
+Tactic Notation "pcofix19" ident(CIH) "using" constr(lem) "with" ident(r) :=
+paco_pre19; eapply lem; paco_post19 CIH with r.
+
+Tactic Notation "pcofix20" ident(CIH) "using" constr(lem) "with" ident(r) :=
+paco_pre20; eapply lem; paco_post20 CIH with r.
+
+Tactic Notation "pcofix21" ident(CIH) "using" constr(lem) "with" ident(r) :=
+paco_pre21; eapply lem; paco_post21 CIH with r.
+
+Tactic Notation "pcofix22" ident(CIH) "using" constr(lem) "with" ident(r) :=
+paco_pre22; eapply lem; paco_post22 CIH with r.
+
+Tactic Notation "pcofix23" ident(CIH) "using" constr(lem) "with" ident(r) :=
+paco_pre23; eapply lem; paco_post23 CIH with r.
+
+Tactic Notation "pcofix24" ident(CIH) "using" constr(lem) "with" ident(r) :=
+paco_pre24; eapply lem; paco_post24 CIH with r.
+
+Tactic Notation "pcofix25" ident(CIH) "using" constr(lem) "with" ident(r) :=
+paco_pre25; eapply lem; paco_post25 CIH with r.
+
+Tactic Notation "pcofix26" ident(CIH) "using" constr(lem) "with" ident(r) :=
+paco_pre26; eapply lem; paco_post26 CIH with r.
+
+Tactic Notation "pcofix27" ident(CIH) "using" constr(lem) "with" ident(r) :=
+paco_pre27; eapply lem; paco_post27 CIH with r.
+
+Tactic Notation "pcofix28" ident(CIH) "using" constr(lem) "with" ident(r) :=
+paco_pre28; eapply lem; paco_post28 CIH with r.
+
+Tactic Notation "pcofix29" ident(CIH) "using" constr(lem) "with" ident(r) :=
+paco_pre29; eapply lem; paco_post29 CIH with r.
+
+Tactic Notation "pcofix30" ident(CIH) "using" constr(lem) "with" ident(r) :=
+paco_pre30; eapply lem; paco_post30 CIH with r.
+
 (** [pcofix] automatically figures out the appropriate index [n] from
     the type of the accumulation lemma [lem] and applies [pcofix{n}].
 *)
@@ -1127,6 +2687,21 @@ Tactic Notation "pcofix" ident(CIH) "using" constr(lem) "with" ident(nr) :=
   assert (TMP: False -> P) by
     (intro TMP; repeat intro; match goal with [H : _ |- _] => revert H end;
      match goal with
+     | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 30)
+     | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 29)
+     | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 28)
+     | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 27)
+     | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 26)
+     | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 25)
+     | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 24)
+     | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 23)
+     | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 22)
+     | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 21)
+     | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 20)
+     | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 19)
+     | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 18)
+     | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 17)
+     | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 16)
      | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 15)
      | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 14)
      | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 13)
@@ -1163,6 +2738,21 @@ Tactic Notation "pcofix" ident(CIH) "using" constr(lem) "with" ident(nr) :=
   | [|- let _ := 13 in _] => intros _; pcofix13 CIH using lem with nr
   | [|- let _ := 14 in _] => intros _; pcofix14 CIH using lem with nr
   | [|- let _ := 15 in _] => intros _; pcofix15 CIH using lem with nr
+  | [|- let _ := 16 in _] => intros _; pcofix16 CIH using lem with nr
+  | [|- let _ := 17 in _] => intros _; pcofix17 CIH using lem with nr
+  | [|- let _ := 18 in _] => intros _; pcofix18 CIH using lem with nr
+  | [|- let _ := 19 in _] => intros _; pcofix19 CIH using lem with nr
+  | [|- let _ := 20 in _] => intros _; pcofix20 CIH using lem with nr
+  | [|- let _ := 21 in _] => intros _; pcofix21 CIH using lem with nr
+  | [|- let _ := 22 in _] => intros _; pcofix22 CIH using lem with nr
+  | [|- let _ := 23 in _] => intros _; pcofix23 CIH using lem with nr
+  | [|- let _ := 24 in _] => intros _; pcofix24 CIH using lem with nr
+  | [|- let _ := 25 in _] => intros _; pcofix25 CIH using lem with nr
+  | [|- let _ := 26 in _] => intros _; pcofix26 CIH using lem with nr
+  | [|- let _ := 27 in _] => intros _; pcofix27 CIH using lem with nr
+  | [|- let _ := 28 in _] => intros _; pcofix28 CIH using lem with nr
+  | [|- let _ := 29 in _] => intros _; pcofix29 CIH using lem with nr
+  | [|- let _ := 30 in _] => intros _; pcofix30 CIH using lem with nr
   end.
 
 Tactic Notation "pcofix" ident(CIH) "using" constr(lem) :=
