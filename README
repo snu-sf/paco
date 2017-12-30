@@ -7,5 +7,11 @@
 
  * Paco v1.2.8 is compatible with Coq8.3, Coq8.4 and Coq8.5.
 
- * See doc/index.html for details.
+ * See src/html/index.html for details.
 
+ * Installation
+   (For library files)
+     cd src; make; make install
+
+   (For documentation)
+     cd src; make doc; make install-doc

@@ -1,3 +1,9 @@
+(** printing \2/ $\cup$ #&cup;# *)
+(** printing <2= $\subseteq$ #&sube;# *)
+(** printing forall $\forall$ #&forall;# *)
+(** printing -> $\rightarrow$ #&rarr;# *)
+(** printing /\ $\land$ #&and;# *)
+
 Require Import ZArith List String Omega.
 Require Import paco.
 Import ListNotations.
@@ -5,6 +11,10 @@ Import ListNotations.
 Set Implicit Arguments.
 Set Contextual Implicit.
 
+(** * A Mixed Induction-Coinduction Example
+
+    Written by Steve Zdancewic.
+*)
 
 CoInductive stream (A:Type) :=
 | snil : stream A
