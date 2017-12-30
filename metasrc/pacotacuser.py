@@ -2,7 +2,8 @@ from __future__ import print_function
 import sys
 from pacolib import *
 
-print ('Require Export paconotation pacotac.')
+print ('Require Export paconotation.')
+print ('Require Import pacotac.')
 print ('Set Implicit Arguments.')
 print ('')
 

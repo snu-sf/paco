@@ -1,4 +1,5 @@
-Require Export paconotation pacotac pacotacuser.
+Require Export paconotation pacotacuser.
+Require Import pacotac.
 Set Implicit Arguments.
 
 (** ** Predicates of Arity 7

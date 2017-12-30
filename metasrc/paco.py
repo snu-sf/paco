@@ -9,7 +9,8 @@ if len(sys.argv) < 3:
 relsize = int(sys.argv[1])
 mutsize = int(sys.argv[2])
 
-print ('Require Export paconotation pacotac pacotacuser.')
+print ('Require Export paconotation pacotacuser.')
+print ('Require Import pacotac.')
 print ('Set Implicit Arguments.')
 print ('')
 
