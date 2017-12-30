@@ -96,6 +96,11 @@ Implicit Arguments paco4_3_2 [ T0 T1 T2 T3 ].
 Implicit Arguments upaco4_3_2 [ T0 T1 T2 T3 ].
 Hint Unfold upaco4_3_2.
 
+(* Less than or equal - internal use only *)
+Notation "p <_paco_4= q" :=
+  (forall _paco_x0 _paco_x1 _paco_x2 _paco_x3 (PR: p _paco_x0 _paco_x1 _paco_x2 _paco_x3 : Prop), q _paco_x0 _paco_x1 _paco_x2 _paco_x3 : Prop)
+  (at level 50, no associativity).
+
 (** 1 Mutual Coinduction *)
 
 Section Arg4_1.

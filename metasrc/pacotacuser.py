@@ -2,13 +2,6 @@ from __future__ import print_function
 import sys
 from pacolib import *
 
-if len(sys.argv) < 3: 
-    sys.stderr.write('\nUsage: '+sys.argv[0]+' relsize mutsize\n\n') 
-    sys.exit(1) 
-
-relsize = int(sys.argv[1])
-mutsize = int(sys.argv[2])
-
 print ('Require Export paconotation pacotac.')
 print ('Set Implicit Arguments.')
 print ('')
@@ -117,21 +110,3 @@ print ('')
 print ('Ltac pmonauto :=')
 print ('  let IN := fresh "IN" in try (repeat intro; destruct IN; eauto; fail).')
 print ('')
-
-print ('(** Tactics for Internal Use Only *)')
-print ('')
-print ('Ltac paco_cofix_auto :=')
-print ('  cofix; repeat intro;')
-print ('  match goal with [H: _ |- _] => destruct H end; econstructor;')
-print ('  try (match goal with [H: _|-_] => apply H end); intros;')
-print ('  lazymatch goal with [PR: _ |- _] => match goal with [H: _ |- _] => apply H in PR end end;')
-print ('  repeat match goal with [ H : _ \/ _ |- _] => destruct H end; first [eauto; fail|eauto 10].')
-print ('')
-print ('Ltac paco_revert :=')
-print ('  match goal with [H: _ |- _] => revert H end.')
-print ('')
-for n in range (relsize+1):
-    print ("Notation \"p <_paco_"+str(n)+"= q\" :=")
-    print ("  (forall"+itrstr(" _paco_x",n)+" (PR: p"+itrstr(" _paco_x",n)+" : Prop), q"+itrstr(" _paco_x",n)+" : Prop)")
-    print ("  (at level 50, no associativity).")
-    print ('')

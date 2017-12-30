@@ -111,6 +111,11 @@ Implicit Arguments paco9_3_2 [ T0 T1 T2 T3 T4 T5 T6 T7 T8 ].
 Implicit Arguments upaco9_3_2 [ T0 T1 T2 T3 T4 T5 T6 T7 T8 ].
 Hint Unfold upaco9_3_2.
 
+(* Less than or equal - internal use only *)
+Notation "p <_paco_9= q" :=
+  (forall _paco_x0 _paco_x1 _paco_x2 _paco_x3 _paco_x4 _paco_x5 _paco_x6 _paco_x7 _paco_x8 (PR: p _paco_x0 _paco_x1 _paco_x2 _paco_x3 _paco_x4 _paco_x5 _paco_x6 _paco_x7 _paco_x8 : Prop), q _paco_x0 _paco_x1 _paco_x2 _paco_x3 _paco_x4 _paco_x5 _paco_x6 _paco_x7 _paco_x8 : Prop)
+  (at level 50, no associativity).
+
 (** 1 Mutual Coinduction *)
 
 Section Arg9_1.

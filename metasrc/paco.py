@@ -49,6 +49,12 @@ for m in range(1,mutsize+1):
         print ('Hint Unfold upaco'+str(n)+lev(m)+idx(m,i)+'.')
     print ('')
 
+print ("(* Less than or equal - internal use only *)")
+print ("Notation \"p <_paco_"+str(n)+"= q\" :=")
+print ("  (forall"+itrstr(" _paco_x",n)+" (PR: p"+itrstr(" _paco_x",n)+" : Prop), q"+itrstr(" _paco_x",n)+" : Prop)")
+print ("  (at level 50, no associativity).")
+print ('')
+
 for m in range (1,mutsize+1):
     print ('(** '+str(m)+' Mutual Coinduction *)')
     print ('')

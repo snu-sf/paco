@@ -184,6 +184,16 @@ Ltac paco_ren_r nr cr :=
 
 Ltac paco_ren_pr pr cr := rename cr into pr.
 
+Ltac paco_revert :=
+  match goal with [H: _ |- _] => revert H end.
+
+Ltac paco_cofix_auto :=
+  cofix; repeat intro;
+  match goal with [H: _ |- _] => destruct H end; econstructor;
+  try (match goal with [H: _|-_] => apply H end); intros;
+  lazymatch goal with [PR: _ |- _] => match goal with [H: _ |- _] => apply H in PR end end;
+  repeat match goal with [ H : _ \/ _ |- _] => destruct H end; first [eauto; fail|eauto 10].
+
 (** *** Arity 0
 *)
 

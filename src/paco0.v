@@ -84,6 +84,11 @@ Implicit Arguments paco0_3_2 [ ].
 Implicit Arguments upaco0_3_2 [ ].
 Hint Unfold upaco0_3_2.
 
+(* Less than or equal - internal use only *)
+Notation "p <_paco_0= q" :=
+  (forall (PR: p : Prop), q : Prop)
+  (at level 50, no associativity).
+
 (** 1 Mutual Coinduction *)
 
 Section Arg0_1.
