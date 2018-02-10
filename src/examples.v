@@ -149,7 +149,7 @@ Lemma nonzero_not_infzeros: forall s
 Proof.
   intros. revert INF. induction ZST.
   - intro INF. punfold INF. dependent destruction INF.
-    dependent destruction BASE. contradiction.
+    dependent destruction BASE. intuition.
   - intro INF. apply IHZST. 
     punfold INF. dependent destruction INF. pclearbot. eauto.
 Qed.
@@ -182,7 +182,7 @@ Proof.
   intros. revert t R. induction IZ; intros.
   - punfold R. induction R; pclearbot; eauto. 
     + inversion BASE. eauto.
-    + inversion BASE. contradiction.
+    + inversion BASE. intuition.
   - punfold R. remember(scons 0 t). generalize dependent t. 
     induction R; intros; pclearbot; dependent destruction Heqs; eauto.
 Qed.
@@ -242,8 +242,8 @@ Proof.
   - induction H0.
     + pfold. punfold R. dependent destruction R; pclearbot; eauto.
       * dependent destruction BASE. eauto 10.
-      * dependent destruction BASE. contradiction.
-      * dependent destruction BASE0. contradiction.
+      * dependent destruction BASE. intuition.
+      * dependent destruction BASE0. intuition.
     + eauto using seq_zero_r, zero_gseq_r.
   - eauto using seq_zero_l, zero_gseq_l.
 Qed.
@@ -283,9 +283,9 @@ Proof.
   intros s1 s2 t ZS1. revert s2. 
   induction ZS1; subst; intros.
   - induction ZS2; subst; eauto.
-    inversion NZ1. contradiction.
+    inversion NZ1. intuition.
   - dependent destruction ZS2; eauto.
-    inversion NZ2. contradiction.
+    inversion NZ2. intuition.
 Qed.
 
 Lemma gseq_trans : forall d1 d2 d3 
