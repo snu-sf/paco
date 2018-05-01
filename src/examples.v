@@ -35,7 +35,7 @@ Proof.
   destruct s; auto.
 Qed.
 
-(* A more relaxed notion of equivalence where the 0's can be inserted finitely often in either 
+(* A more relaxed notion of equivalence where the 0's can be inserted finitely often in either
    stream. *)
 Inductive seq_step (seq : stream nat -> stream nat -> Prop) : stream nat -> stream nat -> Prop :=
 | seq_nil  : seq_step seq snil snil
@@ -47,7 +47,7 @@ Hint Constructors seq_step.
 
 Lemma seq_step_mono : monotone2 seq_step.
 Proof.
-  unfold monotone2. intros x0 x1 r r' IN LE. 
+  unfold monotone2. intros x0 x1 r r' IN LE.
   induction IN; eauto.
 Qed.
 Hint Resolve seq_step_mono : paco.
@@ -68,7 +68,7 @@ Proof.
   intros s.
   pfold.
   destruct s; auto.
-Qed.  
+Qed.
 
 Lemma seq_symm : forall s1 s2, seq s1 s2 -> seq s2 s1.
 Proof.
@@ -78,7 +78,7 @@ Proof.
   punfold H.
   induction H; try constructor; auto.
   pclearbot. right. apply CIH. punfold R.
-Qed.    
+Qed.
 
 Require Import Program Classical.
 
@@ -150,7 +150,7 @@ Proof.
   intros. revert INF. induction ZST.
   - intro INF. punfold INF. dependent destruction INF.
     dependent destruction BASE. intuition.
-  - intro INF. apply IHZST. 
+  - intro INF. apply IHZST.
     punfold INF. dependent destruction INF. pclearbot. eauto.
 Qed.
 
@@ -180,16 +180,16 @@ Lemma seq_zeros_star_imply: forall s t
   (R: seq s t) (IZ: zeros_star nonzero s), zeros_star nonzero t.
 Proof.
   intros. revert t R. induction IZ; intros.
-  - punfold R. induction R; pclearbot; eauto. 
+  - punfold R. induction R; pclearbot; eauto.
     + inversion BASE. eauto.
     + inversion BASE. intuition.
-  - punfold R. remember(scons 0 t). generalize dependent t. 
+  - punfold R. remember(scons 0 t). generalize dependent t.
     induction R; intros; pclearbot; dependent destruction Heqs; eauto.
 Qed.
 
 Lemma seq_infzeros_or_finzeros: forall s t
     (R: seq s t),
-  (infzeros s /\ infzeros t) \/ 
+  (infzeros s /\ infzeros t) \/
   (zeros_star nonzero s /\ zeros_star nonzero t).
 Proof.
   intros. destruct (@infzeros_or_finzeros s).
@@ -197,7 +197,7 @@ Proof.
   - eauto using seq_zeros_star_imply.
 Qed.
 
-Lemma seq_zero_l: forall s t 
+Lemma seq_zero_l: forall s t
     (EQ : seq (scons 0 s) t),
   seq s t.
 Proof.
@@ -207,10 +207,10 @@ Proof.
   punfold R.
 Qed.
 
-Lemma seq_zero_r: forall s t 
+Lemma seq_zero_r: forall s t
     (EQ : seq s (scons 0 t)),
   seq s t.
-Proof. 
+Proof.
   intros. punfold EQ. pfold.
   remember (scons 0 t). generalize dependent t.
   induction EQ; intros; dependent destruction Heqs0; pclearbot; eauto.
@@ -253,7 +253,7 @@ Lemma gseq_implies_seq: forall s t
 Proof.
   pcofix CIH; intros.
   punfold R. destruct R.
-  - punfold IZ1. punfold IZ2. 
+  - punfold IZ1. punfold IZ2.
     dependent destruction IZ1. dependent destruction IZ2. pclearbot.
     pfold. econstructor. right. eauto.
   - induction ZS1; subst.
@@ -280,7 +280,7 @@ Lemma zeros_star_nonzero_uniq: forall s1 s2 t
     (NZ2: nonzero s2),
   s1 = s2.
 Proof.
-  intros s1 s2 t ZS1. revert s2. 
+  intros s1 s2 t ZS1. revert s2.
   induction ZS1; subst; intros.
   - induction ZS2; subst; eauto.
     inversion NZ1. intuition.
@@ -288,7 +288,7 @@ Proof.
     inversion NZ2. intuition.
 Qed.
 
-Lemma gseq_trans : forall d1 d2 d3 
+Lemma gseq_trans : forall d1 d2 d3
   (EQL: gseq d1 d2) (EQR: gseq d2 d3), gseq d1 d3.
 Proof.
   pcofix CIH; intros.
@@ -299,7 +299,7 @@ Proof.
   - exfalso. eapply nonzero_not_infzeros, IZ1.
     eapply zeros_star_mono; eauto.
     simpl. intros. subst. destruct R; eauto.
-  - eapply zeros_star_nonzero_uniq in ZS2; 
+  - eapply zeros_star_nonzero_uniq in ZS2;
     eauto using gseq_cons_or_nil_nonzero_l, gseq_cons_or_nil_nonzero_r.
     subst. pfold. econstructor 2; eauto.
     destruct R; dependent destruction R0; pclearbot; eauto.
