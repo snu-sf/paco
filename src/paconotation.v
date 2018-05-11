@@ -4,67 +4,67 @@
 
 Definition rel0 :=
   Prop.
-Implicit Arguments rel0 [].
+Arguments rel0 : clear implicits.
 
 Definition rel1 T0 :=
   forall (x0: T0), Prop.
-Implicit Arguments rel1 [].
+Arguments rel1 : clear implicits.
 
 Definition rel2 T0 T1 :=
   forall (x0: T0) (x1: T1 x0), Prop.
-Implicit Arguments rel2 [].
+Arguments rel2 : clear implicits.
 
 Definition rel3 T0 T1 T2 :=
   forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1), Prop.
-Implicit Arguments rel3 [].
+Arguments rel3 : clear implicits.
 
 Definition rel4 T0 T1 T2 T3 :=
   forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2), Prop.
-Implicit Arguments rel4 [].
+Arguments rel4 : clear implicits.
 
 Definition rel5 T0 T1 T2 T3 T4 :=
   forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3), Prop.
-Implicit Arguments rel5 [].
+Arguments rel5 : clear implicits.
 
 Definition rel6 T0 T1 T2 T3 T4 T5 :=
   forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4), Prop.
-Implicit Arguments rel6 [].
+Arguments rel6 : clear implicits.
 
 Definition rel7 T0 T1 T2 T3 T4 T5 T6 :=
   forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5), Prop.
-Implicit Arguments rel7 [].
+Arguments rel7 : clear implicits.
 
 Definition rel8 T0 T1 T2 T3 T4 T5 T6 T7 :=
   forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6), Prop.
-Implicit Arguments rel8 [].
+Arguments rel8 : clear implicits.
 
 Definition rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 :=
   forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7), Prop.
-Implicit Arguments rel9 [].
+Arguments rel9 : clear implicits.
 
 Definition rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 :=
   forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: T9 x0 x1 x2 x3 x4 x5 x6 x7 x8), Prop.
-Implicit Arguments rel10 [].
+Arguments rel10 : clear implicits.
 
 Definition rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 :=
   forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9), Prop.
-Implicit Arguments rel11 [].
+Arguments rel11 : clear implicits.
 
 Definition rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 :=
   forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (x11: T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10), Prop.
-Implicit Arguments rel12 [].
+Arguments rel12 : clear implicits.
 
 Definition rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 :=
   forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (x11: T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) (x12: T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11), Prop.
-Implicit Arguments rel13 [].
+Arguments rel13 : clear implicits.
 
 Definition rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 :=
   forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (x11: T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) (x12: T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) (x13: T13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12), Prop.
-Implicit Arguments rel14 [].
+Arguments rel14 : clear implicits.
 
 Definition rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 :=
   forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (x11: T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) (x12: T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) (x13: T13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12) (x14: T14 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13), Prop.
-Implicit Arguments rel15 [].
+Arguments rel15 : clear implicits.
 
 (** ** Bottom *)
 

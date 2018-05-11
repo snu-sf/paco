@@ -9,7 +9,7 @@ Section Arg2_def.
 Variable T0 : Type.
 Variable T1 : forall (x0: @T0), Type.
 Variable gf : rel2 T0 T1 -> rel2 T0 T1.
-Implicit Arguments gf [].
+Arguments gf : clear implicits.
 
 CoInductive paco2( r: rel2 T0 T1) x0 x1 : Prop :=
 | paco2_pfold pco
@@ -18,16 +18,16 @@ CoInductive paco2( r: rel2 T0 T1) x0 x1 : Prop :=
 .
 Definition upaco2( r: rel2 T0 T1) := paco2 r \2/ r.
 End Arg2_def.
-Implicit Arguments paco2 [ T0 T1 ].
-Implicit Arguments upaco2 [ T0 T1 ].
+Arguments paco2 [ T0 T1 ].
+Arguments upaco2 [ T0 T1 ].
 Hint Unfold upaco2.
 
 Section Arg2_2_def.
 Variable T0 : Type.
 Variable T1 : forall (x0: @T0), Type.
 Variable gf_0 gf_1 : rel2 T0 T1 -> rel2 T0 T1 -> rel2 T0 T1.
-Implicit Arguments gf_0 [].
-Implicit Arguments gf_1 [].
+Arguments gf_0 : clear implicits.
+Arguments gf_1 : clear implicits.
 
 CoInductive paco2_2_0( r_0 r_1: rel2 T0 T1) x0 x1 : Prop :=
 | paco2_2_0_pfold pco_0 pco_1
@@ -43,20 +43,20 @@ with paco2_2_1( r_0 r_1: rel2 T0 T1) x0 x1 : Prop :=
 Definition upaco2_2_0( r_0 r_1: rel2 T0 T1) := paco2_2_0 r_0 r_1 \2/ r_0.
 Definition upaco2_2_1( r_0 r_1: rel2 T0 T1) := paco2_2_1 r_0 r_1 \2/ r_1.
 End Arg2_2_def.
-Implicit Arguments paco2_2_0 [ T0 T1 ].
-Implicit Arguments upaco2_2_0 [ T0 T1 ].
+Arguments paco2_2_0 [ T0 T1 ].
+Arguments upaco2_2_0 [ T0 T1 ].
 Hint Unfold upaco2_2_0.
-Implicit Arguments paco2_2_1 [ T0 T1 ].
-Implicit Arguments upaco2_2_1 [ T0 T1 ].
+Arguments paco2_2_1 [ T0 T1 ].
+Arguments upaco2_2_1 [ T0 T1 ].
 Hint Unfold upaco2_2_1.
 
 Section Arg2_3_def.
 Variable T0 : Type.
 Variable T1 : forall (x0: @T0), Type.
 Variable gf_0 gf_1 gf_2 : rel2 T0 T1 -> rel2 T0 T1 -> rel2 T0 T1 -> rel2 T0 T1.
-Implicit Arguments gf_0 [].
-Implicit Arguments gf_1 [].
-Implicit Arguments gf_2 [].
+Arguments gf_0 : clear implicits.
+Arguments gf_1 : clear implicits.
+Arguments gf_2 : clear implicits.
 
 CoInductive paco2_3_0( r_0 r_1 r_2: rel2 T0 T1) x0 x1 : Prop :=
 | paco2_3_0_pfold pco_0 pco_1 pco_2
@@ -81,14 +81,14 @@ Definition upaco2_3_0( r_0 r_1 r_2: rel2 T0 T1) := paco2_3_0 r_0 r_1 r_2 \2/ r_0
 Definition upaco2_3_1( r_0 r_1 r_2: rel2 T0 T1) := paco2_3_1 r_0 r_1 r_2 \2/ r_1.
 Definition upaco2_3_2( r_0 r_1 r_2: rel2 T0 T1) := paco2_3_2 r_0 r_1 r_2 \2/ r_2.
 End Arg2_3_def.
-Implicit Arguments paco2_3_0 [ T0 T1 ].
-Implicit Arguments upaco2_3_0 [ T0 T1 ].
+Arguments paco2_3_0 [ T0 T1 ].
+Arguments upaco2_3_0 [ T0 T1 ].
 Hint Unfold upaco2_3_0.
-Implicit Arguments paco2_3_1 [ T0 T1 ].
-Implicit Arguments upaco2_3_1 [ T0 T1 ].
+Arguments paco2_3_1 [ T0 T1 ].
+Arguments upaco2_3_1 [ T0 T1 ].
 Hint Unfold upaco2_3_1.
-Implicit Arguments paco2_3_2 [ T0 T1 ].
-Implicit Arguments upaco2_3_2 [ T0 T1 ].
+Arguments paco2_3_2 [ T0 T1 ].
+Arguments upaco2_3_2 [ T0 T1 ].
 Hint Unfold upaco2_3_2.
 
 (* Less than or equal - internal use only *)
@@ -106,7 +106,7 @@ Definition monotone2 T0 T1 (gf: rel2 T0 T1 -> rel2 T0 T1) :=
 Variable T0 : Type.
 Variable T1 : forall (x0: @T0), Type.
 Variable gf : rel2 T0 T1 -> rel2 T0 T1.
-Implicit Arguments gf [].
+Arguments gf : clear implicits.
 
 Theorem paco2_acc: forall
   l r (OBG: forall rr (INC: r <2= rr) (CIH: l <_paco_2= rr), l <_paco_2= paco2 gf rr),
@@ -140,12 +140,12 @@ End Arg2_1.
 Hint Unfold monotone2.
 Hint Resolve paco2_fold.
 
-Implicit Arguments paco2_acc            [ T0 T1 ].
-Implicit Arguments paco2_mon            [ T0 T1 ].
-Implicit Arguments paco2_mult_strong    [ T0 T1 ].
-Implicit Arguments paco2_mult           [ T0 T1 ].
-Implicit Arguments paco2_fold           [ T0 T1 ].
-Implicit Arguments paco2_unfold         [ T0 T1 ].
+Arguments paco2_acc            [ T0 T1 ].
+Arguments paco2_mon            [ T0 T1 ].
+Arguments paco2_mult_strong    [ T0 T1 ].
+Arguments paco2_mult           [ T0 T1 ].
+Arguments paco2_fold           [ T0 T1 ].
+Arguments paco2_unfold         [ T0 T1 ].
 
 Instance paco2_inst  T0 T1 (gf : rel2 T0 T1->_) r x0 x1 : paco_class (paco2 gf r x0 x1) :=
 { pacoacc    := paco2_acc gf;
@@ -163,8 +163,8 @@ Definition monotone2_2 T0 T1 (gf: rel2 T0 T1 -> rel2 T0 T1 -> rel2 T0 T1) :=
 Variable T0 : Type.
 Variable T1 : forall (x0: @T0), Type.
 Variable gf_0 gf_1 : rel2 T0 T1 -> rel2 T0 T1 -> rel2 T0 T1.
-Implicit Arguments gf_0 [].
-Implicit Arguments gf_1 [].
+Arguments gf_0 : clear implicits.
+Arguments gf_1 : clear implicits.
 
 Theorem paco2_2_0_acc: forall
   l r_0 r_1 (OBG: forall rr (INC: r_0 <2= rr) (CIH: l <_paco_2= rr), l <_paco_2= paco2_2_0 gf_0 gf_1 rr r_1),
@@ -226,18 +226,18 @@ Hint Unfold monotone2_2.
 Hint Resolve paco2_2_0_fold.
 Hint Resolve paco2_2_1_fold.
 
-Implicit Arguments paco2_2_0_acc            [ T0 T1 ].
-Implicit Arguments paco2_2_1_acc            [ T0 T1 ].
-Implicit Arguments paco2_2_0_mon            [ T0 T1 ].
-Implicit Arguments paco2_2_1_mon            [ T0 T1 ].
-Implicit Arguments paco2_2_0_mult_strong    [ T0 T1 ].
-Implicit Arguments paco2_2_1_mult_strong    [ T0 T1 ].
-Implicit Arguments paco2_2_0_mult           [ T0 T1 ].
-Implicit Arguments paco2_2_1_mult           [ T0 T1 ].
-Implicit Arguments paco2_2_0_fold           [ T0 T1 ].
-Implicit Arguments paco2_2_1_fold           [ T0 T1 ].
-Implicit Arguments paco2_2_0_unfold         [ T0 T1 ].
-Implicit Arguments paco2_2_1_unfold         [ T0 T1 ].
+Arguments paco2_2_0_acc            [ T0 T1 ].
+Arguments paco2_2_1_acc            [ T0 T1 ].
+Arguments paco2_2_0_mon            [ T0 T1 ].
+Arguments paco2_2_1_mon            [ T0 T1 ].
+Arguments paco2_2_0_mult_strong    [ T0 T1 ].
+Arguments paco2_2_1_mult_strong    [ T0 T1 ].
+Arguments paco2_2_0_mult           [ T0 T1 ].
+Arguments paco2_2_1_mult           [ T0 T1 ].
+Arguments paco2_2_0_fold           [ T0 T1 ].
+Arguments paco2_2_1_fold           [ T0 T1 ].
+Arguments paco2_2_0_unfold         [ T0 T1 ].
+Arguments paco2_2_1_unfold         [ T0 T1 ].
 
 Instance paco2_2_0_inst  T0 T1 (gf_0 gf_1 : rel2 T0 T1->_) r_0 r_1 x0 x1 : paco_class (paco2_2_0 gf_0 gf_1 r_0 r_1 x0 x1) :=
 { pacoacc    := paco2_2_0_acc gf_0 gf_1;
@@ -261,9 +261,9 @@ Definition monotone2_3 T0 T1 (gf: rel2 T0 T1 -> rel2 T0 T1 -> rel2 T0 T1 -> rel2
 Variable T0 : Type.
 Variable T1 : forall (x0: @T0), Type.
 Variable gf_0 gf_1 gf_2 : rel2 T0 T1 -> rel2 T0 T1 -> rel2 T0 T1 -> rel2 T0 T1.
-Implicit Arguments gf_0 [].
-Implicit Arguments gf_1 [].
-Implicit Arguments gf_2 [].
+Arguments gf_0 : clear implicits.
+Arguments gf_1 : clear implicits.
+Arguments gf_2 : clear implicits.
 
 Theorem paco2_3_0_acc: forall
   l r_0 r_1 r_2 (OBG: forall rr (INC: r_0 <2= rr) (CIH: l <_paco_2= rr), l <_paco_2= paco2_3_0 gf_0 gf_1 gf_2 rr r_1 r_2),
@@ -353,24 +353,24 @@ Hint Resolve paco2_3_0_fold.
 Hint Resolve paco2_3_1_fold.
 Hint Resolve paco2_3_2_fold.
 
-Implicit Arguments paco2_3_0_acc            [ T0 T1 ].
-Implicit Arguments paco2_3_1_acc            [ T0 T1 ].
-Implicit Arguments paco2_3_2_acc            [ T0 T1 ].
-Implicit Arguments paco2_3_0_mon            [ T0 T1 ].
-Implicit Arguments paco2_3_1_mon            [ T0 T1 ].
-Implicit Arguments paco2_3_2_mon            [ T0 T1 ].
-Implicit Arguments paco2_3_0_mult_strong    [ T0 T1 ].
-Implicit Arguments paco2_3_1_mult_strong    [ T0 T1 ].
-Implicit Arguments paco2_3_2_mult_strong    [ T0 T1 ].
-Implicit Arguments paco2_3_0_mult           [ T0 T1 ].
-Implicit Arguments paco2_3_1_mult           [ T0 T1 ].
-Implicit Arguments paco2_3_2_mult           [ T0 T1 ].
-Implicit Arguments paco2_3_0_fold           [ T0 T1 ].
-Implicit Arguments paco2_3_1_fold           [ T0 T1 ].
-Implicit Arguments paco2_3_2_fold           [ T0 T1 ].
-Implicit Arguments paco2_3_0_unfold         [ T0 T1 ].
-Implicit Arguments paco2_3_1_unfold         [ T0 T1 ].
-Implicit Arguments paco2_3_2_unfold         [ T0 T1 ].
+Arguments paco2_3_0_acc            [ T0 T1 ].
+Arguments paco2_3_1_acc            [ T0 T1 ].
+Arguments paco2_3_2_acc            [ T0 T1 ].
+Arguments paco2_3_0_mon            [ T0 T1 ].
+Arguments paco2_3_1_mon            [ T0 T1 ].
+Arguments paco2_3_2_mon            [ T0 T1 ].
+Arguments paco2_3_0_mult_strong    [ T0 T1 ].
+Arguments paco2_3_1_mult_strong    [ T0 T1 ].
+Arguments paco2_3_2_mult_strong    [ T0 T1 ].
+Arguments paco2_3_0_mult           [ T0 T1 ].
+Arguments paco2_3_1_mult           [ T0 T1 ].
+Arguments paco2_3_2_mult           [ T0 T1 ].
+Arguments paco2_3_0_fold           [ T0 T1 ].
+Arguments paco2_3_1_fold           [ T0 T1 ].
+Arguments paco2_3_2_fold           [ T0 T1 ].
+Arguments paco2_3_0_unfold         [ T0 T1 ].
+Arguments paco2_3_1_unfold         [ T0 T1 ].
+Arguments paco2_3_2_unfold         [ T0 T1 ].
 
 Instance paco2_3_0_inst  T0 T1 (gf_0 gf_1 gf_2 : rel2 T0 T1->_) r_0 r_1 r_2 x0 x1 : paco_class (paco2_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2 x0 x1) :=
 { pacoacc    := paco2_3_0_acc gf_0 gf_1 gf_2;

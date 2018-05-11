@@ -29,7 +29,7 @@ for m in range(1,mutsize+1):
         print (ifpstr(i,', ')+'Type.')
     print ('Variable'+itridx(" gf",m)+' : '+m*('rel'+str(n)+itrstr(" T",n)+' -> ')+'rel'+str(n)+itrstr(" T",n)+'.')
     for i in range(m):
-        print ('Implicit Arguments gf'+idx(m,i)+' [].')
+        print ('Arguments gf'+idx(m,i)+' : clear implicits.')
     print ('')
     print ('CoInductive ',end='')
     for i in range(m):
@@ -45,8 +45,8 @@ for m in range(1,mutsize+1):
         print ('.')
     print ('End Arg'+str(n)+lev(m)+'_def.')
     for i in range(m):
-        print ('Implicit Arguments paco'+str(n)+lev(m)+idx(m,i)+' ['+itrstr(" T",n)+' ].')
-        print ('Implicit Arguments upaco'+str(n)+lev(m)+idx(m,i)+' ['+itrstr(" T",n)+' ].')
+        print ('Arguments paco'+str(n)+lev(m)+idx(m,i)+ifpstr(n,' ['+itrstr(" T",n)+' ].'," : clear implicits."))
+        print ('Arguments upaco'+str(n)+lev(m)+idx(m,i)+ifpstr(n,' ['+itrstr(" T",n)+' ].'," : clear implicits."))
         print ('Hint Unfold upaco'+str(n)+lev(m)+idx(m,i)+'.')
     print ('')
 
@@ -74,7 +74,7 @@ for m in range (1,mutsize+1):
         print (ifpstr(i,', ')+'Type.')
     print ('Variable'+itridx(" gf",m)+' : '+m*('rel'+str(n)+itrstr(" T",n)+' -> ')+'rel'+str(n)+itrstr(" T",n)+'.')
     for i in range(m):
-        print ('Implicit Arguments gf'+idx(m,i)+' [].')
+        print ('Arguments gf'+idx(m,i)+' : clear implicits.')
     print ('')
     for i in range(m):
         print ('Theorem paco'+str(n)+lev(m)+idx(m,i)+'_acc: forall')
@@ -137,17 +137,17 @@ for m in range (1,mutsize+1):
         print ('Hint Resolve paco'+str(n)+lev(m)+idx(m,i)+'_fold.')
     print ('')
     for i in range(m):
-        print ('Implicit Arguments paco'+str(n)+lev(m)+idx(m,i)+'_acc            ['+itrstr(" T",n)+' ].')
+        print ('Arguments paco'+str(n)+lev(m)+idx(m,i)+'_acc'+ifpstr(n,'            ['+itrstr(" T",n)+' ].'," : clear implicits."))
     for i in range(m):
-        print ('Implicit Arguments paco'+str(n)+lev(m)+idx(m,i)+'_mon            ['+itrstr(" T",n)+' ].')
+        print ('Arguments paco'+str(n)+lev(m)+idx(m,i)+'_mon'+ifpstr(n,'            ['+itrstr(" T",n)+' ].'," : clear implicits."))
     for i in range(m):
-        print ('Implicit Arguments paco'+str(n)+lev(m)+idx(m,i)+'_mult_strong    ['+itrstr(" T",n)+' ].')
+        print ('Arguments paco'+str(n)+lev(m)+idx(m,i)+'_mult_strong'+ifpstr(n,'    ['+itrstr(" T",n)+' ].'," : clear implicits."))
     for i in range(m):
-        print ('Implicit Arguments paco'+str(n)+lev(m)+idx(m,i)+'_mult           ['+itrstr(" T",n)+' ].')
+        print ('Arguments paco'+str(n)+lev(m)+idx(m,i)+'_mult'+ifpstr(n,'           ['+itrstr(" T",n)+' ].'," : clear implicits."))
     for i in range(m):
-        print ('Implicit Arguments paco'+str(n)+lev(m)+idx(m,i)+'_fold           ['+itrstr(" T",n)+' ].')
+        print ('Arguments paco'+str(n)+lev(m)+idx(m,i)+'_fold'+ifpstr(n,'           ['+itrstr(" T",n)+' ].'," : clear implicits."))
     for i in range(m):
-        print ('Implicit Arguments paco'+str(n)+lev(m)+idx(m,i)+'_unfold         ['+itrstr(" T",n)+' ].')
+        print ('Arguments paco'+str(n)+lev(m)+idx(m,i)+'_unfold'+ifpstr(n,'         ['+itrstr(" T",n)+' ].'," : clear implicits."))
     print ('')
 
     for i in range(m):

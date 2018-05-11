@@ -188,7 +188,7 @@ Ltac paco_revert :=
   match goal with [H: _ |- _] => revert H end.
 
 Ltac paco_cofix_auto :=
-  cofix; repeat intro;
+  let CIH := fresh "CIH" in cofix CIH; repeat intro;
   match goal with [H: _ |- _] => destruct H end; econstructor;
   try (match goal with [H: _|-_] => apply H end); intros;
   lazymatch goal with [PR: _ |- _] => match goal with [H: _ |- _] => apply H in PR end end;

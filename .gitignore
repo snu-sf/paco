@@ -9,3 +9,4 @@ _CoqProject
 *.v.d
 *.glob
 *.pyc
+\#*\#
