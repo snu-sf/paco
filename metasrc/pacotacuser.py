@@ -92,7 +92,7 @@ print ()
 print ('Ltac pclearbot :=')
 print ('  let X := fresh "_X" in')
 print ('  repeat match goal with')
-print ('  | [H: appcontext[pacoid] |- _] => red in H; destruct H as [H|X]; [|contradiction X]')
+print ('  | [H: context[pacoid] |- _] => red in H; destruct H as [H|X]; [|contradiction X]')
 print ('  end.')
 print ()
 

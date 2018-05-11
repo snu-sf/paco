@@ -198,7 +198,7 @@ print ('Ltac paco_revert :=')
 print ('  match goal with [H: _ |- _] => revert H end.')
 print ('')
 print ('Ltac paco_cofix_auto :=')
-print ('  cofix; repeat intro;')
+print ('  let CIH := fresh "CIH" in cofix CIH; repeat intro;')
 print ('  match goal with [H: _ |- _] => destruct H end; econstructor;')
 print ('  try (match goal with [H: _|-_] => apply H end); intros;')
 print ('  lazymatch goal with [PR: _ |- _] => match goal with [H: _ |- _] => apply H in PR end end;')
@@ -232,7 +232,7 @@ for n in range (1,relsize+1):
     print ("(** *** Arity "+str(n)) 
     print ("*)")
     print ()
-    print ("Ltac paco_cont"+str(n)+itrstr(" e",n)+" := ")
+    print ("Ltac paco_cont"+str(n)+itrstr(" e",n)+" :=")
     for i in range(n):
         print ('let x'+str(i)+' := fresh "_paco_v_" in let EQ'+str(i)+' := fresh "_paco_EQ_" in')
     for i in reversed(range(n)):
@@ -240,7 +240,7 @@ for n in range (1,relsize+1):
     for i in range(n):
         print ('intros x'+str(i)+' EQ'+str(i)+';')
     print ('generalize'+itrstr(' (conj EQ',n-1)+' EQ'+str(n-1)+(n-1)*')'+'; clear'+itrstr(' EQ',n)+';')
-    print (itrstr('move x',n,' at top; '))
+    print (itrstr('move x',n-1,' at top; ')+'move x'+str(n-1)+' at top;')
     print ('paco_generalize_hyp _paco_mark; revert'+itrstr(' x',n)+'.')
     print ()
 
@@ -307,7 +307,7 @@ for n in reversed(range(relsize+1)):
 print ('     end; destruct TMP);')
 print ('  clear TMP;')
 print ('  revert N;')
-print ('  match goal with ')
+print ('  match goal with')
 for n in range(relsize+1):
     print ('  | [|- let _ := '+str(n)+' in _] => intros _; pcofix'+str(n)+' CIH using lem with nr')
 print ('  end.')

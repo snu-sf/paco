@@ -19,7 +19,7 @@ for n in range (relsize+1):
     for i in range (n):
         print (" (x"+str(i)+": T"+str(i)+itrstr(" x",i)+")",end='')
     print (ifpstr(n,", ")+"Prop.")
-    print ("Implicit Arguments rel"+str(n)+" [].")
+    print ("Arguments rel"+str(n)+" : clear implicits.")
     print ()
 
 print ("(** ** Bottom *)")

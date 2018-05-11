@@ -12,7 +12,7 @@ Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
 Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
 Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), Type.
 Variable gf : rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4.
-Implicit Arguments gf [].
+Arguments gf : clear implicits.
 
 CoInductive paco5( r: rel5 T0 T1 T2 T3 T4) x0 x1 x2 x3 x4 : Prop :=
 | paco5_pfold pco
@@ -21,8 +21,8 @@ CoInductive paco5( r: rel5 T0 T1 T2 T3 T4) x0 x1 x2 x3 x4 : Prop :=
 .
 Definition upaco5( r: rel5 T0 T1 T2 T3 T4) := paco5 r \5/ r.
 End Arg5_def.
-Implicit Arguments paco5 [ T0 T1 T2 T3 T4 ].
-Implicit Arguments upaco5 [ T0 T1 T2 T3 T4 ].
+Arguments paco5 [ T0 T1 T2 T3 T4 ].
+Arguments upaco5 [ T0 T1 T2 T3 T4 ].
 Hint Unfold upaco5.
 
 Section Arg5_2_def.
@@ -32,8 +32,8 @@ Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
 Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
 Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), Type.
 Variable gf_0 gf_1 : rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4.
-Implicit Arguments gf_0 [].
-Implicit Arguments gf_1 [].
+Arguments gf_0 : clear implicits.
+Arguments gf_1 : clear implicits.
 
 CoInductive paco5_2_0( r_0 r_1: rel5 T0 T1 T2 T3 T4) x0 x1 x2 x3 x4 : Prop :=
 | paco5_2_0_pfold pco_0 pco_1
@@ -49,11 +49,11 @@ with paco5_2_1( r_0 r_1: rel5 T0 T1 T2 T3 T4) x0 x1 x2 x3 x4 : Prop :=
 Definition upaco5_2_0( r_0 r_1: rel5 T0 T1 T2 T3 T4) := paco5_2_0 r_0 r_1 \5/ r_0.
 Definition upaco5_2_1( r_0 r_1: rel5 T0 T1 T2 T3 T4) := paco5_2_1 r_0 r_1 \5/ r_1.
 End Arg5_2_def.
-Implicit Arguments paco5_2_0 [ T0 T1 T2 T3 T4 ].
-Implicit Arguments upaco5_2_0 [ T0 T1 T2 T3 T4 ].
+Arguments paco5_2_0 [ T0 T1 T2 T3 T4 ].
+Arguments upaco5_2_0 [ T0 T1 T2 T3 T4 ].
 Hint Unfold upaco5_2_0.
-Implicit Arguments paco5_2_1 [ T0 T1 T2 T3 T4 ].
-Implicit Arguments upaco5_2_1 [ T0 T1 T2 T3 T4 ].
+Arguments paco5_2_1 [ T0 T1 T2 T3 T4 ].
+Arguments upaco5_2_1 [ T0 T1 T2 T3 T4 ].
 Hint Unfold upaco5_2_1.
 
 Section Arg5_3_def.
@@ -63,9 +63,9 @@ Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
 Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
 Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), Type.
 Variable gf_0 gf_1 gf_2 : rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4.
-Implicit Arguments gf_0 [].
-Implicit Arguments gf_1 [].
-Implicit Arguments gf_2 [].
+Arguments gf_0 : clear implicits.
+Arguments gf_1 : clear implicits.
+Arguments gf_2 : clear implicits.
 
 CoInductive paco5_3_0( r_0 r_1 r_2: rel5 T0 T1 T2 T3 T4) x0 x1 x2 x3 x4 : Prop :=
 | paco5_3_0_pfold pco_0 pco_1 pco_2
@@ -90,14 +90,14 @@ Definition upaco5_3_0( r_0 r_1 r_2: rel5 T0 T1 T2 T3 T4) := paco5_3_0 r_0 r_1 r_
 Definition upaco5_3_1( r_0 r_1 r_2: rel5 T0 T1 T2 T3 T4) := paco5_3_1 r_0 r_1 r_2 \5/ r_1.
 Definition upaco5_3_2( r_0 r_1 r_2: rel5 T0 T1 T2 T3 T4) := paco5_3_2 r_0 r_1 r_2 \5/ r_2.
 End Arg5_3_def.
-Implicit Arguments paco5_3_0 [ T0 T1 T2 T3 T4 ].
-Implicit Arguments upaco5_3_0 [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_0 [ T0 T1 T2 T3 T4 ].
+Arguments upaco5_3_0 [ T0 T1 T2 T3 T4 ].
 Hint Unfold upaco5_3_0.
-Implicit Arguments paco5_3_1 [ T0 T1 T2 T3 T4 ].
-Implicit Arguments upaco5_3_1 [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_1 [ T0 T1 T2 T3 T4 ].
+Arguments upaco5_3_1 [ T0 T1 T2 T3 T4 ].
 Hint Unfold upaco5_3_1.
-Implicit Arguments paco5_3_2 [ T0 T1 T2 T3 T4 ].
-Implicit Arguments upaco5_3_2 [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_2 [ T0 T1 T2 T3 T4 ].
+Arguments upaco5_3_2 [ T0 T1 T2 T3 T4 ].
 Hint Unfold upaco5_3_2.
 
 (* Less than or equal - internal use only *)
@@ -118,7 +118,7 @@ Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
 Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
 Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), Type.
 Variable gf : rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4.
-Implicit Arguments gf [].
+Arguments gf : clear implicits.
 
 Theorem paco5_acc: forall
   l r (OBG: forall rr (INC: r <5= rr) (CIH: l <_paco_5= rr), l <_paco_5= paco5 gf rr),
@@ -152,12 +152,12 @@ End Arg5_1.
 Hint Unfold monotone5.
 Hint Resolve paco5_fold.
 
-Implicit Arguments paco5_acc            [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_mon            [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_mult_strong    [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_mult           [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_fold           [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_unfold         [ T0 T1 T2 T3 T4 ].
+Arguments paco5_acc            [ T0 T1 T2 T3 T4 ].
+Arguments paco5_mon            [ T0 T1 T2 T3 T4 ].
+Arguments paco5_mult_strong    [ T0 T1 T2 T3 T4 ].
+Arguments paco5_mult           [ T0 T1 T2 T3 T4 ].
+Arguments paco5_fold           [ T0 T1 T2 T3 T4 ].
+Arguments paco5_unfold         [ T0 T1 T2 T3 T4 ].
 
 Instance paco5_inst  T0 T1 T2 T3 T4 (gf : rel5 T0 T1 T2 T3 T4->_) r x0 x1 x2 x3 x4 : paco_class (paco5 gf r x0 x1 x2 x3 x4) :=
 { pacoacc    := paco5_acc gf;
@@ -178,8 +178,8 @@ Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
 Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
 Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), Type.
 Variable gf_0 gf_1 : rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4.
-Implicit Arguments gf_0 [].
-Implicit Arguments gf_1 [].
+Arguments gf_0 : clear implicits.
+Arguments gf_1 : clear implicits.
 
 Theorem paco5_2_0_acc: forall
   l r_0 r_1 (OBG: forall rr (INC: r_0 <5= rr) (CIH: l <_paco_5= rr), l <_paco_5= paco5_2_0 gf_0 gf_1 rr r_1),
@@ -241,18 +241,18 @@ Hint Unfold monotone5_2.
 Hint Resolve paco5_2_0_fold.
 Hint Resolve paco5_2_1_fold.
 
-Implicit Arguments paco5_2_0_acc            [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_2_1_acc            [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_2_0_mon            [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_2_1_mon            [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_2_0_mult_strong    [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_2_1_mult_strong    [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_2_0_mult           [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_2_1_mult           [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_2_0_fold           [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_2_1_fold           [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_2_0_unfold         [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_2_1_unfold         [ T0 T1 T2 T3 T4 ].
+Arguments paco5_2_0_acc            [ T0 T1 T2 T3 T4 ].
+Arguments paco5_2_1_acc            [ T0 T1 T2 T3 T4 ].
+Arguments paco5_2_0_mon            [ T0 T1 T2 T3 T4 ].
+Arguments paco5_2_1_mon            [ T0 T1 T2 T3 T4 ].
+Arguments paco5_2_0_mult_strong    [ T0 T1 T2 T3 T4 ].
+Arguments paco5_2_1_mult_strong    [ T0 T1 T2 T3 T4 ].
+Arguments paco5_2_0_mult           [ T0 T1 T2 T3 T4 ].
+Arguments paco5_2_1_mult           [ T0 T1 T2 T3 T4 ].
+Arguments paco5_2_0_fold           [ T0 T1 T2 T3 T4 ].
+Arguments paco5_2_1_fold           [ T0 T1 T2 T3 T4 ].
+Arguments paco5_2_0_unfold         [ T0 T1 T2 T3 T4 ].
+Arguments paco5_2_1_unfold         [ T0 T1 T2 T3 T4 ].
 
 Instance paco5_2_0_inst  T0 T1 T2 T3 T4 (gf_0 gf_1 : rel5 T0 T1 T2 T3 T4->_) r_0 r_1 x0 x1 x2 x3 x4 : paco_class (paco5_2_0 gf_0 gf_1 r_0 r_1 x0 x1 x2 x3 x4) :=
 { pacoacc    := paco5_2_0_acc gf_0 gf_1;
@@ -279,9 +279,9 @@ Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
 Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
 Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), Type.
 Variable gf_0 gf_1 gf_2 : rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4.
-Implicit Arguments gf_0 [].
-Implicit Arguments gf_1 [].
-Implicit Arguments gf_2 [].
+Arguments gf_0 : clear implicits.
+Arguments gf_1 : clear implicits.
+Arguments gf_2 : clear implicits.
 
 Theorem paco5_3_0_acc: forall
   l r_0 r_1 r_2 (OBG: forall rr (INC: r_0 <5= rr) (CIH: l <_paco_5= rr), l <_paco_5= paco5_3_0 gf_0 gf_1 gf_2 rr r_1 r_2),
@@ -371,24 +371,24 @@ Hint Resolve paco5_3_0_fold.
 Hint Resolve paco5_3_1_fold.
 Hint Resolve paco5_3_2_fold.
 
-Implicit Arguments paco5_3_0_acc            [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_3_1_acc            [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_3_2_acc            [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_3_0_mon            [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_3_1_mon            [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_3_2_mon            [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_3_0_mult_strong    [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_3_1_mult_strong    [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_3_2_mult_strong    [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_3_0_mult           [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_3_1_mult           [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_3_2_mult           [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_3_0_fold           [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_3_1_fold           [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_3_2_fold           [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_3_0_unfold         [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_3_1_unfold         [ T0 T1 T2 T3 T4 ].
-Implicit Arguments paco5_3_2_unfold         [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_0_acc            [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_1_acc            [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_2_acc            [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_0_mon            [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_1_mon            [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_2_mon            [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_0_mult_strong    [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_1_mult_strong    [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_2_mult_strong    [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_0_mult           [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_1_mult           [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_2_mult           [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_0_fold           [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_1_fold           [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_2_fold           [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_0_unfold         [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_1_unfold         [ T0 T1 T2 T3 T4 ].
+Arguments paco5_3_2_unfold         [ T0 T1 T2 T3 T4 ].
 
 Instance paco5_3_0_inst  T0 T1 T2 T3 T4 (gf_0 gf_1 gf_2 : rel5 T0 T1 T2 T3 T4->_) r_0 r_1 r_2 x0 x1 x2 x3 x4 : paco_class (paco5_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2 x0 x1 x2 x3 x4) :=
 { pacoacc    := paco5_3_0_acc gf_0 gf_1 gf_2;

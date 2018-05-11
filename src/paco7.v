@@ -14,7 +14,7 @@ Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), 
 Variable T5 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3), Type.
 Variable T6 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4), Type.
 Variable gf : rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6.
-Implicit Arguments gf [].
+Arguments gf : clear implicits.
 
 CoInductive paco7( r: rel7 T0 T1 T2 T3 T4 T5 T6) x0 x1 x2 x3 x4 x5 x6 : Prop :=
 | paco7_pfold pco
@@ -23,8 +23,8 @@ CoInductive paco7( r: rel7 T0 T1 T2 T3 T4 T5 T6) x0 x1 x2 x3 x4 x5 x6 : Prop :=
 .
 Definition upaco7( r: rel7 T0 T1 T2 T3 T4 T5 T6) := paco7 r \7/ r.
 End Arg7_def.
-Implicit Arguments paco7 [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments upaco7 [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7 [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments upaco7 [ T0 T1 T2 T3 T4 T5 T6 ].
 Hint Unfold upaco7.
 
 Section Arg7_2_def.
@@ -36,8 +36,8 @@ Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), 
 Variable T5 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3), Type.
 Variable T6 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4), Type.
 Variable gf_0 gf_1 : rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6.
-Implicit Arguments gf_0 [].
-Implicit Arguments gf_1 [].
+Arguments gf_0 : clear implicits.
+Arguments gf_1 : clear implicits.
 
 CoInductive paco7_2_0( r_0 r_1: rel7 T0 T1 T2 T3 T4 T5 T6) x0 x1 x2 x3 x4 x5 x6 : Prop :=
 | paco7_2_0_pfold pco_0 pco_1
@@ -53,11 +53,11 @@ with paco7_2_1( r_0 r_1: rel7 T0 T1 T2 T3 T4 T5 T6) x0 x1 x2 x3 x4 x5 x6 : Prop 
 Definition upaco7_2_0( r_0 r_1: rel7 T0 T1 T2 T3 T4 T5 T6) := paco7_2_0 r_0 r_1 \7/ r_0.
 Definition upaco7_2_1( r_0 r_1: rel7 T0 T1 T2 T3 T4 T5 T6) := paco7_2_1 r_0 r_1 \7/ r_1.
 End Arg7_2_def.
-Implicit Arguments paco7_2_0 [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments upaco7_2_0 [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_2_0 [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments upaco7_2_0 [ T0 T1 T2 T3 T4 T5 T6 ].
 Hint Unfold upaco7_2_0.
-Implicit Arguments paco7_2_1 [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments upaco7_2_1 [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_2_1 [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments upaco7_2_1 [ T0 T1 T2 T3 T4 T5 T6 ].
 Hint Unfold upaco7_2_1.
 
 Section Arg7_3_def.
@@ -69,9 +69,9 @@ Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), 
 Variable T5 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3), Type.
 Variable T6 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4), Type.
 Variable gf_0 gf_1 gf_2 : rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6.
-Implicit Arguments gf_0 [].
-Implicit Arguments gf_1 [].
-Implicit Arguments gf_2 [].
+Arguments gf_0 : clear implicits.
+Arguments gf_1 : clear implicits.
+Arguments gf_2 : clear implicits.
 
 CoInductive paco7_3_0( r_0 r_1 r_2: rel7 T0 T1 T2 T3 T4 T5 T6) x0 x1 x2 x3 x4 x5 x6 : Prop :=
 | paco7_3_0_pfold pco_0 pco_1 pco_2
@@ -96,14 +96,14 @@ Definition upaco7_3_0( r_0 r_1 r_2: rel7 T0 T1 T2 T3 T4 T5 T6) := paco7_3_0 r_0 
 Definition upaco7_3_1( r_0 r_1 r_2: rel7 T0 T1 T2 T3 T4 T5 T6) := paco7_3_1 r_0 r_1 r_2 \7/ r_1.
 Definition upaco7_3_2( r_0 r_1 r_2: rel7 T0 T1 T2 T3 T4 T5 T6) := paco7_3_2 r_0 r_1 r_2 \7/ r_2.
 End Arg7_3_def.
-Implicit Arguments paco7_3_0 [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments upaco7_3_0 [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_0 [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments upaco7_3_0 [ T0 T1 T2 T3 T4 T5 T6 ].
 Hint Unfold upaco7_3_0.
-Implicit Arguments paco7_3_1 [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments upaco7_3_1 [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_1 [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments upaco7_3_1 [ T0 T1 T2 T3 T4 T5 T6 ].
 Hint Unfold upaco7_3_1.
-Implicit Arguments paco7_3_2 [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments upaco7_3_2 [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_2 [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments upaco7_3_2 [ T0 T1 T2 T3 T4 T5 T6 ].
 Hint Unfold upaco7_3_2.
 
 (* Less than or equal - internal use only *)
@@ -126,7 +126,7 @@ Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), 
 Variable T5 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3), Type.
 Variable T6 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4), Type.
 Variable gf : rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6.
-Implicit Arguments gf [].
+Arguments gf : clear implicits.
 
 Theorem paco7_acc: forall
   l r (OBG: forall rr (INC: r <7= rr) (CIH: l <_paco_7= rr), l <_paco_7= paco7 gf rr),
@@ -160,12 +160,12 @@ End Arg7_1.
 Hint Unfold monotone7.
 Hint Resolve paco7_fold.
 
-Implicit Arguments paco7_acc            [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_mon            [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_mult_strong    [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_mult           [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_fold           [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_unfold         [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_acc            [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_mon            [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_mult_strong    [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_mult           [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_fold           [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_unfold         [ T0 T1 T2 T3 T4 T5 T6 ].
 
 Instance paco7_inst  T0 T1 T2 T3 T4 T5 T6 (gf : rel7 T0 T1 T2 T3 T4 T5 T6->_) r x0 x1 x2 x3 x4 x5 x6 : paco_class (paco7 gf r x0 x1 x2 x3 x4 x5 x6) :=
 { pacoacc    := paco7_acc gf;
@@ -188,8 +188,8 @@ Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), 
 Variable T5 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3), Type.
 Variable T6 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4), Type.
 Variable gf_0 gf_1 : rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6.
-Implicit Arguments gf_0 [].
-Implicit Arguments gf_1 [].
+Arguments gf_0 : clear implicits.
+Arguments gf_1 : clear implicits.
 
 Theorem paco7_2_0_acc: forall
   l r_0 r_1 (OBG: forall rr (INC: r_0 <7= rr) (CIH: l <_paco_7= rr), l <_paco_7= paco7_2_0 gf_0 gf_1 rr r_1),
@@ -251,18 +251,18 @@ Hint Unfold monotone7_2.
 Hint Resolve paco7_2_0_fold.
 Hint Resolve paco7_2_1_fold.
 
-Implicit Arguments paco7_2_0_acc            [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_2_1_acc            [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_2_0_mon            [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_2_1_mon            [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_2_0_mult_strong    [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_2_1_mult_strong    [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_2_0_mult           [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_2_1_mult           [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_2_0_fold           [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_2_1_fold           [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_2_0_unfold         [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_2_1_unfold         [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_2_0_acc            [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_2_1_acc            [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_2_0_mon            [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_2_1_mon            [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_2_0_mult_strong    [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_2_1_mult_strong    [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_2_0_mult           [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_2_1_mult           [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_2_0_fold           [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_2_1_fold           [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_2_0_unfold         [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_2_1_unfold         [ T0 T1 T2 T3 T4 T5 T6 ].
 
 Instance paco7_2_0_inst  T0 T1 T2 T3 T4 T5 T6 (gf_0 gf_1 : rel7 T0 T1 T2 T3 T4 T5 T6->_) r_0 r_1 x0 x1 x2 x3 x4 x5 x6 : paco_class (paco7_2_0 gf_0 gf_1 r_0 r_1 x0 x1 x2 x3 x4 x5 x6) :=
 { pacoacc    := paco7_2_0_acc gf_0 gf_1;
@@ -291,9 +291,9 @@ Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), 
 Variable T5 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3), Type.
 Variable T6 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4), Type.
 Variable gf_0 gf_1 gf_2 : rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6.
-Implicit Arguments gf_0 [].
-Implicit Arguments gf_1 [].
-Implicit Arguments gf_2 [].
+Arguments gf_0 : clear implicits.
+Arguments gf_1 : clear implicits.
+Arguments gf_2 : clear implicits.
 
 Theorem paco7_3_0_acc: forall
   l r_0 r_1 r_2 (OBG: forall rr (INC: r_0 <7= rr) (CIH: l <_paco_7= rr), l <_paco_7= paco7_3_0 gf_0 gf_1 gf_2 rr r_1 r_2),
@@ -383,24 +383,24 @@ Hint Resolve paco7_3_0_fold.
 Hint Resolve paco7_3_1_fold.
 Hint Resolve paco7_3_2_fold.
 
-Implicit Arguments paco7_3_0_acc            [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_3_1_acc            [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_3_2_acc            [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_3_0_mon            [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_3_1_mon            [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_3_2_mon            [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_3_0_mult_strong    [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_3_1_mult_strong    [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_3_2_mult_strong    [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_3_0_mult           [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_3_1_mult           [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_3_2_mult           [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_3_0_fold           [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_3_1_fold           [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_3_2_fold           [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_3_0_unfold         [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_3_1_unfold         [ T0 T1 T2 T3 T4 T5 T6 ].
-Implicit Arguments paco7_3_2_unfold         [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_0_acc            [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_1_acc            [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_2_acc            [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_0_mon            [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_1_mon            [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_2_mon            [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_0_mult_strong    [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_1_mult_strong    [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_2_mult_strong    [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_0_mult           [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_1_mult           [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_2_mult           [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_0_fold           [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_1_fold           [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_2_fold           [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_0_unfold         [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_1_unfold         [ T0 T1 T2 T3 T4 T5 T6 ].
+Arguments paco7_3_2_unfold         [ T0 T1 T2 T3 T4 T5 T6 ].
 
 Instance paco7_3_0_inst  T0 T1 T2 T3 T4 T5 T6 (gf_0 gf_1 gf_2 : rel7 T0 T1 T2 T3 T4 T5 T6->_) r_0 r_1 r_2 x0 x1 x2 x3 x4 x5 x6 : paco_class (paco7_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2 x0 x1 x2 x3 x4 x5 x6) :=
 { pacoacc    := paco7_3_0_acc gf_0 gf_1 gf_2;

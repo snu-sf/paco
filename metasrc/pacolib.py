@@ -1,14 +1,14 @@
-def ifpstr(n,s):
+def ifpstr(n,s1,s2=""):
     if n > 0:
-        return s
+        return s1
     else:
-        return ""
+        return s2
 
-def ifzstr(n,s):
+def ifzstr(n,s1,s2=""):
     if n == 0:
-        return s
+        return s1
     else:
-        return ""
+        return s2
 
 def itrstr(prefix,n,postfix=''):
     result = ""
