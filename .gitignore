@@ -10,3 +10,4 @@ _CoqProject
 *.glob
 *.pyc
 \#*\#
+*~
