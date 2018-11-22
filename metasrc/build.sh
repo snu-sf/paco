@@ -2,10 +2,10 @@
 
 PACOSRCDIR=../src
 
-maxsize=15
-relsize=15
+maxsize=18
 mutsize=3
 
+rm $PACOSRCDIR/paco*.v
 python paconotation.py $maxsize > $PACOSRCDIR/paconotation.v
 python paconotation_internal.py $maxsize > $PACOSRCDIR/paconotation_internal.v
 python pacotac.py $maxsize > $PACOSRCDIR/pacotac.v
@@ -13,6 +13,6 @@ python pacotacuser.py > $PACOSRCDIR/pacotacuser.v
 python pacon.py ${mutsize} > $PACOSRCDIR/pacon.v
 
 echo "" > $PACOSRCDIR/paco.v
-for i in `seq 0 $relsize`; do
+for i in `seq 0 $maxsize`; do
   ./build-add.sh $i $mutsize
 done

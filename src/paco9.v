@@ -33,7 +33,7 @@ Definition curry9 (R: rel1 sig9T): rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 :=
   fun x0 x1 x2 x3 x4 x5 x6 x7 x8 => R (exist9T x8).
 
 Lemma uncurry_map9 r0 r1 (LE : r0 <9== r1) : uncurry9 r0 <1== uncurry9 r1.
-Proof. intros [] H. apply LE. auto. Qed.
+Proof. intros [] H. apply LE. apply H. Qed.
 
 Lemma uncurry_map_rev9 r0 r1 (LE: uncurry9 r0 <1== uncurry9 r1) : r0 <9== r1.
 Proof.
@@ -51,35 +51,35 @@ Proof.
 Qed.
 
 Lemma uncurry_bij1_9 r : curry9 (uncurry9 r) <9== r.
-Proof. unfold le9. repeat_intros 9; auto. Qed.
+Proof. unfold le9. repeat_intros 9. intros H. apply H. Qed.
 
 Lemma uncurry_bij2_9 r : r <9== curry9 (uncurry9 r).
-Proof. unfold le9. repeat_intros 9; auto. Qed.
+Proof. unfold le9. repeat_intros 9. intros H. apply H. Qed.
 
 Lemma curry_bij1_9 r : uncurry9 (curry9 r) <1== r.
-Proof. intros []; auto. Qed.
+Proof. intros []. intro H. apply H. Qed.
 
 Lemma curry_bij2_9 r : r <1== uncurry9 (curry9 r).
-Proof. intros []; auto. Qed.
+Proof. intros []. intro H. apply H. Qed.
 
 Lemma uncurry_adjoint1_9 r0 r1 (LE: uncurry9 r0 <1== r1) : r0 <9== curry9 r1.
 Proof.
-  apply uncurry_map_rev9. eapply le1_trans; [eauto|]. apply curry_bij2_9.
+  apply uncurry_map_rev9. eapply le1_trans; [apply LE|]. apply curry_bij2_9.
 Qed.
 
 Lemma uncurry_adjoint2_9 r0 r1 (LE: r0 <9== curry9 r1) : uncurry9 r0 <1== r1.
 Proof.
-  apply curry_map_rev9. eapply le9_trans; [|eauto]. apply uncurry_bij2_9.
+  apply curry_map_rev9. eapply le9_trans; [|apply LE]. apply uncurry_bij2_9.
 Qed.
 
 Lemma curry_adjoint1_9 r0 r1 (LE: curry9 r0 <9== r1) : r0 <1== uncurry9 r1.
 Proof.
-  apply curry_map_rev9. eapply le9_trans; [eauto|]. apply uncurry_bij2_9.
+  apply curry_map_rev9. eapply le9_trans; [apply LE|]. apply uncurry_bij2_9.
 Qed.
 
 Lemma curry_adjoint2_9 r0 r1 (LE: r0 <1== uncurry9 r1) : curry9 r0 <9== r1.
 Proof.
-  apply uncurry_map_rev9. eapply le1_trans; [|eauto]. apply curry_bij1_9.
+  apply uncurry_map_rev9. eapply le1_trans; [|apply LE]. apply curry_bij1_9.
 Qed.
 
 (** ** Predicates of Arity 9
@@ -160,13 +160,13 @@ Definition _monotone9 (gf: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T
 
 Lemma monotone9_eq (gf: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8) :
   monotone9 gf <-> _monotone9 gf.
-Proof. unfold monotone9, _monotone9, le9. split; eauto. Qed.
+Proof. unfold monotone9, _monotone9, le9. split; intros; eapply H; eassumption. Qed.
 
 Lemma monotone9_map (gf: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8)
       (MON: _monotone9 gf) :
   _monotone (fun R0 => uncurry9 (gf (curry9 R0))).
 Proof.
-  repeat_intros 3. apply uncurry_map9. apply MON; apply curry_map9; auto.
+  repeat_intros 3. apply uncurry_map9. apply MON; apply curry_map9; assumption.
 Qed.
 
 Variable gf : rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8.
@@ -174,7 +174,7 @@ Arguments gf : clear implicits.
 
 Theorem _paco9_mon: _monotone9 (paco9 gf).
 Proof.
-  repeat_intros 3. eapply curry_map9, _paco_mon; apply uncurry_map9; auto.
+  repeat_intros 3. eapply curry_map9, _paco_mon; apply uncurry_map9; assumption.
 Qed.
 
 Theorem _paco9_acc: forall
@@ -195,7 +195,7 @@ Theorem _paco9_mult_strong: forall r,
 Proof.
   intros. apply curry_map9.
   eapply le1_trans; [| eapply _paco_mult_strong].
-  apply _paco_mon; intros []; eauto.
+  apply _paco_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco9_fold: forall r,
@@ -209,7 +209,7 @@ Theorem _paco9_unfold: forall (MON: _monotone9 gf) r,
   paco9 gf r <9== gf (upaco9 gf r).
 Proof.
   intros. apply curry_adjoint2_9.
-  eapply _paco_unfold; apply monotone9_map; auto.
+  eapply _paco_unfold; apply monotone9_map; assumption.
 Qed.
 
 Theorem paco9_acc: forall
@@ -233,7 +233,7 @@ Qed.
 
 Corollary paco9_mult: forall r,
   paco9 gf (paco9 gf r) <9= paco9 gf r.
-Proof. intros; eapply paco9_mult_strong, paco9_mon; eauto. Qed.
+Proof. intros; eapply paco9_mult_strong, paco9_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Theorem paco9_fold: forall r,
   gf (upaco9 gf r) <9= paco9 gf r.
@@ -244,7 +244,7 @@ Qed.
 Theorem paco9_unfold: forall (MON: monotone9 gf) r,
   paco9 gf r <9= gf (upaco9 gf r).
 Proof.
-  repeat_intros 1. eapply _paco9_unfold; apply monotone9_eq; auto.
+  repeat_intros 1. eapply _paco9_unfold; apply monotone9_eq; assumption.
 Qed.
 
 End Arg9_1.
@@ -274,13 +274,13 @@ Definition _monotone9_2 (gf: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3
 
 Lemma monotone9_2_eq (gf: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8) :
   monotone9_2 gf <-> _monotone9_2 gf.
-Proof. unfold monotone9_2, _monotone9_2, le9. split; eauto. Qed.
+Proof. unfold monotone9_2, _monotone9_2, le9. split; intros; eapply H; eassumption. Qed.
 
 Lemma monotone9_2_map (gf: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8)
       (MON: _monotone9_2 gf) :
   _monotone_2 (fun R0 R1 => uncurry9 (gf (curry9 R0) (curry9 R1))).
 Proof.
-  repeat_intros 6. apply uncurry_map9. apply MON; apply curry_map9; auto.
+  repeat_intros 6. apply uncurry_map9. apply MON; apply curry_map9; assumption.
 Qed.
 
 Variable gf_0 gf_1 : rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8.
@@ -289,12 +289,12 @@ Arguments gf_1 : clear implicits.
 
 Theorem _paco9_2_0_mon: _monotone9_2 (paco9_2_0 gf_0 gf_1).
 Proof.
-  repeat_intros 6. eapply curry_map9, _paco_2_0_mon; apply uncurry_map9; auto.
+  repeat_intros 6. eapply curry_map9, _paco_2_0_mon; apply uncurry_map9; assumption.
 Qed.
 
 Theorem _paco9_2_1_mon: _monotone9_2 (paco9_2_1 gf_0 gf_1).
 Proof.
-  repeat_intros 6. eapply curry_map9, _paco_2_1_mon; apply uncurry_map9; auto.
+  repeat_intros 6. eapply curry_map9, _paco_2_1_mon; apply uncurry_map9; assumption.
 Qed.
 
 Theorem _paco9_2_0_acc: forall
@@ -328,7 +328,7 @@ Theorem _paco9_2_0_mult_strong: forall r_0 r_1,
 Proof.
   intros. apply curry_map9.
   eapply le1_trans; [| eapply _paco_2_0_mult_strong].
-  apply _paco_2_0_mon; intros []; eauto.
+  apply _paco_2_0_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco9_2_1_mult_strong: forall r_0 r_1,
@@ -336,7 +336,7 @@ Theorem _paco9_2_1_mult_strong: forall r_0 r_1,
 Proof.
   intros. apply curry_map9.
   eapply le1_trans; [| eapply _paco_2_1_mult_strong].
-  apply _paco_2_1_mon; intros []; eauto.
+  apply _paco_2_1_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco9_2_0_fold: forall r_0 r_1,
@@ -357,14 +357,14 @@ Theorem _paco9_2_0_unfold: forall (MON: _monotone9_2 gf_0) (MON: _monotone9_2 gf
   paco9_2_0 gf_0 gf_1 r_0 r_1 <9== gf_0 (upaco9_2_0 gf_0 gf_1 r_0 r_1) (upaco9_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
   intros. apply curry_adjoint2_9.
-  eapply _paco_2_0_unfold; apply monotone9_2_map; auto.
+  eapply _paco_2_0_unfold; apply monotone9_2_map; assumption.
 Qed.
 
 Theorem _paco9_2_1_unfold: forall (MON: _monotone9_2 gf_0) (MON: _monotone9_2 gf_1) r_0 r_1,
   paco9_2_1 gf_0 gf_1 r_0 r_1 <9== gf_1 (upaco9_2_0 gf_0 gf_1 r_0 r_1) (upaco9_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
   intros. apply curry_adjoint2_9.
-  eapply _paco_2_1_unfold; apply monotone9_2_map; auto.
+  eapply _paco_2_1_unfold; apply monotone9_2_map; assumption.
 Qed.
 
 Theorem paco9_2_0_acc: forall
@@ -407,11 +407,11 @@ Qed.
 
 Corollary paco9_2_0_mult: forall r_0 r_1,
   paco9_2_0 gf_0 gf_1 (paco9_2_0 gf_0 gf_1 r_0 r_1) (paco9_2_1 gf_0 gf_1 r_0 r_1) <9= paco9_2_0 gf_0 gf_1 r_0 r_1.
-Proof. intros; eapply paco9_2_0_mult_strong, paco9_2_0_mon; eauto. Qed.
+Proof. intros; eapply paco9_2_0_mult_strong, paco9_2_0_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Corollary paco9_2_1_mult: forall r_0 r_1,
   paco9_2_1 gf_0 gf_1 (paco9_2_0 gf_0 gf_1 r_0 r_1) (paco9_2_1 gf_0 gf_1 r_0 r_1) <9= paco9_2_1 gf_0 gf_1 r_0 r_1.
-Proof. intros; eapply paco9_2_1_mult_strong, paco9_2_1_mon; eauto. Qed.
+Proof. intros; eapply paco9_2_1_mult_strong, paco9_2_1_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Theorem paco9_2_0_fold: forall r_0 r_1,
   gf_0 (upaco9_2_0 gf_0 gf_1 r_0 r_1) (upaco9_2_1 gf_0 gf_1 r_0 r_1) <9= paco9_2_0 gf_0 gf_1 r_0 r_1.
@@ -428,13 +428,13 @@ Qed.
 Theorem paco9_2_0_unfold: forall (MON: monotone9_2 gf_0) (MON: monotone9_2 gf_1) r_0 r_1,
   paco9_2_0 gf_0 gf_1 r_0 r_1 <9= gf_0 (upaco9_2_0 gf_0 gf_1 r_0 r_1) (upaco9_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
-  repeat_intros 2. eapply _paco9_2_0_unfold; apply monotone9_2_eq; auto.
+  repeat_intros 2. eapply _paco9_2_0_unfold; apply monotone9_2_eq; assumption.
 Qed.
 
 Theorem paco9_2_1_unfold: forall (MON: monotone9_2 gf_0) (MON: monotone9_2 gf_1) r_0 r_1,
   paco9_2_1 gf_0 gf_1 r_0 r_1 <9= gf_1 (upaco9_2_0 gf_0 gf_1 r_0 r_1) (upaco9_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
-  repeat_intros 2. eapply _paco9_2_1_unfold; apply monotone9_2_eq; auto.
+  repeat_intros 2. eapply _paco9_2_1_unfold; apply monotone9_2_eq; assumption.
 Qed.
 
 End Arg9_2.
@@ -476,13 +476,13 @@ Definition _monotone9_3 (gf: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3
 
 Lemma monotone9_3_eq (gf: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8) :
   monotone9_3 gf <-> _monotone9_3 gf.
-Proof. unfold monotone9_3, _monotone9_3, le9. split; eauto. Qed.
+Proof. unfold monotone9_3, _monotone9_3, le9. split; intros; eapply H; eassumption. Qed.
 
 Lemma monotone9_3_map (gf: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8)
       (MON: _monotone9_3 gf) :
   _monotone_3 (fun R0 R1 R2 => uncurry9 (gf (curry9 R0) (curry9 R1) (curry9 R2))).
 Proof.
-  repeat_intros 9. apply uncurry_map9. apply MON; apply curry_map9; auto.
+  repeat_intros 9. apply uncurry_map9. apply MON; apply curry_map9; assumption.
 Qed.
 
 Variable gf_0 gf_1 gf_2 : rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8.
@@ -492,17 +492,17 @@ Arguments gf_2 : clear implicits.
 
 Theorem _paco9_3_0_mon: _monotone9_3 (paco9_3_0 gf_0 gf_1 gf_2).
 Proof.
-  repeat_intros 9. eapply curry_map9, _paco_3_0_mon; apply uncurry_map9; auto.
+  repeat_intros 9. eapply curry_map9, _paco_3_0_mon; apply uncurry_map9; assumption.
 Qed.
 
 Theorem _paco9_3_1_mon: _monotone9_3 (paco9_3_1 gf_0 gf_1 gf_2).
 Proof.
-  repeat_intros 9. eapply curry_map9, _paco_3_1_mon; apply uncurry_map9; auto.
+  repeat_intros 9. eapply curry_map9, _paco_3_1_mon; apply uncurry_map9; assumption.
 Qed.
 
 Theorem _paco9_3_2_mon: _monotone9_3 (paco9_3_2 gf_0 gf_1 gf_2).
 Proof.
-  repeat_intros 9. eapply curry_map9, _paco_3_2_mon; apply uncurry_map9; auto.
+  repeat_intros 9. eapply curry_map9, _paco_3_2_mon; apply uncurry_map9; assumption.
 Qed.
 
 Theorem _paco9_3_0_acc: forall
@@ -549,7 +549,7 @@ Theorem _paco9_3_0_mult_strong: forall r_0 r_1 r_2,
 Proof.
   intros. apply curry_map9.
   eapply le1_trans; [| eapply _paco_3_0_mult_strong].
-  apply _paco_3_0_mon; intros []; eauto.
+  apply _paco_3_0_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco9_3_1_mult_strong: forall r_0 r_1 r_2,
@@ -557,7 +557,7 @@ Theorem _paco9_3_1_mult_strong: forall r_0 r_1 r_2,
 Proof.
   intros. apply curry_map9.
   eapply le1_trans; [| eapply _paco_3_1_mult_strong].
-  apply _paco_3_1_mon; intros []; eauto.
+  apply _paco_3_1_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco9_3_2_mult_strong: forall r_0 r_1 r_2,
@@ -565,7 +565,7 @@ Theorem _paco9_3_2_mult_strong: forall r_0 r_1 r_2,
 Proof.
   intros. apply curry_map9.
   eapply le1_trans; [| eapply _paco_3_2_mult_strong].
-  apply _paco_3_2_mon; intros []; eauto.
+  apply _paco_3_2_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco9_3_0_fold: forall r_0 r_1 r_2,
@@ -593,21 +593,21 @@ Theorem _paco9_3_0_unfold: forall (MON: _monotone9_3 gf_0) (MON: _monotone9_3 gf
   paco9_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2 <9== gf_0 (upaco9_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco9_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco9_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
   intros. apply curry_adjoint2_9.
-  eapply _paco_3_0_unfold; apply monotone9_3_map; auto.
+  eapply _paco_3_0_unfold; apply monotone9_3_map; assumption.
 Qed.
 
 Theorem _paco9_3_1_unfold: forall (MON: _monotone9_3 gf_0) (MON: _monotone9_3 gf_1) (MON: _monotone9_3 gf_2) r_0 r_1 r_2,
   paco9_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2 <9== gf_1 (upaco9_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco9_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco9_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
   intros. apply curry_adjoint2_9.
-  eapply _paco_3_1_unfold; apply monotone9_3_map; auto.
+  eapply _paco_3_1_unfold; apply monotone9_3_map; assumption.
 Qed.
 
 Theorem _paco9_3_2_unfold: forall (MON: _monotone9_3 gf_0) (MON: _monotone9_3 gf_1) (MON: _monotone9_3 gf_2) r_0 r_1 r_2,
   paco9_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2 <9== gf_2 (upaco9_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco9_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco9_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
   intros. apply curry_adjoint2_9.
-  eapply _paco_3_2_unfold; apply monotone9_3_map; auto.
+  eapply _paco_3_2_unfold; apply monotone9_3_map; assumption.
 Qed.
 
 Theorem paco9_3_0_acc: forall
@@ -669,15 +669,15 @@ Qed.
 
 Corollary paco9_3_0_mult: forall r_0 r_1 r_2,
   paco9_3_0 gf_0 gf_1 gf_2 (paco9_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco9_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco9_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <9= paco9_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
-Proof. intros; eapply paco9_3_0_mult_strong, paco9_3_0_mon; eauto. Qed.
+Proof. intros; eapply paco9_3_0_mult_strong, paco9_3_0_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Corollary paco9_3_1_mult: forall r_0 r_1 r_2,
   paco9_3_1 gf_0 gf_1 gf_2 (paco9_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco9_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco9_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <9= paco9_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2.
-Proof. intros; eapply paco9_3_1_mult_strong, paco9_3_1_mon; eauto. Qed.
+Proof. intros; eapply paco9_3_1_mult_strong, paco9_3_1_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Corollary paco9_3_2_mult: forall r_0 r_1 r_2,
   paco9_3_2 gf_0 gf_1 gf_2 (paco9_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco9_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco9_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <9= paco9_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2.
-Proof. intros; eapply paco9_3_2_mult_strong, paco9_3_2_mon; eauto. Qed.
+Proof. intros; eapply paco9_3_2_mult_strong, paco9_3_2_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Theorem paco9_3_0_fold: forall r_0 r_1 r_2,
   gf_0 (upaco9_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco9_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco9_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <9= paco9_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
@@ -700,19 +700,19 @@ Qed.
 Theorem paco9_3_0_unfold: forall (MON: monotone9_3 gf_0) (MON: monotone9_3 gf_1) (MON: monotone9_3 gf_2) r_0 r_1 r_2,
   paco9_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2 <9= gf_0 (upaco9_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco9_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco9_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
-  repeat_intros 3. eapply _paco9_3_0_unfold; apply monotone9_3_eq; auto.
+  repeat_intros 3. eapply _paco9_3_0_unfold; apply monotone9_3_eq; assumption.
 Qed.
 
 Theorem paco9_3_1_unfold: forall (MON: monotone9_3 gf_0) (MON: monotone9_3 gf_1) (MON: monotone9_3 gf_2) r_0 r_1 r_2,
   paco9_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2 <9= gf_1 (upaco9_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco9_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco9_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
-  repeat_intros 3. eapply _paco9_3_1_unfold; apply monotone9_3_eq; auto.
+  repeat_intros 3. eapply _paco9_3_1_unfold; apply monotone9_3_eq; assumption.
 Qed.
 
 Theorem paco9_3_2_unfold: forall (MON: monotone9_3 gf_0) (MON: monotone9_3 gf_1) (MON: monotone9_3 gf_2) r_0 r_1 r_2,
   paco9_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2 <9= gf_2 (upaco9_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco9_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco9_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
-  repeat_intros 3. eapply _paco9_3_2_unfold; apply monotone9_3_eq; auto.
+  repeat_intros 3. eapply _paco9_3_2_unfold; apply monotone9_3_eq; assumption.
 Qed.
 
 End Arg9_3.

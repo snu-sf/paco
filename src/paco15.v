@@ -45,7 +45,7 @@ Definition curry15 (R: rel1 sig15T): rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11
   fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 => R (exist15T x14).
 
 Lemma uncurry_map15 r0 r1 (LE : r0 <15== r1) : uncurry15 r0 <1== uncurry15 r1.
-Proof. intros [] H. apply LE. auto. Qed.
+Proof. intros [] H. apply LE. apply H. Qed.
 
 Lemma uncurry_map_rev15 r0 r1 (LE: uncurry15 r0 <1== uncurry15 r1) : r0 <15== r1.
 Proof.
@@ -63,35 +63,35 @@ Proof.
 Qed.
 
 Lemma uncurry_bij1_15 r : curry15 (uncurry15 r) <15== r.
-Proof. unfold le15. repeat_intros 15; auto. Qed.
+Proof. unfold le15. repeat_intros 15. intros H. apply H. Qed.
 
 Lemma uncurry_bij2_15 r : r <15== curry15 (uncurry15 r).
-Proof. unfold le15. repeat_intros 15; auto. Qed.
+Proof. unfold le15. repeat_intros 15. intros H. apply H. Qed.
 
 Lemma curry_bij1_15 r : uncurry15 (curry15 r) <1== r.
-Proof. intros []; auto. Qed.
+Proof. intros []. intro H. apply H. Qed.
 
 Lemma curry_bij2_15 r : r <1== uncurry15 (curry15 r).
-Proof. intros []; auto. Qed.
+Proof. intros []. intro H. apply H. Qed.
 
 Lemma uncurry_adjoint1_15 r0 r1 (LE: uncurry15 r0 <1== r1) : r0 <15== curry15 r1.
 Proof.
-  apply uncurry_map_rev15. eapply le1_trans; [eauto|]. apply curry_bij2_15.
+  apply uncurry_map_rev15. eapply le1_trans; [apply LE|]. apply curry_bij2_15.
 Qed.
 
 Lemma uncurry_adjoint2_15 r0 r1 (LE: r0 <15== curry15 r1) : uncurry15 r0 <1== r1.
 Proof.
-  apply curry_map_rev15. eapply le15_trans; [|eauto]. apply uncurry_bij2_15.
+  apply curry_map_rev15. eapply le15_trans; [|apply LE]. apply uncurry_bij2_15.
 Qed.
 
 Lemma curry_adjoint1_15 r0 r1 (LE: curry15 r0 <15== r1) : r0 <1== uncurry15 r1.
 Proof.
-  apply curry_map_rev15. eapply le15_trans; [eauto|]. apply uncurry_bij2_15.
+  apply curry_map_rev15. eapply le15_trans; [apply LE|]. apply uncurry_bij2_15.
 Qed.
 
 Lemma curry_adjoint2_15 r0 r1 (LE: r0 <1== uncurry15 r1) : curry15 r0 <15== r1.
 Proof.
-  apply uncurry_map_rev15. eapply le1_trans; [|eauto]. apply curry_bij1_15.
+  apply uncurry_map_rev15. eapply le1_trans; [|apply LE]. apply curry_bij1_15.
 Qed.
 
 (** ** Predicates of Arity 15
@@ -172,13 +172,13 @@ Definition _monotone15 (gf: rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 
 
 Lemma monotone15_eq (gf: rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14) :
   monotone15 gf <-> _monotone15 gf.
-Proof. unfold monotone15, _monotone15, le15. split; eauto. Qed.
+Proof. unfold monotone15, _monotone15, le15. split; intros; eapply H; eassumption. Qed.
 
 Lemma monotone15_map (gf: rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14)
       (MON: _monotone15 gf) :
   _monotone (fun R0 => uncurry15 (gf (curry15 R0))).
 Proof.
-  repeat_intros 3. apply uncurry_map15. apply MON; apply curry_map15; auto.
+  repeat_intros 3. apply uncurry_map15. apply MON; apply curry_map15; assumption.
 Qed.
 
 Variable gf : rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14.
@@ -186,7 +186,7 @@ Arguments gf : clear implicits.
 
 Theorem _paco15_mon: _monotone15 (paco15 gf).
 Proof.
-  repeat_intros 3. eapply curry_map15, _paco_mon; apply uncurry_map15; auto.
+  repeat_intros 3. eapply curry_map15, _paco_mon; apply uncurry_map15; assumption.
 Qed.
 
 Theorem _paco15_acc: forall
@@ -207,7 +207,7 @@ Theorem _paco15_mult_strong: forall r,
 Proof.
   intros. apply curry_map15.
   eapply le1_trans; [| eapply _paco_mult_strong].
-  apply _paco_mon; intros []; eauto.
+  apply _paco_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco15_fold: forall r,
@@ -221,7 +221,7 @@ Theorem _paco15_unfold: forall (MON: _monotone15 gf) r,
   paco15 gf r <15== gf (upaco15 gf r).
 Proof.
   intros. apply curry_adjoint2_15.
-  eapply _paco_unfold; apply monotone15_map; auto.
+  eapply _paco_unfold; apply monotone15_map; assumption.
 Qed.
 
 Theorem paco15_acc: forall
@@ -245,7 +245,7 @@ Qed.
 
 Corollary paco15_mult: forall r,
   paco15 gf (paco15 gf r) <15= paco15 gf r.
-Proof. intros; eapply paco15_mult_strong, paco15_mon; eauto. Qed.
+Proof. intros; eapply paco15_mult_strong, paco15_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Theorem paco15_fold: forall r,
   gf (upaco15 gf r) <15= paco15 gf r.
@@ -256,7 +256,7 @@ Qed.
 Theorem paco15_unfold: forall (MON: monotone15 gf) r,
   paco15 gf r <15= gf (upaco15 gf r).
 Proof.
-  repeat_intros 1. eapply _paco15_unfold; apply monotone15_eq; auto.
+  repeat_intros 1. eapply _paco15_unfold; apply monotone15_eq; assumption.
 Qed.
 
 End Arg15_1.
@@ -286,13 +286,13 @@ Definition _monotone15_2 (gf: rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T1
 
 Lemma monotone15_2_eq (gf: rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14) :
   monotone15_2 gf <-> _monotone15_2 gf.
-Proof. unfold monotone15_2, _monotone15_2, le15. split; eauto. Qed.
+Proof. unfold monotone15_2, _monotone15_2, le15. split; intros; eapply H; eassumption. Qed.
 
 Lemma monotone15_2_map (gf: rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14)
       (MON: _monotone15_2 gf) :
   _monotone_2 (fun R0 R1 => uncurry15 (gf (curry15 R0) (curry15 R1))).
 Proof.
-  repeat_intros 6. apply uncurry_map15. apply MON; apply curry_map15; auto.
+  repeat_intros 6. apply uncurry_map15. apply MON; apply curry_map15; assumption.
 Qed.
 
 Variable gf_0 gf_1 : rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14.
@@ -301,12 +301,12 @@ Arguments gf_1 : clear implicits.
 
 Theorem _paco15_2_0_mon: _monotone15_2 (paco15_2_0 gf_0 gf_1).
 Proof.
-  repeat_intros 6. eapply curry_map15, _paco_2_0_mon; apply uncurry_map15; auto.
+  repeat_intros 6. eapply curry_map15, _paco_2_0_mon; apply uncurry_map15; assumption.
 Qed.
 
 Theorem _paco15_2_1_mon: _monotone15_2 (paco15_2_1 gf_0 gf_1).
 Proof.
-  repeat_intros 6. eapply curry_map15, _paco_2_1_mon; apply uncurry_map15; auto.
+  repeat_intros 6. eapply curry_map15, _paco_2_1_mon; apply uncurry_map15; assumption.
 Qed.
 
 Theorem _paco15_2_0_acc: forall
@@ -340,7 +340,7 @@ Theorem _paco15_2_0_mult_strong: forall r_0 r_1,
 Proof.
   intros. apply curry_map15.
   eapply le1_trans; [| eapply _paco_2_0_mult_strong].
-  apply _paco_2_0_mon; intros []; eauto.
+  apply _paco_2_0_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco15_2_1_mult_strong: forall r_0 r_1,
@@ -348,7 +348,7 @@ Theorem _paco15_2_1_mult_strong: forall r_0 r_1,
 Proof.
   intros. apply curry_map15.
   eapply le1_trans; [| eapply _paco_2_1_mult_strong].
-  apply _paco_2_1_mon; intros []; eauto.
+  apply _paco_2_1_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco15_2_0_fold: forall r_0 r_1,
@@ -369,14 +369,14 @@ Theorem _paco15_2_0_unfold: forall (MON: _monotone15_2 gf_0) (MON: _monotone15_2
   paco15_2_0 gf_0 gf_1 r_0 r_1 <15== gf_0 (upaco15_2_0 gf_0 gf_1 r_0 r_1) (upaco15_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
   intros. apply curry_adjoint2_15.
-  eapply _paco_2_0_unfold; apply monotone15_2_map; auto.
+  eapply _paco_2_0_unfold; apply monotone15_2_map; assumption.
 Qed.
 
 Theorem _paco15_2_1_unfold: forall (MON: _monotone15_2 gf_0) (MON: _monotone15_2 gf_1) r_0 r_1,
   paco15_2_1 gf_0 gf_1 r_0 r_1 <15== gf_1 (upaco15_2_0 gf_0 gf_1 r_0 r_1) (upaco15_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
   intros. apply curry_adjoint2_15.
-  eapply _paco_2_1_unfold; apply monotone15_2_map; auto.
+  eapply _paco_2_1_unfold; apply monotone15_2_map; assumption.
 Qed.
 
 Theorem paco15_2_0_acc: forall
@@ -419,11 +419,11 @@ Qed.
 
 Corollary paco15_2_0_mult: forall r_0 r_1,
   paco15_2_0 gf_0 gf_1 (paco15_2_0 gf_0 gf_1 r_0 r_1) (paco15_2_1 gf_0 gf_1 r_0 r_1) <15= paco15_2_0 gf_0 gf_1 r_0 r_1.
-Proof. intros; eapply paco15_2_0_mult_strong, paco15_2_0_mon; eauto. Qed.
+Proof. intros; eapply paco15_2_0_mult_strong, paco15_2_0_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Corollary paco15_2_1_mult: forall r_0 r_1,
   paco15_2_1 gf_0 gf_1 (paco15_2_0 gf_0 gf_1 r_0 r_1) (paco15_2_1 gf_0 gf_1 r_0 r_1) <15= paco15_2_1 gf_0 gf_1 r_0 r_1.
-Proof. intros; eapply paco15_2_1_mult_strong, paco15_2_1_mon; eauto. Qed.
+Proof. intros; eapply paco15_2_1_mult_strong, paco15_2_1_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Theorem paco15_2_0_fold: forall r_0 r_1,
   gf_0 (upaco15_2_0 gf_0 gf_1 r_0 r_1) (upaco15_2_1 gf_0 gf_1 r_0 r_1) <15= paco15_2_0 gf_0 gf_1 r_0 r_1.
@@ -440,13 +440,13 @@ Qed.
 Theorem paco15_2_0_unfold: forall (MON: monotone15_2 gf_0) (MON: monotone15_2 gf_1) r_0 r_1,
   paco15_2_0 gf_0 gf_1 r_0 r_1 <15= gf_0 (upaco15_2_0 gf_0 gf_1 r_0 r_1) (upaco15_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
-  repeat_intros 2. eapply _paco15_2_0_unfold; apply monotone15_2_eq; auto.
+  repeat_intros 2. eapply _paco15_2_0_unfold; apply monotone15_2_eq; assumption.
 Qed.
 
 Theorem paco15_2_1_unfold: forall (MON: monotone15_2 gf_0) (MON: monotone15_2 gf_1) r_0 r_1,
   paco15_2_1 gf_0 gf_1 r_0 r_1 <15= gf_1 (upaco15_2_0 gf_0 gf_1 r_0 r_1) (upaco15_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
-  repeat_intros 2. eapply _paco15_2_1_unfold; apply monotone15_2_eq; auto.
+  repeat_intros 2. eapply _paco15_2_1_unfold; apply monotone15_2_eq; assumption.
 Qed.
 
 End Arg15_2.
@@ -488,13 +488,13 @@ Definition _monotone15_3 (gf: rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T1
 
 Lemma monotone15_3_eq (gf: rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14) :
   monotone15_3 gf <-> _monotone15_3 gf.
-Proof. unfold monotone15_3, _monotone15_3, le15. split; eauto. Qed.
+Proof. unfold monotone15_3, _monotone15_3, le15. split; intros; eapply H; eassumption. Qed.
 
 Lemma monotone15_3_map (gf: rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14)
       (MON: _monotone15_3 gf) :
   _monotone_3 (fun R0 R1 R2 => uncurry15 (gf (curry15 R0) (curry15 R1) (curry15 R2))).
 Proof.
-  repeat_intros 9. apply uncurry_map15. apply MON; apply curry_map15; auto.
+  repeat_intros 9. apply uncurry_map15. apply MON; apply curry_map15; assumption.
 Qed.
 
 Variable gf_0 gf_1 gf_2 : rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14.
@@ -504,17 +504,17 @@ Arguments gf_2 : clear implicits.
 
 Theorem _paco15_3_0_mon: _monotone15_3 (paco15_3_0 gf_0 gf_1 gf_2).
 Proof.
-  repeat_intros 9. eapply curry_map15, _paco_3_0_mon; apply uncurry_map15; auto.
+  repeat_intros 9. eapply curry_map15, _paco_3_0_mon; apply uncurry_map15; assumption.
 Qed.
 
 Theorem _paco15_3_1_mon: _monotone15_3 (paco15_3_1 gf_0 gf_1 gf_2).
 Proof.
-  repeat_intros 9. eapply curry_map15, _paco_3_1_mon; apply uncurry_map15; auto.
+  repeat_intros 9. eapply curry_map15, _paco_3_1_mon; apply uncurry_map15; assumption.
 Qed.
 
 Theorem _paco15_3_2_mon: _monotone15_3 (paco15_3_2 gf_0 gf_1 gf_2).
 Proof.
-  repeat_intros 9. eapply curry_map15, _paco_3_2_mon; apply uncurry_map15; auto.
+  repeat_intros 9. eapply curry_map15, _paco_3_2_mon; apply uncurry_map15; assumption.
 Qed.
 
 Theorem _paco15_3_0_acc: forall
@@ -561,7 +561,7 @@ Theorem _paco15_3_0_mult_strong: forall r_0 r_1 r_2,
 Proof.
   intros. apply curry_map15.
   eapply le1_trans; [| eapply _paco_3_0_mult_strong].
-  apply _paco_3_0_mon; intros []; eauto.
+  apply _paco_3_0_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco15_3_1_mult_strong: forall r_0 r_1 r_2,
@@ -569,7 +569,7 @@ Theorem _paco15_3_1_mult_strong: forall r_0 r_1 r_2,
 Proof.
   intros. apply curry_map15.
   eapply le1_trans; [| eapply _paco_3_1_mult_strong].
-  apply _paco_3_1_mon; intros []; eauto.
+  apply _paco_3_1_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco15_3_2_mult_strong: forall r_0 r_1 r_2,
@@ -577,7 +577,7 @@ Theorem _paco15_3_2_mult_strong: forall r_0 r_1 r_2,
 Proof.
   intros. apply curry_map15.
   eapply le1_trans; [| eapply _paco_3_2_mult_strong].
-  apply _paco_3_2_mon; intros []; eauto.
+  apply _paco_3_2_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco15_3_0_fold: forall r_0 r_1 r_2,
@@ -605,21 +605,21 @@ Theorem _paco15_3_0_unfold: forall (MON: _monotone15_3 gf_0) (MON: _monotone15_3
   paco15_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2 <15== gf_0 (upaco15_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco15_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco15_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
   intros. apply curry_adjoint2_15.
-  eapply _paco_3_0_unfold; apply monotone15_3_map; auto.
+  eapply _paco_3_0_unfold; apply monotone15_3_map; assumption.
 Qed.
 
 Theorem _paco15_3_1_unfold: forall (MON: _monotone15_3 gf_0) (MON: _monotone15_3 gf_1) (MON: _monotone15_3 gf_2) r_0 r_1 r_2,
   paco15_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2 <15== gf_1 (upaco15_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco15_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco15_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
   intros. apply curry_adjoint2_15.
-  eapply _paco_3_1_unfold; apply monotone15_3_map; auto.
+  eapply _paco_3_1_unfold; apply monotone15_3_map; assumption.
 Qed.
 
 Theorem _paco15_3_2_unfold: forall (MON: _monotone15_3 gf_0) (MON: _monotone15_3 gf_1) (MON: _monotone15_3 gf_2) r_0 r_1 r_2,
   paco15_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2 <15== gf_2 (upaco15_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco15_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco15_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
   intros. apply curry_adjoint2_15.
-  eapply _paco_3_2_unfold; apply monotone15_3_map; auto.
+  eapply _paco_3_2_unfold; apply monotone15_3_map; assumption.
 Qed.
 
 Theorem paco15_3_0_acc: forall
@@ -681,15 +681,15 @@ Qed.
 
 Corollary paco15_3_0_mult: forall r_0 r_1 r_2,
   paco15_3_0 gf_0 gf_1 gf_2 (paco15_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco15_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco15_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <15= paco15_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
-Proof. intros; eapply paco15_3_0_mult_strong, paco15_3_0_mon; eauto. Qed.
+Proof. intros; eapply paco15_3_0_mult_strong, paco15_3_0_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Corollary paco15_3_1_mult: forall r_0 r_1 r_2,
   paco15_3_1 gf_0 gf_1 gf_2 (paco15_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco15_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco15_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <15= paco15_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2.
-Proof. intros; eapply paco15_3_1_mult_strong, paco15_3_1_mon; eauto. Qed.
+Proof. intros; eapply paco15_3_1_mult_strong, paco15_3_1_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Corollary paco15_3_2_mult: forall r_0 r_1 r_2,
   paco15_3_2 gf_0 gf_1 gf_2 (paco15_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco15_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco15_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <15= paco15_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2.
-Proof. intros; eapply paco15_3_2_mult_strong, paco15_3_2_mon; eauto. Qed.
+Proof. intros; eapply paco15_3_2_mult_strong, paco15_3_2_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Theorem paco15_3_0_fold: forall r_0 r_1 r_2,
   gf_0 (upaco15_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco15_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco15_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <15= paco15_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
@@ -712,19 +712,19 @@ Qed.
 Theorem paco15_3_0_unfold: forall (MON: monotone15_3 gf_0) (MON: monotone15_3 gf_1) (MON: monotone15_3 gf_2) r_0 r_1 r_2,
   paco15_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2 <15= gf_0 (upaco15_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco15_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco15_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
-  repeat_intros 3. eapply _paco15_3_0_unfold; apply monotone15_3_eq; auto.
+  repeat_intros 3. eapply _paco15_3_0_unfold; apply monotone15_3_eq; assumption.
 Qed.
 
 Theorem paco15_3_1_unfold: forall (MON: monotone15_3 gf_0) (MON: monotone15_3 gf_1) (MON: monotone15_3 gf_2) r_0 r_1 r_2,
   paco15_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2 <15= gf_1 (upaco15_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco15_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco15_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
-  repeat_intros 3. eapply _paco15_3_1_unfold; apply monotone15_3_eq; auto.
+  repeat_intros 3. eapply _paco15_3_1_unfold; apply monotone15_3_eq; assumption.
 Qed.
 
 Theorem paco15_3_2_unfold: forall (MON: monotone15_3 gf_0) (MON: monotone15_3 gf_1) (MON: monotone15_3 gf_2) r_0 r_1 r_2,
   paco15_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2 <15= gf_2 (upaco15_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco15_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco15_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
-  repeat_intros 3. eapply _paco15_3_2_unfold; apply monotone15_3_eq; auto.
+  repeat_intros 3. eapply _paco15_3_2_unfold; apply monotone15_3_eq; assumption.
 Qed.
 
 End Arg15_3.

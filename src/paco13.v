@@ -41,7 +41,7 @@ Definition curry13 (R: rel1 sig13T): rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11
   fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 => R (exist13T x12).
 
 Lemma uncurry_map13 r0 r1 (LE : r0 <13== r1) : uncurry13 r0 <1== uncurry13 r1.
-Proof. intros [] H. apply LE. auto. Qed.
+Proof. intros [] H. apply LE. apply H. Qed.
 
 Lemma uncurry_map_rev13 r0 r1 (LE: uncurry13 r0 <1== uncurry13 r1) : r0 <13== r1.
 Proof.
@@ -59,35 +59,35 @@ Proof.
 Qed.
 
 Lemma uncurry_bij1_13 r : curry13 (uncurry13 r) <13== r.
-Proof. unfold le13. repeat_intros 13; auto. Qed.
+Proof. unfold le13. repeat_intros 13. intros H. apply H. Qed.
 
 Lemma uncurry_bij2_13 r : r <13== curry13 (uncurry13 r).
-Proof. unfold le13. repeat_intros 13; auto. Qed.
+Proof. unfold le13. repeat_intros 13. intros H. apply H. Qed.
 
 Lemma curry_bij1_13 r : uncurry13 (curry13 r) <1== r.
-Proof. intros []; auto. Qed.
+Proof. intros []. intro H. apply H. Qed.
 
 Lemma curry_bij2_13 r : r <1== uncurry13 (curry13 r).
-Proof. intros []; auto. Qed.
+Proof. intros []. intro H. apply H. Qed.
 
 Lemma uncurry_adjoint1_13 r0 r1 (LE: uncurry13 r0 <1== r1) : r0 <13== curry13 r1.
 Proof.
-  apply uncurry_map_rev13. eapply le1_trans; [eauto|]. apply curry_bij2_13.
+  apply uncurry_map_rev13. eapply le1_trans; [apply LE|]. apply curry_bij2_13.
 Qed.
 
 Lemma uncurry_adjoint2_13 r0 r1 (LE: r0 <13== curry13 r1) : uncurry13 r0 <1== r1.
 Proof.
-  apply curry_map_rev13. eapply le13_trans; [|eauto]. apply uncurry_bij2_13.
+  apply curry_map_rev13. eapply le13_trans; [|apply LE]. apply uncurry_bij2_13.
 Qed.
 
 Lemma curry_adjoint1_13 r0 r1 (LE: curry13 r0 <13== r1) : r0 <1== uncurry13 r1.
 Proof.
-  apply curry_map_rev13. eapply le13_trans; [eauto|]. apply uncurry_bij2_13.
+  apply curry_map_rev13. eapply le13_trans; [apply LE|]. apply uncurry_bij2_13.
 Qed.
 
 Lemma curry_adjoint2_13 r0 r1 (LE: r0 <1== uncurry13 r1) : curry13 r0 <13== r1.
 Proof.
-  apply uncurry_map_rev13. eapply le1_trans; [|eauto]. apply curry_bij1_13.
+  apply uncurry_map_rev13. eapply le1_trans; [|apply LE]. apply curry_bij1_13.
 Qed.
 
 (** ** Predicates of Arity 13
@@ -168,13 +168,13 @@ Definition _monotone13 (gf: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> r
 
 Lemma monotone13_eq (gf: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) :
   monotone13 gf <-> _monotone13 gf.
-Proof. unfold monotone13, _monotone13, le13. split; eauto. Qed.
+Proof. unfold monotone13, _monotone13, le13. split; intros; eapply H; eassumption. Qed.
 
 Lemma monotone13_map (gf: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12)
       (MON: _monotone13 gf) :
   _monotone (fun R0 => uncurry13 (gf (curry13 R0))).
 Proof.
-  repeat_intros 3. apply uncurry_map13. apply MON; apply curry_map13; auto.
+  repeat_intros 3. apply uncurry_map13. apply MON; apply curry_map13; assumption.
 Qed.
 
 Variable gf : rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12.
@@ -182,7 +182,7 @@ Arguments gf : clear implicits.
 
 Theorem _paco13_mon: _monotone13 (paco13 gf).
 Proof.
-  repeat_intros 3. eapply curry_map13, _paco_mon; apply uncurry_map13; auto.
+  repeat_intros 3. eapply curry_map13, _paco_mon; apply uncurry_map13; assumption.
 Qed.
 
 Theorem _paco13_acc: forall
@@ -203,7 +203,7 @@ Theorem _paco13_mult_strong: forall r,
 Proof.
   intros. apply curry_map13.
   eapply le1_trans; [| eapply _paco_mult_strong].
-  apply _paco_mon; intros []; eauto.
+  apply _paco_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco13_fold: forall r,
@@ -217,7 +217,7 @@ Theorem _paco13_unfold: forall (MON: _monotone13 gf) r,
   paco13 gf r <13== gf (upaco13 gf r).
 Proof.
   intros. apply curry_adjoint2_13.
-  eapply _paco_unfold; apply monotone13_map; auto.
+  eapply _paco_unfold; apply monotone13_map; assumption.
 Qed.
 
 Theorem paco13_acc: forall
@@ -241,7 +241,7 @@ Qed.
 
 Corollary paco13_mult: forall r,
   paco13 gf (paco13 gf r) <13= paco13 gf r.
-Proof. intros; eapply paco13_mult_strong, paco13_mon; eauto. Qed.
+Proof. intros; eapply paco13_mult_strong, paco13_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Theorem paco13_fold: forall r,
   gf (upaco13 gf r) <13= paco13 gf r.
@@ -252,7 +252,7 @@ Qed.
 Theorem paco13_unfold: forall (MON: monotone13 gf) r,
   paco13 gf r <13= gf (upaco13 gf r).
 Proof.
-  repeat_intros 1. eapply _paco13_unfold; apply monotone13_eq; auto.
+  repeat_intros 1. eapply _paco13_unfold; apply monotone13_eq; assumption.
 Qed.
 
 End Arg13_1.
@@ -282,13 +282,13 @@ Definition _monotone13_2 (gf: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 ->
 
 Lemma monotone13_2_eq (gf: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) :
   monotone13_2 gf <-> _monotone13_2 gf.
-Proof. unfold monotone13_2, _monotone13_2, le13. split; eauto. Qed.
+Proof. unfold monotone13_2, _monotone13_2, le13. split; intros; eapply H; eassumption. Qed.
 
 Lemma monotone13_2_map (gf: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12)
       (MON: _monotone13_2 gf) :
   _monotone_2 (fun R0 R1 => uncurry13 (gf (curry13 R0) (curry13 R1))).
 Proof.
-  repeat_intros 6. apply uncurry_map13. apply MON; apply curry_map13; auto.
+  repeat_intros 6. apply uncurry_map13. apply MON; apply curry_map13; assumption.
 Qed.
 
 Variable gf_0 gf_1 : rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12.
@@ -297,12 +297,12 @@ Arguments gf_1 : clear implicits.
 
 Theorem _paco13_2_0_mon: _monotone13_2 (paco13_2_0 gf_0 gf_1).
 Proof.
-  repeat_intros 6. eapply curry_map13, _paco_2_0_mon; apply uncurry_map13; auto.
+  repeat_intros 6. eapply curry_map13, _paco_2_0_mon; apply uncurry_map13; assumption.
 Qed.
 
 Theorem _paco13_2_1_mon: _monotone13_2 (paco13_2_1 gf_0 gf_1).
 Proof.
-  repeat_intros 6. eapply curry_map13, _paco_2_1_mon; apply uncurry_map13; auto.
+  repeat_intros 6. eapply curry_map13, _paco_2_1_mon; apply uncurry_map13; assumption.
 Qed.
 
 Theorem _paco13_2_0_acc: forall
@@ -336,7 +336,7 @@ Theorem _paco13_2_0_mult_strong: forall r_0 r_1,
 Proof.
   intros. apply curry_map13.
   eapply le1_trans; [| eapply _paco_2_0_mult_strong].
-  apply _paco_2_0_mon; intros []; eauto.
+  apply _paco_2_0_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco13_2_1_mult_strong: forall r_0 r_1,
@@ -344,7 +344,7 @@ Theorem _paco13_2_1_mult_strong: forall r_0 r_1,
 Proof.
   intros. apply curry_map13.
   eapply le1_trans; [| eapply _paco_2_1_mult_strong].
-  apply _paco_2_1_mon; intros []; eauto.
+  apply _paco_2_1_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco13_2_0_fold: forall r_0 r_1,
@@ -365,14 +365,14 @@ Theorem _paco13_2_0_unfold: forall (MON: _monotone13_2 gf_0) (MON: _monotone13_2
   paco13_2_0 gf_0 gf_1 r_0 r_1 <13== gf_0 (upaco13_2_0 gf_0 gf_1 r_0 r_1) (upaco13_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
   intros. apply curry_adjoint2_13.
-  eapply _paco_2_0_unfold; apply monotone13_2_map; auto.
+  eapply _paco_2_0_unfold; apply monotone13_2_map; assumption.
 Qed.
 
 Theorem _paco13_2_1_unfold: forall (MON: _monotone13_2 gf_0) (MON: _monotone13_2 gf_1) r_0 r_1,
   paco13_2_1 gf_0 gf_1 r_0 r_1 <13== gf_1 (upaco13_2_0 gf_0 gf_1 r_0 r_1) (upaco13_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
   intros. apply curry_adjoint2_13.
-  eapply _paco_2_1_unfold; apply monotone13_2_map; auto.
+  eapply _paco_2_1_unfold; apply monotone13_2_map; assumption.
 Qed.
 
 Theorem paco13_2_0_acc: forall
@@ -415,11 +415,11 @@ Qed.
 
 Corollary paco13_2_0_mult: forall r_0 r_1,
   paco13_2_0 gf_0 gf_1 (paco13_2_0 gf_0 gf_1 r_0 r_1) (paco13_2_1 gf_0 gf_1 r_0 r_1) <13= paco13_2_0 gf_0 gf_1 r_0 r_1.
-Proof. intros; eapply paco13_2_0_mult_strong, paco13_2_0_mon; eauto. Qed.
+Proof. intros; eapply paco13_2_0_mult_strong, paco13_2_0_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Corollary paco13_2_1_mult: forall r_0 r_1,
   paco13_2_1 gf_0 gf_1 (paco13_2_0 gf_0 gf_1 r_0 r_1) (paco13_2_1 gf_0 gf_1 r_0 r_1) <13= paco13_2_1 gf_0 gf_1 r_0 r_1.
-Proof. intros; eapply paco13_2_1_mult_strong, paco13_2_1_mon; eauto. Qed.
+Proof. intros; eapply paco13_2_1_mult_strong, paco13_2_1_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Theorem paco13_2_0_fold: forall r_0 r_1,
   gf_0 (upaco13_2_0 gf_0 gf_1 r_0 r_1) (upaco13_2_1 gf_0 gf_1 r_0 r_1) <13= paco13_2_0 gf_0 gf_1 r_0 r_1.
@@ -436,13 +436,13 @@ Qed.
 Theorem paco13_2_0_unfold: forall (MON: monotone13_2 gf_0) (MON: monotone13_2 gf_1) r_0 r_1,
   paco13_2_0 gf_0 gf_1 r_0 r_1 <13= gf_0 (upaco13_2_0 gf_0 gf_1 r_0 r_1) (upaco13_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
-  repeat_intros 2. eapply _paco13_2_0_unfold; apply monotone13_2_eq; auto.
+  repeat_intros 2. eapply _paco13_2_0_unfold; apply monotone13_2_eq; assumption.
 Qed.
 
 Theorem paco13_2_1_unfold: forall (MON: monotone13_2 gf_0) (MON: monotone13_2 gf_1) r_0 r_1,
   paco13_2_1 gf_0 gf_1 r_0 r_1 <13= gf_1 (upaco13_2_0 gf_0 gf_1 r_0 r_1) (upaco13_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
-  repeat_intros 2. eapply _paco13_2_1_unfold; apply monotone13_2_eq; auto.
+  repeat_intros 2. eapply _paco13_2_1_unfold; apply monotone13_2_eq; assumption.
 Qed.
 
 End Arg13_2.
@@ -484,13 +484,13 @@ Definition _monotone13_3 (gf: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 ->
 
 Lemma monotone13_3_eq (gf: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) :
   monotone13_3 gf <-> _monotone13_3 gf.
-Proof. unfold monotone13_3, _monotone13_3, le13. split; eauto. Qed.
+Proof. unfold monotone13_3, _monotone13_3, le13. split; intros; eapply H; eassumption. Qed.
 
 Lemma monotone13_3_map (gf: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12)
       (MON: _monotone13_3 gf) :
   _monotone_3 (fun R0 R1 R2 => uncurry13 (gf (curry13 R0) (curry13 R1) (curry13 R2))).
 Proof.
-  repeat_intros 9. apply uncurry_map13. apply MON; apply curry_map13; auto.
+  repeat_intros 9. apply uncurry_map13. apply MON; apply curry_map13; assumption.
 Qed.
 
 Variable gf_0 gf_1 gf_2 : rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12.
@@ -500,17 +500,17 @@ Arguments gf_2 : clear implicits.
 
 Theorem _paco13_3_0_mon: _monotone13_3 (paco13_3_0 gf_0 gf_1 gf_2).
 Proof.
-  repeat_intros 9. eapply curry_map13, _paco_3_0_mon; apply uncurry_map13; auto.
+  repeat_intros 9. eapply curry_map13, _paco_3_0_mon; apply uncurry_map13; assumption.
 Qed.
 
 Theorem _paco13_3_1_mon: _monotone13_3 (paco13_3_1 gf_0 gf_1 gf_2).
 Proof.
-  repeat_intros 9. eapply curry_map13, _paco_3_1_mon; apply uncurry_map13; auto.
+  repeat_intros 9. eapply curry_map13, _paco_3_1_mon; apply uncurry_map13; assumption.
 Qed.
 
 Theorem _paco13_3_2_mon: _monotone13_3 (paco13_3_2 gf_0 gf_1 gf_2).
 Proof.
-  repeat_intros 9. eapply curry_map13, _paco_3_2_mon; apply uncurry_map13; auto.
+  repeat_intros 9. eapply curry_map13, _paco_3_2_mon; apply uncurry_map13; assumption.
 Qed.
 
 Theorem _paco13_3_0_acc: forall
@@ -557,7 +557,7 @@ Theorem _paco13_3_0_mult_strong: forall r_0 r_1 r_2,
 Proof.
   intros. apply curry_map13.
   eapply le1_trans; [| eapply _paco_3_0_mult_strong].
-  apply _paco_3_0_mon; intros []; eauto.
+  apply _paco_3_0_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco13_3_1_mult_strong: forall r_0 r_1 r_2,
@@ -565,7 +565,7 @@ Theorem _paco13_3_1_mult_strong: forall r_0 r_1 r_2,
 Proof.
   intros. apply curry_map13.
   eapply le1_trans; [| eapply _paco_3_1_mult_strong].
-  apply _paco_3_1_mon; intros []; eauto.
+  apply _paco_3_1_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco13_3_2_mult_strong: forall r_0 r_1 r_2,
@@ -573,7 +573,7 @@ Theorem _paco13_3_2_mult_strong: forall r_0 r_1 r_2,
 Proof.
   intros. apply curry_map13.
   eapply le1_trans; [| eapply _paco_3_2_mult_strong].
-  apply _paco_3_2_mon; intros []; eauto.
+  apply _paco_3_2_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco13_3_0_fold: forall r_0 r_1 r_2,
@@ -601,21 +601,21 @@ Theorem _paco13_3_0_unfold: forall (MON: _monotone13_3 gf_0) (MON: _monotone13_3
   paco13_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2 <13== gf_0 (upaco13_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco13_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco13_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
   intros. apply curry_adjoint2_13.
-  eapply _paco_3_0_unfold; apply monotone13_3_map; auto.
+  eapply _paco_3_0_unfold; apply monotone13_3_map; assumption.
 Qed.
 
 Theorem _paco13_3_1_unfold: forall (MON: _monotone13_3 gf_0) (MON: _monotone13_3 gf_1) (MON: _monotone13_3 gf_2) r_0 r_1 r_2,
   paco13_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2 <13== gf_1 (upaco13_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco13_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco13_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
   intros. apply curry_adjoint2_13.
-  eapply _paco_3_1_unfold; apply monotone13_3_map; auto.
+  eapply _paco_3_1_unfold; apply monotone13_3_map; assumption.
 Qed.
 
 Theorem _paco13_3_2_unfold: forall (MON: _monotone13_3 gf_0) (MON: _monotone13_3 gf_1) (MON: _monotone13_3 gf_2) r_0 r_1 r_2,
   paco13_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2 <13== gf_2 (upaco13_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco13_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco13_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
   intros. apply curry_adjoint2_13.
-  eapply _paco_3_2_unfold; apply monotone13_3_map; auto.
+  eapply _paco_3_2_unfold; apply monotone13_3_map; assumption.
 Qed.
 
 Theorem paco13_3_0_acc: forall
@@ -677,15 +677,15 @@ Qed.
 
 Corollary paco13_3_0_mult: forall r_0 r_1 r_2,
   paco13_3_0 gf_0 gf_1 gf_2 (paco13_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco13_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco13_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <13= paco13_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
-Proof. intros; eapply paco13_3_0_mult_strong, paco13_3_0_mon; eauto. Qed.
+Proof. intros; eapply paco13_3_0_mult_strong, paco13_3_0_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Corollary paco13_3_1_mult: forall r_0 r_1 r_2,
   paco13_3_1 gf_0 gf_1 gf_2 (paco13_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco13_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco13_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <13= paco13_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2.
-Proof. intros; eapply paco13_3_1_mult_strong, paco13_3_1_mon; eauto. Qed.
+Proof. intros; eapply paco13_3_1_mult_strong, paco13_3_1_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Corollary paco13_3_2_mult: forall r_0 r_1 r_2,
   paco13_3_2 gf_0 gf_1 gf_2 (paco13_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco13_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco13_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <13= paco13_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2.
-Proof. intros; eapply paco13_3_2_mult_strong, paco13_3_2_mon; eauto. Qed.
+Proof. intros; eapply paco13_3_2_mult_strong, paco13_3_2_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Theorem paco13_3_0_fold: forall r_0 r_1 r_2,
   gf_0 (upaco13_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco13_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco13_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <13= paco13_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
@@ -708,19 +708,19 @@ Qed.
 Theorem paco13_3_0_unfold: forall (MON: monotone13_3 gf_0) (MON: monotone13_3 gf_1) (MON: monotone13_3 gf_2) r_0 r_1 r_2,
   paco13_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2 <13= gf_0 (upaco13_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco13_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco13_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
-  repeat_intros 3. eapply _paco13_3_0_unfold; apply monotone13_3_eq; auto.
+  repeat_intros 3. eapply _paco13_3_0_unfold; apply monotone13_3_eq; assumption.
 Qed.
 
 Theorem paco13_3_1_unfold: forall (MON: monotone13_3 gf_0) (MON: monotone13_3 gf_1) (MON: monotone13_3 gf_2) r_0 r_1 r_2,
   paco13_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2 <13= gf_1 (upaco13_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco13_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco13_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
-  repeat_intros 3. eapply _paco13_3_1_unfold; apply monotone13_3_eq; auto.
+  repeat_intros 3. eapply _paco13_3_1_unfold; apply monotone13_3_eq; assumption.
 Qed.
 
 Theorem paco13_3_2_unfold: forall (MON: monotone13_3 gf_0) (MON: monotone13_3 gf_1) (MON: monotone13_3 gf_2) r_0 r_1 r_2,
   paco13_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2 <13= gf_2 (upaco13_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco13_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco13_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
-  repeat_intros 3. eapply _paco13_3_2_unfold; apply monotone13_3_eq; auto.
+  repeat_intros 3. eapply _paco13_3_2_unfold; apply monotone13_3_eq; assumption.
 Qed.
 
 End Arg13_3.
