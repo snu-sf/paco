@@ -2,9 +2,9 @@ from __future__ import print_function
 import sys
 from pacolib import *
 
-if len(sys.argv) < 3: 
-    sys.stderr.write('\nUsage: '+sys.argv[0]+' relsize mutsize\n\n') 
-    sys.exit(1) 
+if len(sys.argv) < 3:
+    sys.stderr.write('\nUsage: '+sys.argv[0]+' relsize mutsize\n\n')
+    sys.exit(1)
 
 relsize = int(sys.argv[1])
 mutsize = int(sys.argv[2])
@@ -41,7 +41,7 @@ print ('  '+ifpstr(n, 'fun'+itrstr(' x', n)+' => ')+'R (exist'+str(n)+'T'+ifpstr
 print ('')
 
 print ('Lemma uncurry_map'+str(n)+' r0 r1 (LE : r0 <'+str(n)+'== r1) : uncurry'+str(n)+' r0 <1== uncurry'+str(n)+' r1.')
-print ('Proof. intros [] H. apply LE. auto. Qed.')
+print ('Proof. intros [] H. apply LE. apply H. Qed.')
 print ('')
 
 print ('Lemma uncurry_map_rev'+str(n)+' r0 r1 (LE: uncurry'+str(n)+' r0 <1== uncurry'+str(n)+' r1) : r0 <'+str(n)+'== r1.')
@@ -63,42 +63,42 @@ print ('Qed.')
 print ('')
 
 print ('Lemma uncurry_bij1_'+str(n)+' r : curry'+str(n)+' (uncurry'+str(n)+' r) <'+str(n)+'== r.')
-print ('Proof. unfold le'+str(n)+'. repeat_intros '+str(n)+'; auto. Qed.')
+print ('Proof. unfold le'+str(n)+'. repeat_intros '+str(n)+'. intros H. apply H. Qed.')
 print ('')
 
 print ('Lemma uncurry_bij2_'+str(n)+' r : r <'+str(n)+'== curry'+str(n)+' (uncurry'+str(n)+' r).')
-print ('Proof. unfold le'+str(n)+'. repeat_intros '+str(n)+'; auto. Qed.')
+print ('Proof. unfold le'+str(n)+'. repeat_intros '+str(n)+'. intros H. apply H. Qed.')
 print ('')
 
 print ('Lemma curry_bij1_'+str(n)+' r : uncurry'+str(n)+' (curry'+str(n)+' r) <1== r.')
-print ('Proof. intros []; auto. Qed.')
+print ('Proof. intros []. intro H. apply H. Qed.')
 print ('')
 
 print ('Lemma curry_bij2_'+str(n)+' r : r <1== uncurry'+str(n)+' (curry'+str(n)+' r).')
-print ('Proof. intros []; auto. Qed.')
+print ('Proof. intros []. intro H. apply H. Qed.')
 print ('')
 
 print ('Lemma uncurry_adjoint1_'+str(n)+' r0 r1 (LE: uncurry'+str(n)+' r0 <1== r1) : r0 <'+str(n)+'== curry'+str(n)+' r1.')
 print ('Proof.')
-print ('  apply uncurry_map_rev'+str(n)+'. eapply le1_trans; [eauto|]. apply curry_bij2_'+str(n)+'.')
+print ('  apply uncurry_map_rev'+str(n)+'. eapply le1_trans; [apply LE|]. apply curry_bij2_'+str(n)+'.')
 print ('Qed.')
 print ('')
 
 print ('Lemma uncurry_adjoint2_'+str(n)+' r0 r1 (LE: r0 <'+str(n)+'== curry'+str(n)+' r1) : uncurry'+str(n)+' r0 <1== r1.')
 print ('Proof.')
-print ('  apply curry_map_rev'+str(n)+'. eapply le'+str(n)+'_trans; [|eauto]. apply uncurry_bij2_'+str(n)+'.')
+print ('  apply curry_map_rev'+str(n)+'. eapply le'+str(n)+'_trans; [|apply LE]. apply uncurry_bij2_'+str(n)+'.')
 print ('Qed.')
 print ('')
 
 print ('Lemma curry_adjoint1_'+str(n)+' r0 r1 (LE: curry'+str(n)+' r0 <'+str(n)+'== r1) : r0 <1== uncurry'+str(n)+' r1.')
 print ('Proof.')
-print ('  apply curry_map_rev'+str(n)+'. eapply le'+str(n)+'_trans; [eauto|]. apply uncurry_bij2_'+str(n)+'.')
+print ('  apply curry_map_rev'+str(n)+'. eapply le'+str(n)+'_trans; [apply LE|]. apply uncurry_bij2_'+str(n)+'.')
 print ('Qed.')
 print ('')
 
 print ('Lemma curry_adjoint2_'+str(n)+' r0 r1 (LE: r0 <1== uncurry'+str(n)+' r1) : curry'+str(n)+' r0 <'+str(n)+'== r1.')
 print ('Proof.')
-print ('  apply uncurry_map_rev'+str(n)+'. eapply le1_trans; [|eauto]. apply curry_bij1_'+str(n)+'.')
+print ('  apply uncurry_map_rev'+str(n)+'. eapply le1_trans; [|apply LE]. apply curry_bij1_'+str(n)+'.')
 print ('Qed.')
 print ('')
 
@@ -152,13 +152,13 @@ for m in range (1,mutsize+1):
     print ('')
     print ("Lemma monotone"+str(n)+lev(m)+'_eq'+" (gf: "+m*("rel"+str(n)+itrstr(" T",n)+" -> ")+"rel"+str(n)+itrstr(" T",n)+") :")
     print ("  monotone"+str(n)+lev(m)+' gf <-> _monotone'+str(n)+lev(m)+' gf.')
-    print ("Proof. unfold monotone"+str(n)+lev(m)+', _monotone'+str(n)+lev(m)+', le'+str(n)+'. split; eauto. Qed.')
+    print ("Proof. unfold monotone"+str(n)+lev(m)+', _monotone'+str(n)+lev(m)+', le'+str(n)+'. split; intros; eapply H; eassumption. Qed.')
     print ('')
     print ("Lemma monotone"+str(n)+lev(m)+'_map'+" (gf: "+m*("rel"+str(n)+itrstr(" T",n)+" -> ")+"rel"+str(n)+itrstr(" T",n)+")")
     print ("      (MON: _monotone"+str(n)+lev(m)+' gf) :')
     print ("  _monotone"+lev(m)+' (fun'+itrstr(' R', m)+' => uncurry'+str(n)+' (gf'+itrstr(' (curry'+str(n)+' R', m, ')')+')).')
     print ('Proof.')
-    print ('  repeat_intros '+str(3*m)+'. apply uncurry_map'+str(n)+'. apply MON; apply curry_map'+str(n)+'; auto.')
+    print ('  repeat_intros '+str(3*m)+'. apply uncurry_map'+str(n)+'. apply MON; apply curry_map'+str(n)+'; assumption.')
     print ('Qed.')
     print ('')
 
@@ -169,7 +169,7 @@ for m in range (1,mutsize+1):
     for i in range(m):
         print ('Theorem _paco'+str(n)+lev(m)+idx(m,i)+'_mon: _monotone'+str(n)+lev(m)+' (paco'+str(n)+lev(m)+idx(m,i)+itridx(" gf",m)+').')
         print ('Proof.')
-        print ('  repeat_intros '+str(m*3)+'. eapply curry_map'+str(n)+', _paco'+lev(m)+idx(m,i)+'_mon; apply uncurry_map'+str(n)+'; auto.')
+        print ('  repeat_intros '+str(m*3)+'. eapply curry_map'+str(n)+', _paco'+lev(m)+idx(m,i)+'_mon; apply uncurry_map'+str(n)+'; assumption.')
         print ('Qed.')
         print ('')
     for i in range(m):
@@ -198,10 +198,10 @@ for m in range (1,mutsize+1):
         for j in range(m):
             print (' (upaco'+str(n)+lev(m)+idx(m,j)+itridx(" gf",m)+itridx(' r',m)+')',end='')
         print (' <'+str(n)+'== paco'+str(n)+lev(m)+idx(m,i)+itridx(" gf",m)+itridx(' r',m)+'.')
-        print ('Proof.') 
+        print ('Proof.')
         print ('  intros. apply curry_map'+str(n)+'.')
         print ('  eapply le1_trans; [| eapply _paco'+lev(m)+idx(m,i)+'_mult_strong].')
-        print ('  apply _paco'+lev(m)+idx(m,i)+'_mon; intros []; eauto.')
+        print ('  apply _paco'+lev(m)+idx(m,i)+'_mon; intros []; intros H; apply H.')
         print ('Qed.')
         print ('')
     for i in range(m):
@@ -210,7 +210,7 @@ for m in range (1,mutsize+1):
         for j in range(m):
             print (' (upaco'+str(n)+lev(m)+idx(m,j)+itridx(" gf",m)+itridx(' r',m)+')',end='')
         print (' <'+str(n)+'== paco'+str(n)+lev(m)+idx(m,i)+itridx(" gf",m)+itridx(' r',m)+'.')
-        print ('Proof.') 
+        print ('Proof.')
         print ('  intros. apply uncurry_adjoint1_'+str(n)+'.')
         print ('  eapply le1_trans; [| apply _paco'+lev(m)+idx(m,i)+'_fold]. apply le1_refl.')
         print ('Qed.')
@@ -223,7 +223,7 @@ for m in range (1,mutsize+1):
         print ('.')
         print ('Proof.')
         print ('  intros. apply curry_adjoint2_'+str(n)+'.')
-        print ('  eapply _paco'+lev(m)+idx(m,i)+'_unfold; apply monotone'+str(n)+lev(m)+'_map; auto.')
+        print ('  eapply _paco'+lev(m)+idx(m,i)+'_unfold; apply monotone'+str(n)+lev(m)+'_map; assumption.')
         print ('Qed.')
         print ('')
 
@@ -261,7 +261,7 @@ for m in range (1,mutsize+1):
     for i in range(m):
         print ('Corollary paco'+str(n)+lev(m)+idx(m,i)+'_mult: forall'+itridx(' r',m)+',')
         print ('  paco'+str(n)+lev(m)+idx(m,i)+itridx(" gf",m)+itridx(' (paco'+str(n)+lev(m),m,itridx(" gf",m)+itridx(' r',m)+')')+' <'+str(n)+'= paco'+str(n)+lev(m)+idx(m,i)+itridx(" gf",m)+itridx(' r',m)+'.')
-        print ('Proof. intros; eapply paco'+str(n)+lev(m)+idx(m,i)+'_mult_strong, paco'+str(n)+lev(m)+idx(m,i)+'_mon; eauto. Qed.')
+        print ('Proof. intros; eapply paco'+str(n)+lev(m)+idx(m,i)+'_mult_strong, paco'+str(n)+lev(m)+idx(m,i)+'_mon; [apply PR|..]; intros; left; assumption. Qed.')
         print ('')
     for i in range(m):
         print ('Theorem paco'+str(n)+lev(m)+idx(m,i)+'_fold: forall'+itridx(' r',m)+',')
@@ -269,7 +269,7 @@ for m in range (1,mutsize+1):
         for j in range(m):
             print (' (upaco'+str(n)+lev(m)+idx(m,j)+itridx(" gf",m)+itridx(' r',m)+')',end='')
         print (' <'+str(n)+'= paco'+str(n)+lev(m)+idx(m,i)+itridx(" gf",m)+itridx(' r',m)+'.')
-        print ('Proof.') 
+        print ('Proof.')
         print ('  apply _paco'+str(n)+lev(m)+idx(m,i)+'_fold.')
         print ('Qed.')
         print ('')
@@ -280,7 +280,7 @@ for m in range (1,mutsize+1):
             print (' (upaco'+str(n)+lev(m)+idx(m,j)+itridx(" gf",m)+itridx(' r',m)+')',end='')
         print ('.')
         print ('Proof.')
-        print ('  repeat_intros '+str(m)+'. eapply _paco'+str(n)+lev(m)+idx(m,i)+'_unfold; apply monotone'+str(n)+lev(m)+'_eq; auto.')
+        print ('  repeat_intros '+str(m)+'. eapply _paco'+str(n)+lev(m)+idx(m,i)+'_unfold; apply monotone'+str(n)+lev(m)+'_eq; assumption.')
         print ('Qed.')
         print ('')
 

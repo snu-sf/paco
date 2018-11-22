@@ -27,7 +27,7 @@ Definition curry6 (R: rel1 sig6T): rel6 T0 T1 T2 T3 T4 T5 :=
   fun x0 x1 x2 x3 x4 x5 => R (exist6T x5).
 
 Lemma uncurry_map6 r0 r1 (LE : r0 <6== r1) : uncurry6 r0 <1== uncurry6 r1.
-Proof. intros [] H. apply LE. auto. Qed.
+Proof. intros [] H. apply LE. apply H. Qed.
 
 Lemma uncurry_map_rev6 r0 r1 (LE: uncurry6 r0 <1== uncurry6 r1) : r0 <6== r1.
 Proof.
@@ -45,35 +45,35 @@ Proof.
 Qed.
 
 Lemma uncurry_bij1_6 r : curry6 (uncurry6 r) <6== r.
-Proof. unfold le6. repeat_intros 6; auto. Qed.
+Proof. unfold le6. repeat_intros 6. intros H. apply H. Qed.
 
 Lemma uncurry_bij2_6 r : r <6== curry6 (uncurry6 r).
-Proof. unfold le6. repeat_intros 6; auto. Qed.
+Proof. unfold le6. repeat_intros 6. intros H. apply H. Qed.
 
 Lemma curry_bij1_6 r : uncurry6 (curry6 r) <1== r.
-Proof. intros []; auto. Qed.
+Proof. intros []. intro H. apply H. Qed.
 
 Lemma curry_bij2_6 r : r <1== uncurry6 (curry6 r).
-Proof. intros []; auto. Qed.
+Proof. intros []. intro H. apply H. Qed.
 
 Lemma uncurry_adjoint1_6 r0 r1 (LE: uncurry6 r0 <1== r1) : r0 <6== curry6 r1.
 Proof.
-  apply uncurry_map_rev6. eapply le1_trans; [eauto|]. apply curry_bij2_6.
+  apply uncurry_map_rev6. eapply le1_trans; [apply LE|]. apply curry_bij2_6.
 Qed.
 
 Lemma uncurry_adjoint2_6 r0 r1 (LE: r0 <6== curry6 r1) : uncurry6 r0 <1== r1.
 Proof.
-  apply curry_map_rev6. eapply le6_trans; [|eauto]. apply uncurry_bij2_6.
+  apply curry_map_rev6. eapply le6_trans; [|apply LE]. apply uncurry_bij2_6.
 Qed.
 
 Lemma curry_adjoint1_6 r0 r1 (LE: curry6 r0 <6== r1) : r0 <1== uncurry6 r1.
 Proof.
-  apply curry_map_rev6. eapply le6_trans; [eauto|]. apply uncurry_bij2_6.
+  apply curry_map_rev6. eapply le6_trans; [apply LE|]. apply uncurry_bij2_6.
 Qed.
 
 Lemma curry_adjoint2_6 r0 r1 (LE: r0 <1== uncurry6 r1) : curry6 r0 <6== r1.
 Proof.
-  apply uncurry_map_rev6. eapply le1_trans; [|eauto]. apply curry_bij1_6.
+  apply uncurry_map_rev6. eapply le1_trans; [|apply LE]. apply curry_bij1_6.
 Qed.
 
 (** ** Predicates of Arity 6
@@ -154,13 +154,13 @@ Definition _monotone6 (gf: rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5) :=
 
 Lemma monotone6_eq (gf: rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5) :
   monotone6 gf <-> _monotone6 gf.
-Proof. unfold monotone6, _monotone6, le6. split; eauto. Qed.
+Proof. unfold monotone6, _monotone6, le6. split; intros; eapply H; eassumption. Qed.
 
 Lemma monotone6_map (gf: rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5)
       (MON: _monotone6 gf) :
   _monotone (fun R0 => uncurry6 (gf (curry6 R0))).
 Proof.
-  repeat_intros 3. apply uncurry_map6. apply MON; apply curry_map6; auto.
+  repeat_intros 3. apply uncurry_map6. apply MON; apply curry_map6; assumption.
 Qed.
 
 Variable gf : rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5.
@@ -168,7 +168,7 @@ Arguments gf : clear implicits.
 
 Theorem _paco6_mon: _monotone6 (paco6 gf).
 Proof.
-  repeat_intros 3. eapply curry_map6, _paco_mon; apply uncurry_map6; auto.
+  repeat_intros 3. eapply curry_map6, _paco_mon; apply uncurry_map6; assumption.
 Qed.
 
 Theorem _paco6_acc: forall
@@ -189,7 +189,7 @@ Theorem _paco6_mult_strong: forall r,
 Proof.
   intros. apply curry_map6.
   eapply le1_trans; [| eapply _paco_mult_strong].
-  apply _paco_mon; intros []; eauto.
+  apply _paco_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco6_fold: forall r,
@@ -203,7 +203,7 @@ Theorem _paco6_unfold: forall (MON: _monotone6 gf) r,
   paco6 gf r <6== gf (upaco6 gf r).
 Proof.
   intros. apply curry_adjoint2_6.
-  eapply _paco_unfold; apply monotone6_map; auto.
+  eapply _paco_unfold; apply monotone6_map; assumption.
 Qed.
 
 Theorem paco6_acc: forall
@@ -227,7 +227,7 @@ Qed.
 
 Corollary paco6_mult: forall r,
   paco6 gf (paco6 gf r) <6= paco6 gf r.
-Proof. intros; eapply paco6_mult_strong, paco6_mon; eauto. Qed.
+Proof. intros; eapply paco6_mult_strong, paco6_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Theorem paco6_fold: forall r,
   gf (upaco6 gf r) <6= paco6 gf r.
@@ -238,7 +238,7 @@ Qed.
 Theorem paco6_unfold: forall (MON: monotone6 gf) r,
   paco6 gf r <6= gf (upaco6 gf r).
 Proof.
-  repeat_intros 1. eapply _paco6_unfold; apply monotone6_eq; auto.
+  repeat_intros 1. eapply _paco6_unfold; apply monotone6_eq; assumption.
 Qed.
 
 End Arg6_1.
@@ -268,13 +268,13 @@ Definition _monotone6_2 (gf: rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5 ->
 
 Lemma monotone6_2_eq (gf: rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5) :
   monotone6_2 gf <-> _monotone6_2 gf.
-Proof. unfold monotone6_2, _monotone6_2, le6. split; eauto. Qed.
+Proof. unfold monotone6_2, _monotone6_2, le6. split; intros; eapply H; eassumption. Qed.
 
 Lemma monotone6_2_map (gf: rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5)
       (MON: _monotone6_2 gf) :
   _monotone_2 (fun R0 R1 => uncurry6 (gf (curry6 R0) (curry6 R1))).
 Proof.
-  repeat_intros 6. apply uncurry_map6. apply MON; apply curry_map6; auto.
+  repeat_intros 6. apply uncurry_map6. apply MON; apply curry_map6; assumption.
 Qed.
 
 Variable gf_0 gf_1 : rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5.
@@ -283,12 +283,12 @@ Arguments gf_1 : clear implicits.
 
 Theorem _paco6_2_0_mon: _monotone6_2 (paco6_2_0 gf_0 gf_1).
 Proof.
-  repeat_intros 6. eapply curry_map6, _paco_2_0_mon; apply uncurry_map6; auto.
+  repeat_intros 6. eapply curry_map6, _paco_2_0_mon; apply uncurry_map6; assumption.
 Qed.
 
 Theorem _paco6_2_1_mon: _monotone6_2 (paco6_2_1 gf_0 gf_1).
 Proof.
-  repeat_intros 6. eapply curry_map6, _paco_2_1_mon; apply uncurry_map6; auto.
+  repeat_intros 6. eapply curry_map6, _paco_2_1_mon; apply uncurry_map6; assumption.
 Qed.
 
 Theorem _paco6_2_0_acc: forall
@@ -322,7 +322,7 @@ Theorem _paco6_2_0_mult_strong: forall r_0 r_1,
 Proof.
   intros. apply curry_map6.
   eapply le1_trans; [| eapply _paco_2_0_mult_strong].
-  apply _paco_2_0_mon; intros []; eauto.
+  apply _paco_2_0_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco6_2_1_mult_strong: forall r_0 r_1,
@@ -330,7 +330,7 @@ Theorem _paco6_2_1_mult_strong: forall r_0 r_1,
 Proof.
   intros. apply curry_map6.
   eapply le1_trans; [| eapply _paco_2_1_mult_strong].
-  apply _paco_2_1_mon; intros []; eauto.
+  apply _paco_2_1_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco6_2_0_fold: forall r_0 r_1,
@@ -351,14 +351,14 @@ Theorem _paco6_2_0_unfold: forall (MON: _monotone6_2 gf_0) (MON: _monotone6_2 gf
   paco6_2_0 gf_0 gf_1 r_0 r_1 <6== gf_0 (upaco6_2_0 gf_0 gf_1 r_0 r_1) (upaco6_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
   intros. apply curry_adjoint2_6.
-  eapply _paco_2_0_unfold; apply monotone6_2_map; auto.
+  eapply _paco_2_0_unfold; apply monotone6_2_map; assumption.
 Qed.
 
 Theorem _paco6_2_1_unfold: forall (MON: _monotone6_2 gf_0) (MON: _monotone6_2 gf_1) r_0 r_1,
   paco6_2_1 gf_0 gf_1 r_0 r_1 <6== gf_1 (upaco6_2_0 gf_0 gf_1 r_0 r_1) (upaco6_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
   intros. apply curry_adjoint2_6.
-  eapply _paco_2_1_unfold; apply monotone6_2_map; auto.
+  eapply _paco_2_1_unfold; apply monotone6_2_map; assumption.
 Qed.
 
 Theorem paco6_2_0_acc: forall
@@ -401,11 +401,11 @@ Qed.
 
 Corollary paco6_2_0_mult: forall r_0 r_1,
   paco6_2_0 gf_0 gf_1 (paco6_2_0 gf_0 gf_1 r_0 r_1) (paco6_2_1 gf_0 gf_1 r_0 r_1) <6= paco6_2_0 gf_0 gf_1 r_0 r_1.
-Proof. intros; eapply paco6_2_0_mult_strong, paco6_2_0_mon; eauto. Qed.
+Proof. intros; eapply paco6_2_0_mult_strong, paco6_2_0_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Corollary paco6_2_1_mult: forall r_0 r_1,
   paco6_2_1 gf_0 gf_1 (paco6_2_0 gf_0 gf_1 r_0 r_1) (paco6_2_1 gf_0 gf_1 r_0 r_1) <6= paco6_2_1 gf_0 gf_1 r_0 r_1.
-Proof. intros; eapply paco6_2_1_mult_strong, paco6_2_1_mon; eauto. Qed.
+Proof. intros; eapply paco6_2_1_mult_strong, paco6_2_1_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Theorem paco6_2_0_fold: forall r_0 r_1,
   gf_0 (upaco6_2_0 gf_0 gf_1 r_0 r_1) (upaco6_2_1 gf_0 gf_1 r_0 r_1) <6= paco6_2_0 gf_0 gf_1 r_0 r_1.
@@ -422,13 +422,13 @@ Qed.
 Theorem paco6_2_0_unfold: forall (MON: monotone6_2 gf_0) (MON: monotone6_2 gf_1) r_0 r_1,
   paco6_2_0 gf_0 gf_1 r_0 r_1 <6= gf_0 (upaco6_2_0 gf_0 gf_1 r_0 r_1) (upaco6_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
-  repeat_intros 2. eapply _paco6_2_0_unfold; apply monotone6_2_eq; auto.
+  repeat_intros 2. eapply _paco6_2_0_unfold; apply monotone6_2_eq; assumption.
 Qed.
 
 Theorem paco6_2_1_unfold: forall (MON: monotone6_2 gf_0) (MON: monotone6_2 gf_1) r_0 r_1,
   paco6_2_1 gf_0 gf_1 r_0 r_1 <6= gf_1 (upaco6_2_0 gf_0 gf_1 r_0 r_1) (upaco6_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
-  repeat_intros 2. eapply _paco6_2_1_unfold; apply monotone6_2_eq; auto.
+  repeat_intros 2. eapply _paco6_2_1_unfold; apply monotone6_2_eq; assumption.
 Qed.
 
 End Arg6_2.
@@ -470,13 +470,13 @@ Definition _monotone6_3 (gf: rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5 ->
 
 Lemma monotone6_3_eq (gf: rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5) :
   monotone6_3 gf <-> _monotone6_3 gf.
-Proof. unfold monotone6_3, _monotone6_3, le6. split; eauto. Qed.
+Proof. unfold monotone6_3, _monotone6_3, le6. split; intros; eapply H; eassumption. Qed.
 
 Lemma monotone6_3_map (gf: rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5)
       (MON: _monotone6_3 gf) :
   _monotone_3 (fun R0 R1 R2 => uncurry6 (gf (curry6 R0) (curry6 R1) (curry6 R2))).
 Proof.
-  repeat_intros 9. apply uncurry_map6. apply MON; apply curry_map6; auto.
+  repeat_intros 9. apply uncurry_map6. apply MON; apply curry_map6; assumption.
 Qed.
 
 Variable gf_0 gf_1 gf_2 : rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5.
@@ -486,17 +486,17 @@ Arguments gf_2 : clear implicits.
 
 Theorem _paco6_3_0_mon: _monotone6_3 (paco6_3_0 gf_0 gf_1 gf_2).
 Proof.
-  repeat_intros 9. eapply curry_map6, _paco_3_0_mon; apply uncurry_map6; auto.
+  repeat_intros 9. eapply curry_map6, _paco_3_0_mon; apply uncurry_map6; assumption.
 Qed.
 
 Theorem _paco6_3_1_mon: _monotone6_3 (paco6_3_1 gf_0 gf_1 gf_2).
 Proof.
-  repeat_intros 9. eapply curry_map6, _paco_3_1_mon; apply uncurry_map6; auto.
+  repeat_intros 9. eapply curry_map6, _paco_3_1_mon; apply uncurry_map6; assumption.
 Qed.
 
 Theorem _paco6_3_2_mon: _monotone6_3 (paco6_3_2 gf_0 gf_1 gf_2).
 Proof.
-  repeat_intros 9. eapply curry_map6, _paco_3_2_mon; apply uncurry_map6; auto.
+  repeat_intros 9. eapply curry_map6, _paco_3_2_mon; apply uncurry_map6; assumption.
 Qed.
 
 Theorem _paco6_3_0_acc: forall
@@ -543,7 +543,7 @@ Theorem _paco6_3_0_mult_strong: forall r_0 r_1 r_2,
 Proof.
   intros. apply curry_map6.
   eapply le1_trans; [| eapply _paco_3_0_mult_strong].
-  apply _paco_3_0_mon; intros []; eauto.
+  apply _paco_3_0_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco6_3_1_mult_strong: forall r_0 r_1 r_2,
@@ -551,7 +551,7 @@ Theorem _paco6_3_1_mult_strong: forall r_0 r_1 r_2,
 Proof.
   intros. apply curry_map6.
   eapply le1_trans; [| eapply _paco_3_1_mult_strong].
-  apply _paco_3_1_mon; intros []; eauto.
+  apply _paco_3_1_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco6_3_2_mult_strong: forall r_0 r_1 r_2,
@@ -559,7 +559,7 @@ Theorem _paco6_3_2_mult_strong: forall r_0 r_1 r_2,
 Proof.
   intros. apply curry_map6.
   eapply le1_trans; [| eapply _paco_3_2_mult_strong].
-  apply _paco_3_2_mon; intros []; eauto.
+  apply _paco_3_2_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco6_3_0_fold: forall r_0 r_1 r_2,
@@ -587,21 +587,21 @@ Theorem _paco6_3_0_unfold: forall (MON: _monotone6_3 gf_0) (MON: _monotone6_3 gf
   paco6_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2 <6== gf_0 (upaco6_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco6_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco6_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
   intros. apply curry_adjoint2_6.
-  eapply _paco_3_0_unfold; apply monotone6_3_map; auto.
+  eapply _paco_3_0_unfold; apply monotone6_3_map; assumption.
 Qed.
 
 Theorem _paco6_3_1_unfold: forall (MON: _monotone6_3 gf_0) (MON: _monotone6_3 gf_1) (MON: _monotone6_3 gf_2) r_0 r_1 r_2,
   paco6_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2 <6== gf_1 (upaco6_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco6_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco6_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
   intros. apply curry_adjoint2_6.
-  eapply _paco_3_1_unfold; apply monotone6_3_map; auto.
+  eapply _paco_3_1_unfold; apply monotone6_3_map; assumption.
 Qed.
 
 Theorem _paco6_3_2_unfold: forall (MON: _monotone6_3 gf_0) (MON: _monotone6_3 gf_1) (MON: _monotone6_3 gf_2) r_0 r_1 r_2,
   paco6_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2 <6== gf_2 (upaco6_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco6_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco6_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
   intros. apply curry_adjoint2_6.
-  eapply _paco_3_2_unfold; apply monotone6_3_map; auto.
+  eapply _paco_3_2_unfold; apply monotone6_3_map; assumption.
 Qed.
 
 Theorem paco6_3_0_acc: forall
@@ -663,15 +663,15 @@ Qed.
 
 Corollary paco6_3_0_mult: forall r_0 r_1 r_2,
   paco6_3_0 gf_0 gf_1 gf_2 (paco6_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco6_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco6_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <6= paco6_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
-Proof. intros; eapply paco6_3_0_mult_strong, paco6_3_0_mon; eauto. Qed.
+Proof. intros; eapply paco6_3_0_mult_strong, paco6_3_0_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Corollary paco6_3_1_mult: forall r_0 r_1 r_2,
   paco6_3_1 gf_0 gf_1 gf_2 (paco6_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco6_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco6_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <6= paco6_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2.
-Proof. intros; eapply paco6_3_1_mult_strong, paco6_3_1_mon; eauto. Qed.
+Proof. intros; eapply paco6_3_1_mult_strong, paco6_3_1_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Corollary paco6_3_2_mult: forall r_0 r_1 r_2,
   paco6_3_2 gf_0 gf_1 gf_2 (paco6_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco6_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco6_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <6= paco6_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2.
-Proof. intros; eapply paco6_3_2_mult_strong, paco6_3_2_mon; eauto. Qed.
+Proof. intros; eapply paco6_3_2_mult_strong, paco6_3_2_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Theorem paco6_3_0_fold: forall r_0 r_1 r_2,
   gf_0 (upaco6_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco6_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco6_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <6= paco6_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
@@ -694,19 +694,19 @@ Qed.
 Theorem paco6_3_0_unfold: forall (MON: monotone6_3 gf_0) (MON: monotone6_3 gf_1) (MON: monotone6_3 gf_2) r_0 r_1 r_2,
   paco6_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2 <6= gf_0 (upaco6_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco6_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco6_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
-  repeat_intros 3. eapply _paco6_3_0_unfold; apply monotone6_3_eq; auto.
+  repeat_intros 3. eapply _paco6_3_0_unfold; apply monotone6_3_eq; assumption.
 Qed.
 
 Theorem paco6_3_1_unfold: forall (MON: monotone6_3 gf_0) (MON: monotone6_3 gf_1) (MON: monotone6_3 gf_2) r_0 r_1 r_2,
   paco6_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2 <6= gf_1 (upaco6_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco6_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco6_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
-  repeat_intros 3. eapply _paco6_3_1_unfold; apply monotone6_3_eq; auto.
+  repeat_intros 3. eapply _paco6_3_1_unfold; apply monotone6_3_eq; assumption.
 Qed.
 
 Theorem paco6_3_2_unfold: forall (MON: monotone6_3 gf_0) (MON: monotone6_3 gf_1) (MON: monotone6_3 gf_2) r_0 r_1 r_2,
   paco6_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2 <6= gf_2 (upaco6_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco6_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco6_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
-  repeat_intros 3. eapply _paco6_3_2_unfold; apply monotone6_3_eq; auto.
+  repeat_intros 3. eapply _paco6_3_2_unfold; apply monotone6_3_eq; assumption.
 Qed.
 
 End Arg6_3.

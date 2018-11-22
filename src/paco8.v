@@ -31,7 +31,7 @@ Definition curry8 (R: rel1 sig8T): rel8 T0 T1 T2 T3 T4 T5 T6 T7 :=
   fun x0 x1 x2 x3 x4 x5 x6 x7 => R (exist8T x7).
 
 Lemma uncurry_map8 r0 r1 (LE : r0 <8== r1) : uncurry8 r0 <1== uncurry8 r1.
-Proof. intros [] H. apply LE. auto. Qed.
+Proof. intros [] H. apply LE. apply H. Qed.
 
 Lemma uncurry_map_rev8 r0 r1 (LE: uncurry8 r0 <1== uncurry8 r1) : r0 <8== r1.
 Proof.
@@ -49,35 +49,35 @@ Proof.
 Qed.
 
 Lemma uncurry_bij1_8 r : curry8 (uncurry8 r) <8== r.
-Proof. unfold le8. repeat_intros 8; auto. Qed.
+Proof. unfold le8. repeat_intros 8. intros H. apply H. Qed.
 
 Lemma uncurry_bij2_8 r : r <8== curry8 (uncurry8 r).
-Proof. unfold le8. repeat_intros 8; auto. Qed.
+Proof. unfold le8. repeat_intros 8. intros H. apply H. Qed.
 
 Lemma curry_bij1_8 r : uncurry8 (curry8 r) <1== r.
-Proof. intros []; auto. Qed.
+Proof. intros []. intro H. apply H. Qed.
 
 Lemma curry_bij2_8 r : r <1== uncurry8 (curry8 r).
-Proof. intros []; auto. Qed.
+Proof. intros []. intro H. apply H. Qed.
 
 Lemma uncurry_adjoint1_8 r0 r1 (LE: uncurry8 r0 <1== r1) : r0 <8== curry8 r1.
 Proof.
-  apply uncurry_map_rev8. eapply le1_trans; [eauto|]. apply curry_bij2_8.
+  apply uncurry_map_rev8. eapply le1_trans; [apply LE|]. apply curry_bij2_8.
 Qed.
 
 Lemma uncurry_adjoint2_8 r0 r1 (LE: r0 <8== curry8 r1) : uncurry8 r0 <1== r1.
 Proof.
-  apply curry_map_rev8. eapply le8_trans; [|eauto]. apply uncurry_bij2_8.
+  apply curry_map_rev8. eapply le8_trans; [|apply LE]. apply uncurry_bij2_8.
 Qed.
 
 Lemma curry_adjoint1_8 r0 r1 (LE: curry8 r0 <8== r1) : r0 <1== uncurry8 r1.
 Proof.
-  apply curry_map_rev8. eapply le8_trans; [eauto|]. apply uncurry_bij2_8.
+  apply curry_map_rev8. eapply le8_trans; [apply LE|]. apply uncurry_bij2_8.
 Qed.
 
 Lemma curry_adjoint2_8 r0 r1 (LE: r0 <1== uncurry8 r1) : curry8 r0 <8== r1.
 Proof.
-  apply uncurry_map_rev8. eapply le1_trans; [|eauto]. apply curry_bij1_8.
+  apply uncurry_map_rev8. eapply le1_trans; [|apply LE]. apply curry_bij1_8.
 Qed.
 
 (** ** Predicates of Arity 8
@@ -158,13 +158,13 @@ Definition _monotone8 (gf: rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T
 
 Lemma monotone8_eq (gf: rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7) :
   monotone8 gf <-> _monotone8 gf.
-Proof. unfold monotone8, _monotone8, le8. split; eauto. Qed.
+Proof. unfold monotone8, _monotone8, le8. split; intros; eapply H; eassumption. Qed.
 
 Lemma monotone8_map (gf: rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7)
       (MON: _monotone8 gf) :
   _monotone (fun R0 => uncurry8 (gf (curry8 R0))).
 Proof.
-  repeat_intros 3. apply uncurry_map8. apply MON; apply curry_map8; auto.
+  repeat_intros 3. apply uncurry_map8. apply MON; apply curry_map8; assumption.
 Qed.
 
 Variable gf : rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7.
@@ -172,7 +172,7 @@ Arguments gf : clear implicits.
 
 Theorem _paco8_mon: _monotone8 (paco8 gf).
 Proof.
-  repeat_intros 3. eapply curry_map8, _paco_mon; apply uncurry_map8; auto.
+  repeat_intros 3. eapply curry_map8, _paco_mon; apply uncurry_map8; assumption.
 Qed.
 
 Theorem _paco8_acc: forall
@@ -193,7 +193,7 @@ Theorem _paco8_mult_strong: forall r,
 Proof.
   intros. apply curry_map8.
   eapply le1_trans; [| eapply _paco_mult_strong].
-  apply _paco_mon; intros []; eauto.
+  apply _paco_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco8_fold: forall r,
@@ -207,7 +207,7 @@ Theorem _paco8_unfold: forall (MON: _monotone8 gf) r,
   paco8 gf r <8== gf (upaco8 gf r).
 Proof.
   intros. apply curry_adjoint2_8.
-  eapply _paco_unfold; apply monotone8_map; auto.
+  eapply _paco_unfold; apply monotone8_map; assumption.
 Qed.
 
 Theorem paco8_acc: forall
@@ -231,7 +231,7 @@ Qed.
 
 Corollary paco8_mult: forall r,
   paco8 gf (paco8 gf r) <8= paco8 gf r.
-Proof. intros; eapply paco8_mult_strong, paco8_mon; eauto. Qed.
+Proof. intros; eapply paco8_mult_strong, paco8_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Theorem paco8_fold: forall r,
   gf (upaco8 gf r) <8= paco8 gf r.
@@ -242,7 +242,7 @@ Qed.
 Theorem paco8_unfold: forall (MON: monotone8 gf) r,
   paco8 gf r <8= gf (upaco8 gf r).
 Proof.
-  repeat_intros 1. eapply _paco8_unfold; apply monotone8_eq; auto.
+  repeat_intros 1. eapply _paco8_unfold; apply monotone8_eq; assumption.
 Qed.
 
 End Arg8_1.
@@ -272,13 +272,13 @@ Definition _monotone8_2 (gf: rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4
 
 Lemma monotone8_2_eq (gf: rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7) :
   monotone8_2 gf <-> _monotone8_2 gf.
-Proof. unfold monotone8_2, _monotone8_2, le8. split; eauto. Qed.
+Proof. unfold monotone8_2, _monotone8_2, le8. split; intros; eapply H; eassumption. Qed.
 
 Lemma monotone8_2_map (gf: rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7)
       (MON: _monotone8_2 gf) :
   _monotone_2 (fun R0 R1 => uncurry8 (gf (curry8 R0) (curry8 R1))).
 Proof.
-  repeat_intros 6. apply uncurry_map8. apply MON; apply curry_map8; auto.
+  repeat_intros 6. apply uncurry_map8. apply MON; apply curry_map8; assumption.
 Qed.
 
 Variable gf_0 gf_1 : rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7.
@@ -287,12 +287,12 @@ Arguments gf_1 : clear implicits.
 
 Theorem _paco8_2_0_mon: _monotone8_2 (paco8_2_0 gf_0 gf_1).
 Proof.
-  repeat_intros 6. eapply curry_map8, _paco_2_0_mon; apply uncurry_map8; auto.
+  repeat_intros 6. eapply curry_map8, _paco_2_0_mon; apply uncurry_map8; assumption.
 Qed.
 
 Theorem _paco8_2_1_mon: _monotone8_2 (paco8_2_1 gf_0 gf_1).
 Proof.
-  repeat_intros 6. eapply curry_map8, _paco_2_1_mon; apply uncurry_map8; auto.
+  repeat_intros 6. eapply curry_map8, _paco_2_1_mon; apply uncurry_map8; assumption.
 Qed.
 
 Theorem _paco8_2_0_acc: forall
@@ -326,7 +326,7 @@ Theorem _paco8_2_0_mult_strong: forall r_0 r_1,
 Proof.
   intros. apply curry_map8.
   eapply le1_trans; [| eapply _paco_2_0_mult_strong].
-  apply _paco_2_0_mon; intros []; eauto.
+  apply _paco_2_0_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco8_2_1_mult_strong: forall r_0 r_1,
@@ -334,7 +334,7 @@ Theorem _paco8_2_1_mult_strong: forall r_0 r_1,
 Proof.
   intros. apply curry_map8.
   eapply le1_trans; [| eapply _paco_2_1_mult_strong].
-  apply _paco_2_1_mon; intros []; eauto.
+  apply _paco_2_1_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco8_2_0_fold: forall r_0 r_1,
@@ -355,14 +355,14 @@ Theorem _paco8_2_0_unfold: forall (MON: _monotone8_2 gf_0) (MON: _monotone8_2 gf
   paco8_2_0 gf_0 gf_1 r_0 r_1 <8== gf_0 (upaco8_2_0 gf_0 gf_1 r_0 r_1) (upaco8_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
   intros. apply curry_adjoint2_8.
-  eapply _paco_2_0_unfold; apply monotone8_2_map; auto.
+  eapply _paco_2_0_unfold; apply monotone8_2_map; assumption.
 Qed.
 
 Theorem _paco8_2_1_unfold: forall (MON: _monotone8_2 gf_0) (MON: _monotone8_2 gf_1) r_0 r_1,
   paco8_2_1 gf_0 gf_1 r_0 r_1 <8== gf_1 (upaco8_2_0 gf_0 gf_1 r_0 r_1) (upaco8_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
   intros. apply curry_adjoint2_8.
-  eapply _paco_2_1_unfold; apply monotone8_2_map; auto.
+  eapply _paco_2_1_unfold; apply monotone8_2_map; assumption.
 Qed.
 
 Theorem paco8_2_0_acc: forall
@@ -405,11 +405,11 @@ Qed.
 
 Corollary paco8_2_0_mult: forall r_0 r_1,
   paco8_2_0 gf_0 gf_1 (paco8_2_0 gf_0 gf_1 r_0 r_1) (paco8_2_1 gf_0 gf_1 r_0 r_1) <8= paco8_2_0 gf_0 gf_1 r_0 r_1.
-Proof. intros; eapply paco8_2_0_mult_strong, paco8_2_0_mon; eauto. Qed.
+Proof. intros; eapply paco8_2_0_mult_strong, paco8_2_0_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Corollary paco8_2_1_mult: forall r_0 r_1,
   paco8_2_1 gf_0 gf_1 (paco8_2_0 gf_0 gf_1 r_0 r_1) (paco8_2_1 gf_0 gf_1 r_0 r_1) <8= paco8_2_1 gf_0 gf_1 r_0 r_1.
-Proof. intros; eapply paco8_2_1_mult_strong, paco8_2_1_mon; eauto. Qed.
+Proof. intros; eapply paco8_2_1_mult_strong, paco8_2_1_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Theorem paco8_2_0_fold: forall r_0 r_1,
   gf_0 (upaco8_2_0 gf_0 gf_1 r_0 r_1) (upaco8_2_1 gf_0 gf_1 r_0 r_1) <8= paco8_2_0 gf_0 gf_1 r_0 r_1.
@@ -426,13 +426,13 @@ Qed.
 Theorem paco8_2_0_unfold: forall (MON: monotone8_2 gf_0) (MON: monotone8_2 gf_1) r_0 r_1,
   paco8_2_0 gf_0 gf_1 r_0 r_1 <8= gf_0 (upaco8_2_0 gf_0 gf_1 r_0 r_1) (upaco8_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
-  repeat_intros 2. eapply _paco8_2_0_unfold; apply monotone8_2_eq; auto.
+  repeat_intros 2. eapply _paco8_2_0_unfold; apply monotone8_2_eq; assumption.
 Qed.
 
 Theorem paco8_2_1_unfold: forall (MON: monotone8_2 gf_0) (MON: monotone8_2 gf_1) r_0 r_1,
   paco8_2_1 gf_0 gf_1 r_0 r_1 <8= gf_1 (upaco8_2_0 gf_0 gf_1 r_0 r_1) (upaco8_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
-  repeat_intros 2. eapply _paco8_2_1_unfold; apply monotone8_2_eq; auto.
+  repeat_intros 2. eapply _paco8_2_1_unfold; apply monotone8_2_eq; assumption.
 Qed.
 
 End Arg8_2.
@@ -474,13 +474,13 @@ Definition _monotone8_3 (gf: rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4
 
 Lemma monotone8_3_eq (gf: rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7) :
   monotone8_3 gf <-> _monotone8_3 gf.
-Proof. unfold monotone8_3, _monotone8_3, le8. split; eauto. Qed.
+Proof. unfold monotone8_3, _monotone8_3, le8. split; intros; eapply H; eassumption. Qed.
 
 Lemma monotone8_3_map (gf: rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7)
       (MON: _monotone8_3 gf) :
   _monotone_3 (fun R0 R1 R2 => uncurry8 (gf (curry8 R0) (curry8 R1) (curry8 R2))).
 Proof.
-  repeat_intros 9. apply uncurry_map8. apply MON; apply curry_map8; auto.
+  repeat_intros 9. apply uncurry_map8. apply MON; apply curry_map8; assumption.
 Qed.
 
 Variable gf_0 gf_1 gf_2 : rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7.
@@ -490,17 +490,17 @@ Arguments gf_2 : clear implicits.
 
 Theorem _paco8_3_0_mon: _monotone8_3 (paco8_3_0 gf_0 gf_1 gf_2).
 Proof.
-  repeat_intros 9. eapply curry_map8, _paco_3_0_mon; apply uncurry_map8; auto.
+  repeat_intros 9. eapply curry_map8, _paco_3_0_mon; apply uncurry_map8; assumption.
 Qed.
 
 Theorem _paco8_3_1_mon: _monotone8_3 (paco8_3_1 gf_0 gf_1 gf_2).
 Proof.
-  repeat_intros 9. eapply curry_map8, _paco_3_1_mon; apply uncurry_map8; auto.
+  repeat_intros 9. eapply curry_map8, _paco_3_1_mon; apply uncurry_map8; assumption.
 Qed.
 
 Theorem _paco8_3_2_mon: _monotone8_3 (paco8_3_2 gf_0 gf_1 gf_2).
 Proof.
-  repeat_intros 9. eapply curry_map8, _paco_3_2_mon; apply uncurry_map8; auto.
+  repeat_intros 9. eapply curry_map8, _paco_3_2_mon; apply uncurry_map8; assumption.
 Qed.
 
 Theorem _paco8_3_0_acc: forall
@@ -547,7 +547,7 @@ Theorem _paco8_3_0_mult_strong: forall r_0 r_1 r_2,
 Proof.
   intros. apply curry_map8.
   eapply le1_trans; [| eapply _paco_3_0_mult_strong].
-  apply _paco_3_0_mon; intros []; eauto.
+  apply _paco_3_0_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco8_3_1_mult_strong: forall r_0 r_1 r_2,
@@ -555,7 +555,7 @@ Theorem _paco8_3_1_mult_strong: forall r_0 r_1 r_2,
 Proof.
   intros. apply curry_map8.
   eapply le1_trans; [| eapply _paco_3_1_mult_strong].
-  apply _paco_3_1_mon; intros []; eauto.
+  apply _paco_3_1_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco8_3_2_mult_strong: forall r_0 r_1 r_2,
@@ -563,7 +563,7 @@ Theorem _paco8_3_2_mult_strong: forall r_0 r_1 r_2,
 Proof.
   intros. apply curry_map8.
   eapply le1_trans; [| eapply _paco_3_2_mult_strong].
-  apply _paco_3_2_mon; intros []; eauto.
+  apply _paco_3_2_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco8_3_0_fold: forall r_0 r_1 r_2,
@@ -591,21 +591,21 @@ Theorem _paco8_3_0_unfold: forall (MON: _monotone8_3 gf_0) (MON: _monotone8_3 gf
   paco8_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2 <8== gf_0 (upaco8_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco8_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco8_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
   intros. apply curry_adjoint2_8.
-  eapply _paco_3_0_unfold; apply monotone8_3_map; auto.
+  eapply _paco_3_0_unfold; apply monotone8_3_map; assumption.
 Qed.
 
 Theorem _paco8_3_1_unfold: forall (MON: _monotone8_3 gf_0) (MON: _monotone8_3 gf_1) (MON: _monotone8_3 gf_2) r_0 r_1 r_2,
   paco8_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2 <8== gf_1 (upaco8_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco8_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco8_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
   intros. apply curry_adjoint2_8.
-  eapply _paco_3_1_unfold; apply monotone8_3_map; auto.
+  eapply _paco_3_1_unfold; apply monotone8_3_map; assumption.
 Qed.
 
 Theorem _paco8_3_2_unfold: forall (MON: _monotone8_3 gf_0) (MON: _monotone8_3 gf_1) (MON: _monotone8_3 gf_2) r_0 r_1 r_2,
   paco8_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2 <8== gf_2 (upaco8_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco8_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco8_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
   intros. apply curry_adjoint2_8.
-  eapply _paco_3_2_unfold; apply monotone8_3_map; auto.
+  eapply _paco_3_2_unfold; apply monotone8_3_map; assumption.
 Qed.
 
 Theorem paco8_3_0_acc: forall
@@ -667,15 +667,15 @@ Qed.
 
 Corollary paco8_3_0_mult: forall r_0 r_1 r_2,
   paco8_3_0 gf_0 gf_1 gf_2 (paco8_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco8_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco8_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <8= paco8_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
-Proof. intros; eapply paco8_3_0_mult_strong, paco8_3_0_mon; eauto. Qed.
+Proof. intros; eapply paco8_3_0_mult_strong, paco8_3_0_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Corollary paco8_3_1_mult: forall r_0 r_1 r_2,
   paco8_3_1 gf_0 gf_1 gf_2 (paco8_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco8_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco8_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <8= paco8_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2.
-Proof. intros; eapply paco8_3_1_mult_strong, paco8_3_1_mon; eauto. Qed.
+Proof. intros; eapply paco8_3_1_mult_strong, paco8_3_1_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Corollary paco8_3_2_mult: forall r_0 r_1 r_2,
   paco8_3_2 gf_0 gf_1 gf_2 (paco8_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco8_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco8_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <8= paco8_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2.
-Proof. intros; eapply paco8_3_2_mult_strong, paco8_3_2_mon; eauto. Qed.
+Proof. intros; eapply paco8_3_2_mult_strong, paco8_3_2_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Theorem paco8_3_0_fold: forall r_0 r_1 r_2,
   gf_0 (upaco8_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco8_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco8_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <8= paco8_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
@@ -698,19 +698,19 @@ Qed.
 Theorem paco8_3_0_unfold: forall (MON: monotone8_3 gf_0) (MON: monotone8_3 gf_1) (MON: monotone8_3 gf_2) r_0 r_1 r_2,
   paco8_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2 <8= gf_0 (upaco8_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco8_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco8_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
-  repeat_intros 3. eapply _paco8_3_0_unfold; apply monotone8_3_eq; auto.
+  repeat_intros 3. eapply _paco8_3_0_unfold; apply monotone8_3_eq; assumption.
 Qed.
 
 Theorem paco8_3_1_unfold: forall (MON: monotone8_3 gf_0) (MON: monotone8_3 gf_1) (MON: monotone8_3 gf_2) r_0 r_1 r_2,
   paco8_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2 <8= gf_1 (upaco8_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco8_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco8_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
-  repeat_intros 3. eapply _paco8_3_1_unfold; apply monotone8_3_eq; auto.
+  repeat_intros 3. eapply _paco8_3_1_unfold; apply monotone8_3_eq; assumption.
 Qed.
 
 Theorem paco8_3_2_unfold: forall (MON: monotone8_3 gf_0) (MON: monotone8_3 gf_1) (MON: monotone8_3 gf_2) r_0 r_1 r_2,
   paco8_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2 <8= gf_2 (upaco8_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco8_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco8_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
-  repeat_intros 3. eapply _paco8_3_2_unfold; apply monotone8_3_eq; auto.
+  repeat_intros 3. eapply _paco8_3_2_unfold; apply monotone8_3_eq; assumption.
 Qed.
 
 End Arg8_3.

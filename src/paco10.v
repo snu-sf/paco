@@ -35,7 +35,7 @@ Definition curry10 (R: rel1 sig10T): rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 :=
   fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 => R (exist10T x9).
 
 Lemma uncurry_map10 r0 r1 (LE : r0 <10== r1) : uncurry10 r0 <1== uncurry10 r1.
-Proof. intros [] H. apply LE. auto. Qed.
+Proof. intros [] H. apply LE. apply H. Qed.
 
 Lemma uncurry_map_rev10 r0 r1 (LE: uncurry10 r0 <1== uncurry10 r1) : r0 <10== r1.
 Proof.
@@ -53,35 +53,35 @@ Proof.
 Qed.
 
 Lemma uncurry_bij1_10 r : curry10 (uncurry10 r) <10== r.
-Proof. unfold le10. repeat_intros 10; auto. Qed.
+Proof. unfold le10. repeat_intros 10. intros H. apply H. Qed.
 
 Lemma uncurry_bij2_10 r : r <10== curry10 (uncurry10 r).
-Proof. unfold le10. repeat_intros 10; auto. Qed.
+Proof. unfold le10. repeat_intros 10. intros H. apply H. Qed.
 
 Lemma curry_bij1_10 r : uncurry10 (curry10 r) <1== r.
-Proof. intros []; auto. Qed.
+Proof. intros []. intro H. apply H. Qed.
 
 Lemma curry_bij2_10 r : r <1== uncurry10 (curry10 r).
-Proof. intros []; auto. Qed.
+Proof. intros []. intro H. apply H. Qed.
 
 Lemma uncurry_adjoint1_10 r0 r1 (LE: uncurry10 r0 <1== r1) : r0 <10== curry10 r1.
 Proof.
-  apply uncurry_map_rev10. eapply le1_trans; [eauto|]. apply curry_bij2_10.
+  apply uncurry_map_rev10. eapply le1_trans; [apply LE|]. apply curry_bij2_10.
 Qed.
 
 Lemma uncurry_adjoint2_10 r0 r1 (LE: r0 <10== curry10 r1) : uncurry10 r0 <1== r1.
 Proof.
-  apply curry_map_rev10. eapply le10_trans; [|eauto]. apply uncurry_bij2_10.
+  apply curry_map_rev10. eapply le10_trans; [|apply LE]. apply uncurry_bij2_10.
 Qed.
 
 Lemma curry_adjoint1_10 r0 r1 (LE: curry10 r0 <10== r1) : r0 <1== uncurry10 r1.
 Proof.
-  apply curry_map_rev10. eapply le10_trans; [eauto|]. apply uncurry_bij2_10.
+  apply curry_map_rev10. eapply le10_trans; [apply LE|]. apply uncurry_bij2_10.
 Qed.
 
 Lemma curry_adjoint2_10 r0 r1 (LE: r0 <1== uncurry10 r1) : curry10 r0 <10== r1.
 Proof.
-  apply uncurry_map_rev10. eapply le1_trans; [|eauto]. apply curry_bij1_10.
+  apply uncurry_map_rev10. eapply le1_trans; [|apply LE]. apply curry_bij1_10.
 Qed.
 
 (** ** Predicates of Arity 10
@@ -162,13 +162,13 @@ Definition _monotone10 (gf: rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T
 
 Lemma monotone10_eq (gf: rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9) :
   monotone10 gf <-> _monotone10 gf.
-Proof. unfold monotone10, _monotone10, le10. split; eauto. Qed.
+Proof. unfold monotone10, _monotone10, le10. split; intros; eapply H; eassumption. Qed.
 
 Lemma monotone10_map (gf: rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9)
       (MON: _monotone10 gf) :
   _monotone (fun R0 => uncurry10 (gf (curry10 R0))).
 Proof.
-  repeat_intros 3. apply uncurry_map10. apply MON; apply curry_map10; auto.
+  repeat_intros 3. apply uncurry_map10. apply MON; apply curry_map10; assumption.
 Qed.
 
 Variable gf : rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9.
@@ -176,7 +176,7 @@ Arguments gf : clear implicits.
 
 Theorem _paco10_mon: _monotone10 (paco10 gf).
 Proof.
-  repeat_intros 3. eapply curry_map10, _paco_mon; apply uncurry_map10; auto.
+  repeat_intros 3. eapply curry_map10, _paco_mon; apply uncurry_map10; assumption.
 Qed.
 
 Theorem _paco10_acc: forall
@@ -197,7 +197,7 @@ Theorem _paco10_mult_strong: forall r,
 Proof.
   intros. apply curry_map10.
   eapply le1_trans; [| eapply _paco_mult_strong].
-  apply _paco_mon; intros []; eauto.
+  apply _paco_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco10_fold: forall r,
@@ -211,7 +211,7 @@ Theorem _paco10_unfold: forall (MON: _monotone10 gf) r,
   paco10 gf r <10== gf (upaco10 gf r).
 Proof.
   intros. apply curry_adjoint2_10.
-  eapply _paco_unfold; apply monotone10_map; auto.
+  eapply _paco_unfold; apply monotone10_map; assumption.
 Qed.
 
 Theorem paco10_acc: forall
@@ -235,7 +235,7 @@ Qed.
 
 Corollary paco10_mult: forall r,
   paco10 gf (paco10 gf r) <10= paco10 gf r.
-Proof. intros; eapply paco10_mult_strong, paco10_mon; eauto. Qed.
+Proof. intros; eapply paco10_mult_strong, paco10_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Theorem paco10_fold: forall r,
   gf (upaco10 gf r) <10= paco10 gf r.
@@ -246,7 +246,7 @@ Qed.
 Theorem paco10_unfold: forall (MON: monotone10 gf) r,
   paco10 gf r <10= gf (upaco10 gf r).
 Proof.
-  repeat_intros 1. eapply _paco10_unfold; apply monotone10_eq; auto.
+  repeat_intros 1. eapply _paco10_unfold; apply monotone10_eq; assumption.
 Qed.
 
 End Arg10_1.
@@ -276,13 +276,13 @@ Definition _monotone10_2 (gf: rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1
 
 Lemma monotone10_2_eq (gf: rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9) :
   monotone10_2 gf <-> _monotone10_2 gf.
-Proof. unfold monotone10_2, _monotone10_2, le10. split; eauto. Qed.
+Proof. unfold monotone10_2, _monotone10_2, le10. split; intros; eapply H; eassumption. Qed.
 
 Lemma monotone10_2_map (gf: rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9)
       (MON: _monotone10_2 gf) :
   _monotone_2 (fun R0 R1 => uncurry10 (gf (curry10 R0) (curry10 R1))).
 Proof.
-  repeat_intros 6. apply uncurry_map10. apply MON; apply curry_map10; auto.
+  repeat_intros 6. apply uncurry_map10. apply MON; apply curry_map10; assumption.
 Qed.
 
 Variable gf_0 gf_1 : rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9.
@@ -291,12 +291,12 @@ Arguments gf_1 : clear implicits.
 
 Theorem _paco10_2_0_mon: _monotone10_2 (paco10_2_0 gf_0 gf_1).
 Proof.
-  repeat_intros 6. eapply curry_map10, _paco_2_0_mon; apply uncurry_map10; auto.
+  repeat_intros 6. eapply curry_map10, _paco_2_0_mon; apply uncurry_map10; assumption.
 Qed.
 
 Theorem _paco10_2_1_mon: _monotone10_2 (paco10_2_1 gf_0 gf_1).
 Proof.
-  repeat_intros 6. eapply curry_map10, _paco_2_1_mon; apply uncurry_map10; auto.
+  repeat_intros 6. eapply curry_map10, _paco_2_1_mon; apply uncurry_map10; assumption.
 Qed.
 
 Theorem _paco10_2_0_acc: forall
@@ -330,7 +330,7 @@ Theorem _paco10_2_0_mult_strong: forall r_0 r_1,
 Proof.
   intros. apply curry_map10.
   eapply le1_trans; [| eapply _paco_2_0_mult_strong].
-  apply _paco_2_0_mon; intros []; eauto.
+  apply _paco_2_0_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco10_2_1_mult_strong: forall r_0 r_1,
@@ -338,7 +338,7 @@ Theorem _paco10_2_1_mult_strong: forall r_0 r_1,
 Proof.
   intros. apply curry_map10.
   eapply le1_trans; [| eapply _paco_2_1_mult_strong].
-  apply _paco_2_1_mon; intros []; eauto.
+  apply _paco_2_1_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco10_2_0_fold: forall r_0 r_1,
@@ -359,14 +359,14 @@ Theorem _paco10_2_0_unfold: forall (MON: _monotone10_2 gf_0) (MON: _monotone10_2
   paco10_2_0 gf_0 gf_1 r_0 r_1 <10== gf_0 (upaco10_2_0 gf_0 gf_1 r_0 r_1) (upaco10_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
   intros. apply curry_adjoint2_10.
-  eapply _paco_2_0_unfold; apply monotone10_2_map; auto.
+  eapply _paco_2_0_unfold; apply monotone10_2_map; assumption.
 Qed.
 
 Theorem _paco10_2_1_unfold: forall (MON: _monotone10_2 gf_0) (MON: _monotone10_2 gf_1) r_0 r_1,
   paco10_2_1 gf_0 gf_1 r_0 r_1 <10== gf_1 (upaco10_2_0 gf_0 gf_1 r_0 r_1) (upaco10_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
   intros. apply curry_adjoint2_10.
-  eapply _paco_2_1_unfold; apply monotone10_2_map; auto.
+  eapply _paco_2_1_unfold; apply monotone10_2_map; assumption.
 Qed.
 
 Theorem paco10_2_0_acc: forall
@@ -409,11 +409,11 @@ Qed.
 
 Corollary paco10_2_0_mult: forall r_0 r_1,
   paco10_2_0 gf_0 gf_1 (paco10_2_0 gf_0 gf_1 r_0 r_1) (paco10_2_1 gf_0 gf_1 r_0 r_1) <10= paco10_2_0 gf_0 gf_1 r_0 r_1.
-Proof. intros; eapply paco10_2_0_mult_strong, paco10_2_0_mon; eauto. Qed.
+Proof. intros; eapply paco10_2_0_mult_strong, paco10_2_0_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Corollary paco10_2_1_mult: forall r_0 r_1,
   paco10_2_1 gf_0 gf_1 (paco10_2_0 gf_0 gf_1 r_0 r_1) (paco10_2_1 gf_0 gf_1 r_0 r_1) <10= paco10_2_1 gf_0 gf_1 r_0 r_1.
-Proof. intros; eapply paco10_2_1_mult_strong, paco10_2_1_mon; eauto. Qed.
+Proof. intros; eapply paco10_2_1_mult_strong, paco10_2_1_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Theorem paco10_2_0_fold: forall r_0 r_1,
   gf_0 (upaco10_2_0 gf_0 gf_1 r_0 r_1) (upaco10_2_1 gf_0 gf_1 r_0 r_1) <10= paco10_2_0 gf_0 gf_1 r_0 r_1.
@@ -430,13 +430,13 @@ Qed.
 Theorem paco10_2_0_unfold: forall (MON: monotone10_2 gf_0) (MON: monotone10_2 gf_1) r_0 r_1,
   paco10_2_0 gf_0 gf_1 r_0 r_1 <10= gf_0 (upaco10_2_0 gf_0 gf_1 r_0 r_1) (upaco10_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
-  repeat_intros 2. eapply _paco10_2_0_unfold; apply monotone10_2_eq; auto.
+  repeat_intros 2. eapply _paco10_2_0_unfold; apply monotone10_2_eq; assumption.
 Qed.
 
 Theorem paco10_2_1_unfold: forall (MON: monotone10_2 gf_0) (MON: monotone10_2 gf_1) r_0 r_1,
   paco10_2_1 gf_0 gf_1 r_0 r_1 <10= gf_1 (upaco10_2_0 gf_0 gf_1 r_0 r_1) (upaco10_2_1 gf_0 gf_1 r_0 r_1).
 Proof.
-  repeat_intros 2. eapply _paco10_2_1_unfold; apply monotone10_2_eq; auto.
+  repeat_intros 2. eapply _paco10_2_1_unfold; apply monotone10_2_eq; assumption.
 Qed.
 
 End Arg10_2.
@@ -478,13 +478,13 @@ Definition _monotone10_3 (gf: rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1
 
 Lemma monotone10_3_eq (gf: rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9) :
   monotone10_3 gf <-> _monotone10_3 gf.
-Proof. unfold monotone10_3, _monotone10_3, le10. split; eauto. Qed.
+Proof. unfold monotone10_3, _monotone10_3, le10. split; intros; eapply H; eassumption. Qed.
 
 Lemma monotone10_3_map (gf: rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9)
       (MON: _monotone10_3 gf) :
   _monotone_3 (fun R0 R1 R2 => uncurry10 (gf (curry10 R0) (curry10 R1) (curry10 R2))).
 Proof.
-  repeat_intros 9. apply uncurry_map10. apply MON; apply curry_map10; auto.
+  repeat_intros 9. apply uncurry_map10. apply MON; apply curry_map10; assumption.
 Qed.
 
 Variable gf_0 gf_1 gf_2 : rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9.
@@ -494,17 +494,17 @@ Arguments gf_2 : clear implicits.
 
 Theorem _paco10_3_0_mon: _monotone10_3 (paco10_3_0 gf_0 gf_1 gf_2).
 Proof.
-  repeat_intros 9. eapply curry_map10, _paco_3_0_mon; apply uncurry_map10; auto.
+  repeat_intros 9. eapply curry_map10, _paco_3_0_mon; apply uncurry_map10; assumption.
 Qed.
 
 Theorem _paco10_3_1_mon: _monotone10_3 (paco10_3_1 gf_0 gf_1 gf_2).
 Proof.
-  repeat_intros 9. eapply curry_map10, _paco_3_1_mon; apply uncurry_map10; auto.
+  repeat_intros 9. eapply curry_map10, _paco_3_1_mon; apply uncurry_map10; assumption.
 Qed.
 
 Theorem _paco10_3_2_mon: _monotone10_3 (paco10_3_2 gf_0 gf_1 gf_2).
 Proof.
-  repeat_intros 9. eapply curry_map10, _paco_3_2_mon; apply uncurry_map10; auto.
+  repeat_intros 9. eapply curry_map10, _paco_3_2_mon; apply uncurry_map10; assumption.
 Qed.
 
 Theorem _paco10_3_0_acc: forall
@@ -551,7 +551,7 @@ Theorem _paco10_3_0_mult_strong: forall r_0 r_1 r_2,
 Proof.
   intros. apply curry_map10.
   eapply le1_trans; [| eapply _paco_3_0_mult_strong].
-  apply _paco_3_0_mon; intros []; eauto.
+  apply _paco_3_0_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco10_3_1_mult_strong: forall r_0 r_1 r_2,
@@ -559,7 +559,7 @@ Theorem _paco10_3_1_mult_strong: forall r_0 r_1 r_2,
 Proof.
   intros. apply curry_map10.
   eapply le1_trans; [| eapply _paco_3_1_mult_strong].
-  apply _paco_3_1_mon; intros []; eauto.
+  apply _paco_3_1_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco10_3_2_mult_strong: forall r_0 r_1 r_2,
@@ -567,7 +567,7 @@ Theorem _paco10_3_2_mult_strong: forall r_0 r_1 r_2,
 Proof.
   intros. apply curry_map10.
   eapply le1_trans; [| eapply _paco_3_2_mult_strong].
-  apply _paco_3_2_mon; intros []; eauto.
+  apply _paco_3_2_mon; intros []; intros H; apply H.
 Qed.
 
 Theorem _paco10_3_0_fold: forall r_0 r_1 r_2,
@@ -595,21 +595,21 @@ Theorem _paco10_3_0_unfold: forall (MON: _monotone10_3 gf_0) (MON: _monotone10_3
   paco10_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2 <10== gf_0 (upaco10_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco10_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco10_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
   intros. apply curry_adjoint2_10.
-  eapply _paco_3_0_unfold; apply monotone10_3_map; auto.
+  eapply _paco_3_0_unfold; apply monotone10_3_map; assumption.
 Qed.
 
 Theorem _paco10_3_1_unfold: forall (MON: _monotone10_3 gf_0) (MON: _monotone10_3 gf_1) (MON: _monotone10_3 gf_2) r_0 r_1 r_2,
   paco10_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2 <10== gf_1 (upaco10_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco10_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco10_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
   intros. apply curry_adjoint2_10.
-  eapply _paco_3_1_unfold; apply monotone10_3_map; auto.
+  eapply _paco_3_1_unfold; apply monotone10_3_map; assumption.
 Qed.
 
 Theorem _paco10_3_2_unfold: forall (MON: _monotone10_3 gf_0) (MON: _monotone10_3 gf_1) (MON: _monotone10_3 gf_2) r_0 r_1 r_2,
   paco10_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2 <10== gf_2 (upaco10_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco10_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco10_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
   intros. apply curry_adjoint2_10.
-  eapply _paco_3_2_unfold; apply monotone10_3_map; auto.
+  eapply _paco_3_2_unfold; apply monotone10_3_map; assumption.
 Qed.
 
 Theorem paco10_3_0_acc: forall
@@ -671,15 +671,15 @@ Qed.
 
 Corollary paco10_3_0_mult: forall r_0 r_1 r_2,
   paco10_3_0 gf_0 gf_1 gf_2 (paco10_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco10_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco10_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <10= paco10_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
-Proof. intros; eapply paco10_3_0_mult_strong, paco10_3_0_mon; eauto. Qed.
+Proof. intros; eapply paco10_3_0_mult_strong, paco10_3_0_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Corollary paco10_3_1_mult: forall r_0 r_1 r_2,
   paco10_3_1 gf_0 gf_1 gf_2 (paco10_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco10_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco10_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <10= paco10_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2.
-Proof. intros; eapply paco10_3_1_mult_strong, paco10_3_1_mon; eauto. Qed.
+Proof. intros; eapply paco10_3_1_mult_strong, paco10_3_1_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Corollary paco10_3_2_mult: forall r_0 r_1 r_2,
   paco10_3_2 gf_0 gf_1 gf_2 (paco10_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco10_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (paco10_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <10= paco10_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2.
-Proof. intros; eapply paco10_3_2_mult_strong, paco10_3_2_mon; eauto. Qed.
+Proof. intros; eapply paco10_3_2_mult_strong, paco10_3_2_mon; [apply PR|..]; intros; left; assumption. Qed.
 
 Theorem paco10_3_0_fold: forall r_0 r_1 r_2,
   gf_0 (upaco10_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco10_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco10_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <10= paco10_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
@@ -702,19 +702,19 @@ Qed.
 Theorem paco10_3_0_unfold: forall (MON: monotone10_3 gf_0) (MON: monotone10_3 gf_1) (MON: monotone10_3 gf_2) r_0 r_1 r_2,
   paco10_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2 <10= gf_0 (upaco10_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco10_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco10_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
-  repeat_intros 3. eapply _paco10_3_0_unfold; apply monotone10_3_eq; auto.
+  repeat_intros 3. eapply _paco10_3_0_unfold; apply monotone10_3_eq; assumption.
 Qed.
 
 Theorem paco10_3_1_unfold: forall (MON: monotone10_3 gf_0) (MON: monotone10_3 gf_1) (MON: monotone10_3 gf_2) r_0 r_1 r_2,
   paco10_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2 <10= gf_1 (upaco10_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco10_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco10_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
-  repeat_intros 3. eapply _paco10_3_1_unfold; apply monotone10_3_eq; auto.
+  repeat_intros 3. eapply _paco10_3_1_unfold; apply monotone10_3_eq; assumption.
 Qed.
 
 Theorem paco10_3_2_unfold: forall (MON: monotone10_3 gf_0) (MON: monotone10_3 gf_1) (MON: monotone10_3 gf_2) r_0 r_1 r_2,
   paco10_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2 <10= gf_2 (upaco10_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco10_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco10_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2).
 Proof.
-  repeat_intros 3. eapply _paco10_3_2_unfold; apply monotone10_3_eq; auto.
+  repeat_intros 3. eapply _paco10_3_2_unfold; apply monotone10_3_eq; assumption.
 Qed.
 
 End Arg10_3.
