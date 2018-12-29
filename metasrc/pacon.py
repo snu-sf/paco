@@ -11,6 +11,7 @@ mutsize = int(sys.argv[1])
 print ('Require Export paconotation pacotacuser.')
 print ('Require Import pacotac paconotation_internal.')
 print ('Set Implicit Arguments.')
+print ('Set Primitive Projections.')
 print ('')
 
 n = 1

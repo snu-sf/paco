@@ -1,6 +1,7 @@
 Require Export paconotation pacotacuser.
 Require Import pacotac paconotation_internal.
 Set Implicit Arguments.
+Set Primitive Projections.
 
 (** ** Predicates of Arity 1
 *)
