@@ -229,6 +229,13 @@ Proof.
   apply _paco11_mon.
 Qed.
 
+Theorem upaco11_mon: monotone11 (upaco11 gf).
+Proof.
+  repeat_intros 13. intros R  LE0.
+  destruct R.
+  - left. eapply paco11_mon. apply H. apply LE0.
+  - right. apply LE0, H.
+Qed.
 Theorem paco11_mult_strong: forall r,
   paco11 gf (upaco11 gf r) <11= paco11 gf r.
 Proof.
@@ -255,6 +262,7 @@ End Arg11_1.
 
 Arguments paco11_acc : clear implicits.
 Arguments paco11_mon : clear implicits.
+Arguments upaco11_mon : clear implicits.
 Arguments paco11_mult_strong : clear implicits.
 Arguments paco11_mult : clear implicits.
 Arguments paco11_fold : clear implicits.
@@ -397,6 +405,20 @@ Proof.
   apply _paco11_2_1_mon.
 Qed.
 
+Theorem upaco11_2_0_mon: monotone11_2 (upaco11_2_0 gf_0 gf_1).
+Proof.
+  repeat_intros 15. intros R  LE0 LE1.
+  destruct R.
+  - left. eapply paco11_2_0_mon. apply H. apply LE0. apply LE1.
+  - right. apply LE0, H.
+Qed.
+Theorem upaco11_2_1_mon: monotone11_2 (upaco11_2_1 gf_0 gf_1).
+Proof.
+  repeat_intros 15. intros R  LE0 LE1.
+  destruct R.
+  - left. eapply paco11_2_1_mon. apply H. apply LE0. apply LE1.
+  - right. apply LE1, H.
+Qed.
 Theorem paco11_2_0_mult_strong: forall r_0 r_1,
   paco11_2_0 gf_0 gf_1 (upaco11_2_0 gf_0 gf_1 r_0 r_1) (upaco11_2_1 gf_0 gf_1 r_0 r_1) <11= paco11_2_0 gf_0 gf_1 r_0 r_1.
 Proof.
@@ -447,6 +469,8 @@ Arguments paco11_2_0_acc : clear implicits.
 Arguments paco11_2_1_acc : clear implicits.
 Arguments paco11_2_0_mon : clear implicits.
 Arguments paco11_2_1_mon : clear implicits.
+Arguments upaco11_2_0_mon : clear implicits.
+Arguments upaco11_2_1_mon : clear implicits.
 Arguments paco11_2_0_mult_strong : clear implicits.
 Arguments paco11_2_1_mult_strong : clear implicits.
 Arguments paco11_2_0_mult : clear implicits.
@@ -653,6 +677,27 @@ Proof.
   apply _paco11_3_2_mon.
 Qed.
 
+Theorem upaco11_3_0_mon: monotone11_3 (upaco11_3_0 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 17. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco11_3_0_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE0, H.
+Qed.
+Theorem upaco11_3_1_mon: monotone11_3 (upaco11_3_1 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 17. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco11_3_1_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE1, H.
+Qed.
+Theorem upaco11_3_2_mon: monotone11_3 (upaco11_3_2 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 17. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco11_3_2_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE2, H.
+Qed.
 Theorem paco11_3_0_mult_strong: forall r_0 r_1 r_2,
   paco11_3_0 gf_0 gf_1 gf_2 (upaco11_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco11_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco11_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <11= paco11_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
 Proof.
@@ -727,6 +772,9 @@ Arguments paco11_3_2_acc : clear implicits.
 Arguments paco11_3_0_mon : clear implicits.
 Arguments paco11_3_1_mon : clear implicits.
 Arguments paco11_3_2_mon : clear implicits.
+Arguments upaco11_3_0_mon : clear implicits.
+Arguments upaco11_3_1_mon : clear implicits.
+Arguments upaco11_3_2_mon : clear implicits.
 Arguments paco11_3_0_mult_strong : clear implicits.
 Arguments paco11_3_1_mult_strong : clear implicits.
 Arguments paco11_3_2_mult_strong : clear implicits.

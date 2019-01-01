@@ -219,6 +219,13 @@ Proof.
   apply _paco6_mon.
 Qed.
 
+Theorem upaco6_mon: monotone6 (upaco6 gf).
+Proof.
+  repeat_intros 8. intros R  LE0.
+  destruct R.
+  - left. eapply paco6_mon. apply H. apply LE0.
+  - right. apply LE0, H.
+Qed.
 Theorem paco6_mult_strong: forall r,
   paco6 gf (upaco6 gf r) <6= paco6 gf r.
 Proof.
@@ -245,6 +252,7 @@ End Arg6_1.
 
 Arguments paco6_acc : clear implicits.
 Arguments paco6_mon : clear implicits.
+Arguments upaco6_mon : clear implicits.
 Arguments paco6_mult_strong : clear implicits.
 Arguments paco6_mult : clear implicits.
 Arguments paco6_fold : clear implicits.
@@ -387,6 +395,20 @@ Proof.
   apply _paco6_2_1_mon.
 Qed.
 
+Theorem upaco6_2_0_mon: monotone6_2 (upaco6_2_0 gf_0 gf_1).
+Proof.
+  repeat_intros 10. intros R  LE0 LE1.
+  destruct R.
+  - left. eapply paco6_2_0_mon. apply H. apply LE0. apply LE1.
+  - right. apply LE0, H.
+Qed.
+Theorem upaco6_2_1_mon: monotone6_2 (upaco6_2_1 gf_0 gf_1).
+Proof.
+  repeat_intros 10. intros R  LE0 LE1.
+  destruct R.
+  - left. eapply paco6_2_1_mon. apply H. apply LE0. apply LE1.
+  - right. apply LE1, H.
+Qed.
 Theorem paco6_2_0_mult_strong: forall r_0 r_1,
   paco6_2_0 gf_0 gf_1 (upaco6_2_0 gf_0 gf_1 r_0 r_1) (upaco6_2_1 gf_0 gf_1 r_0 r_1) <6= paco6_2_0 gf_0 gf_1 r_0 r_1.
 Proof.
@@ -437,6 +459,8 @@ Arguments paco6_2_0_acc : clear implicits.
 Arguments paco6_2_1_acc : clear implicits.
 Arguments paco6_2_0_mon : clear implicits.
 Arguments paco6_2_1_mon : clear implicits.
+Arguments upaco6_2_0_mon : clear implicits.
+Arguments upaco6_2_1_mon : clear implicits.
 Arguments paco6_2_0_mult_strong : clear implicits.
 Arguments paco6_2_1_mult_strong : clear implicits.
 Arguments paco6_2_0_mult : clear implicits.
@@ -643,6 +667,27 @@ Proof.
   apply _paco6_3_2_mon.
 Qed.
 
+Theorem upaco6_3_0_mon: monotone6_3 (upaco6_3_0 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 12. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco6_3_0_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE0, H.
+Qed.
+Theorem upaco6_3_1_mon: monotone6_3 (upaco6_3_1 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 12. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco6_3_1_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE1, H.
+Qed.
+Theorem upaco6_3_2_mon: monotone6_3 (upaco6_3_2 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 12. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco6_3_2_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE2, H.
+Qed.
 Theorem paco6_3_0_mult_strong: forall r_0 r_1 r_2,
   paco6_3_0 gf_0 gf_1 gf_2 (upaco6_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco6_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco6_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <6= paco6_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
 Proof.
@@ -717,6 +762,9 @@ Arguments paco6_3_2_acc : clear implicits.
 Arguments paco6_3_0_mon : clear implicits.
 Arguments paco6_3_1_mon : clear implicits.
 Arguments paco6_3_2_mon : clear implicits.
+Arguments upaco6_3_0_mon : clear implicits.
+Arguments upaco6_3_1_mon : clear implicits.
+Arguments upaco6_3_2_mon : clear implicits.
 Arguments paco6_3_0_mult_strong : clear implicits.
 Arguments paco6_3_1_mult_strong : clear implicits.
 Arguments paco6_3_2_mult_strong : clear implicits.

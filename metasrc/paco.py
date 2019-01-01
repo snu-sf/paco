@@ -249,6 +249,14 @@ for m in range (1,mutsize+1):
         print ('Qed.')
         print ('')
     for i in range(m):
+        print ('Theorem upaco'+str(n)+lev(m)+idx(m,i)+'_mon: monotone'+str(n)+lev(m)+' (upaco'+str(n)+lev(m)+idx(m,i)+itridx(" gf",m)+').')
+        print ('Proof.')
+        print ('  repeat_intros '+str(n+2*m)+'. intros R '+itrstr(" LE",m)+'.')
+        print ('  destruct R.')
+        print ('  - left. eapply paco'+str(n)+lev(m)+idx(m,i)+'_mon. apply H.'+itrstr(" apply LE",m,'.'))
+        print ('  - right. apply LE'+str(i)+', H.')
+        print ('Qed.')
+    for i in range(m):
         print ('Theorem paco'+str(n)+lev(m)+idx(m,i)+'_mult_strong: forall'+itridx(' r',m)+',')
         print ('  paco'+str(n)+lev(m)+idx(m,i)+itridx(" gf",m),end='')
         for j in range(m):
@@ -291,6 +299,8 @@ for m in range (1,mutsize+1):
         print ('Arguments paco'+str(n)+lev(m)+idx(m,i)+'_acc'+" : clear implicits.")
     for i in range(m):
         print ('Arguments paco'+str(n)+lev(m)+idx(m,i)+'_mon'+" : clear implicits.")
+    for i in range(m):
+        print ('Arguments upaco'+str(n)+lev(m)+idx(m,i)+'_mon'+" : clear implicits.")
     for i in range(m):
         print ('Arguments paco'+str(n)+lev(m)+idx(m,i)+'_mult_strong'+" : clear implicits.")
     for i in range(m):

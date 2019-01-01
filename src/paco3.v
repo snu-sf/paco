@@ -213,6 +213,13 @@ Proof.
   apply _paco3_mon.
 Qed.
 
+Theorem upaco3_mon: monotone3 (upaco3 gf).
+Proof.
+  repeat_intros 5. intros R  LE0.
+  destruct R.
+  - left. eapply paco3_mon. apply H. apply LE0.
+  - right. apply LE0, H.
+Qed.
 Theorem paco3_mult_strong: forall r,
   paco3 gf (upaco3 gf r) <3= paco3 gf r.
 Proof.
@@ -239,6 +246,7 @@ End Arg3_1.
 
 Arguments paco3_acc : clear implicits.
 Arguments paco3_mon : clear implicits.
+Arguments upaco3_mon : clear implicits.
 Arguments paco3_mult_strong : clear implicits.
 Arguments paco3_mult : clear implicits.
 Arguments paco3_fold : clear implicits.
@@ -381,6 +389,20 @@ Proof.
   apply _paco3_2_1_mon.
 Qed.
 
+Theorem upaco3_2_0_mon: monotone3_2 (upaco3_2_0 gf_0 gf_1).
+Proof.
+  repeat_intros 7. intros R  LE0 LE1.
+  destruct R.
+  - left. eapply paco3_2_0_mon. apply H. apply LE0. apply LE1.
+  - right. apply LE0, H.
+Qed.
+Theorem upaco3_2_1_mon: monotone3_2 (upaco3_2_1 gf_0 gf_1).
+Proof.
+  repeat_intros 7. intros R  LE0 LE1.
+  destruct R.
+  - left. eapply paco3_2_1_mon. apply H. apply LE0. apply LE1.
+  - right. apply LE1, H.
+Qed.
 Theorem paco3_2_0_mult_strong: forall r_0 r_1,
   paco3_2_0 gf_0 gf_1 (upaco3_2_0 gf_0 gf_1 r_0 r_1) (upaco3_2_1 gf_0 gf_1 r_0 r_1) <3= paco3_2_0 gf_0 gf_1 r_0 r_1.
 Proof.
@@ -431,6 +453,8 @@ Arguments paco3_2_0_acc : clear implicits.
 Arguments paco3_2_1_acc : clear implicits.
 Arguments paco3_2_0_mon : clear implicits.
 Arguments paco3_2_1_mon : clear implicits.
+Arguments upaco3_2_0_mon : clear implicits.
+Arguments upaco3_2_1_mon : clear implicits.
 Arguments paco3_2_0_mult_strong : clear implicits.
 Arguments paco3_2_1_mult_strong : clear implicits.
 Arguments paco3_2_0_mult : clear implicits.
@@ -637,6 +661,27 @@ Proof.
   apply _paco3_3_2_mon.
 Qed.
 
+Theorem upaco3_3_0_mon: monotone3_3 (upaco3_3_0 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 9. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco3_3_0_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE0, H.
+Qed.
+Theorem upaco3_3_1_mon: monotone3_3 (upaco3_3_1 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 9. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco3_3_1_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE1, H.
+Qed.
+Theorem upaco3_3_2_mon: monotone3_3 (upaco3_3_2 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 9. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco3_3_2_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE2, H.
+Qed.
 Theorem paco3_3_0_mult_strong: forall r_0 r_1 r_2,
   paco3_3_0 gf_0 gf_1 gf_2 (upaco3_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco3_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco3_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <3= paco3_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
 Proof.
@@ -711,6 +756,9 @@ Arguments paco3_3_2_acc : clear implicits.
 Arguments paco3_3_0_mon : clear implicits.
 Arguments paco3_3_1_mon : clear implicits.
 Arguments paco3_3_2_mon : clear implicits.
+Arguments upaco3_3_0_mon : clear implicits.
+Arguments upaco3_3_1_mon : clear implicits.
+Arguments upaco3_3_2_mon : clear implicits.
 Arguments paco3_3_0_mult_strong : clear implicits.
 Arguments paco3_3_1_mult_strong : clear implicits.
 Arguments paco3_3_2_mult_strong : clear implicits.

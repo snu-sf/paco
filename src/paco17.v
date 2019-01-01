@@ -241,6 +241,13 @@ Proof.
   apply _paco17_mon.
 Qed.
 
+Theorem upaco17_mon: monotone17 (upaco17 gf).
+Proof.
+  repeat_intros 19. intros R  LE0.
+  destruct R.
+  - left. eapply paco17_mon. apply H. apply LE0.
+  - right. apply LE0, H.
+Qed.
 Theorem paco17_mult_strong: forall r,
   paco17 gf (upaco17 gf r) <17= paco17 gf r.
 Proof.
@@ -267,6 +274,7 @@ End Arg17_1.
 
 Arguments paco17_acc : clear implicits.
 Arguments paco17_mon : clear implicits.
+Arguments upaco17_mon : clear implicits.
 Arguments paco17_mult_strong : clear implicits.
 Arguments paco17_mult : clear implicits.
 Arguments paco17_fold : clear implicits.
@@ -409,6 +417,20 @@ Proof.
   apply _paco17_2_1_mon.
 Qed.
 
+Theorem upaco17_2_0_mon: monotone17_2 (upaco17_2_0 gf_0 gf_1).
+Proof.
+  repeat_intros 21. intros R  LE0 LE1.
+  destruct R.
+  - left. eapply paco17_2_0_mon. apply H. apply LE0. apply LE1.
+  - right. apply LE0, H.
+Qed.
+Theorem upaco17_2_1_mon: monotone17_2 (upaco17_2_1 gf_0 gf_1).
+Proof.
+  repeat_intros 21. intros R  LE0 LE1.
+  destruct R.
+  - left. eapply paco17_2_1_mon. apply H. apply LE0. apply LE1.
+  - right. apply LE1, H.
+Qed.
 Theorem paco17_2_0_mult_strong: forall r_0 r_1,
   paco17_2_0 gf_0 gf_1 (upaco17_2_0 gf_0 gf_1 r_0 r_1) (upaco17_2_1 gf_0 gf_1 r_0 r_1) <17= paco17_2_0 gf_0 gf_1 r_0 r_1.
 Proof.
@@ -459,6 +481,8 @@ Arguments paco17_2_0_acc : clear implicits.
 Arguments paco17_2_1_acc : clear implicits.
 Arguments paco17_2_0_mon : clear implicits.
 Arguments paco17_2_1_mon : clear implicits.
+Arguments upaco17_2_0_mon : clear implicits.
+Arguments upaco17_2_1_mon : clear implicits.
 Arguments paco17_2_0_mult_strong : clear implicits.
 Arguments paco17_2_1_mult_strong : clear implicits.
 Arguments paco17_2_0_mult : clear implicits.
@@ -665,6 +689,27 @@ Proof.
   apply _paco17_3_2_mon.
 Qed.
 
+Theorem upaco17_3_0_mon: monotone17_3 (upaco17_3_0 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 23. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco17_3_0_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE0, H.
+Qed.
+Theorem upaco17_3_1_mon: monotone17_3 (upaco17_3_1 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 23. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco17_3_1_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE1, H.
+Qed.
+Theorem upaco17_3_2_mon: monotone17_3 (upaco17_3_2 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 23. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco17_3_2_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE2, H.
+Qed.
 Theorem paco17_3_0_mult_strong: forall r_0 r_1 r_2,
   paco17_3_0 gf_0 gf_1 gf_2 (upaco17_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco17_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco17_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <17= paco17_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
 Proof.
@@ -739,6 +784,9 @@ Arguments paco17_3_2_acc : clear implicits.
 Arguments paco17_3_0_mon : clear implicits.
 Arguments paco17_3_1_mon : clear implicits.
 Arguments paco17_3_2_mon : clear implicits.
+Arguments upaco17_3_0_mon : clear implicits.
+Arguments upaco17_3_1_mon : clear implicits.
+Arguments upaco17_3_2_mon : clear implicits.
 Arguments paco17_3_0_mult_strong : clear implicits.
 Arguments paco17_3_1_mult_strong : clear implicits.
 Arguments paco17_3_2_mult_strong : clear implicits.

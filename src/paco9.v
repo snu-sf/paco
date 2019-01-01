@@ -225,6 +225,13 @@ Proof.
   apply _paco9_mon.
 Qed.
 
+Theorem upaco9_mon: monotone9 (upaco9 gf).
+Proof.
+  repeat_intros 11. intros R  LE0.
+  destruct R.
+  - left. eapply paco9_mon. apply H. apply LE0.
+  - right. apply LE0, H.
+Qed.
 Theorem paco9_mult_strong: forall r,
   paco9 gf (upaco9 gf r) <9= paco9 gf r.
 Proof.
@@ -251,6 +258,7 @@ End Arg9_1.
 
 Arguments paco9_acc : clear implicits.
 Arguments paco9_mon : clear implicits.
+Arguments upaco9_mon : clear implicits.
 Arguments paco9_mult_strong : clear implicits.
 Arguments paco9_mult : clear implicits.
 Arguments paco9_fold : clear implicits.
@@ -393,6 +401,20 @@ Proof.
   apply _paco9_2_1_mon.
 Qed.
 
+Theorem upaco9_2_0_mon: monotone9_2 (upaco9_2_0 gf_0 gf_1).
+Proof.
+  repeat_intros 13. intros R  LE0 LE1.
+  destruct R.
+  - left. eapply paco9_2_0_mon. apply H. apply LE0. apply LE1.
+  - right. apply LE0, H.
+Qed.
+Theorem upaco9_2_1_mon: monotone9_2 (upaco9_2_1 gf_0 gf_1).
+Proof.
+  repeat_intros 13. intros R  LE0 LE1.
+  destruct R.
+  - left. eapply paco9_2_1_mon. apply H. apply LE0. apply LE1.
+  - right. apply LE1, H.
+Qed.
 Theorem paco9_2_0_mult_strong: forall r_0 r_1,
   paco9_2_0 gf_0 gf_1 (upaco9_2_0 gf_0 gf_1 r_0 r_1) (upaco9_2_1 gf_0 gf_1 r_0 r_1) <9= paco9_2_0 gf_0 gf_1 r_0 r_1.
 Proof.
@@ -443,6 +465,8 @@ Arguments paco9_2_0_acc : clear implicits.
 Arguments paco9_2_1_acc : clear implicits.
 Arguments paco9_2_0_mon : clear implicits.
 Arguments paco9_2_1_mon : clear implicits.
+Arguments upaco9_2_0_mon : clear implicits.
+Arguments upaco9_2_1_mon : clear implicits.
 Arguments paco9_2_0_mult_strong : clear implicits.
 Arguments paco9_2_1_mult_strong : clear implicits.
 Arguments paco9_2_0_mult : clear implicits.
@@ -649,6 +673,27 @@ Proof.
   apply _paco9_3_2_mon.
 Qed.
 
+Theorem upaco9_3_0_mon: monotone9_3 (upaco9_3_0 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 15. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco9_3_0_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE0, H.
+Qed.
+Theorem upaco9_3_1_mon: monotone9_3 (upaco9_3_1 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 15. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco9_3_1_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE1, H.
+Qed.
+Theorem upaco9_3_2_mon: monotone9_3 (upaco9_3_2 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 15. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco9_3_2_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE2, H.
+Qed.
 Theorem paco9_3_0_mult_strong: forall r_0 r_1 r_2,
   paco9_3_0 gf_0 gf_1 gf_2 (upaco9_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco9_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco9_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <9= paco9_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
 Proof.
@@ -723,6 +768,9 @@ Arguments paco9_3_2_acc : clear implicits.
 Arguments paco9_3_0_mon : clear implicits.
 Arguments paco9_3_1_mon : clear implicits.
 Arguments paco9_3_2_mon : clear implicits.
+Arguments upaco9_3_0_mon : clear implicits.
+Arguments upaco9_3_1_mon : clear implicits.
+Arguments upaco9_3_2_mon : clear implicits.
 Arguments paco9_3_0_mult_strong : clear implicits.
 Arguments paco9_3_1_mult_strong : clear implicits.
 Arguments paco9_3_2_mult_strong : clear implicits.
