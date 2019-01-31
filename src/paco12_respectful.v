@@ -55,9 +55,10 @@ Lemma sound12_is_gf: forall clo (UPTO: sound12 clo),
     paco12 (compose gf clo) bot12 <12= paco12 gf bot12.
 Proof.
   intros. punfold PR. edestruct UPTO.
-  eapply (SOUND (paco12 (compose gf clo) bot12)); [|eauto].
-  intros. punfold PR0.
-  eapply (gfclo12_mon UPTO); eauto. intros. destruct PR1; eauto. contradiction.
+  eapply (SOUND (paco12 (compose gf clo) bot12)).
+  - intros. punfold PR0.
+    eapply (gfclo12_mon UPTO); [apply PR0| intros; destruct PR1; [apply H|destruct H]].
+  - pfold. apply PR.
 Qed.
 
 Lemma respectful12_is_sound12: respectful12 <1= sound12.
@@ -68,15 +69,23 @@ Proof.
          | 0 => r
          | S n' => rclo clo n' r \12/ clo (rclo clo n' r)
          end).
-  intros. destruct PR. econstructor; eauto.
+  intros. destruct PR. econstructor; [apply MON0|].
   intros. set (rr e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 := exists n, rclo clo n r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11).
-  assert (rr x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) by (exists 0; eauto); clear PR.
+  assert (rr x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) by (exists 0; apply PR); clear PR.
   cut (forall n, rclo clo n r <12= gf (rclo clo (S n) r)).
   { intro X; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 H; pcofix CIH; intros.
-    unfold rr in *; destruct H0; eauto 10 using gf_mon. }
-  induction n; intros; [simpl; eauto using gf_mon|].
-  simpl in *; destruct PR; [eauto using gf_mon|].
-  eapply gf_mon; [eapply RESPECTFUL0; [|apply IHn|]|]; instantiate; simpl; eauto.
+    unfold rr in *; destruct H0.
+    pfold. eapply gf_mon.
+    - apply X. apply H.
+    - intros. right. apply CIH. exists (S x). apply PR.
+  }
+  induction n; intros; simpl in *.
+  - eapply gf_mon.
+    + clear RESPECTFUL0. eapply PFIX, PR.
+    + intros. right. eapply PR0.
+  - destruct PR.
+    + eapply gf_mon; [eapply IHn, H0|]. intros. clear - PR. auto.
+    + eapply gf_mon; [eapply RESPECTFUL0; [|apply IHn|]|]; instantiate; simpl; auto.
 Qed.
 
 Lemma respectful12_compose
@@ -87,27 +96,34 @@ Lemma respectful12_compose
 Proof.
   intros. destruct RES0, RES1.
   econstructor.
-  - repeat intro. eapply MON0; eauto.
+  - repeat intro. eapply MON0; [apply IN|].
+    intros. eapply MON1; [apply PR|apply LE].
   - intros. eapply RESPECTFUL0; [| |apply PR].
-    + intros. eapply MON1; eauto.
-    + intros. eapply RESPECTFUL1; eauto.
+    + intros. eapply MON1; [apply PR0|apply LE].
+    + intros. eapply RESPECTFUL1; [apply LE| apply GF| apply PR0].
 Qed.
 
 Lemma grespectful12_respectful12: respectful12 gres12.
 Proof.
   econstructor; repeat intro.
-  - destruct IN; destruct RES; exists clo; eauto.
-  - destruct PR; destruct RES; eapply gf_mon with (r:=clo r); eauto.
+  - destruct IN; destruct RES; exists clo; [|eapply MON0; [eapply CLO| eapply LE]].
+    constructor; [eapply MON0|].
+    intros. eapply RESPECTFUL0; [apply LE0|apply GF|apply PR].
+  - destruct PR; destruct RES; eapply gf_mon with (r:=clo r).
+    eapply RESPECTFUL0; [apply LE|apply GF|apply CLO].
+    intros. econstructor; [constructor; [apply MON0|apply RESPECTFUL0]|apply PR].
 Qed.
 
 Lemma gfgres12_mon: monotone12 (compose gf gres12).
 Proof.
-  destruct grespectful12_respectful12; eauto using gf_mon.
+  destruct grespectful12_respectful12.
+  unfold monotone12. intros. eapply gf_mon; [eapply IN|].
+  intros. eapply MON0;[apply PR|apply LE].
 Qed.
 Hint Resolve gfgres12_mon : paco.
 
 Lemma grespectful12_greatest: forall clo (RES: respectful12 clo), clo <13= gres12.
-Proof. eauto. Qed.
+Proof. intros. econstructor;[apply RES|apply PR]. Qed.
 
 Lemma grespectful12_incl: forall r, r <12= gres12 r.
 Proof.
@@ -118,8 +134,8 @@ Hint Resolve grespectful12_incl.
 Lemma grespectful12_compose: forall clo (RES: respectful12 clo) r,
     clo (gres12 r) <12= gres12 r.
 Proof.
-  intros; eapply grespectful12_greatest with (clo := compose clo gres12);
-    eauto using respectful12_compose, grespectful12_respectful12.
+  intros; eapply grespectful12_greatest with (clo := compose clo gres12); [|apply PR].
+  apply respectful12_compose; [apply RES|apply grespectful12_respectful12].
 Qed.
 
 Lemma grespectful12_incl_rev: forall r,
@@ -127,9 +143,12 @@ Lemma grespectful12_incl_rev: forall r,
 Proof.
   intro r; pcofix CIH; intros; pfold.
   eapply gf_mon, grespectful12_compose, grespectful12_respectful12.
-  destruct grespectful12_respectful12; eapply RESPECTFUL0, PR; intros; [apply grespectful12_incl; eauto|].
+  destruct grespectful12_respectful12; eapply RESPECTFUL0, PR; intros; [apply grespectful12_incl; auto|].
   punfold PR0.
-  eapply gfgres12_mon; eauto; intros; destruct PR1; eauto.
+  eapply gfgres12_mon; [apply PR0|].
+  intros; destruct PR1.
+  - left. eapply paco12_mon; [apply H| apply CIH0].
+  - right. eapply CIH0, H.
 Qed.
 
 Inductive rclo12 clo (r: rel): rel :=
@@ -151,17 +170,19 @@ Inductive rclo12 clo (r: rel): rel :=
 Lemma rclo12_mon clo:
   monotone12 (rclo12 clo).
 Proof.
-  repeat intro. induction IN; eauto using rclo12.
+  repeat intro. induction IN.
+  - econstructor 1. apply LE, R.
+  - econstructor 2; [intros; eapply H, PR| eapply CLOR'].
+  - econstructor 3; [intros; eapply H, PR| eapply CLOR'].
 Qed.
-Hint Resolve rclo12_mon: paco.
 
 Lemma rclo12_base
       clo
       (MON: monotone12 clo):
   clo <13= rclo12 clo.
 Proof.
-  simpl. intros. econstructor 2; eauto.
-  eapply MON; eauto using rclo12.
+  simpl. intros. econstructor 2; [eauto|].
+  eapply MON; [apply PR|intros; constructor; apply PR0].
 Qed.
 
 Lemma rclo12_step
@@ -176,7 +197,10 @@ Lemma rclo12_rclo12
       (MON: monotone12 clo):
   rclo12 clo (rclo12 clo r) <12= rclo12 clo r.
 Proof.
-  intros. induction PR; eauto using rclo12.
+  intros. induction PR.
+  - eapply R.
+  - econstructor 2; [eapply H | eapply CLOR'].
+  - econstructor 3; [eapply H | eapply CLOR'].
 Qed.
 
 Structure weak_respectful12 (clo: rel -> rel) : Prop :=
@@ -192,21 +216,22 @@ Lemma weak_respectful12_respectful12
       clo (RES: weak_respectful12 clo):
   respectful12 (rclo12 clo).
 Proof.
-  inversion RES. econstructor; eauto with paco. intros.
+  inversion RES. econstructor; [eapply rclo12_mon|]. intros.
   induction PR; intros.
-  - eapply gf_mon; eauto. intros.
-    apply rclo12_incl. auto.
+  - eapply gf_mon; [apply GF, R|]. intros.
+    apply rclo12_incl. apply PR.
   - eapply gf_mon.
     + eapply WEAK_RESPECTFUL0; [|apply H|apply CLOR'].
-      intros. eapply rclo12_mon; eauto.
-    + intros. apply rclo12_rclo12; auto.
-  - eapply gf_mon; eauto using rclo12.
+      intros. eapply rclo12_mon; [apply R', PR|apply LE].
+    + intros. apply rclo12_rclo12;[apply WEAK_MON0|apply PR].
+  - eapply gf_mon; [apply CLOR'|].
+    intros. eapply rclo12_mon; [apply R', PR| apply LE].
 Qed.
 
 Lemma upto12_init:
   paco12 (compose gf gres12) bot12 <12= paco12 gf bot12.
 Proof.
-  apply sound12_is_gf; eauto.
+  apply sound12_is_gf.
   apply respectful12_is_sound12.
   apply grespectful12_respectful12.
 Qed.
@@ -216,7 +241,8 @@ Lemma upto12_final:
 Proof.
   pcofix CIH. intros. punfold PR. pfold.
   eapply gf_mon; [|apply grespectful12_incl].
-  eapply gf_mon; [eauto|]. intros. right. inversion PR0; auto.
+  eapply gf_mon; [apply PR|]. intros. right.
+  inversion PR0; [apply CIH, H | apply CIH0, H].
 Qed.
 
 Lemma upto12_step
@@ -225,17 +251,18 @@ Lemma upto12_step
 Proof.
   intros. apply grespectful12_incl_rev.
   assert (RES' := weak_respectful12_respectful12 RES).
-  eapply grespectful12_greatest. eauto.
-  eapply rclo12_base; eauto.
-  inversion RES. auto.
+  eapply grespectful12_greatest; [apply RES'|].
+  eapply rclo12_base; [apply RES|].
+  inversion RES. apply PR.
 Qed.
 
 Lemma upto12_step_under
       r clo (RES: weak_respectful12 clo):
   clo (gres12 r) <12= gres12 r.
 Proof.
-  intros. apply weak_respectful12_respectful12 in RES; eauto.
-  eapply grespectful12_compose; eauto. eauto using rclo12.
+  intros. apply weak_respectful12_respectful12 in RES.
+  eapply grespectful12_compose; [apply RES|].
+  econstructor 2; [intros; constructor 1; apply PR0 | apply PR].
 Qed.
 
 End Respectful12.
