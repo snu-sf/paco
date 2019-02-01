@@ -319,6 +319,10 @@ for m in range (1,mutsize+1):
         print ("  pacounfold := paco"+str(n)+lev(m)+idx(m,i)+"_unfold"+itridx(" gf",m)+" }.")
         print ('')
 
+print ('Lemma upaco'+str(n)+'_clear gf'+itrstr(' x', n)+':')
+print ('  upaco'+str(n)+' gf bot'+str(n)+itrstr(' x', n)+' <-> paco'+str(n)+' gf bot'+str(n)+itrstr(' x', n)+'.')
+print ('Proof. split; intros; [destruct H;[apply H|destruct H]|left; apply H]. Qed.')
+print ('')
 
 print ('End PACO'+str(n)+'.')
 print ('')

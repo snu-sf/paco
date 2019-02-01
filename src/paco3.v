@@ -790,6 +790,10 @@ Global Instance paco3_3_2_inst  (gf_0 gf_1 gf_2 : rel3 T0 T1 T2->_) r_0 r_1 r_2 
   pacofold   := paco3_3_2_fold gf_0 gf_1 gf_2;
   pacounfold := paco3_3_2_unfold gf_0 gf_1 gf_2 }.
 
+Lemma upaco3_clear gf x0 x1 x2:
+  upaco3 gf bot3 x0 x1 x2 <-> paco3 gf bot3 x0 x1 x2.
+Proof. split; intros; [destruct H;[apply H|destruct H]|left; apply H]. Qed.
+
 End PACO3.
 
 Global Opaque paco3.

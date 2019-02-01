@@ -796,6 +796,10 @@ Global Instance paco6_3_2_inst  (gf_0 gf_1 gf_2 : rel6 T0 T1 T2 T3 T4 T5->_) r_0
   pacofold   := paco6_3_2_fold gf_0 gf_1 gf_2;
   pacounfold := paco6_3_2_unfold gf_0 gf_1 gf_2 }.
 
+Lemma upaco6_clear gf x0 x1 x2 x3 x4 x5:
+  upaco6 gf bot6 x0 x1 x2 x3 x4 x5 <-> paco6 gf bot6 x0 x1 x2 x3 x4 x5.
+Proof. split; intros; [destruct H;[apply H|destruct H]|left; apply H]. Qed.
+
 End PACO6.
 
 Global Opaque paco6.

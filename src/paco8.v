@@ -800,6 +800,10 @@ Global Instance paco8_3_2_inst  (gf_0 gf_1 gf_2 : rel8 T0 T1 T2 T3 T4 T5 T6 T7->
   pacofold   := paco8_3_2_fold gf_0 gf_1 gf_2;
   pacounfold := paco8_3_2_unfold gf_0 gf_1 gf_2 }.
 
+Lemma upaco8_clear gf x0 x1 x2 x3 x4 x5 x6 x7:
+  upaco8 gf bot8 x0 x1 x2 x3 x4 x5 x6 x7 <-> paco8 gf bot8 x0 x1 x2 x3 x4 x5 x6 x7.
+Proof. split; intros; [destruct H;[apply H|destruct H]|left; apply H]. Qed.
+
 End PACO8.
 
 Global Opaque paco8.

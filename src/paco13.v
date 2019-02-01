@@ -810,6 +810,10 @@ Global Instance paco13_3_2_inst  (gf_0 gf_1 gf_2 : rel13 T0 T1 T2 T3 T4 T5 T6 T7
   pacofold   := paco13_3_2_fold gf_0 gf_1 gf_2;
   pacounfold := paco13_3_2_unfold gf_0 gf_1 gf_2 }.
 
+Lemma upaco13_clear gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12:
+  upaco13 gf bot13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 <-> paco13 gf bot13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12.
+Proof. split; intros; [destruct H;[apply H|destruct H]|left; apply H]. Qed.
+
 End PACO13.
 
 Global Opaque paco13.
