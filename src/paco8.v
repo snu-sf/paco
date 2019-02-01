@@ -223,6 +223,13 @@ Proof.
   apply _paco8_mon.
 Qed.
 
+Theorem upaco8_mon: monotone8 (upaco8 gf).
+Proof.
+  repeat_intros 10. intros R  LE0.
+  destruct R.
+  - left. eapply paco8_mon. apply H. apply LE0.
+  - right. apply LE0, H.
+Qed.
 Theorem paco8_mult_strong: forall r,
   paco8 gf (upaco8 gf r) <8= paco8 gf r.
 Proof.
@@ -249,6 +256,7 @@ End Arg8_1.
 
 Arguments paco8_acc : clear implicits.
 Arguments paco8_mon : clear implicits.
+Arguments upaco8_mon : clear implicits.
 Arguments paco8_mult_strong : clear implicits.
 Arguments paco8_mult : clear implicits.
 Arguments paco8_fold : clear implicits.
@@ -391,6 +399,20 @@ Proof.
   apply _paco8_2_1_mon.
 Qed.
 
+Theorem upaco8_2_0_mon: monotone8_2 (upaco8_2_0 gf_0 gf_1).
+Proof.
+  repeat_intros 12. intros R  LE0 LE1.
+  destruct R.
+  - left. eapply paco8_2_0_mon. apply H. apply LE0. apply LE1.
+  - right. apply LE0, H.
+Qed.
+Theorem upaco8_2_1_mon: monotone8_2 (upaco8_2_1 gf_0 gf_1).
+Proof.
+  repeat_intros 12. intros R  LE0 LE1.
+  destruct R.
+  - left. eapply paco8_2_1_mon. apply H. apply LE0. apply LE1.
+  - right. apply LE1, H.
+Qed.
 Theorem paco8_2_0_mult_strong: forall r_0 r_1,
   paco8_2_0 gf_0 gf_1 (upaco8_2_0 gf_0 gf_1 r_0 r_1) (upaco8_2_1 gf_0 gf_1 r_0 r_1) <8= paco8_2_0 gf_0 gf_1 r_0 r_1.
 Proof.
@@ -441,6 +463,8 @@ Arguments paco8_2_0_acc : clear implicits.
 Arguments paco8_2_1_acc : clear implicits.
 Arguments paco8_2_0_mon : clear implicits.
 Arguments paco8_2_1_mon : clear implicits.
+Arguments upaco8_2_0_mon : clear implicits.
+Arguments upaco8_2_1_mon : clear implicits.
 Arguments paco8_2_0_mult_strong : clear implicits.
 Arguments paco8_2_1_mult_strong : clear implicits.
 Arguments paco8_2_0_mult : clear implicits.
@@ -647,6 +671,27 @@ Proof.
   apply _paco8_3_2_mon.
 Qed.
 
+Theorem upaco8_3_0_mon: monotone8_3 (upaco8_3_0 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 14. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco8_3_0_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE0, H.
+Qed.
+Theorem upaco8_3_1_mon: monotone8_3 (upaco8_3_1 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 14. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco8_3_1_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE1, H.
+Qed.
+Theorem upaco8_3_2_mon: monotone8_3 (upaco8_3_2 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 14. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco8_3_2_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE2, H.
+Qed.
 Theorem paco8_3_0_mult_strong: forall r_0 r_1 r_2,
   paco8_3_0 gf_0 gf_1 gf_2 (upaco8_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco8_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco8_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <8= paco8_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
 Proof.
@@ -721,6 +766,9 @@ Arguments paco8_3_2_acc : clear implicits.
 Arguments paco8_3_0_mon : clear implicits.
 Arguments paco8_3_1_mon : clear implicits.
 Arguments paco8_3_2_mon : clear implicits.
+Arguments upaco8_3_0_mon : clear implicits.
+Arguments upaco8_3_1_mon : clear implicits.
+Arguments upaco8_3_2_mon : clear implicits.
 Arguments paco8_3_0_mult_strong : clear implicits.
 Arguments paco8_3_1_mult_strong : clear implicits.
 Arguments paco8_3_2_mult_strong : clear implicits.
@@ -751,6 +799,10 @@ Global Instance paco8_3_2_inst  (gf_0 gf_1 gf_2 : rel8 T0 T1 T2 T3 T4 T5 T6 T7->
   pacomult   := paco8_3_2_mult gf_0 gf_1 gf_2;
   pacofold   := paco8_3_2_fold gf_0 gf_1 gf_2;
   pacounfold := paco8_3_2_unfold gf_0 gf_1 gf_2 }.
+
+Lemma upaco8_clear gf x0 x1 x2 x3 x4 x5 x6 x7:
+  upaco8 gf bot8 x0 x1 x2 x3 x4 x5 x6 x7 <-> paco8 gf bot8 x0 x1 x2 x3 x4 x5 x6 x7.
+Proof. split; intros; [destruct H;[apply H|destruct H]|left; apply H]. Qed.
 
 End PACO8.
 

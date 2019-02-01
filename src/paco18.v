@@ -243,6 +243,13 @@ Proof.
   apply _paco18_mon.
 Qed.
 
+Theorem upaco18_mon: monotone18 (upaco18 gf).
+Proof.
+  repeat_intros 20. intros R  LE0.
+  destruct R.
+  - left. eapply paco18_mon. apply H. apply LE0.
+  - right. apply LE0, H.
+Qed.
 Theorem paco18_mult_strong: forall r,
   paco18 gf (upaco18 gf r) <18= paco18 gf r.
 Proof.
@@ -269,6 +276,7 @@ End Arg18_1.
 
 Arguments paco18_acc : clear implicits.
 Arguments paco18_mon : clear implicits.
+Arguments upaco18_mon : clear implicits.
 Arguments paco18_mult_strong : clear implicits.
 Arguments paco18_mult : clear implicits.
 Arguments paco18_fold : clear implicits.
@@ -411,6 +419,20 @@ Proof.
   apply _paco18_2_1_mon.
 Qed.
 
+Theorem upaco18_2_0_mon: monotone18_2 (upaco18_2_0 gf_0 gf_1).
+Proof.
+  repeat_intros 22. intros R  LE0 LE1.
+  destruct R.
+  - left. eapply paco18_2_0_mon. apply H. apply LE0. apply LE1.
+  - right. apply LE0, H.
+Qed.
+Theorem upaco18_2_1_mon: monotone18_2 (upaco18_2_1 gf_0 gf_1).
+Proof.
+  repeat_intros 22. intros R  LE0 LE1.
+  destruct R.
+  - left. eapply paco18_2_1_mon. apply H. apply LE0. apply LE1.
+  - right. apply LE1, H.
+Qed.
 Theorem paco18_2_0_mult_strong: forall r_0 r_1,
   paco18_2_0 gf_0 gf_1 (upaco18_2_0 gf_0 gf_1 r_0 r_1) (upaco18_2_1 gf_0 gf_1 r_0 r_1) <18= paco18_2_0 gf_0 gf_1 r_0 r_1.
 Proof.
@@ -461,6 +483,8 @@ Arguments paco18_2_0_acc : clear implicits.
 Arguments paco18_2_1_acc : clear implicits.
 Arguments paco18_2_0_mon : clear implicits.
 Arguments paco18_2_1_mon : clear implicits.
+Arguments upaco18_2_0_mon : clear implicits.
+Arguments upaco18_2_1_mon : clear implicits.
 Arguments paco18_2_0_mult_strong : clear implicits.
 Arguments paco18_2_1_mult_strong : clear implicits.
 Arguments paco18_2_0_mult : clear implicits.
@@ -667,6 +691,27 @@ Proof.
   apply _paco18_3_2_mon.
 Qed.
 
+Theorem upaco18_3_0_mon: monotone18_3 (upaco18_3_0 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 24. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco18_3_0_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE0, H.
+Qed.
+Theorem upaco18_3_1_mon: monotone18_3 (upaco18_3_1 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 24. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco18_3_1_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE1, H.
+Qed.
+Theorem upaco18_3_2_mon: monotone18_3 (upaco18_3_2 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 24. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco18_3_2_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE2, H.
+Qed.
 Theorem paco18_3_0_mult_strong: forall r_0 r_1 r_2,
   paco18_3_0 gf_0 gf_1 gf_2 (upaco18_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco18_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco18_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <18= paco18_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
 Proof.
@@ -741,6 +786,9 @@ Arguments paco18_3_2_acc : clear implicits.
 Arguments paco18_3_0_mon : clear implicits.
 Arguments paco18_3_1_mon : clear implicits.
 Arguments paco18_3_2_mon : clear implicits.
+Arguments upaco18_3_0_mon : clear implicits.
+Arguments upaco18_3_1_mon : clear implicits.
+Arguments upaco18_3_2_mon : clear implicits.
 Arguments paco18_3_0_mult_strong : clear implicits.
 Arguments paco18_3_1_mult_strong : clear implicits.
 Arguments paco18_3_2_mult_strong : clear implicits.
@@ -771,6 +819,10 @@ Global Instance paco18_3_2_inst  (gf_0 gf_1 gf_2 : rel18 T0 T1 T2 T3 T4 T5 T6 T7
   pacomult   := paco18_3_2_mult gf_0 gf_1 gf_2;
   pacofold   := paco18_3_2_fold gf_0 gf_1 gf_2;
   pacounfold := paco18_3_2_unfold gf_0 gf_1 gf_2 }.
+
+Lemma upaco18_clear gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17:
+  upaco18 gf bot18 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 <-> paco18 gf bot18 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17.
+Proof. split; intros; [destruct H;[apply H|destruct H]|left; apply H]. Qed.
 
 End PACO18.
 

@@ -239,6 +239,13 @@ Proof.
   apply _paco16_mon.
 Qed.
 
+Theorem upaco16_mon: monotone16 (upaco16 gf).
+Proof.
+  repeat_intros 18. intros R  LE0.
+  destruct R.
+  - left. eapply paco16_mon. apply H. apply LE0.
+  - right. apply LE0, H.
+Qed.
 Theorem paco16_mult_strong: forall r,
   paco16 gf (upaco16 gf r) <16= paco16 gf r.
 Proof.
@@ -265,6 +272,7 @@ End Arg16_1.
 
 Arguments paco16_acc : clear implicits.
 Arguments paco16_mon : clear implicits.
+Arguments upaco16_mon : clear implicits.
 Arguments paco16_mult_strong : clear implicits.
 Arguments paco16_mult : clear implicits.
 Arguments paco16_fold : clear implicits.
@@ -407,6 +415,20 @@ Proof.
   apply _paco16_2_1_mon.
 Qed.
 
+Theorem upaco16_2_0_mon: monotone16_2 (upaco16_2_0 gf_0 gf_1).
+Proof.
+  repeat_intros 20. intros R  LE0 LE1.
+  destruct R.
+  - left. eapply paco16_2_0_mon. apply H. apply LE0. apply LE1.
+  - right. apply LE0, H.
+Qed.
+Theorem upaco16_2_1_mon: monotone16_2 (upaco16_2_1 gf_0 gf_1).
+Proof.
+  repeat_intros 20. intros R  LE0 LE1.
+  destruct R.
+  - left. eapply paco16_2_1_mon. apply H. apply LE0. apply LE1.
+  - right. apply LE1, H.
+Qed.
 Theorem paco16_2_0_mult_strong: forall r_0 r_1,
   paco16_2_0 gf_0 gf_1 (upaco16_2_0 gf_0 gf_1 r_0 r_1) (upaco16_2_1 gf_0 gf_1 r_0 r_1) <16= paco16_2_0 gf_0 gf_1 r_0 r_1.
 Proof.
@@ -457,6 +479,8 @@ Arguments paco16_2_0_acc : clear implicits.
 Arguments paco16_2_1_acc : clear implicits.
 Arguments paco16_2_0_mon : clear implicits.
 Arguments paco16_2_1_mon : clear implicits.
+Arguments upaco16_2_0_mon : clear implicits.
+Arguments upaco16_2_1_mon : clear implicits.
 Arguments paco16_2_0_mult_strong : clear implicits.
 Arguments paco16_2_1_mult_strong : clear implicits.
 Arguments paco16_2_0_mult : clear implicits.
@@ -663,6 +687,27 @@ Proof.
   apply _paco16_3_2_mon.
 Qed.
 
+Theorem upaco16_3_0_mon: monotone16_3 (upaco16_3_0 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 22. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco16_3_0_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE0, H.
+Qed.
+Theorem upaco16_3_1_mon: monotone16_3 (upaco16_3_1 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 22. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco16_3_1_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE1, H.
+Qed.
+Theorem upaco16_3_2_mon: monotone16_3 (upaco16_3_2 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 22. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco16_3_2_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE2, H.
+Qed.
 Theorem paco16_3_0_mult_strong: forall r_0 r_1 r_2,
   paco16_3_0 gf_0 gf_1 gf_2 (upaco16_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco16_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco16_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <16= paco16_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
 Proof.
@@ -737,6 +782,9 @@ Arguments paco16_3_2_acc : clear implicits.
 Arguments paco16_3_0_mon : clear implicits.
 Arguments paco16_3_1_mon : clear implicits.
 Arguments paco16_3_2_mon : clear implicits.
+Arguments upaco16_3_0_mon : clear implicits.
+Arguments upaco16_3_1_mon : clear implicits.
+Arguments upaco16_3_2_mon : clear implicits.
 Arguments paco16_3_0_mult_strong : clear implicits.
 Arguments paco16_3_1_mult_strong : clear implicits.
 Arguments paco16_3_2_mult_strong : clear implicits.
@@ -767,6 +815,10 @@ Global Instance paco16_3_2_inst  (gf_0 gf_1 gf_2 : rel16 T0 T1 T2 T3 T4 T5 T6 T7
   pacomult   := paco16_3_2_mult gf_0 gf_1 gf_2;
   pacofold   := paco16_3_2_fold gf_0 gf_1 gf_2;
   pacounfold := paco16_3_2_unfold gf_0 gf_1 gf_2 }.
+
+Lemma upaco16_clear gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15:
+  upaco16 gf bot16 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 <-> paco16 gf bot16 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15.
+Proof. split; intros; [destruct H;[apply H|destruct H]|left; apply H]. Qed.
 
 End PACO16.
 

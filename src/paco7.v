@@ -221,6 +221,13 @@ Proof.
   apply _paco7_mon.
 Qed.
 
+Theorem upaco7_mon: monotone7 (upaco7 gf).
+Proof.
+  repeat_intros 9. intros R  LE0.
+  destruct R.
+  - left. eapply paco7_mon. apply H. apply LE0.
+  - right. apply LE0, H.
+Qed.
 Theorem paco7_mult_strong: forall r,
   paco7 gf (upaco7 gf r) <7= paco7 gf r.
 Proof.
@@ -247,6 +254,7 @@ End Arg7_1.
 
 Arguments paco7_acc : clear implicits.
 Arguments paco7_mon : clear implicits.
+Arguments upaco7_mon : clear implicits.
 Arguments paco7_mult_strong : clear implicits.
 Arguments paco7_mult : clear implicits.
 Arguments paco7_fold : clear implicits.
@@ -389,6 +397,20 @@ Proof.
   apply _paco7_2_1_mon.
 Qed.
 
+Theorem upaco7_2_0_mon: monotone7_2 (upaco7_2_0 gf_0 gf_1).
+Proof.
+  repeat_intros 11. intros R  LE0 LE1.
+  destruct R.
+  - left. eapply paco7_2_0_mon. apply H. apply LE0. apply LE1.
+  - right. apply LE0, H.
+Qed.
+Theorem upaco7_2_1_mon: monotone7_2 (upaco7_2_1 gf_0 gf_1).
+Proof.
+  repeat_intros 11. intros R  LE0 LE1.
+  destruct R.
+  - left. eapply paco7_2_1_mon. apply H. apply LE0. apply LE1.
+  - right. apply LE1, H.
+Qed.
 Theorem paco7_2_0_mult_strong: forall r_0 r_1,
   paco7_2_0 gf_0 gf_1 (upaco7_2_0 gf_0 gf_1 r_0 r_1) (upaco7_2_1 gf_0 gf_1 r_0 r_1) <7= paco7_2_0 gf_0 gf_1 r_0 r_1.
 Proof.
@@ -439,6 +461,8 @@ Arguments paco7_2_0_acc : clear implicits.
 Arguments paco7_2_1_acc : clear implicits.
 Arguments paco7_2_0_mon : clear implicits.
 Arguments paco7_2_1_mon : clear implicits.
+Arguments upaco7_2_0_mon : clear implicits.
+Arguments upaco7_2_1_mon : clear implicits.
 Arguments paco7_2_0_mult_strong : clear implicits.
 Arguments paco7_2_1_mult_strong : clear implicits.
 Arguments paco7_2_0_mult : clear implicits.
@@ -645,6 +669,27 @@ Proof.
   apply _paco7_3_2_mon.
 Qed.
 
+Theorem upaco7_3_0_mon: monotone7_3 (upaco7_3_0 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 13. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco7_3_0_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE0, H.
+Qed.
+Theorem upaco7_3_1_mon: monotone7_3 (upaco7_3_1 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 13. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco7_3_1_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE1, H.
+Qed.
+Theorem upaco7_3_2_mon: monotone7_3 (upaco7_3_2 gf_0 gf_1 gf_2).
+Proof.
+  repeat_intros 13. intros R  LE0 LE1 LE2.
+  destruct R.
+  - left. eapply paco7_3_2_mon. apply H. apply LE0. apply LE1. apply LE2.
+  - right. apply LE2, H.
+Qed.
 Theorem paco7_3_0_mult_strong: forall r_0 r_1 r_2,
   paco7_3_0 gf_0 gf_1 gf_2 (upaco7_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco7_3_1 gf_0 gf_1 gf_2 r_0 r_1 r_2) (upaco7_3_2 gf_0 gf_1 gf_2 r_0 r_1 r_2) <7= paco7_3_0 gf_0 gf_1 gf_2 r_0 r_1 r_2.
 Proof.
@@ -719,6 +764,9 @@ Arguments paco7_3_2_acc : clear implicits.
 Arguments paco7_3_0_mon : clear implicits.
 Arguments paco7_3_1_mon : clear implicits.
 Arguments paco7_3_2_mon : clear implicits.
+Arguments upaco7_3_0_mon : clear implicits.
+Arguments upaco7_3_1_mon : clear implicits.
+Arguments upaco7_3_2_mon : clear implicits.
 Arguments paco7_3_0_mult_strong : clear implicits.
 Arguments paco7_3_1_mult_strong : clear implicits.
 Arguments paco7_3_2_mult_strong : clear implicits.
@@ -749,6 +797,10 @@ Global Instance paco7_3_2_inst  (gf_0 gf_1 gf_2 : rel7 T0 T1 T2 T3 T4 T5 T6->_) 
   pacomult   := paco7_3_2_mult gf_0 gf_1 gf_2;
   pacofold   := paco7_3_2_fold gf_0 gf_1 gf_2;
   pacounfold := paco7_3_2_unfold gf_0 gf_1 gf_2 }.
+
+Lemma upaco7_clear gf x0 x1 x2 x3 x4 x5 x6:
+  upaco7 gf bot7 x0 x1 x2 x3 x4 x5 x6 <-> paco7 gf bot7 x0 x1 x2 x3 x4 x5 x6.
+Proof. split; intros; [destruct H;[apply H|destruct H]|left; apply H]. Qed.
 
 End PACO7.
 
