@@ -677,18 +677,6 @@ Qed.
     before).
 *)
 
-Inductive eqone_gen eqone eqtwo : inftree -> Prop :=
-  | _eqone_gen : forall tl tr (EQL : eqone tl : Prop) (EQR : eqtwo tr : Prop),
-                    eqone_gen eqone eqtwo (node 1 tl tr).
-
-Inductive eqtwo_gen eqone eqtwo : inftree -> Prop :=
-  | _eqtwo_gen : forall tl tr (EQL : eqone tl : Prop) (EQR : eqtwo tr : Prop),
-                   eqtwo_gen eqone eqtwo (node 2 tl tr).
-
-Hint Constructors eqone_gen eqtwo_gen.
-
-
-
 (** *** A proof via [cofix]
 
     Using these, we now define two mutually coinductive predicates
@@ -697,20 +685,22 @@ Hint Constructors eqone_gen eqtwo_gen.
     respectively.  We then prove that [eqone] contains [eins].
 *)
 
-CoInductive eqone (t : inftree) : Prop :=
-  | eqone_fold (EQ : eqone_gen eqone eqtwo t)
-with eqtwo (t : inftree) : Prop :=
-  | eqtwo_fold (EQ : eqtwo_gen eqone eqtwo t).
+CoInductive eqone : inftree -> Prop :=
+  | eqone_fold tl tr (EQL : eqone tl : Prop) (EQR : eqtwo tr : Prop):
+      eqone (node 1 tl tr)  
+with eqtwo : inftree -> Prop :=
+  | eqtwo_fold tl tr (EQL : eqone tl : Prop) (EQR : eqtwo tr : Prop):
+      eqtwo (node 2 tl tr).         
 
 Lemma eqone_eins : eqone eins.
 Proof.
-  cofix CIH0; apply eqone_fold.
-  rewrite tunf_eq; simpl; constructor.
-    apply CIH0.
-  cofix CIH1; apply eqtwo_fold.
-  constructor.
-    apply CIH0.
-  rewrite tunf_eq; apply CIH1.
+  cofix CIH0.
+  rewrite (tunf_eq eins); simpl.
+  constructor; [apply CIH0|].
+  cofix CIH1.
+  constructor; [apply CIH0|].
+  rewrite (tunf_eq zwei).
+  apply CIH1.
 Qed.
 
 
@@ -721,26 +711,30 @@ Qed.
     the two constructors [paco1_2_0] and [paco1_2_1], respectively ("1"
     because we are dealing with unary predicates).  Again, the
     translation of the lemma and of its proof is almost trivial.
-*)
+ *)
 
-Definition eqone' t := paco1_2_0 eqone_gen eqtwo_gen bot1 bot1 t.
-Definition eqtwo' t := paco1_2_1 eqone_gen eqtwo_gen bot1 bot1 t.
+Inductive eqonetwo_gen eqonetwo : inftree+inftree -> Prop :=
+  | eqonetwo_left: forall tl tr (EQL: eqonetwo (inl tl) : Prop) (EQR: eqonetwo (inr tr) : Prop),
+      eqonetwo_gen eqonetwo (inl (node 1 tl tr))
+  | eqonetwo_right: forall tl tr (EQL: eqonetwo (inl tl) : Prop) (EQR: eqonetwo (inr tr) : Prop),
+      eqonetwo_gen eqonetwo (inr (node 2 tl tr))
+.
+Hint Constructors eqonetwo_gen.
+
+Definition eqone' t := paco1 eqonetwo_gen bot1 (inl t).
+Definition eqtwo' t := paco1 eqonetwo_gen bot1 (inr t).
 Hint Unfold eqone' eqtwo'.
-Lemma eqone_gen_mon: monotone1_2 eqone_gen. Proof. pmonauto. Qed.
-Lemma eqtwo_gen_mon: monotone1_2 eqtwo_gen. Proof. pmonauto. Qed.
-Hint Resolve eqone_gen_mon eqtwo_gen_mon : paco.
+Lemma eqonetwo_gen_mon: monotone1 eqonetwo_gen.
+Proof. pmonauto. Qed.
+Hint Resolve eqonetwo_gen_mon : paco.
 
 Lemma eqone'_eins: eqone' eins.
 Proof.
   pcofix CIH0; pfold.
-  rewrite tunf_eq; simpl; constructor.
-    right; apply CIH0.
+  rewrite (tunf_eq eins); simpl.
+  constructor; [right; apply CIH0|].
   left; pcofix CIH1; pfold.
-  constructor.
-    right; apply CIH0.
-  right; rewrite tunf_eq; apply CIH1.
+  constructor; [right; apply CIH0|].
+  rewrite (tunf_eq zwei).
+  right; apply CIH1.
 Qed.
-
-(** _Remark_: For three mutually coinductive predicates, the
-    constructors are [paco{n}_3_0], [paco{n}_3_1], and [paco{n}_3_2].
-*)

@@ -3,7 +3,7 @@
 PACOSRCDIR=../src
 
 maxsize=18
-mutsize=3
+mutsize=1
 
 rm $PACOSRCDIR/paco*.v
 python paconotation.py $(expr $maxsize + 1) > $PACOSRCDIR/paconotation.v
