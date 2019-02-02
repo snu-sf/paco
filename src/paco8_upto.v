@@ -44,15 +44,18 @@ Inductive gres8 (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 : Prop :=
 .
 Hint Constructors gres8.
 Lemma gfclo8_mon: forall clo, sound8 clo -> monotone8 (compose gf clo).
-Proof. intros; destruct H; eauto using gf_mon. Qed.
+Proof.
+  intros; destruct H; red; intros.
+  eapply gf_mon; [apply IN|intros; eapply MON0; [apply PR|apply LE]].
+Qed.
 Hint Resolve gfclo8_mon : paco.
 
 Lemma sound8_is_gf: forall clo (UPTO: sound8 clo),
     paco8 (compose gf clo) bot8 <8= paco8 gf bot8.
 Proof.
-  intros. punfold PR. edestruct UPTO.
+  intros. _punfold PR; [|apply gfclo8_mon, UPTO]. edestruct UPTO.
   eapply (SOUND (paco8 (compose gf clo) bot8)).
-  - intros. punfold PR0.
+  - intros. _punfold PR0; [|apply gfclo8_mon, UPTO].
     eapply (gfclo8_mon UPTO); [apply PR0| intros; destruct PR1; [apply H|destruct H]].
   - pfold. apply PR.
 Qed.
@@ -75,13 +78,16 @@ Proof.
     - apply X. apply H.
     - intros. right. apply CIH. exists (S x). apply PR.
   }
-  induction n; intros; simpl in *.
+  induction n; intros.
   - eapply gf_mon.
     + clear RESPECTFUL0. eapply PFIX, PR.
     + intros. right. eapply PR0.
   - destruct PR.
-    + eapply gf_mon; [eapply IHn, H0|]. intros. clear - PR. auto.
-    + eapply gf_mon; [eapply RESPECTFUL0; [|apply IHn|]|]; instantiate; simpl; auto.
+    + eapply gf_mon; [eapply IHn, H0|]. intros. left. apply PR.
+    + eapply gf_mon; [eapply RESPECTFUL0; [|apply IHn|]|]; intros.
+      * left; apply PR.
+      * apply H0.
+      * right; apply PR.
 Qed.
 
 Lemma respectful8_compose
@@ -123,7 +129,11 @@ Proof. intros. econstructor;[apply RES|apply PR]. Qed.
 
 Lemma grespectful8_incl: forall r, r <8= gres8 r.
 Proof.
-  intros; eexists (fun x => x); eauto.
+  intros; eexists (fun x => x).
+  - econstructor.
+    + red; intros; apply LE, IN.
+    + intros; apply GF, PR0.
+  - apply PR.
 Qed.
 Hint Resolve grespectful8_incl.
 
@@ -139,8 +149,8 @@ Lemma grespectful8_incl_rev: forall r,
 Proof.
   intro r; pcofix CIH; intros; pfold.
   eapply gf_mon, grespectful8_compose, grespectful8_respectful8.
-  destruct grespectful8_respectful8; eapply RESPECTFUL0, PR; intros; [apply grespectful8_incl; auto|].
-  punfold PR0.
+  destruct grespectful8_respectful8; eapply RESPECTFUL0, PR; intros; [apply grespectful8_incl; right; apply CIH, grespectful8_incl, PR0|].
+  _punfold PR0; [|apply gfgres8_mon].
   eapply gfgres8_mon; [apply PR0|].
   intros; destruct PR1.
   - left. eapply paco8_mon; [apply H| apply CIH0].
@@ -171,13 +181,14 @@ Proof.
   - econstructor 2; [intros; eapply H, PR| eapply CLOR'].
   - econstructor 3; [intros; eapply H, PR| eapply CLOR'].
 Qed.
+Hint Resolve rclo8_mon: paco.
 
 Lemma rclo8_base
       clo
       (MON: monotone8 clo):
   clo <9= rclo8 clo.
 Proof.
-  simpl. intros. econstructor 2; [eauto|].
+  intros. econstructor 2; [intros; apply PR0|].
   eapply MON; [apply PR|intros; constructor; apply PR0].
 Qed.
 
@@ -185,7 +196,7 @@ Lemma rclo8_step
       (clo: rel -> rel) r:
   clo (rclo8 clo r) <8= rclo8 clo r.
 Proof.
-  intros. econstructor 2; eauto.
+  intros. econstructor 2; [intros; apply PR0|apply PR].
 Qed.
 
 Lemma rclo8_rclo8
@@ -235,7 +246,7 @@ Qed.
 Lemma upto8_final:
   paco8 gf <9= paco8 (compose gf gres8).
 Proof.
-  pcofix CIH. intros. punfold PR. pfold.
+  pcofix CIH. intros. _punfold PR; [|apply gf_mon]. pfold.
   eapply gf_mon; [|apply grespectful8_incl].
   eapply gf_mon; [apply PR|]. intros. right.
   inversion PR0; [apply CIH, H | apply CIH0, H].
@@ -272,7 +283,7 @@ Hint Resolve grespectful8_incl.
 Hint Resolve rclo8_mon: paco.
 Hint Constructors weak_respectful8.
 
-Ltac pupto8_init := eapply upto8_init; eauto with paco.
-Ltac pupto8_final := first [eapply upto8_final; eauto with paco | eapply grespectful8_incl].
-Ltac pupto8 H := first [eapply upto8_step|eapply upto8_step_under]; [|eapply H|]; eauto with paco.
+Ltac pupto8_init := eapply upto8_init; [eauto with paco|].
+Ltac pupto8_final := first [eapply upto8_final; [eauto with paco|] | eapply grespectful8_incl].
+Ltac pupto8 H := first [eapply upto8_step|eapply upto8_step_under]; [eauto with paco|eapply H|].
 

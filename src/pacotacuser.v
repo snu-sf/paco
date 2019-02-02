@@ -45,11 +45,11 @@ Ltac pfold := let x := fresh "_x_" in
   - [punfold H]
 *)
 
-Ltac punfold H := let x := fresh "_x_" in
+Ltac _punfold H := let x := fresh "_x_" in
   repeat red in H;
   let G := type of H in paco_class G (@pacounfold);
-  intro x; match goal with [x:=?lem|-_] => clear x; eapply lem in H end;
-  eauto with paco.
+  intro x; match goal with [x:=?lem|-_] => clear x; eapply lem in H end.
+Ltac punfold H := _punfold H; eauto with paco.
 
 (** ** pmult tactic
   - [pmult]

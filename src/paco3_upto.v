@@ -39,15 +39,18 @@ Inductive gres3 (r: rel) e0 e1 e2 : Prop :=
 .
 Hint Constructors gres3.
 Lemma gfclo3_mon: forall clo, sound3 clo -> monotone3 (compose gf clo).
-Proof. intros; destruct H; eauto using gf_mon. Qed.
+Proof.
+  intros; destruct H; red; intros.
+  eapply gf_mon; [apply IN|intros; eapply MON0; [apply PR|apply LE]].
+Qed.
 Hint Resolve gfclo3_mon : paco.
 
 Lemma sound3_is_gf: forall clo (UPTO: sound3 clo),
     paco3 (compose gf clo) bot3 <3= paco3 gf bot3.
 Proof.
-  intros. punfold PR. edestruct UPTO.
+  intros. _punfold PR; [|apply gfclo3_mon, UPTO]. edestruct UPTO.
   eapply (SOUND (paco3 (compose gf clo) bot3)).
-  - intros. punfold PR0.
+  - intros. _punfold PR0; [|apply gfclo3_mon, UPTO].
     eapply (gfclo3_mon UPTO); [apply PR0| intros; destruct PR1; [apply H|destruct H]].
   - pfold. apply PR.
 Qed.
@@ -70,13 +73,16 @@ Proof.
     - apply X. apply H.
     - intros. right. apply CIH. exists (S x). apply PR.
   }
-  induction n; intros; simpl in *.
+  induction n; intros.
   - eapply gf_mon.
     + clear RESPECTFUL0. eapply PFIX, PR.
     + intros. right. eapply PR0.
   - destruct PR.
-    + eapply gf_mon; [eapply IHn, H0|]. intros. clear - PR. auto.
-    + eapply gf_mon; [eapply RESPECTFUL0; [|apply IHn|]|]; instantiate; simpl; auto.
+    + eapply gf_mon; [eapply IHn, H0|]. intros. left. apply PR.
+    + eapply gf_mon; [eapply RESPECTFUL0; [|apply IHn|]|]; intros.
+      * left; apply PR.
+      * apply H0.
+      * right; apply PR.
 Qed.
 
 Lemma respectful3_compose
@@ -118,7 +124,11 @@ Proof. intros. econstructor;[apply RES|apply PR]. Qed.
 
 Lemma grespectful3_incl: forall r, r <3= gres3 r.
 Proof.
-  intros; eexists (fun x => x); eauto.
+  intros; eexists (fun x => x).
+  - econstructor.
+    + red; intros; apply LE, IN.
+    + intros; apply GF, PR0.
+  - apply PR.
 Qed.
 Hint Resolve grespectful3_incl.
 
@@ -134,8 +144,8 @@ Lemma grespectful3_incl_rev: forall r,
 Proof.
   intro r; pcofix CIH; intros; pfold.
   eapply gf_mon, grespectful3_compose, grespectful3_respectful3.
-  destruct grespectful3_respectful3; eapply RESPECTFUL0, PR; intros; [apply grespectful3_incl; auto|].
-  punfold PR0.
+  destruct grespectful3_respectful3; eapply RESPECTFUL0, PR; intros; [apply grespectful3_incl; right; apply CIH, grespectful3_incl, PR0|].
+  _punfold PR0; [|apply gfgres3_mon].
   eapply gfgres3_mon; [apply PR0|].
   intros; destruct PR1.
   - left. eapply paco3_mon; [apply H| apply CIH0].
@@ -166,13 +176,14 @@ Proof.
   - econstructor 2; [intros; eapply H, PR| eapply CLOR'].
   - econstructor 3; [intros; eapply H, PR| eapply CLOR'].
 Qed.
+Hint Resolve rclo3_mon: paco.
 
 Lemma rclo3_base
       clo
       (MON: monotone3 clo):
   clo <4= rclo3 clo.
 Proof.
-  simpl. intros. econstructor 2; [eauto|].
+  intros. econstructor 2; [intros; apply PR0|].
   eapply MON; [apply PR|intros; constructor; apply PR0].
 Qed.
 
@@ -180,7 +191,7 @@ Lemma rclo3_step
       (clo: rel -> rel) r:
   clo (rclo3 clo r) <3= rclo3 clo r.
 Proof.
-  intros. econstructor 2; eauto.
+  intros. econstructor 2; [intros; apply PR0|apply PR].
 Qed.
 
 Lemma rclo3_rclo3
@@ -230,7 +241,7 @@ Qed.
 Lemma upto3_final:
   paco3 gf <4= paco3 (compose gf gres3).
 Proof.
-  pcofix CIH. intros. punfold PR. pfold.
+  pcofix CIH. intros. _punfold PR; [|apply gf_mon]. pfold.
   eapply gf_mon; [|apply grespectful3_incl].
   eapply gf_mon; [apply PR|]. intros. right.
   inversion PR0; [apply CIH, H | apply CIH0, H].
@@ -267,7 +278,7 @@ Hint Resolve grespectful3_incl.
 Hint Resolve rclo3_mon: paco.
 Hint Constructors weak_respectful3.
 
-Ltac pupto3_init := eapply upto3_init; eauto with paco.
-Ltac pupto3_final := first [eapply upto3_final; eauto with paco | eapply grespectful3_incl].
-Ltac pupto3 H := first [eapply upto3_step|eapply upto3_step_under]; [|eapply H|]; eauto with paco.
+Ltac pupto3_init := eapply upto3_init; [eauto with paco|].
+Ltac pupto3_final := first [eapply upto3_final; [eauto with paco|] | eapply grespectful3_incl].
+Ltac pupto3 H := first [eapply upto3_step|eapply upto3_step_under]; [eauto with paco|eapply H|].
 

@@ -47,15 +47,18 @@ Inductive gres11 (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 : Prop :=
 .
 Hint Constructors gres11.
 Lemma gfclo11_mon: forall clo, sound11 clo -> monotone11 (compose gf clo).
-Proof. intros; destruct H; eauto using gf_mon. Qed.
+Proof.
+  intros; destruct H; red; intros.
+  eapply gf_mon; [apply IN|intros; eapply MON0; [apply PR|apply LE]].
+Qed.
 Hint Resolve gfclo11_mon : paco.
 
 Lemma sound11_is_gf: forall clo (UPTO: sound11 clo),
     paco11 (compose gf clo) bot11 <11= paco11 gf bot11.
 Proof.
-  intros. punfold PR. edestruct UPTO.
+  intros. _punfold PR; [|apply gfclo11_mon, UPTO]. edestruct UPTO.
   eapply (SOUND (paco11 (compose gf clo) bot11)).
-  - intros. punfold PR0.
+  - intros. _punfold PR0; [|apply gfclo11_mon, UPTO].
     eapply (gfclo11_mon UPTO); [apply PR0| intros; destruct PR1; [apply H|destruct H]].
   - pfold. apply PR.
 Qed.
@@ -78,13 +81,16 @@ Proof.
     - apply X. apply H.
     - intros. right. apply CIH. exists (S x). apply PR.
   }
-  induction n; intros; simpl in *.
+  induction n; intros.
   - eapply gf_mon.
     + clear RESPECTFUL0. eapply PFIX, PR.
     + intros. right. eapply PR0.
   - destruct PR.
-    + eapply gf_mon; [eapply IHn, H0|]. intros. clear - PR. auto.
-    + eapply gf_mon; [eapply RESPECTFUL0; [|apply IHn|]|]; instantiate; simpl; auto.
+    + eapply gf_mon; [eapply IHn, H0|]. intros. left. apply PR.
+    + eapply gf_mon; [eapply RESPECTFUL0; [|apply IHn|]|]; intros.
+      * left; apply PR.
+      * apply H0.
+      * right; apply PR.
 Qed.
 
 Lemma respectful11_compose
@@ -126,7 +132,11 @@ Proof. intros. econstructor;[apply RES|apply PR]. Qed.
 
 Lemma grespectful11_incl: forall r, r <11= gres11 r.
 Proof.
-  intros; eexists (fun x => x); eauto.
+  intros; eexists (fun x => x).
+  - econstructor.
+    + red; intros; apply LE, IN.
+    + intros; apply GF, PR0.
+  - apply PR.
 Qed.
 Hint Resolve grespectful11_incl.
 
@@ -142,8 +152,8 @@ Lemma grespectful11_incl_rev: forall r,
 Proof.
   intro r; pcofix CIH; intros; pfold.
   eapply gf_mon, grespectful11_compose, grespectful11_respectful11.
-  destruct grespectful11_respectful11; eapply RESPECTFUL0, PR; intros; [apply grespectful11_incl; auto|].
-  punfold PR0.
+  destruct grespectful11_respectful11; eapply RESPECTFUL0, PR; intros; [apply grespectful11_incl; right; apply CIH, grespectful11_incl, PR0|].
+  _punfold PR0; [|apply gfgres11_mon].
   eapply gfgres11_mon; [apply PR0|].
   intros; destruct PR1.
   - left. eapply paco11_mon; [apply H| apply CIH0].
@@ -174,13 +184,14 @@ Proof.
   - econstructor 2; [intros; eapply H, PR| eapply CLOR'].
   - econstructor 3; [intros; eapply H, PR| eapply CLOR'].
 Qed.
+Hint Resolve rclo11_mon: paco.
 
 Lemma rclo11_base
       clo
       (MON: monotone11 clo):
   clo <12= rclo11 clo.
 Proof.
-  simpl. intros. econstructor 2; [eauto|].
+  intros. econstructor 2; [intros; apply PR0|].
   eapply MON; [apply PR|intros; constructor; apply PR0].
 Qed.
 
@@ -188,7 +199,7 @@ Lemma rclo11_step
       (clo: rel -> rel) r:
   clo (rclo11 clo r) <11= rclo11 clo r.
 Proof.
-  intros. econstructor 2; eauto.
+  intros. econstructor 2; [intros; apply PR0|apply PR].
 Qed.
 
 Lemma rclo11_rclo11
@@ -238,7 +249,7 @@ Qed.
 Lemma upto11_final:
   paco11 gf <12= paco11 (compose gf gres11).
 Proof.
-  pcofix CIH. intros. punfold PR. pfold.
+  pcofix CIH. intros. _punfold PR; [|apply gf_mon]. pfold.
   eapply gf_mon; [|apply grespectful11_incl].
   eapply gf_mon; [apply PR|]. intros. right.
   inversion PR0; [apply CIH, H | apply CIH0, H].
@@ -275,7 +286,7 @@ Hint Resolve grespectful11_incl.
 Hint Resolve rclo11_mon: paco.
 Hint Constructors weak_respectful11.
 
-Ltac pupto11_init := eapply upto11_init; eauto with paco.
-Ltac pupto11_final := first [eapply upto11_final; eauto with paco | eapply grespectful11_incl].
-Ltac pupto11 H := first [eapply upto11_step|eapply upto11_step_under]; [|eapply H|]; eauto with paco.
+Ltac pupto11_init := eapply upto11_init; [eauto with paco|].
+Ltac pupto11_final := first [eapply upto11_final; [eauto with paco|] | eapply grespectful11_incl].
+Ltac pupto11 H := first [eapply upto11_step|eapply upto11_step_under]; [eauto with paco|eapply H|].
 
