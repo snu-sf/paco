@@ -7,17 +7,23 @@ Set Primitive Projections.
 *)
 
 Section Arg1_def.
+
 Variable T0 : Type.
 Variable gf : rel1 T0 -> rel1 T0.
 Arguments gf : clear implicits.
 
-CoInductive paco( r: rel1 T0) x0 : Prop :=
+Inductive _paco (paco: rel1 T0 -> rel1 T0) ( r: rel1 T0) x0 : Prop :=
 | paco_pfold pco
     (LE : pco <1= (paco r \1/ r))
     (SIM: gf pco x0)
 .
+
+CoInductive paco r x0 : Prop := paco_go { paco_observe: _paco paco r x0 }.
+
 Definition upaco( r: rel1 T0) := paco r \1/ r.
+
 End Arg1_def.
+
 Arguments paco [ T0 ].
 Arguments upaco [ T0 ].
 Hint Unfold upaco.
@@ -27,9 +33,15 @@ Notation "p <_paco_1= q" :=
   (forall _paco_x0 (PR: p _paco_x0 : Prop), q _paco_x0 : Prop)
   (at level 50, no associativity).
 
-(** 1 Mutual Coinduction *)
+(* coinduction automation - internal use only *)
+Ltac paco_cofix_auto :=
+  let CIH := fresh "CIH" in cofix CIH; repeat intro;
+  match goal with [H: _ |- _] => destruct H as [[]] end; do 2 econstructor;
+  try (match goal with [H: _|-_] => apply H end); intros;
+  lazymatch goal with [PR: _ |- _] => match goal with [H: _ |- _] => apply H in PR end end;
+  repeat match goal with [ H : _ \/ _ |- _] => destruct H end; first [eauto; fail|eauto 10].
 
-Section Arg1_1.
+Section Arg1.
 
 Definition monotone T0 (gf: rel1 T0 -> rel1 T0) :=
   forall x0 r r' (IN: gf r x0) (LE: r <1= r'), gf r' x0.
@@ -66,11 +78,11 @@ Proof. intros; eapply paco_mult_strong, paco_mon; eauto. Qed.
 
 Theorem paco_fold: forall r,
   gf (upaco gf r) <1= paco gf r.
-Proof. intros; econstructor; [ |eauto]; eauto. Qed.
+Proof. intros; do 2 econstructor; [ |eauto]; eauto. Qed.
 
 Theorem paco_unfold: forall (MON: monotone gf) r,
   paco gf r <1= gf (upaco gf r).
-Proof. unfold monotone; intros; destruct PR; eauto. Qed.
+Proof. unfold monotone; intros; destruct PR as [[]]; eauto. Qed.
 
 Theorem _paco_acc: forall
   l r (OBG: forall rr (INC: r <1== rr) (CIH: l <1== rr), l <1== paco gf rr),
@@ -95,7 +107,7 @@ Proof.
   eapply paco_unfold; apply monotone_eq; eauto.
 Qed.
 
-End Arg1_1.
+End Arg1.
 
 Hint Unfold monotone.
 Hint Resolve paco_fold.
