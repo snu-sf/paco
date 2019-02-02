@@ -12,6 +12,6 @@ relsize=$1
 mutsize=$2
 
 python paco.py ${relsize} ${mutsize} > $PACOSRCDIR/paco${relsize}.v;
-python respectful.py ${relsize} > $PACOSRCDIR/paco${relsize}_respectful.v;
+python upto.py ${relsize} > $PACOSRCDIR/paco${relsize}_upto.v;
 echo "Require Export paco${relsize}." >> $PACOSRCDIR/paco.v;
-echo "Require Export paco${relsize}_respectful." >> $PACOSRCDIR/paco.v;
+echo "Require Export paco${relsize}_upto." >> $PACOSRCDIR/paco.v;
