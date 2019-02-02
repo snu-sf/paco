@@ -37,30 +37,3 @@ Require Export paco17.
 Require Export paco17_respectful.
 Require Export paco18.
 Require Export paco18_respectful.
-
-Ltac pclearbot :=
-  let X := fresh "_X" in
-  repeat match goal with
-         | [H: context[pacoid] |- _] =>
-           first
-             [red in H; destruct H as [H|X]; [|contradiction X]|(
-                setoid_rewrite upaco0_clear in H ||
-                setoid_rewrite upaco1_clear in H ||
-                setoid_rewrite upaco2_clear in H ||
-                setoid_rewrite upaco3_clear in H ||
-                setoid_rewrite upaco4_clear in H ||
-                setoid_rewrite upaco5_clear in H ||
-                setoid_rewrite upaco6_clear in H ||
-                setoid_rewrite upaco7_clear in H ||
-                setoid_rewrite upaco8_clear in H ||
-                setoid_rewrite upaco9_clear in H ||
-                setoid_rewrite upaco10_clear in H ||
-                setoid_rewrite upaco11_clear in H ||
-                setoid_rewrite upaco12_clear in H ||
-                setoid_rewrite upaco13_clear in H ||
-                setoid_rewrite upaco14_clear in H ||
-                setoid_rewrite upaco15_clear in H ||
-                setoid_rewrite upaco16_clear in H ||
-                setoid_rewrite upaco17_clear in H ||
-                setoid_rewrite upaco18_clear in H ||
-                fail)] end.
