@@ -101,22 +101,13 @@ Qed.
 (** ** Predicates of Arity 17
 *)
 
-Section Arg17_def.
-Variable gf : rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 -> rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16.
-Arguments gf : clear implicits.
-
-Definition paco17( r: rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16) : rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 :=
+Definition paco17(gf : rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 -> rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16)(r: rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16) : rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 :=
   curry17 (paco (fun R0 => uncurry17 (gf (curry17 R0))) (uncurry17 r)).
 
-Definition upaco17( r: rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16) := paco17 r \17/ r.
-End Arg17_def.
+Definition upaco17(gf : rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 -> rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16)(r: rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16) := paco17 gf r \17/ r.
 Arguments paco17 : clear implicits.
 Arguments upaco17 : clear implicits.
 Hint Unfold upaco17.
-
-(** 1 Mutual Coinduction *)
-
-Section Arg17_1.
 
 Definition monotone17 (gf: rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 -> rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16) :=
   forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 r r' (IN: gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16) (LE: r <17= r'), gf r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16.
@@ -134,6 +125,8 @@ Lemma monotone17_map (gf: rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T1
 Proof.
   repeat_intros 3. apply uncurry_map17. apply MON; apply curry_map17; assumption.
 Qed.
+
+Section Arg17.
 
 Variable gf : rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 -> rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16.
 Arguments gf : clear implicits.
@@ -220,7 +213,7 @@ Proof.
   repeat_intros 1. eapply _paco17_unfold; apply monotone17_eq; assumption.
 Qed.
 
-End Arg17_1.
+End Arg17.
 
 Arguments paco17_acc : clear implicits.
 Arguments paco17_mon : clear implicits.

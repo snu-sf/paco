@@ -87,22 +87,13 @@ Qed.
 (** ** Predicates of Arity 10
 *)
 
-Section Arg10_def.
-Variable gf : rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9.
-Arguments gf : clear implicits.
-
-Definition paco10( r: rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9) : rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 :=
+Definition paco10(gf : rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9)(r: rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9) : rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 :=
   curry10 (paco (fun R0 => uncurry10 (gf (curry10 R0))) (uncurry10 r)).
 
-Definition upaco10( r: rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9) := paco10 r \10/ r.
-End Arg10_def.
+Definition upaco10(gf : rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9)(r: rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9) := paco10 gf r \10/ r.
 Arguments paco10 : clear implicits.
 Arguments upaco10 : clear implicits.
 Hint Unfold upaco10.
-
-(** 1 Mutual Coinduction *)
-
-Section Arg10_1.
 
 Definition monotone10 (gf: rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9) :=
   forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 r r' (IN: gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (LE: r <10= r'), gf r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9.
@@ -120,6 +111,8 @@ Lemma monotone10_map (gf: rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 
 Proof.
   repeat_intros 3. apply uncurry_map10. apply MON; apply curry_map10; assumption.
 Qed.
+
+Section Arg10.
 
 Variable gf : rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9.
 Arguments gf : clear implicits.
@@ -206,7 +199,7 @@ Proof.
   repeat_intros 1. eapply _paco10_unfold; apply monotone10_eq; assumption.
 Qed.
 
-End Arg10_1.
+End Arg10.
 
 Arguments paco10_acc : clear implicits.
 Arguments paco10_mon : clear implicits.

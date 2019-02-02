@@ -93,22 +93,13 @@ Qed.
 (** ** Predicates of Arity 13
 *)
 
-Section Arg13_def.
-Variable gf : rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12.
-Arguments gf : clear implicits.
-
-Definition paco13( r: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) : rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 :=
+Definition paco13(gf : rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12)(r: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) : rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 :=
   curry13 (paco (fun R0 => uncurry13 (gf (curry13 R0))) (uncurry13 r)).
 
-Definition upaco13( r: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) := paco13 r \13/ r.
-End Arg13_def.
+Definition upaco13(gf : rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12)(r: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) := paco13 gf r \13/ r.
 Arguments paco13 : clear implicits.
 Arguments upaco13 : clear implicits.
 Hint Unfold upaco13.
-
-(** 1 Mutual Coinduction *)
-
-Section Arg13_1.
 
 Definition monotone13 (gf: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) :=
   forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 r r' (IN: gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12) (LE: r <13= r'), gf r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12.
@@ -126,6 +117,8 @@ Lemma monotone13_map (gf: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel
 Proof.
   repeat_intros 3. apply uncurry_map13. apply MON; apply curry_map13; assumption.
 Qed.
+
+Section Arg13.
 
 Variable gf : rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12.
 Arguments gf : clear implicits.
@@ -212,7 +205,7 @@ Proof.
   repeat_intros 1. eapply _paco13_unfold; apply monotone13_eq; assumption.
 Qed.
 
-End Arg13_1.
+End Arg13.
 
 Arguments paco13_acc : clear implicits.
 Arguments paco13_mon : clear implicits.

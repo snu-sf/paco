@@ -67,22 +67,13 @@ Qed.
 (** ** Predicates of Arity 0
 *)
 
-Section Arg0_def.
-Variable gf : rel0 -> rel0.
-Arguments gf : clear implicits.
-
-Definition paco0( r: rel0) : rel0 :=
+Definition paco0(gf : rel0 -> rel0)(r: rel0) : rel0 :=
   curry0 (paco (fun R0 => uncurry0 (gf (curry0 R0))) (uncurry0 r)).
 
-Definition upaco0( r: rel0) := paco0 r \0/ r.
-End Arg0_def.
+Definition upaco0(gf : rel0 -> rel0)(r: rel0) := paco0 gf r \0/ r.
 Arguments paco0 : clear implicits.
 Arguments upaco0 : clear implicits.
 Hint Unfold upaco0.
-
-(** 1 Mutual Coinduction *)
-
-Section Arg0_1.
 
 Definition monotone0 (gf: rel0 -> rel0) :=
   forall r r' (IN: gf r) (LE: r <0= r'), gf r'.
@@ -100,6 +91,8 @@ Lemma monotone0_map (gf: rel0 -> rel0)
 Proof.
   repeat_intros 3. apply uncurry_map0. apply MON; apply curry_map0; assumption.
 Qed.
+
+Section Arg0.
 
 Variable gf : rel0 -> rel0.
 Arguments gf : clear implicits.
@@ -186,7 +179,7 @@ Proof.
   repeat_intros 1. eapply _paco0_unfold; apply monotone0_eq; assumption.
 Qed.
 
-End Arg0_1.
+End Arg0.
 
 Arguments paco0_acc : clear implicits.
 Arguments paco0_mon : clear implicits.

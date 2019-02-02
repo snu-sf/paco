@@ -73,22 +73,13 @@ Qed.
 (** ** Predicates of Arity 3
 *)
 
-Section Arg3_def.
-Variable gf : rel3 T0 T1 T2 -> rel3 T0 T1 T2.
-Arguments gf : clear implicits.
-
-Definition paco3( r: rel3 T0 T1 T2) : rel3 T0 T1 T2 :=
+Definition paco3(gf : rel3 T0 T1 T2 -> rel3 T0 T1 T2)(r: rel3 T0 T1 T2) : rel3 T0 T1 T2 :=
   curry3 (paco (fun R0 => uncurry3 (gf (curry3 R0))) (uncurry3 r)).
 
-Definition upaco3( r: rel3 T0 T1 T2) := paco3 r \3/ r.
-End Arg3_def.
+Definition upaco3(gf : rel3 T0 T1 T2 -> rel3 T0 T1 T2)(r: rel3 T0 T1 T2) := paco3 gf r \3/ r.
 Arguments paco3 : clear implicits.
 Arguments upaco3 : clear implicits.
 Hint Unfold upaco3.
-
-(** 1 Mutual Coinduction *)
-
-Section Arg3_1.
 
 Definition monotone3 (gf: rel3 T0 T1 T2 -> rel3 T0 T1 T2) :=
   forall x0 x1 x2 r r' (IN: gf r x0 x1 x2) (LE: r <3= r'), gf r' x0 x1 x2.
@@ -106,6 +97,8 @@ Lemma monotone3_map (gf: rel3 T0 T1 T2 -> rel3 T0 T1 T2)
 Proof.
   repeat_intros 3. apply uncurry_map3. apply MON; apply curry_map3; assumption.
 Qed.
+
+Section Arg3.
 
 Variable gf : rel3 T0 T1 T2 -> rel3 T0 T1 T2.
 Arguments gf : clear implicits.
@@ -192,7 +185,7 @@ Proof.
   repeat_intros 1. eapply _paco3_unfold; apply monotone3_eq; assumption.
 Qed.
 
-End Arg3_1.
+End Arg3.
 
 Arguments paco3_acc : clear implicits.
 Arguments paco3_mon : clear implicits.

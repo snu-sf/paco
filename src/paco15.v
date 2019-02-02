@@ -97,22 +97,13 @@ Qed.
 (** ** Predicates of Arity 15
 *)
 
-Section Arg15_def.
-Variable gf : rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14.
-Arguments gf : clear implicits.
-
-Definition paco15( r: rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14) : rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 :=
+Definition paco15(gf : rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14)(r: rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14) : rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 :=
   curry15 (paco (fun R0 => uncurry15 (gf (curry15 R0))) (uncurry15 r)).
 
-Definition upaco15( r: rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14) := paco15 r \15/ r.
-End Arg15_def.
+Definition upaco15(gf : rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14)(r: rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14) := paco15 gf r \15/ r.
 Arguments paco15 : clear implicits.
 Arguments upaco15 : clear implicits.
 Hint Unfold upaco15.
-
-(** 1 Mutual Coinduction *)
-
-Section Arg15_1.
 
 Definition monotone15 (gf: rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14) :=
   forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 r r' (IN: gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14) (LE: r <15= r'), gf r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14.
@@ -130,6 +121,8 @@ Lemma monotone15_map (gf: rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T1
 Proof.
   repeat_intros 3. apply uncurry_map15. apply MON; apply curry_map15; assumption.
 Qed.
+
+Section Arg15.
 
 Variable gf : rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14.
 Arguments gf : clear implicits.
@@ -216,7 +209,7 @@ Proof.
   repeat_intros 1. eapply _paco15_unfold; apply monotone15_eq; assumption.
 Qed.
 
-End Arg15_1.
+End Arg15.
 
 Arguments paco15_acc : clear implicits.
 Arguments paco15_mon : clear implicits.

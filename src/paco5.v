@@ -77,22 +77,13 @@ Qed.
 (** ** Predicates of Arity 5
 *)
 
-Section Arg5_def.
-Variable gf : rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4.
-Arguments gf : clear implicits.
-
-Definition paco5( r: rel5 T0 T1 T2 T3 T4) : rel5 T0 T1 T2 T3 T4 :=
+Definition paco5(gf : rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4)(r: rel5 T0 T1 T2 T3 T4) : rel5 T0 T1 T2 T3 T4 :=
   curry5 (paco (fun R0 => uncurry5 (gf (curry5 R0))) (uncurry5 r)).
 
-Definition upaco5( r: rel5 T0 T1 T2 T3 T4) := paco5 r \5/ r.
-End Arg5_def.
+Definition upaco5(gf : rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4)(r: rel5 T0 T1 T2 T3 T4) := paco5 gf r \5/ r.
 Arguments paco5 : clear implicits.
 Arguments upaco5 : clear implicits.
 Hint Unfold upaco5.
-
-(** 1 Mutual Coinduction *)
-
-Section Arg5_1.
 
 Definition monotone5 (gf: rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4) :=
   forall x0 x1 x2 x3 x4 r r' (IN: gf r x0 x1 x2 x3 x4) (LE: r <5= r'), gf r' x0 x1 x2 x3 x4.
@@ -110,6 +101,8 @@ Lemma monotone5_map (gf: rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4)
 Proof.
   repeat_intros 3. apply uncurry_map5. apply MON; apply curry_map5; assumption.
 Qed.
+
+Section Arg5.
 
 Variable gf : rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4.
 Arguments gf : clear implicits.
@@ -196,7 +189,7 @@ Proof.
   repeat_intros 1. eapply _paco5_unfold; apply monotone5_eq; assumption.
 Qed.
 
-End Arg5_1.
+End Arg5.
 
 Arguments paco5_acc : clear implicits.
 Arguments paco5_mon : clear implicits.

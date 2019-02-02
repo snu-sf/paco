@@ -79,22 +79,13 @@ Qed.
 (** ** Predicates of Arity 6
 *)
 
-Section Arg6_def.
-Variable gf : rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5.
-Arguments gf : clear implicits.
-
-Definition paco6( r: rel6 T0 T1 T2 T3 T4 T5) : rel6 T0 T1 T2 T3 T4 T5 :=
+Definition paco6(gf : rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5)(r: rel6 T0 T1 T2 T3 T4 T5) : rel6 T0 T1 T2 T3 T4 T5 :=
   curry6 (paco (fun R0 => uncurry6 (gf (curry6 R0))) (uncurry6 r)).
 
-Definition upaco6( r: rel6 T0 T1 T2 T3 T4 T5) := paco6 r \6/ r.
-End Arg6_def.
+Definition upaco6(gf : rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5)(r: rel6 T0 T1 T2 T3 T4 T5) := paco6 gf r \6/ r.
 Arguments paco6 : clear implicits.
 Arguments upaco6 : clear implicits.
 Hint Unfold upaco6.
-
-(** 1 Mutual Coinduction *)
-
-Section Arg6_1.
 
 Definition monotone6 (gf: rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5) :=
   forall x0 x1 x2 x3 x4 x5 r r' (IN: gf r x0 x1 x2 x3 x4 x5) (LE: r <6= r'), gf r' x0 x1 x2 x3 x4 x5.
@@ -112,6 +103,8 @@ Lemma monotone6_map (gf: rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5)
 Proof.
   repeat_intros 3. apply uncurry_map6. apply MON; apply curry_map6; assumption.
 Qed.
+
+Section Arg6.
 
 Variable gf : rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5.
 Arguments gf : clear implicits.
@@ -198,7 +191,7 @@ Proof.
   repeat_intros 1. eapply _paco6_unfold; apply monotone6_eq; assumption.
 Qed.
 
-End Arg6_1.
+End Arg6.
 
 Arguments paco6_acc : clear implicits.
 Arguments paco6_mon : clear implicits.

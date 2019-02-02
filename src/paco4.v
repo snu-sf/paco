@@ -75,22 +75,13 @@ Qed.
 (** ** Predicates of Arity 4
 *)
 
-Section Arg4_def.
-Variable gf : rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3.
-Arguments gf : clear implicits.
-
-Definition paco4( r: rel4 T0 T1 T2 T3) : rel4 T0 T1 T2 T3 :=
+Definition paco4(gf : rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3)(r: rel4 T0 T1 T2 T3) : rel4 T0 T1 T2 T3 :=
   curry4 (paco (fun R0 => uncurry4 (gf (curry4 R0))) (uncurry4 r)).
 
-Definition upaco4( r: rel4 T0 T1 T2 T3) := paco4 r \4/ r.
-End Arg4_def.
+Definition upaco4(gf : rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3)(r: rel4 T0 T1 T2 T3) := paco4 gf r \4/ r.
 Arguments paco4 : clear implicits.
 Arguments upaco4 : clear implicits.
 Hint Unfold upaco4.
-
-(** 1 Mutual Coinduction *)
-
-Section Arg4_1.
 
 Definition monotone4 (gf: rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3) :=
   forall x0 x1 x2 x3 r r' (IN: gf r x0 x1 x2 x3) (LE: r <4= r'), gf r' x0 x1 x2 x3.
@@ -108,6 +99,8 @@ Lemma monotone4_map (gf: rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3)
 Proof.
   repeat_intros 3. apply uncurry_map4. apply MON; apply curry_map4; assumption.
 Qed.
+
+Section Arg4.
 
 Variable gf : rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3.
 Arguments gf : clear implicits.
@@ -194,7 +187,7 @@ Proof.
   repeat_intros 1. eapply _paco4_unfold; apply monotone4_eq; assumption.
 Qed.
 
-End Arg4_1.
+End Arg4.
 
 Arguments paco4_acc : clear implicits.
 Arguments paco4_mon : clear implicits.

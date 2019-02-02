@@ -95,22 +95,13 @@ Qed.
 (** ** Predicates of Arity 14
 *)
 
-Section Arg14_def.
-Variable gf : rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 -> rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13.
-Arguments gf : clear implicits.
-
-Definition paco14( r: rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13) : rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 :=
+Definition paco14(gf : rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 -> rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13)(r: rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13) : rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 :=
   curry14 (paco (fun R0 => uncurry14 (gf (curry14 R0))) (uncurry14 r)).
 
-Definition upaco14( r: rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13) := paco14 r \14/ r.
-End Arg14_def.
+Definition upaco14(gf : rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 -> rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13)(r: rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13) := paco14 gf r \14/ r.
 Arguments paco14 : clear implicits.
 Arguments upaco14 : clear implicits.
 Hint Unfold upaco14.
-
-(** 1 Mutual Coinduction *)
-
-Section Arg14_1.
 
 Definition monotone14 (gf: rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 -> rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13) :=
   forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 r r' (IN: gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13) (LE: r <14= r'), gf r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13.
@@ -128,6 +119,8 @@ Lemma monotone14_map (gf: rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 ->
 Proof.
   repeat_intros 3. apply uncurry_map14. apply MON; apply curry_map14; assumption.
 Qed.
+
+Section Arg14.
 
 Variable gf : rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 -> rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13.
 Arguments gf : clear implicits.
@@ -214,7 +207,7 @@ Proof.
   repeat_intros 1. eapply _paco14_unfold; apply monotone14_eq; assumption.
 Qed.
 
-End Arg14_1.
+End Arg14.
 
 Arguments paco14_acc : clear implicits.
 Arguments paco14_mon : clear implicits.

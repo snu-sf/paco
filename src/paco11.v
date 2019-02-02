@@ -89,22 +89,13 @@ Qed.
 (** ** Predicates of Arity 11
 *)
 
-Section Arg11_def.
-Variable gf : rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10.
-Arguments gf : clear implicits.
-
-Definition paco11( r: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) : rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 :=
+Definition paco11(gf : rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10)(r: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) : rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 :=
   curry11 (paco (fun R0 => uncurry11 (gf (curry11 R0))) (uncurry11 r)).
 
-Definition upaco11( r: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) := paco11 r \11/ r.
-End Arg11_def.
+Definition upaco11(gf : rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10)(r: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) := paco11 gf r \11/ r.
 Arguments paco11 : clear implicits.
 Arguments upaco11 : clear implicits.
 Hint Unfold upaco11.
-
-(** 1 Mutual Coinduction *)
-
-Section Arg11_1.
 
 Definition monotone11 (gf: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) :=
   forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 r r' (IN: gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) (LE: r <11= r'), gf r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10.
@@ -122,6 +113,8 @@ Lemma monotone11_map (gf: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1
 Proof.
   repeat_intros 3. apply uncurry_map11. apply MON; apply curry_map11; assumption.
 Qed.
+
+Section Arg11.
 
 Variable gf : rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10.
 Arguments gf : clear implicits.
@@ -208,7 +201,7 @@ Proof.
   repeat_intros 1. eapply _paco11_unfold; apply monotone11_eq; assumption.
 Qed.
 
-End Arg11_1.
+End Arg11.
 
 Arguments paco11_acc : clear implicits.
 Arguments paco11_mon : clear implicits.

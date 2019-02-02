@@ -71,22 +71,13 @@ Qed.
 (** ** Predicates of Arity 2
 *)
 
-Section Arg2_def.
-Variable gf : rel2 T0 T1 -> rel2 T0 T1.
-Arguments gf : clear implicits.
-
-Definition paco2( r: rel2 T0 T1) : rel2 T0 T1 :=
+Definition paco2(gf : rel2 T0 T1 -> rel2 T0 T1)(r: rel2 T0 T1) : rel2 T0 T1 :=
   curry2 (paco (fun R0 => uncurry2 (gf (curry2 R0))) (uncurry2 r)).
 
-Definition upaco2( r: rel2 T0 T1) := paco2 r \2/ r.
-End Arg2_def.
+Definition upaco2(gf : rel2 T0 T1 -> rel2 T0 T1)(r: rel2 T0 T1) := paco2 gf r \2/ r.
 Arguments paco2 : clear implicits.
 Arguments upaco2 : clear implicits.
 Hint Unfold upaco2.
-
-(** 1 Mutual Coinduction *)
-
-Section Arg2_1.
 
 Definition monotone2 (gf: rel2 T0 T1 -> rel2 T0 T1) :=
   forall x0 x1 r r' (IN: gf r x0 x1) (LE: r <2= r'), gf r' x0 x1.
@@ -104,6 +95,8 @@ Lemma monotone2_map (gf: rel2 T0 T1 -> rel2 T0 T1)
 Proof.
   repeat_intros 3. apply uncurry_map2. apply MON; apply curry_map2; assumption.
 Qed.
+
+Section Arg2.
 
 Variable gf : rel2 T0 T1 -> rel2 T0 T1.
 Arguments gf : clear implicits.
@@ -190,7 +183,7 @@ Proof.
   repeat_intros 1. eapply _paco2_unfold; apply monotone2_eq; assumption.
 Qed.
 
-End Arg2_1.
+End Arg2.
 
 Arguments paco2_acc : clear implicits.
 Arguments paco2_mon : clear implicits.

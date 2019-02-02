@@ -83,22 +83,13 @@ Qed.
 (** ** Predicates of Arity 8
 *)
 
-Section Arg8_def.
-Variable gf : rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7.
-Arguments gf : clear implicits.
-
-Definition paco8( r: rel8 T0 T1 T2 T3 T4 T5 T6 T7) : rel8 T0 T1 T2 T3 T4 T5 T6 T7 :=
+Definition paco8(gf : rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7)(r: rel8 T0 T1 T2 T3 T4 T5 T6 T7) : rel8 T0 T1 T2 T3 T4 T5 T6 T7 :=
   curry8 (paco (fun R0 => uncurry8 (gf (curry8 R0))) (uncurry8 r)).
 
-Definition upaco8( r: rel8 T0 T1 T2 T3 T4 T5 T6 T7) := paco8 r \8/ r.
-End Arg8_def.
+Definition upaco8(gf : rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7)(r: rel8 T0 T1 T2 T3 T4 T5 T6 T7) := paco8 gf r \8/ r.
 Arguments paco8 : clear implicits.
 Arguments upaco8 : clear implicits.
 Hint Unfold upaco8.
-
-(** 1 Mutual Coinduction *)
-
-Section Arg8_1.
 
 Definition monotone8 (gf: rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7) :=
   forall x0 x1 x2 x3 x4 x5 x6 x7 r r' (IN: gf r x0 x1 x2 x3 x4 x5 x6 x7) (LE: r <8= r'), gf r' x0 x1 x2 x3 x4 x5 x6 x7.
@@ -116,6 +107,8 @@ Lemma monotone8_map (gf: rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 
 Proof.
   repeat_intros 3. apply uncurry_map8. apply MON; apply curry_map8; assumption.
 Qed.
+
+Section Arg8.
 
 Variable gf : rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7.
 Arguments gf : clear implicits.
@@ -202,7 +195,7 @@ Proof.
   repeat_intros 1. eapply _paco8_unfold; apply monotone8_eq; assumption.
 Qed.
 
-End Arg8_1.
+End Arg8.
 
 Arguments paco8_acc : clear implicits.
 Arguments paco8_mon : clear implicits.

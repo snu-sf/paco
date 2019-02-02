@@ -85,22 +85,13 @@ Qed.
 (** ** Predicates of Arity 9
 *)
 
-Section Arg9_def.
-Variable gf : rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8.
-Arguments gf : clear implicits.
-
-Definition paco9( r: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8) : rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 :=
+Definition paco9(gf : rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8)(r: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8) : rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 :=
   curry9 (paco (fun R0 => uncurry9 (gf (curry9 R0))) (uncurry9 r)).
 
-Definition upaco9( r: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8) := paco9 r \9/ r.
-End Arg9_def.
+Definition upaco9(gf : rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8)(r: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8) := paco9 gf r \9/ r.
 Arguments paco9 : clear implicits.
 Arguments upaco9 : clear implicits.
 Hint Unfold upaco9.
-
-(** 1 Mutual Coinduction *)
-
-Section Arg9_1.
 
 Definition monotone9 (gf: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8) :=
   forall x0 x1 x2 x3 x4 x5 x6 x7 x8 r r' (IN: gf r x0 x1 x2 x3 x4 x5 x6 x7 x8) (LE: r <9= r'), gf r' x0 x1 x2 x3 x4 x5 x6 x7 x8.
@@ -118,6 +109,8 @@ Lemma monotone9_map (gf: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 
 Proof.
   repeat_intros 3. apply uncurry_map9. apply MON; apply curry_map9; assumption.
 Qed.
+
+Section Arg9.
 
 Variable gf : rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8.
 Arguments gf : clear implicits.
@@ -204,7 +197,7 @@ Proof.
   repeat_intros 1. eapply _paco9_unfold; apply monotone9_eq; assumption.
 Qed.
 
-End Arg9_1.
+End Arg9.
 
 Arguments paco9_acc : clear implicits.
 Arguments paco9_mon : clear implicits.
