@@ -122,6 +122,36 @@ Proof.
   repeat_intros 3. apply uncurry_map15. apply MON; apply curry_map15; assumption.
 Qed.
 
+Lemma _paco15_mon_gen (gf gf': rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14) r r'
+    (LEgf: gf <16= gf')
+    (LEr: r <15= r'):
+  paco15 gf r <15== paco15 gf' r'.
+Proof.
+  apply curry_map15. red; intros. eapply paco_mon_gen. apply PR.
+  - intros. apply LEgf, PR0.
+  - intros. apply LEr, PR0.
+Qed.
+
+Lemma paco15_mon_gen (gf gf': rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14) r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14
+    (REL: paco15 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14)
+    (LEgf: gf <16= gf')
+    (LEr: r <15= r'):
+  paco15 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14.
+Proof.
+  eapply _paco15_mon_gen; [apply LEgf | apply LEr | apply REL].
+Qed.
+
+Lemma upaco15_mon_gen (gf gf': rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14) r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14
+    (REL: upaco15 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14)
+    (LEgf: gf <16= gf')
+    (LEr: r <15= r'):
+  upaco15 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14.
+Proof.
+  destruct REL.
+  - left. eapply paco15_mon_gen; [apply H | apply LEgf | apply LEr].
+  - right. apply LEr, H.
+Qed.
+
 Section Arg15.
 
 Variable gf : rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14.
@@ -187,6 +217,7 @@ Proof.
   - left. eapply paco15_mon. apply H. apply LE0.
   - right. apply LE0, H.
 Qed.
+
 Theorem paco15_mult_strong: forall r,
   paco15 gf (upaco15 gf r) <15= paco15 gf r.
 Proof.
@@ -224,10 +255,6 @@ Global Instance paco15_inst  (gf : rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T
   pacomult   := paco15_mult gf;
   pacofold   := paco15_fold gf;
   pacounfold := paco15_unfold gf }.
-
-Lemma upaco15_clear gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14:
-  upaco15 gf bot15 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 <-> paco15 gf bot15 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14.
-Proof. split; intros; [destruct H;[apply H|destruct H]|left; apply H]. Qed.
 
 End PACO15.
 

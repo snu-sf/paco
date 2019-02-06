@@ -108,6 +108,36 @@ Proof.
   repeat_intros 3. apply uncurry_map8. apply MON; apply curry_map8; assumption.
 Qed.
 
+Lemma _paco8_mon_gen (gf gf': rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7) r r'
+    (LEgf: gf <9= gf')
+    (LEr: r <8= r'):
+  paco8 gf r <8== paco8 gf' r'.
+Proof.
+  apply curry_map8. red; intros. eapply paco_mon_gen. apply PR.
+  - intros. apply LEgf, PR0.
+  - intros. apply LEr, PR0.
+Qed.
+
+Lemma paco8_mon_gen (gf gf': rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7) r r' x0 x1 x2 x3 x4 x5 x6 x7
+    (REL: paco8 gf r x0 x1 x2 x3 x4 x5 x6 x7)
+    (LEgf: gf <9= gf')
+    (LEr: r <8= r'):
+  paco8 gf' r' x0 x1 x2 x3 x4 x5 x6 x7.
+Proof.
+  eapply _paco8_mon_gen; [apply LEgf | apply LEr | apply REL].
+Qed.
+
+Lemma upaco8_mon_gen (gf gf': rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7) r r' x0 x1 x2 x3 x4 x5 x6 x7
+    (REL: upaco8 gf r x0 x1 x2 x3 x4 x5 x6 x7)
+    (LEgf: gf <9= gf')
+    (LEr: r <8= r'):
+  upaco8 gf' r' x0 x1 x2 x3 x4 x5 x6 x7.
+Proof.
+  destruct REL.
+  - left. eapply paco8_mon_gen; [apply H | apply LEgf | apply LEr].
+  - right. apply LEr, H.
+Qed.
+
 Section Arg8.
 
 Variable gf : rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7.
@@ -173,6 +203,7 @@ Proof.
   - left. eapply paco8_mon. apply H. apply LE0.
   - right. apply LE0, H.
 Qed.
+
 Theorem paco8_mult_strong: forall r,
   paco8 gf (upaco8 gf r) <8= paco8 gf r.
 Proof.
@@ -210,10 +241,6 @@ Global Instance paco8_inst  (gf : rel8 T0 T1 T2 T3 T4 T5 T6 T7->_) r x0 x1 x2 x3
   pacomult   := paco8_mult gf;
   pacofold   := paco8_fold gf;
   pacounfold := paco8_unfold gf }.
-
-Lemma upaco8_clear gf x0 x1 x2 x3 x4 x5 x6 x7:
-  upaco8 gf bot8 x0 x1 x2 x3 x4 x5 x6 x7 <-> paco8 gf bot8 x0 x1 x2 x3 x4 x5 x6 x7.
-Proof. split; intros; [destruct H;[apply H|destruct H]|left; apply H]. Qed.
 
 End PACO8.
 

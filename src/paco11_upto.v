@@ -288,5 +288,5 @@ Hint Constructors weak_respectful11.
 
 Ltac pupto11_init := eapply upto11_init; [eauto with paco|].
 Ltac pupto11_final := first [eapply upto11_final; [eauto with paco|] | eapply grespectful11_incl].
-Ltac pupto11 H := first [eapply upto11_step|eapply upto11_step_under]; [eauto with paco|eapply H|].
+Ltac pupto11 H := first [eapply upto11_step|eapply upto11_step_under]; [|eapply H|]; [eauto with paco|].
 

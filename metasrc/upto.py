@@ -324,5 +324,5 @@ print ('')
 
 print ('Ltac pupto'+str(n)+'_init := eapply upto'+str(n)+'_init; [eauto with paco|].')
 print ('Ltac pupto'+str(n)+'_final := first [eapply upto'+str(n)+'_final; [eauto with paco|] | eapply grespectful'+str(n)+'_incl].')
-print ('Ltac pupto'+str(n)+' H := first [eapply upto'+str(n)+'_step|eapply upto'+str(n)+'_step_under]; [eauto with paco|eapply H|].')
+print ('Ltac pupto'+str(n)+' H := first [eapply upto'+str(n)+'_step|eapply upto'+str(n)+'_step_under]; [|eapply H|]; [eauto with paco|].')
 print ('')

@@ -289,5 +289,5 @@ Hint Constructors weak_respectful12.
 
 Ltac pupto12_init := eapply upto12_init; [eauto with paco|].
 Ltac pupto12_final := first [eapply upto12_final; [eauto with paco|] | eapply grespectful12_incl].
-Ltac pupto12 H := first [eapply upto12_step|eapply upto12_step_under]; [eauto with paco|eapply H|].
+Ltac pupto12 H := first [eapply upto12_step|eapply upto12_step_under]; [|eapply H|]; [eauto with paco|].
 

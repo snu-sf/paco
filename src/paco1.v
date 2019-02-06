@@ -94,6 +94,36 @@ Proof.
   repeat_intros 3. apply uncurry_map1. apply MON; apply curry_map1; assumption.
 Qed.
 
+Lemma _paco1_mon_gen (gf gf': rel1 T0 -> rel1 T0) r r'
+    (LEgf: gf <2= gf')
+    (LEr: r <1= r'):
+  paco1 gf r <1== paco1 gf' r'.
+Proof.
+  apply curry_map1. red; intros. eapply paco_mon_gen. apply PR.
+  - intros. apply LEgf, PR0.
+  - intros. apply LEr, PR0.
+Qed.
+
+Lemma paco1_mon_gen (gf gf': rel1 T0 -> rel1 T0) r r' x0
+    (REL: paco1 gf r x0)
+    (LEgf: gf <2= gf')
+    (LEr: r <1= r'):
+  paco1 gf' r' x0.
+Proof.
+  eapply _paco1_mon_gen; [apply LEgf | apply LEr | apply REL].
+Qed.
+
+Lemma upaco1_mon_gen (gf gf': rel1 T0 -> rel1 T0) r r' x0
+    (REL: upaco1 gf r x0)
+    (LEgf: gf <2= gf')
+    (LEr: r <1= r'):
+  upaco1 gf' r' x0.
+Proof.
+  destruct REL.
+  - left. eapply paco1_mon_gen; [apply H | apply LEgf | apply LEr].
+  - right. apply LEr, H.
+Qed.
+
 Section Arg1.
 
 Variable gf : rel1 T0 -> rel1 T0.
@@ -159,6 +189,7 @@ Proof.
   - left. eapply paco1_mon. apply H. apply LE0.
   - right. apply LE0, H.
 Qed.
+
 Theorem paco1_mult_strong: forall r,
   paco1 gf (upaco1 gf r) <1= paco1 gf r.
 Proof.
@@ -196,10 +227,6 @@ Global Instance paco1_inst  (gf : rel1 T0->_) r x0 : paco_class (paco1 gf r x0) 
   pacomult   := paco1_mult gf;
   pacofold   := paco1_fold gf;
   pacounfold := paco1_unfold gf }.
-
-Lemma upaco1_clear gf x0:
-  upaco1 gf bot1 x0 <-> paco1 gf bot1 x0.
-Proof. split; intros; [destruct H;[apply H|destruct H]|left; apply H]. Qed.
 
 End PACO1.
 

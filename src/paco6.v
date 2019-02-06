@@ -104,6 +104,36 @@ Proof.
   repeat_intros 3. apply uncurry_map6. apply MON; apply curry_map6; assumption.
 Qed.
 
+Lemma _paco6_mon_gen (gf gf': rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5) r r'
+    (LEgf: gf <7= gf')
+    (LEr: r <6= r'):
+  paco6 gf r <6== paco6 gf' r'.
+Proof.
+  apply curry_map6. red; intros. eapply paco_mon_gen. apply PR.
+  - intros. apply LEgf, PR0.
+  - intros. apply LEr, PR0.
+Qed.
+
+Lemma paco6_mon_gen (gf gf': rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5) r r' x0 x1 x2 x3 x4 x5
+    (REL: paco6 gf r x0 x1 x2 x3 x4 x5)
+    (LEgf: gf <7= gf')
+    (LEr: r <6= r'):
+  paco6 gf' r' x0 x1 x2 x3 x4 x5.
+Proof.
+  eapply _paco6_mon_gen; [apply LEgf | apply LEr | apply REL].
+Qed.
+
+Lemma upaco6_mon_gen (gf gf': rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5) r r' x0 x1 x2 x3 x4 x5
+    (REL: upaco6 gf r x0 x1 x2 x3 x4 x5)
+    (LEgf: gf <7= gf')
+    (LEr: r <6= r'):
+  upaco6 gf' r' x0 x1 x2 x3 x4 x5.
+Proof.
+  destruct REL.
+  - left. eapply paco6_mon_gen; [apply H | apply LEgf | apply LEr].
+  - right. apply LEr, H.
+Qed.
+
 Section Arg6.
 
 Variable gf : rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5.
@@ -169,6 +199,7 @@ Proof.
   - left. eapply paco6_mon. apply H. apply LE0.
   - right. apply LE0, H.
 Qed.
+
 Theorem paco6_mult_strong: forall r,
   paco6 gf (upaco6 gf r) <6= paco6 gf r.
 Proof.
@@ -206,10 +237,6 @@ Global Instance paco6_inst  (gf : rel6 T0 T1 T2 T3 T4 T5->_) r x0 x1 x2 x3 x4 x5
   pacomult   := paco6_mult gf;
   pacofold   := paco6_fold gf;
   pacounfold := paco6_unfold gf }.
-
-Lemma upaco6_clear gf x0 x1 x2 x3 x4 x5:
-  upaco6 gf bot6 x0 x1 x2 x3 x4 x5 <-> paco6 gf bot6 x0 x1 x2 x3 x4 x5.
-Proof. split; intros; [destruct H;[apply H|destruct H]|left; apply H]. Qed.
 
 End PACO6.
 

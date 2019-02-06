@@ -116,6 +116,36 @@ Proof.
   repeat_intros 3. apply uncurry_map12. apply MON; apply curry_map12; assumption.
 Qed.
 
+Lemma _paco12_mon_gen (gf gf': rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) r r'
+    (LEgf: gf <13= gf')
+    (LEr: r <12= r'):
+  paco12 gf r <12== paco12 gf' r'.
+Proof.
+  apply curry_map12. red; intros. eapply paco_mon_gen. apply PR.
+  - intros. apply LEgf, PR0.
+  - intros. apply LEr, PR0.
+Qed.
+
+Lemma paco12_mon_gen (gf gf': rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11
+    (REL: paco12 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
+    (LEgf: gf <13= gf')
+    (LEr: r <12= r'):
+  paco12 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11.
+Proof.
+  eapply _paco12_mon_gen; [apply LEgf | apply LEr | apply REL].
+Qed.
+
+Lemma upaco12_mon_gen (gf gf': rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11
+    (REL: upaco12 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
+    (LEgf: gf <13= gf')
+    (LEr: r <12= r'):
+  upaco12 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11.
+Proof.
+  destruct REL.
+  - left. eapply paco12_mon_gen; [apply H | apply LEgf | apply LEr].
+  - right. apply LEr, H.
+Qed.
+
 Section Arg12.
 
 Variable gf : rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11.
@@ -181,6 +211,7 @@ Proof.
   - left. eapply paco12_mon. apply H. apply LE0.
   - right. apply LE0, H.
 Qed.
+
 Theorem paco12_mult_strong: forall r,
   paco12 gf (upaco12 gf r) <12= paco12 gf r.
 Proof.
@@ -218,10 +249,6 @@ Global Instance paco12_inst  (gf : rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11->
   pacomult   := paco12_mult gf;
   pacofold   := paco12_fold gf;
   pacounfold := paco12_unfold gf }.
-
-Lemma upaco12_clear gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11:
-  upaco12 gf bot12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 <-> paco12 gf bot12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11.
-Proof. split; intros; [destruct H;[apply H|destruct H]|left; apply H]. Qed.
 
 End PACO12.
 

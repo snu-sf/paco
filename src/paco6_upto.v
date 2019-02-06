@@ -283,5 +283,5 @@ Hint Constructors weak_respectful6.
 
 Ltac pupto6_init := eapply upto6_init; [eauto with paco|].
 Ltac pupto6_final := first [eapply upto6_final; [eauto with paco|] | eapply grespectful6_incl].
-Ltac pupto6 H := first [eapply upto6_step|eapply upto6_step_under]; [eauto with paco|eapply H|].
+Ltac pupto6 H := first [eapply upto6_step|eapply upto6_step_under]; [|eapply H|]; [eauto with paco|].
 

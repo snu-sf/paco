@@ -293,5 +293,5 @@ Hint Constructors weak_respectful16.
 
 Ltac pupto16_init := eapply upto16_init; [eauto with paco|].
 Ltac pupto16_final := first [eapply upto16_final; [eauto with paco|] | eapply grespectful16_incl].
-Ltac pupto16 H := first [eapply upto16_step|eapply upto16_step_under]; [eauto with paco|eapply H|].
+Ltac pupto16 H := first [eapply upto16_step|eapply upto16_step_under]; [|eapply H|]; [eauto with paco|].
 

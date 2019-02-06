@@ -290,5 +290,5 @@ Hint Constructors weak_respectful13.
 
 Ltac pupto13_init := eapply upto13_init; [eauto with paco|].
 Ltac pupto13_final := first [eapply upto13_final; [eauto with paco|] | eapply grespectful13_incl].
-Ltac pupto13 H := first [eapply upto13_step|eapply upto13_step_under]; [eauto with paco|eapply H|].
+Ltac pupto13 H := first [eapply upto13_step|eapply upto13_step_under]; [|eapply H|]; [eauto with paco|].
 

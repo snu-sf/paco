@@ -292,5 +292,5 @@ Hint Constructors weak_respectful15.
 
 Ltac pupto15_init := eapply upto15_init; [eauto with paco|].
 Ltac pupto15_final := first [eapply upto15_final; [eauto with paco|] | eapply grespectful15_incl].
-Ltac pupto15 H := first [eapply upto15_step|eapply upto15_step_under]; [eauto with paco|eapply H|].
+Ltac pupto15 H := first [eapply upto15_step|eapply upto15_step_under]; [|eapply H|]; [eauto with paco|].
 

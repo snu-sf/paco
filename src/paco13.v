@@ -118,6 +118,36 @@ Proof.
   repeat_intros 3. apply uncurry_map13. apply MON; apply curry_map13; assumption.
 Qed.
 
+Lemma _paco13_mon_gen (gf gf': rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) r r'
+    (LEgf: gf <14= gf')
+    (LEr: r <13= r'):
+  paco13 gf r <13== paco13 gf' r'.
+Proof.
+  apply curry_map13. red; intros. eapply paco_mon_gen. apply PR.
+  - intros. apply LEgf, PR0.
+  - intros. apply LEr, PR0.
+Qed.
+
+Lemma paco13_mon_gen (gf gf': rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12
+    (REL: paco13 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12)
+    (LEgf: gf <14= gf')
+    (LEr: r <13= r'):
+  paco13 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12.
+Proof.
+  eapply _paco13_mon_gen; [apply LEgf | apply LEr | apply REL].
+Qed.
+
+Lemma upaco13_mon_gen (gf gf': rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12
+    (REL: upaco13 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12)
+    (LEgf: gf <14= gf')
+    (LEr: r <13= r'):
+  upaco13 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12.
+Proof.
+  destruct REL.
+  - left. eapply paco13_mon_gen; [apply H | apply LEgf | apply LEr].
+  - right. apply LEr, H.
+Qed.
+
 Section Arg13.
 
 Variable gf : rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12.
@@ -183,6 +213,7 @@ Proof.
   - left. eapply paco13_mon. apply H. apply LE0.
   - right. apply LE0, H.
 Qed.
+
 Theorem paco13_mult_strong: forall r,
   paco13 gf (upaco13 gf r) <13= paco13 gf r.
 Proof.
@@ -220,10 +251,6 @@ Global Instance paco13_inst  (gf : rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T
   pacomult   := paco13_mult gf;
   pacofold   := paco13_fold gf;
   pacounfold := paco13_unfold gf }.
-
-Lemma upaco13_clear gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12:
-  upaco13 gf bot13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 <-> paco13 gf bot13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12.
-Proof. split; intros; [destruct H;[apply H|destruct H]|left; apply H]. Qed.
 
 End PACO13.
 

@@ -286,5 +286,5 @@ Hint Constructors weak_respectful9.
 
 Ltac pupto9_init := eapply upto9_init; [eauto with paco|].
 Ltac pupto9_final := first [eapply upto9_final; [eauto with paco|] | eapply grespectful9_incl].
-Ltac pupto9 H := first [eapply upto9_step|eapply upto9_step_under]; [eauto with paco|eapply H|].
+Ltac pupto9 H := first [eapply upto9_step|eapply upto9_step_under]; [|eapply H|]; [eauto with paco|].
 

@@ -41,8 +41,6 @@ Ltac paco_cofix_auto :=
   lazymatch goal with [PR: _ |- _] => match goal with [H: _ |- _] => apply H in PR end end;
   repeat match goal with [ H : _ \/ _ |- _] => destruct H end; first [eauto; fail|eauto 10].
 
-Section Arg1.
-
 Definition monotone T0 (gf: rel1 T0 -> rel1 T0) :=
   forall x0 r r' (IN: gf r x0) (LE: r <1= r'), gf r' x0.
 
@@ -52,6 +50,23 @@ Definition _monotone T0 (gf: rel1 T0 -> rel1 T0) :=
 Lemma monotone_eq T0 (gf: rel1 T0 -> rel1 T0) :
   monotone gf <-> _monotone gf.
 Proof. unfold monotone, _monotone, le1. split; eauto. Qed.
+
+Lemma paco_mon_gen T0 gf gf' r r' x
+    (PR: @paco T0 gf r x)
+    (LEgf: gf <2= gf')
+    (LEr: r <1= r'):
+  paco gf' r' x.
+Proof.
+  revert x PR. cofix CIH.
+  intros. destruct PR, paco_observe0.
+  do 2 econstructor.
+  - intros. specialize (LE x0 PR). destruct LE.
+    + left. apply CIH, H.
+    + right. apply LEr, H.
+  - apply LEgf, SIM.
+Qed.
+
+Section Arg1.
 
 Variable T0 : Type.
 Variable gf : rel1 T0 -> rel1 T0.
@@ -64,7 +79,6 @@ Proof.
   intros; assert (SIM: paco gf (r \1/ l) x0) by eauto.
   clear PR; repeat (try left; do 2 paco_revert; paco_cofix_auto).
 Qed.
-
 
 Theorem paco_mon: monotone (paco gf).
 Proof. paco_cofix_auto; repeat (left; do 2 paco_revert; paco_cofix_auto). Qed.
@@ -113,6 +127,7 @@ End Arg1.
 Hint Unfold monotone.
 Hint Resolve paco_fold.
 
+Arguments paco_mon_gen        [ T0 ].
 Arguments paco_acc            [ T0 ].
 Arguments paco_mon            [ T0 ].
 Arguments paco_mult_strong    [ T0 ].

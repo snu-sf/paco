@@ -277,5 +277,5 @@ Hint Constructors weak_respectful0.
 
 Ltac pupto0_init := eapply upto0_init; [eauto with paco|].
 Ltac pupto0_final := first [eapply upto0_final; [eauto with paco|] | eapply grespectful0_incl].
-Ltac pupto0 H := first [eapply upto0_step|eapply upto0_step_under]; [eauto with paco|eapply H|].
+Ltac pupto0 H := first [eapply upto0_step|eapply upto0_step_under]; [|eapply H|]; [eauto with paco|].
 

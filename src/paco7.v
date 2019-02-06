@@ -106,6 +106,36 @@ Proof.
   repeat_intros 3. apply uncurry_map7. apply MON; apply curry_map7; assumption.
 Qed.
 
+Lemma _paco7_mon_gen (gf gf': rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6) r r'
+    (LEgf: gf <8= gf')
+    (LEr: r <7= r'):
+  paco7 gf r <7== paco7 gf' r'.
+Proof.
+  apply curry_map7. red; intros. eapply paco_mon_gen. apply PR.
+  - intros. apply LEgf, PR0.
+  - intros. apply LEr, PR0.
+Qed.
+
+Lemma paco7_mon_gen (gf gf': rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6) r r' x0 x1 x2 x3 x4 x5 x6
+    (REL: paco7 gf r x0 x1 x2 x3 x4 x5 x6)
+    (LEgf: gf <8= gf')
+    (LEr: r <7= r'):
+  paco7 gf' r' x0 x1 x2 x3 x4 x5 x6.
+Proof.
+  eapply _paco7_mon_gen; [apply LEgf | apply LEr | apply REL].
+Qed.
+
+Lemma upaco7_mon_gen (gf gf': rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6) r r' x0 x1 x2 x3 x4 x5 x6
+    (REL: upaco7 gf r x0 x1 x2 x3 x4 x5 x6)
+    (LEgf: gf <8= gf')
+    (LEr: r <7= r'):
+  upaco7 gf' r' x0 x1 x2 x3 x4 x5 x6.
+Proof.
+  destruct REL.
+  - left. eapply paco7_mon_gen; [apply H | apply LEgf | apply LEr].
+  - right. apply LEr, H.
+Qed.
+
 Section Arg7.
 
 Variable gf : rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6.
@@ -171,6 +201,7 @@ Proof.
   - left. eapply paco7_mon. apply H. apply LE0.
   - right. apply LE0, H.
 Qed.
+
 Theorem paco7_mult_strong: forall r,
   paco7 gf (upaco7 gf r) <7= paco7 gf r.
 Proof.
@@ -208,10 +239,6 @@ Global Instance paco7_inst  (gf : rel7 T0 T1 T2 T3 T4 T5 T6->_) r x0 x1 x2 x3 x4
   pacomult   := paco7_mult gf;
   pacofold   := paco7_fold gf;
   pacounfold := paco7_unfold gf }.
-
-Lemma upaco7_clear gf x0 x1 x2 x3 x4 x5 x6:
-  upaco7 gf bot7 x0 x1 x2 x3 x4 x5 x6 <-> paco7 gf bot7 x0 x1 x2 x3 x4 x5 x6.
-Proof. split; intros; [destruct H;[apply H|destruct H]|left; apply H]. Qed.
 
 End PACO7.
 

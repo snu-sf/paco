@@ -285,5 +285,5 @@ Hint Constructors weak_respectful8.
 
 Ltac pupto8_init := eapply upto8_init; [eauto with paco|].
 Ltac pupto8_final := first [eapply upto8_final; [eauto with paco|] | eapply grespectful8_incl].
-Ltac pupto8 H := first [eapply upto8_step|eapply upto8_step_under]; [eauto with paco|eapply H|].
+Ltac pupto8 H := first [eapply upto8_step|eapply upto8_step_under]; [|eapply H|]; [eauto with paco|].
 

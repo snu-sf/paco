@@ -295,5 +295,5 @@ Hint Constructors weak_respectful18.
 
 Ltac pupto18_init := eapply upto18_init; [eauto with paco|].
 Ltac pupto18_final := first [eapply upto18_final; [eauto with paco|] | eapply grespectful18_incl].
-Ltac pupto18 H := first [eapply upto18_step|eapply upto18_step_under]; [eauto with paco|eapply H|].
+Ltac pupto18 H := first [eapply upto18_step|eapply upto18_step_under]; [|eapply H|]; [eauto with paco|].
 

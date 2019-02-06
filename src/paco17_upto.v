@@ -294,5 +294,5 @@ Hint Constructors weak_respectful17.
 
 Ltac pupto17_init := eapply upto17_init; [eauto with paco|].
 Ltac pupto17_final := first [eapply upto17_final; [eauto with paco|] | eapply grespectful17_incl].
-Ltac pupto17 H := first [eapply upto17_step|eapply upto17_step_under]; [eauto with paco|eapply H|].
+Ltac pupto17 H := first [eapply upto17_step|eapply upto17_step_under]; [|eapply H|]; [eauto with paco|].
 

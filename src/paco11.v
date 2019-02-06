@@ -114,6 +114,36 @@ Proof.
   repeat_intros 3. apply uncurry_map11. apply MON; apply curry_map11; assumption.
 Qed.
 
+Lemma _paco11_mon_gen (gf gf': rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) r r'
+    (LEgf: gf <12= gf')
+    (LEr: r <11= r'):
+  paco11 gf r <11== paco11 gf' r'.
+Proof.
+  apply curry_map11. red; intros. eapply paco_mon_gen. apply PR.
+  - intros. apply LEgf, PR0.
+  - intros. apply LEr, PR0.
+Qed.
+
+Lemma paco11_mon_gen (gf gf': rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10
+    (REL: paco11 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
+    (LEgf: gf <12= gf')
+    (LEr: r <11= r'):
+  paco11 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10.
+Proof.
+  eapply _paco11_mon_gen; [apply LEgf | apply LEr | apply REL].
+Qed.
+
+Lemma upaco11_mon_gen (gf gf': rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10
+    (REL: upaco11 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
+    (LEgf: gf <12= gf')
+    (LEr: r <11= r'):
+  upaco11 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10.
+Proof.
+  destruct REL.
+  - left. eapply paco11_mon_gen; [apply H | apply LEgf | apply LEr].
+  - right. apply LEr, H.
+Qed.
+
 Section Arg11.
 
 Variable gf : rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10.
@@ -179,6 +209,7 @@ Proof.
   - left. eapply paco11_mon. apply H. apply LE0.
   - right. apply LE0, H.
 Qed.
+
 Theorem paco11_mult_strong: forall r,
   paco11 gf (upaco11 gf r) <11= paco11 gf r.
 Proof.
@@ -216,10 +247,6 @@ Global Instance paco11_inst  (gf : rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10->_) r
   pacomult   := paco11_mult gf;
   pacofold   := paco11_fold gf;
   pacounfold := paco11_unfold gf }.
-
-Lemma upaco11_clear gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10:
-  upaco11 gf bot11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 <-> paco11 gf bot11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10.
-Proof. split; intros; [destruct H;[apply H|destruct H]|left; apply H]. Qed.
 
 End PACO11.
 

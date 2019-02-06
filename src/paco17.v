@@ -126,6 +126,36 @@ Proof.
   repeat_intros 3. apply uncurry_map17. apply MON; apply curry_map17; assumption.
 Qed.
 
+Lemma _paco17_mon_gen (gf gf': rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 -> rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16) r r'
+    (LEgf: gf <18= gf')
+    (LEr: r <17= r'):
+  paco17 gf r <17== paco17 gf' r'.
+Proof.
+  apply curry_map17. red; intros. eapply paco_mon_gen. apply PR.
+  - intros. apply LEgf, PR0.
+  - intros. apply LEr, PR0.
+Qed.
+
+Lemma paco17_mon_gen (gf gf': rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 -> rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16) r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16
+    (REL: paco17 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16)
+    (LEgf: gf <18= gf')
+    (LEr: r <17= r'):
+  paco17 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16.
+Proof.
+  eapply _paco17_mon_gen; [apply LEgf | apply LEr | apply REL].
+Qed.
+
+Lemma upaco17_mon_gen (gf gf': rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 -> rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16) r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16
+    (REL: upaco17 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16)
+    (LEgf: gf <18= gf')
+    (LEr: r <17= r'):
+  upaco17 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16.
+Proof.
+  destruct REL.
+  - left. eapply paco17_mon_gen; [apply H | apply LEgf | apply LEr].
+  - right. apply LEr, H.
+Qed.
+
 Section Arg17.
 
 Variable gf : rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 -> rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16.
@@ -191,6 +221,7 @@ Proof.
   - left. eapply paco17_mon. apply H. apply LE0.
   - right. apply LE0, H.
 Qed.
+
 Theorem paco17_mult_strong: forall r,
   paco17 gf (upaco17 gf r) <17= paco17 gf r.
 Proof.
@@ -228,10 +259,6 @@ Global Instance paco17_inst  (gf : rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T
   pacomult   := paco17_mult gf;
   pacofold   := paco17_fold gf;
   pacounfold := paco17_unfold gf }.
-
-Lemma upaco17_clear gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16:
-  upaco17 gf bot17 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 <-> paco17 gf bot17 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16.
-Proof. split; intros; [destruct H;[apply H|destruct H]|left; apply H]. Qed.
 
 End PACO17.
 

@@ -281,5 +281,5 @@ Hint Constructors weak_respectful4.
 
 Ltac pupto4_init := eapply upto4_init; [eauto with paco|].
 Ltac pupto4_final := first [eapply upto4_final; [eauto with paco|] | eapply grespectful4_incl].
-Ltac pupto4 H := first [eapply upto4_step|eapply upto4_step_under]; [eauto with paco|eapply H|].
+Ltac pupto4 H := first [eapply upto4_step|eapply upto4_step_under]; [|eapply H|]; [eauto with paco|].
 

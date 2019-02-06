@@ -128,6 +128,36 @@ Proof.
   repeat_intros 3. apply uncurry_map18. apply MON; apply curry_map18; assumption.
 Qed.
 
+Lemma _paco18_mon_gen (gf gf': rel18 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 -> rel18 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17) r r'
+    (LEgf: gf <19= gf')
+    (LEr: r <18= r'):
+  paco18 gf r <18== paco18 gf' r'.
+Proof.
+  apply curry_map18. red; intros. eapply paco_mon_gen. apply PR.
+  - intros. apply LEgf, PR0.
+  - intros. apply LEr, PR0.
+Qed.
+
+Lemma paco18_mon_gen (gf gf': rel18 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 -> rel18 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17) r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17
+    (REL: paco18 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17)
+    (LEgf: gf <19= gf')
+    (LEr: r <18= r'):
+  paco18 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17.
+Proof.
+  eapply _paco18_mon_gen; [apply LEgf | apply LEr | apply REL].
+Qed.
+
+Lemma upaco18_mon_gen (gf gf': rel18 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 -> rel18 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17) r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17
+    (REL: upaco18 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17)
+    (LEgf: gf <19= gf')
+    (LEr: r <18= r'):
+  upaco18 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17.
+Proof.
+  destruct REL.
+  - left. eapply paco18_mon_gen; [apply H | apply LEgf | apply LEr].
+  - right. apply LEr, H.
+Qed.
+
 Section Arg18.
 
 Variable gf : rel18 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 -> rel18 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17.
@@ -193,6 +223,7 @@ Proof.
   - left. eapply paco18_mon. apply H. apply LE0.
   - right. apply LE0, H.
 Qed.
+
 Theorem paco18_mult_strong: forall r,
   paco18 gf (upaco18 gf r) <18= paco18 gf r.
 Proof.
@@ -230,10 +261,6 @@ Global Instance paco18_inst  (gf : rel18 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T
   pacomult   := paco18_mult gf;
   pacofold   := paco18_fold gf;
   pacounfold := paco18_unfold gf }.
-
-Lemma upaco18_clear gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17:
-  upaco18 gf bot18 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 <-> paco18 gf bot18 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17.
-Proof. split; intros; [destruct H;[apply H|destruct H]|left; apply H]. Qed.
 
 End PACO18.
 

@@ -287,5 +287,5 @@ Hint Constructors weak_respectful10.
 
 Ltac pupto10_init := eapply upto10_init; [eauto with paco|].
 Ltac pupto10_final := first [eapply upto10_final; [eauto with paco|] | eapply grespectful10_incl].
-Ltac pupto10 H := first [eapply upto10_step|eapply upto10_step_under]; [eauto with paco|eapply H|].
+Ltac pupto10 H := first [eapply upto10_step|eapply upto10_step_under]; [|eapply H|]; [eauto with paco|].
 
