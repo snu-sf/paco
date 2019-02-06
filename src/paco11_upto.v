@@ -282,6 +282,26 @@ Qed.
 
 End Respectful11.
 
+Lemma grespectful11_impl T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 (gf gf': rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10
+    (PR: gres11 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
+    (EQ: forall r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10, gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 <-> gf' r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10):
+  gres11 gf' r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10.
+Proof.
+  intros. destruct PR. econstructor; [|apply CLO].
+  destruct RES. econstructor; [apply MON0|].
+  intros. rewrite <-EQ. eapply RESPECTFUL0; [apply LE| |apply PR].
+  intros. rewrite EQ. apply GF, PR0.
+Qed.
+
+Lemma grespectful11_iff T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 (gf gf': rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10
+    (EQ: forall r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10, gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 <-> gf' r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10):
+  gres11 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 <-> gres11 gf' r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10.
+Proof.
+  split; intros.
+  - eapply grespectful11_impl; [apply H | apply EQ].
+  - eapply grespectful11_impl; [apply H | symmetry; apply EQ].
+Qed.
+
 Hint Constructors sound11.
 Hint Constructors respectful11.
 Hint Constructors gres11.

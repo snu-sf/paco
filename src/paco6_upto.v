@@ -277,6 +277,26 @@ Qed.
 
 End Respectful6.
 
+Lemma grespectful6_impl T0 T1 T2 T3 T4 T5 (gf gf': rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5) r x0 x1 x2 x3 x4 x5
+    (PR: gres6 gf r x0 x1 x2 x3 x4 x5)
+    (EQ: forall r x0 x1 x2 x3 x4 x5, gf r x0 x1 x2 x3 x4 x5 <-> gf' r x0 x1 x2 x3 x4 x5):
+  gres6 gf' r x0 x1 x2 x3 x4 x5.
+Proof.
+  intros. destruct PR. econstructor; [|apply CLO].
+  destruct RES. econstructor; [apply MON0|].
+  intros. rewrite <-EQ. eapply RESPECTFUL0; [apply LE| |apply PR].
+  intros. rewrite EQ. apply GF, PR0.
+Qed.
+
+Lemma grespectful6_iff T0 T1 T2 T3 T4 T5 (gf gf': rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5) r x0 x1 x2 x3 x4 x5
+    (EQ: forall r x0 x1 x2 x3 x4 x5, gf r x0 x1 x2 x3 x4 x5 <-> gf' r x0 x1 x2 x3 x4 x5):
+  gres6 gf r x0 x1 x2 x3 x4 x5 <-> gres6 gf' r x0 x1 x2 x3 x4 x5.
+Proof.
+  split; intros.
+  - eapply grespectful6_impl; [apply H | apply EQ].
+  - eapply grespectful6_impl; [apply H | symmetry; apply EQ].
+Qed.
+
 Hint Constructors sound6.
 Hint Constructors respectful6.
 Hint Constructors gres6.

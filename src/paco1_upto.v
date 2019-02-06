@@ -272,6 +272,26 @@ Qed.
 
 End Respectful1.
 
+Lemma grespectful1_impl T0 (gf gf': rel1 T0 -> rel1 T0) r x0
+    (PR: gres1 gf r x0)
+    (EQ: forall r x0, gf r x0 <-> gf' r x0):
+  gres1 gf' r x0.
+Proof.
+  intros. destruct PR. econstructor; [|apply CLO].
+  destruct RES. econstructor; [apply MON0|].
+  intros. rewrite <-EQ. eapply RESPECTFUL0; [apply LE| |apply PR].
+  intros. rewrite EQ. apply GF, PR0.
+Qed.
+
+Lemma grespectful1_iff T0 (gf gf': rel1 T0 -> rel1 T0) r x0
+    (EQ: forall r x0, gf r x0 <-> gf' r x0):
+  gres1 gf r x0 <-> gres1 gf' r x0.
+Proof.
+  split; intros.
+  - eapply grespectful1_impl; [apply H | apply EQ].
+  - eapply grespectful1_impl; [apply H | symmetry; apply EQ].
+Qed.
+
 Hint Constructors sound1.
 Hint Constructors respectful1.
 Hint Constructors gres1.

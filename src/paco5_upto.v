@@ -276,6 +276,26 @@ Qed.
 
 End Respectful5.
 
+Lemma grespectful5_impl T0 T1 T2 T3 T4 (gf gf': rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4) r x0 x1 x2 x3 x4
+    (PR: gres5 gf r x0 x1 x2 x3 x4)
+    (EQ: forall r x0 x1 x2 x3 x4, gf r x0 x1 x2 x3 x4 <-> gf' r x0 x1 x2 x3 x4):
+  gres5 gf' r x0 x1 x2 x3 x4.
+Proof.
+  intros. destruct PR. econstructor; [|apply CLO].
+  destruct RES. econstructor; [apply MON0|].
+  intros. rewrite <-EQ. eapply RESPECTFUL0; [apply LE| |apply PR].
+  intros. rewrite EQ. apply GF, PR0.
+Qed.
+
+Lemma grespectful5_iff T0 T1 T2 T3 T4 (gf gf': rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4) r x0 x1 x2 x3 x4
+    (EQ: forall r x0 x1 x2 x3 x4, gf r x0 x1 x2 x3 x4 <-> gf' r x0 x1 x2 x3 x4):
+  gres5 gf r x0 x1 x2 x3 x4 <-> gres5 gf' r x0 x1 x2 x3 x4.
+Proof.
+  split; intros.
+  - eapply grespectful5_impl; [apply H | apply EQ].
+  - eapply grespectful5_impl; [apply H | symmetry; apply EQ].
+Qed.
+
 Hint Constructors sound5.
 Hint Constructors respectful5.
 Hint Constructors gres5.
