@@ -109,15 +109,20 @@ Proof.
     + intros. eapply RESPECTFUL1; [apply LE| apply GF| apply PR0].
 Qed.
 
+Lemma grespectful12_mon: monotone12 gres12.
+Proof.
+  red. intros.
+  destruct IN; destruct RES; exists clo; [|eapply MON0; [eapply CLO| eapply LE]].
+  constructor; [eapply MON0|].
+  intros. eapply RESPECTFUL0; [apply LE0|apply GF|apply PR].
+Qed.
+
 Lemma grespectful12_respectful12: respectful12 gres12.
 Proof.
-  econstructor; repeat intro.
-  - destruct IN; destruct RES; exists clo; [|eapply MON0; [eapply CLO| eapply LE]].
-    constructor; [eapply MON0|].
-    intros. eapply RESPECTFUL0; [apply LE0|apply GF|apply PR].
-  - destruct PR; destruct RES; eapply gf_mon with (r:=clo r).
-    eapply RESPECTFUL0; [apply LE|apply GF|apply CLO].
-    intros. econstructor; [constructor; [apply MON0|apply RESPECTFUL0]|apply PR].
+  econstructor; [apply grespectful12_mon|intros].
+  destruct PR; destruct RES; eapply gf_mon with (r:=clo r).
+  eapply RESPECTFUL0; [apply LE|apply GF|apply CLO].
+  intros. econstructor; [constructor; [apply MON0|apply RESPECTFUL0]|apply PR].
 Qed.
 
 Lemma gfgres12_mon: monotone12 (compose gf gres12).

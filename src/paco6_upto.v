@@ -103,15 +103,20 @@ Proof.
     + intros. eapply RESPECTFUL1; [apply LE| apply GF| apply PR0].
 Qed.
 
+Lemma grespectful6_mon: monotone6 gres6.
+Proof.
+  red. intros.
+  destruct IN; destruct RES; exists clo; [|eapply MON0; [eapply CLO| eapply LE]].
+  constructor; [eapply MON0|].
+  intros. eapply RESPECTFUL0; [apply LE0|apply GF|apply PR].
+Qed.
+
 Lemma grespectful6_respectful6: respectful6 gres6.
 Proof.
-  econstructor; repeat intro.
-  - destruct IN; destruct RES; exists clo; [|eapply MON0; [eapply CLO| eapply LE]].
-    constructor; [eapply MON0|].
-    intros. eapply RESPECTFUL0; [apply LE0|apply GF|apply PR].
-  - destruct PR; destruct RES; eapply gf_mon with (r:=clo r).
-    eapply RESPECTFUL0; [apply LE|apply GF|apply CLO].
-    intros. econstructor; [constructor; [apply MON0|apply RESPECTFUL0]|apply PR].
+  econstructor; [apply grespectful6_mon|intros].
+  destruct PR; destruct RES; eapply gf_mon with (r:=clo r).
+  eapply RESPECTFUL0; [apply LE|apply GF|apply CLO].
+  intros. econstructor; [constructor; [apply MON0|apply RESPECTFUL0]|apply PR].
 Qed.
 
 Lemma gfgres6_mon: monotone6 (compose gf gres6).

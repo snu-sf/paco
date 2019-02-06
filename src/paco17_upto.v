@@ -114,15 +114,20 @@ Proof.
     + intros. eapply RESPECTFUL1; [apply LE| apply GF| apply PR0].
 Qed.
 
+Lemma grespectful17_mon: monotone17 gres17.
+Proof.
+  red. intros.
+  destruct IN; destruct RES; exists clo; [|eapply MON0; [eapply CLO| eapply LE]].
+  constructor; [eapply MON0|].
+  intros. eapply RESPECTFUL0; [apply LE0|apply GF|apply PR].
+Qed.
+
 Lemma grespectful17_respectful17: respectful17 gres17.
 Proof.
-  econstructor; repeat intro.
-  - destruct IN; destruct RES; exists clo; [|eapply MON0; [eapply CLO| eapply LE]].
-    constructor; [eapply MON0|].
-    intros. eapply RESPECTFUL0; [apply LE0|apply GF|apply PR].
-  - destruct PR; destruct RES; eapply gf_mon with (r:=clo r).
-    eapply RESPECTFUL0; [apply LE|apply GF|apply CLO].
-    intros. econstructor; [constructor; [apply MON0|apply RESPECTFUL0]|apply PR].
+  econstructor; [apply grespectful17_mon|intros].
+  destruct PR; destruct RES; eapply gf_mon with (r:=clo r).
+  eapply RESPECTFUL0; [apply LE|apply GF|apply CLO].
+  intros. econstructor; [constructor; [apply MON0|apply RESPECTFUL0]|apply PR].
 Qed.
 
 Lemma gfgres17_mon: monotone17 (compose gf gres17).
