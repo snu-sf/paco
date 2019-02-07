@@ -58,7 +58,7 @@ Lemma paco_mon_gen T0 gf gf' r r' x
   paco gf' r' x.
 Proof.
   revert x PR. cofix CIH.
-  intros. destruct PR as [[]].
+  intros. apply paco_observe in PR. destruct PR as [].
   do 2 econstructor.
   - intros. specialize (LE x0 PR). destruct LE.
     + left. apply CIH, H.
