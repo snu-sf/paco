@@ -1,6 +1,5 @@
+Require Export Program.Basics. Open Scope program_scope.
 Require Import paco6.
-Require Import Program.Basics.
-Require Import Setoids.Setoid.
 Set Implicit Arguments.
 
 Section Respectful6.
@@ -285,8 +284,8 @@ Lemma grespectful6_impl T0 T1 T2 T3 T4 T5 (gf gf': rel6 T0 T1 T2 T3 T4 T5 -> rel
 Proof.
   intros. destruct PR. econstructor; [|apply CLO].
   destruct RES. econstructor; [apply MON0|].
-  intros. rewrite <- EQ. eapply RESPECTFUL0; [apply LE| |apply PR].
-  intros. rewrite EQ. apply GF, PR0.
+  intros. eapply EQ. eapply RESPECTFUL0; [apply LE| |apply PR].
+  intros. eapply EQ. apply GF, PR0.
 Qed.
 
 Lemma grespectful6_iff T0 T1 T2 T3 T4 T5 (gf gf': rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5) r x0 x1 x2 x3 x4 x5
@@ -295,7 +294,7 @@ Lemma grespectful6_iff T0 T1 T2 T3 T4 T5 (gf gf': rel6 T0 T1 T2 T3 T4 T5 -> rel6
 Proof.
   split; intros.
   - eapply grespectful6_impl; [apply H | apply EQ].
-  - eapply grespectful6_impl; [apply H | symmetry; apply EQ].
+  - eapply grespectful6_impl; [apply H | split; apply EQ].
 Qed.
 
 Hint Constructors sound6.

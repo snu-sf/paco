@@ -9,9 +9,8 @@ if len(sys.argv) < 2:
 relsize = int(sys.argv[1])
 n = relsize
 
+print ('Require Export Program.Basics. Open Scope program_scope.')
 print ('Require Import paco'+str(n)+'.')
-print ('Require Import Program.Basics.')
-print ('Require Import Setoids.Setoid.')
 print ('Set Implicit Arguments.')
 print ('')
 
@@ -326,8 +325,8 @@ print ("  gres"+str(n)+" gf' r"+itrstr(' x', n)+".")
 print ("Proof.")
 print ("  intros. destruct PR. econstructor; [|apply CLO].")
 print ("  destruct RES. econstructor; [apply MON0|].")
-print ("  intros. rewrite <- EQ. eapply RESPECTFUL0; [apply LE| |apply PR].")
-print ("  intros. rewrite EQ. apply GF, PR0.")
+print ("  intros. eapply EQ. eapply RESPECTFUL0; [apply LE| |apply PR].")
+print ("  intros. eapply EQ. apply GF, PR0.")
 print ("Qed.")
 print ("")
 
@@ -337,7 +336,7 @@ print ("  gres"+str(n)+" gf r"+itrstr(' x', n)+" <-> gres"+str(n)+" gf' r"+itrst
 print ("Proof.")
 print ("  split; intros.")
 print ("  - eapply grespectful"+str(n)+"_impl; [apply H | apply EQ].")
-print ("  - eapply grespectful"+str(n)+"_impl; [apply H | symmetry; apply EQ].")
+print ("  - eapply grespectful"+str(n)+"_impl; [apply H | split; apply EQ].")
 print ("Qed.")
 print ("")
 

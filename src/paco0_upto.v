@@ -1,6 +1,5 @@
+Require Export Program.Basics. Open Scope program_scope.
 Require Import paco0.
-Require Import Program.Basics.
-Require Import Setoids.Setoid.
 Set Implicit Arguments.
 
 Section Respectful0.
@@ -279,8 +278,8 @@ Lemma grespectful0_impl (gf gf': rel0 -> rel0) r
 Proof.
   intros. destruct PR. econstructor; [|apply CLO].
   destruct RES. econstructor; [apply MON0|].
-  intros. rewrite <- EQ. eapply RESPECTFUL0; [apply LE| |apply PR].
-  intros. rewrite EQ. apply GF, PR0.
+  intros. eapply EQ. eapply RESPECTFUL0; [apply LE| |apply PR].
+  intros. eapply EQ. apply GF, PR0.
 Qed.
 
 Lemma grespectful0_iff (gf gf': rel0 -> rel0) r
@@ -289,7 +288,7 @@ Lemma grespectful0_iff (gf gf': rel0 -> rel0) r
 Proof.
   split; intros.
   - eapply grespectful0_impl; [apply H | apply EQ].
-  - eapply grespectful0_impl; [apply H | symmetry; apply EQ].
+  - eapply grespectful0_impl; [apply H | split; apply EQ].
 Qed.
 
 Hint Constructors sound0.

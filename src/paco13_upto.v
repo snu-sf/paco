@@ -1,6 +1,5 @@
+Require Export Program.Basics. Open Scope program_scope.
 Require Import paco13.
-Require Import Program.Basics.
-Require Import Setoids.Setoid.
 Set Implicit Arguments.
 
 Section Respectful13.
@@ -292,8 +291,8 @@ Lemma grespectful13_impl T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 (gf gf': rel1
 Proof.
   intros. destruct PR. econstructor; [|apply CLO].
   destruct RES. econstructor; [apply MON0|].
-  intros. rewrite <- EQ. eapply RESPECTFUL0; [apply LE| |apply PR].
-  intros. rewrite EQ. apply GF, PR0.
+  intros. eapply EQ. eapply RESPECTFUL0; [apply LE| |apply PR].
+  intros. eapply EQ. apply GF, PR0.
 Qed.
 
 Lemma grespectful13_iff T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 (gf gf': rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12
@@ -302,7 +301,7 @@ Lemma grespectful13_iff T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 (gf gf': rel13
 Proof.
   split; intros.
   - eapply grespectful13_impl; [apply H | apply EQ].
-  - eapply grespectful13_impl; [apply H | symmetry; apply EQ].
+  - eapply grespectful13_impl; [apply H | split; apply EQ].
 Qed.
 
 Hint Constructors sound13.

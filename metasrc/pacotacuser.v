@@ -1,3 +1,4 @@
+Require Import Program.Tactics.
 Require Export paconotation.
 Require Import pacotac.
 Set Implicit Arguments.
@@ -79,11 +80,23 @@ Tactic Notation "pcofix" ident(CIH) := pcofix CIH with r.
 (** ** [pclearbot] simplifies all hypotheses of the form [upaco{n} gf bot{n}] to [paco{n} gf bot{n}].
 *)
 
+Definition pclearbot_or (P Q: Prop) := P.
+
 Ltac pclearbot :=
-  let X := fresh "_X" in
-  repeat match goal with
-         | [H: context[pacoid] |- _] => red in H; destruct H as [H|X]; [|contradiction X]
-         end.
+  generalize _paco_mark_cons;
+  repeat(
+    match goal with [H: context [pacoid] |- _] =>
+      let NH := fresh H in
+      revert_until H; red in H;
+      match goal with [Hcrr: context f [or] |- _] =>
+        match Hcrr with H =>
+          let P := context f [pclearbot_or] in
+          assert (NH: P) by (repeat intro; edestruct H ; [eassumption|contradiction]);
+          clear H; rename NH into H; unfold pclearbot_or in H
+        end
+      end
+    end);
+  intros; paco_revert_hyp _paco_mark.
 
 (** ** [pdestruct H] and [pinversion H]
 *)
