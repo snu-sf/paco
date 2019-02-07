@@ -79,14 +79,11 @@ Tactic Notation "pcofix" ident(CIH) := pcofix CIH with r.
 (** ** [pclearbot] simplifies all hypotheses of the form [upaco{n} gf bot{n}] to [paco{n} gf bot{n}].
 *)
 
-Lemma paco_clear_bot: forall P:Prop, P \/ False <-> P.
-Proof. tauto. Qed.
-
 Ltac pclearbot :=
   let X := fresh "_X" in
   repeat match goal with
-  | [H: context[pacoid] |- _] => try red in H; setoid_rewrite paco_clear_bot in H
-  end.
+         | [H: context[pacoid] |- _] => red in H; destruct H as [H|X]; [|contradiction X]
+         end.
 
 (** ** [pdestruct H] and [pinversion H]
 *)
@@ -101,4 +98,3 @@ Ltac pinversion H := punfold H; inversion H; pclearbot.
 
 Ltac pmonauto :=
   let IN := fresh "IN" in try (repeat intro; destruct IN; eauto; fail).
-
