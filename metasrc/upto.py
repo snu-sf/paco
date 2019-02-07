@@ -10,7 +10,6 @@ relsize = int(sys.argv[1])
 n = relsize
 
 print ('Require Import paco'+str(n)+'.')
-print ('Require Import Program.Basics.')
 print ('Require Import Setoids.Setoid.')
 print ('Set Implicit Arguments.')
 print ('')

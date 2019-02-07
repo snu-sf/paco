@@ -1,5 +1,7 @@
 (** * Common notations and definitions *)
 
+Notation compose g f := (fun x => g (f x))
+
 (** ** Types of dependent predicates *)
 
 Definition rel0 :=

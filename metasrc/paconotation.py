@@ -2,13 +2,16 @@ from __future__ import print_function
 import sys
 from pacolib import *
 
-if len(sys.argv) < 2: 
-    sys.stderr.write('\nUsage: '+sys.argv[0]+' relsize\n\n') 
-    sys.exit(1) 
+if len(sys.argv) < 2:
+    sys.stderr.write('\nUsage: '+sys.argv[0]+' relsize\n\n')
+    sys.exit(1)
 
 relsize = int(sys.argv[1])
 
 print ("(** * Common notations and definitions *)")
+print ()
+
+print ("Notation compose g f := (fun x => g (f x))")
 print ()
 
 print ("(** ** Types of dependent predicates *)")
@@ -54,4 +57,3 @@ for n in range (relsize+1):
     print ("  ("+ifpstr(n,"fun")+itrstr(" x",n)+ifpstr(n," => ")+"p"+itrstr(" x",n)+" /\\ q"+itrstr(" x",n)+")")
     print ("  (at level 50, no associativity"+ifzstr(n,", only parsing")+").")
     print ()
-
