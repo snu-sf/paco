@@ -10,7 +10,8 @@ relsize = int(sys.argv[1])
 n = relsize
 
 print ('Require Import paco'+str(n)+'.')
-print ('Require Export Program.')
+print ('Require Import Program.Basics.')
+print ('Require Import Setoids.Setoid.')
 print ('Set Implicit Arguments.')
 print ('')
 
@@ -325,7 +326,7 @@ print ("  gres"+str(n)+" gf' r"+itrstr(' x', n)+".")
 print ("Proof.")
 print ("  intros. destruct PR. econstructor; [|apply CLO].")
 print ("  destruct RES. econstructor; [apply MON0|].")
-print ("  intros. rewrite <-EQ. eapply RESPECTFUL0; [apply LE| |apply PR].")
+print ("  intros. rewrite <- EQ. eapply RESPECTFUL0; [apply LE| |apply PR].")
 print ("  intros. rewrite EQ. apply GF, PR0.")
 print ("Qed.")
 print ("")

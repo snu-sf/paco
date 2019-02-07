@@ -1,5 +1,6 @@
 Require Import paco3.
-Require Export Program.
+Require Import Program.Basics.
+Require Import Setoids.Setoid.
 Set Implicit Arguments.
 
 Section Respectful3.
@@ -281,7 +282,7 @@ Lemma grespectful3_impl T0 T1 T2 (gf gf': rel3 T0 T1 T2 -> rel3 T0 T1 T2) r x0 x
 Proof.
   intros. destruct PR. econstructor; [|apply CLO].
   destruct RES. econstructor; [apply MON0|].
-  intros. rewrite <-EQ. eapply RESPECTFUL0; [apply LE| |apply PR].
+  intros. rewrite <- EQ. eapply RESPECTFUL0; [apply LE| |apply PR].
   intros. rewrite EQ. apply GF, PR0.
 Qed.
 

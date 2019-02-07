@@ -1,5 +1,6 @@
 Require Import paco7.
-Require Export Program.
+Require Import Program.Basics.
+Require Import Setoids.Setoid.
 Set Implicit Arguments.
 
 Section Respectful7.
@@ -285,7 +286,7 @@ Lemma grespectful7_impl T0 T1 T2 T3 T4 T5 T6 (gf gf': rel7 T0 T1 T2 T3 T4 T5 T6 
 Proof.
   intros. destruct PR. econstructor; [|apply CLO].
   destruct RES. econstructor; [apply MON0|].
-  intros. rewrite <-EQ. eapply RESPECTFUL0; [apply LE| |apply PR].
+  intros. rewrite <- EQ. eapply RESPECTFUL0; [apply LE| |apply PR].
   intros. rewrite EQ. apply GF, PR0.
 Qed.
 

@@ -1,5 +1,6 @@
 Require Import paco9.
-Require Export Program.
+Require Import Program.Basics.
+Require Import Setoids.Setoid.
 Set Implicit Arguments.
 
 Section Respectful9.
@@ -287,7 +288,7 @@ Lemma grespectful9_impl T0 T1 T2 T3 T4 T5 T6 T7 T8 (gf gf': rel9 T0 T1 T2 T3 T4 
 Proof.
   intros. destruct PR. econstructor; [|apply CLO].
   destruct RES. econstructor; [apply MON0|].
-  intros. rewrite <-EQ. eapply RESPECTFUL0; [apply LE| |apply PR].
+  intros. rewrite <- EQ. eapply RESPECTFUL0; [apply LE| |apply PR].
   intros. rewrite EQ. apply GF, PR0.
 Qed.
 
