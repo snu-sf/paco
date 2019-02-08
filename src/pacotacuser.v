@@ -83,11 +83,11 @@ Tactic Notation "pcofix" ident(CIH) := pcofix CIH with r.
 Definition pclearbot_or (P Q: Prop) := P.
 
 Ltac pclearbot :=
-  generalize _paco_mark_cons;  
+  generalize _paco_mark_cons;
   repeat(
     match goal with [H: context [pacoid] |- _] =>
       let NH := fresh H in
-      revert_until H; red in H;
+      revert_until H; repeat red in H;
       match goal with [Hcrr: context f [or] |- _] =>
         match Hcrr with H =>
           let P := context f [pclearbot_or] in
