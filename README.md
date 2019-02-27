@@ -8,7 +8,7 @@ Paco is a Coq library for parametric coinduction.  For more information, please 
 - Chung-Kil Hur, Georg Neis, Derek Dreyer and Viktor Vafeiadis.  [The power of parameterization in
 coinductive proof](https://dl.acm.org/citation.cfm?doid=2429069.2429093).  POPL 2013.
 
-The current version is v2.0.0, and it's compatible with Coq 8.6.1, 8.7.2, 8.8.1 and 8.9.0.
+The current version is v2.0.3, and it's compatible with Coq 8.6.1, 8.7.2, 8.8.1 and 8.9.0.
 
 
 ## Installation

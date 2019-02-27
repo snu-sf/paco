@@ -143,6 +143,14 @@ Proof.
   eapply _paco16_mon_gen; [apply LEgf | apply LEr | apply REL].
 Qed.
 
+Lemma paco16_mon_bot (gf gf': rel16 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 -> rel16 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15) r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15
+    (REL: paco16 gf bot16 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15)
+    (LEgf: gf <17= gf'):
+  paco16 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15.
+Proof.
+  eapply paco16_mon_gen; [apply REL | apply LEgf | intros; contradiction PR].
+Qed.
+
 Lemma upaco16_mon_gen (gf gf': rel16 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 -> rel16 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15) r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15
     (REL: upaco16 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15)
     (LEgf: gf <17= gf')
@@ -152,6 +160,14 @@ Proof.
   destruct REL.
   - left. eapply paco16_mon_gen; [apply H | apply LEgf | apply LEr].
   - right. apply LEr, H.
+Qed.
+
+Lemma upaco16_mon_bot (gf gf': rel16 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 -> rel16 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15) r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15
+    (REL: upaco16 gf bot16 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15)
+    (LEgf: gf <17= gf'):
+  upaco16 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15.
+Proof.
+  eapply upaco16_mon_gen; [apply REL | apply LEgf | intros; contradiction PR].
 Qed.
 
 Section Arg16.

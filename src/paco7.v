@@ -125,6 +125,14 @@ Proof.
   eapply _paco7_mon_gen; [apply LEgf | apply LEr | apply REL].
 Qed.
 
+Lemma paco7_mon_bot (gf gf': rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6) r' x0 x1 x2 x3 x4 x5 x6
+    (REL: paco7 gf bot7 x0 x1 x2 x3 x4 x5 x6)
+    (LEgf: gf <8= gf'):
+  paco7 gf' r' x0 x1 x2 x3 x4 x5 x6.
+Proof.
+  eapply paco7_mon_gen; [apply REL | apply LEgf | intros; contradiction PR].
+Qed.
+
 Lemma upaco7_mon_gen (gf gf': rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6) r r' x0 x1 x2 x3 x4 x5 x6
     (REL: upaco7 gf r x0 x1 x2 x3 x4 x5 x6)
     (LEgf: gf <8= gf')
@@ -134,6 +142,14 @@ Proof.
   destruct REL.
   - left. eapply paco7_mon_gen; [apply H | apply LEgf | apply LEr].
   - right. apply LEr, H.
+Qed.
+
+Lemma upaco7_mon_bot (gf gf': rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6) r' x0 x1 x2 x3 x4 x5 x6
+    (REL: upaco7 gf bot7 x0 x1 x2 x3 x4 x5 x6)
+    (LEgf: gf <8= gf'):
+  upaco7 gf' r' x0 x1 x2 x3 x4 x5 x6.
+Proof.
+  eapply upaco7_mon_gen; [apply REL | apply LEgf | intros; contradiction PR].
 Qed.
 
 Section Arg7.

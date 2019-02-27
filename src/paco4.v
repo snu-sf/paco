@@ -119,6 +119,14 @@ Proof.
   eapply _paco4_mon_gen; [apply LEgf | apply LEr | apply REL].
 Qed.
 
+Lemma paco4_mon_bot (gf gf': rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3) r' x0 x1 x2 x3
+    (REL: paco4 gf bot4 x0 x1 x2 x3)
+    (LEgf: gf <5= gf'):
+  paco4 gf' r' x0 x1 x2 x3.
+Proof.
+  eapply paco4_mon_gen; [apply REL | apply LEgf | intros; contradiction PR].
+Qed.
+
 Lemma upaco4_mon_gen (gf gf': rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3) r r' x0 x1 x2 x3
     (REL: upaco4 gf r x0 x1 x2 x3)
     (LEgf: gf <5= gf')
@@ -128,6 +136,14 @@ Proof.
   destruct REL.
   - left. eapply paco4_mon_gen; [apply H | apply LEgf | apply LEr].
   - right. apply LEr, H.
+Qed.
+
+Lemma upaco4_mon_bot (gf gf': rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3) r' x0 x1 x2 x3
+    (REL: upaco4 gf bot4 x0 x1 x2 x3)
+    (LEgf: gf <5= gf'):
+  upaco4 gf' r' x0 x1 x2 x3.
+Proof.
+  eapply upaco4_mon_gen; [apply REL | apply LEgf | intros; contradiction PR].
 Qed.
 
 Section Arg4.

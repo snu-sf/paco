@@ -131,6 +131,14 @@ Proof.
   eapply _paco10_mon_gen; [apply LEgf | apply LEr | apply REL].
 Qed.
 
+Lemma paco10_mon_bot (gf gf': rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9) r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9
+    (REL: paco10 gf bot10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
+    (LEgf: gf <11= gf'):
+  paco10 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9.
+Proof.
+  eapply paco10_mon_gen; [apply REL | apply LEgf | intros; contradiction PR].
+Qed.
+
 Lemma upaco10_mon_gen (gf gf': rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9) r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9
     (REL: upaco10 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
     (LEgf: gf <11= gf')
@@ -140,6 +148,14 @@ Proof.
   destruct REL.
   - left. eapply paco10_mon_gen; [apply H | apply LEgf | apply LEr].
   - right. apply LEr, H.
+Qed.
+
+Lemma upaco10_mon_bot (gf gf': rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9) r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9
+    (REL: upaco10 gf bot10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
+    (LEgf: gf <11= gf'):
+  upaco10 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9.
+Proof.
+  eapply upaco10_mon_gen; [apply REL | apply LEgf | intros; contradiction PR].
 Qed.
 
 Section Arg10.

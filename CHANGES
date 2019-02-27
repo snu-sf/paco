@@ -1,3 +1,25 @@
+changes from v2.0.2 to v2.0.3
+=========================
+- add the lemmas "[u]paco{n}_mon_bot".
+
+changes from v2.0.1 to v2.0.2
+=========================
+- improve "pclearbot" to work under binders.
+- export Program.Basics to support the notation for "compose".
+
+changes from v2.0.0 to v2.0.1
+=========================
+- improve the "pupto" tactic to just take the lemma name without arguments to the lemma.
+- add the lemmas "[u]paco{n}_mon_gen".
+
+changes from v1.2.9 to v2.0.0
+=========================
+- add the upto library.
+
+changes from v1.2.8 to v1.2.9
+=========================
+- speed up the compliation time by internally defining n-ary pacos using the unary paco.
+
 changes from v1.2.7 to v1.2.8
 =========================
 - add the definition "upaco".

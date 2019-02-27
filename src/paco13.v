@@ -137,6 +137,14 @@ Proof.
   eapply _paco13_mon_gen; [apply LEgf | apply LEr | apply REL].
 Qed.
 
+Lemma paco13_mon_bot (gf gf': rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12
+    (REL: paco13 gf bot13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12)
+    (LEgf: gf <14= gf'):
+  paco13 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12.
+Proof.
+  eapply paco13_mon_gen; [apply REL | apply LEgf | intros; contradiction PR].
+Qed.
+
 Lemma upaco13_mon_gen (gf gf': rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12
     (REL: upaco13 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12)
     (LEgf: gf <14= gf')
@@ -146,6 +154,14 @@ Proof.
   destruct REL.
   - left. eapply paco13_mon_gen; [apply H | apply LEgf | apply LEr].
   - right. apply LEr, H.
+Qed.
+
+Lemma upaco13_mon_bot (gf gf': rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12
+    (REL: upaco13 gf bot13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12)
+    (LEgf: gf <14= gf'):
+  upaco13 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12.
+Proof.
+  eapply upaco13_mon_gen; [apply REL | apply LEgf | intros; contradiction PR].
 Qed.
 
 Section Arg13.

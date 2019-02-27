@@ -115,6 +115,14 @@ Proof.
   eapply _paco2_mon_gen; [apply LEgf | apply LEr | apply REL].
 Qed.
 
+Lemma paco2_mon_bot (gf gf': rel2 T0 T1 -> rel2 T0 T1) r' x0 x1
+    (REL: paco2 gf bot2 x0 x1)
+    (LEgf: gf <3= gf'):
+  paco2 gf' r' x0 x1.
+Proof.
+  eapply paco2_mon_gen; [apply REL | apply LEgf | intros; contradiction PR].
+Qed.
+
 Lemma upaco2_mon_gen (gf gf': rel2 T0 T1 -> rel2 T0 T1) r r' x0 x1
     (REL: upaco2 gf r x0 x1)
     (LEgf: gf <3= gf')
@@ -124,6 +132,14 @@ Proof.
   destruct REL.
   - left. eapply paco2_mon_gen; [apply H | apply LEgf | apply LEr].
   - right. apply LEr, H.
+Qed.
+
+Lemma upaco2_mon_bot (gf gf': rel2 T0 T1 -> rel2 T0 T1) r' x0 x1
+    (REL: upaco2 gf bot2 x0 x1)
+    (LEgf: gf <3= gf'):
+  upaco2 gf' r' x0 x1.
+Proof.
+  eapply upaco2_mon_gen; [apply REL | apply LEgf | intros; contradiction PR].
 Qed.
 
 Section Arg2.

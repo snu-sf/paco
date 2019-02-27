@@ -127,6 +127,14 @@ Proof.
   eapply _paco8_mon_gen; [apply LEgf | apply LEr | apply REL].
 Qed.
 
+Lemma paco8_mon_bot (gf gf': rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7) r' x0 x1 x2 x3 x4 x5 x6 x7
+    (REL: paco8 gf bot8 x0 x1 x2 x3 x4 x5 x6 x7)
+    (LEgf: gf <9= gf'):
+  paco8 gf' r' x0 x1 x2 x3 x4 x5 x6 x7.
+Proof.
+  eapply paco8_mon_gen; [apply REL | apply LEgf | intros; contradiction PR].
+Qed.
+
 Lemma upaco8_mon_gen (gf gf': rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7) r r' x0 x1 x2 x3 x4 x5 x6 x7
     (REL: upaco8 gf r x0 x1 x2 x3 x4 x5 x6 x7)
     (LEgf: gf <9= gf')
@@ -136,6 +144,14 @@ Proof.
   destruct REL.
   - left. eapply paco8_mon_gen; [apply H | apply LEgf | apply LEr].
   - right. apply LEr, H.
+Qed.
+
+Lemma upaco8_mon_bot (gf gf': rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7) r' x0 x1 x2 x3 x4 x5 x6 x7
+    (REL: upaco8 gf bot8 x0 x1 x2 x3 x4 x5 x6 x7)
+    (LEgf: gf <9= gf'):
+  upaco8 gf' r' x0 x1 x2 x3 x4 x5 x6 x7.
+Proof.
+  eapply upaco8_mon_gen; [apply REL | apply LEgf | intros; contradiction PR].
 Qed.
 
 Section Arg8.
