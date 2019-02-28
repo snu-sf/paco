@@ -182,22 +182,13 @@ Inductive rclo10 (clo: rel->rel) (r: rel): rel :=
     @rclo10 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9
 .
 
-Lemma rclo10_mon_gen clo clo' r r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9
-      (REL: @rclo10 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9)
-      (LEclo: clo <11= clo')
-      (LEr: r <10= r') :
-  @rclo10 clo' r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9.
-Proof.
-  induction REL.
-  - econstructor 1. apply LEr, R.
-  - econstructor 2; [intros; eapply H, PR| apply LEclo, CLOR'].
-  - econstructor 3; [intros; eapply H, PR| apply CLOR'].
-Qed.
-
 Lemma rclo10_mon clo:
   monotone10 (rclo10 clo).
 Proof.
-  repeat intro. eapply rclo10_mon_gen; intros; [apply IN | apply PR | apply LE, PR].
+  repeat intro. induction IN.
+  - econstructor 1. apply LE, R.
+  - econstructor 2; [intros; eapply H, PR| apply CLOR'].
+  - econstructor 3; [intros; eapply H, PR| apply CLOR'].
 Qed.
 Hint Resolve rclo10_mon: paco.
 
@@ -291,6 +282,19 @@ Proof.
 Qed.
 
 End Respectful10.
+
+Lemma rclo10_mon_gen T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 (gf gf': rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9) clo clo' r r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9
+      (REL: rclo10 gf clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9)
+      (LEgf: gf <11= gf')
+      (LEclo: clo <11= clo')
+      (LEr: r <10= r') :
+  rclo10 gf' clo' r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9.
+Proof.
+  induction REL.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR| apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR| apply LEgf, CLOR'].
+Qed.
 
 Lemma grespectful10_impl T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 (gf gf': rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9) r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9
     (PR: gres10 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)

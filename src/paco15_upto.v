@@ -187,22 +187,13 @@ Inductive rclo15 (clo: rel->rel) (r: rel): rel :=
     @rclo15 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14
 .
 
-Lemma rclo15_mon_gen clo clo' r r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14
-      (REL: @rclo15 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14)
-      (LEclo: clo <16= clo')
-      (LEr: r <15= r') :
-  @rclo15 clo' r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
-Proof.
-  induction REL.
-  - econstructor 1. apply LEr, R.
-  - econstructor 2; [intros; eapply H, PR| apply LEclo, CLOR'].
-  - econstructor 3; [intros; eapply H, PR| apply CLOR'].
-Qed.
-
 Lemma rclo15_mon clo:
   monotone15 (rclo15 clo).
 Proof.
-  repeat intro. eapply rclo15_mon_gen; intros; [apply IN | apply PR | apply LE, PR].
+  repeat intro. induction IN.
+  - econstructor 1. apply LE, R.
+  - econstructor 2; [intros; eapply H, PR| apply CLOR'].
+  - econstructor 3; [intros; eapply H, PR| apply CLOR'].
 Qed.
 Hint Resolve rclo15_mon: paco.
 
@@ -296,6 +287,19 @@ Proof.
 Qed.
 
 End Respectful15.
+
+Lemma rclo15_mon_gen T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 (gf gf': rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14) clo clo' r r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14
+      (REL: rclo15 gf clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14)
+      (LEgf: gf <16= gf')
+      (LEclo: clo <16= clo')
+      (LEr: r <15= r') :
+  rclo15 gf' clo' r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+Proof.
+  induction REL.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR| apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR| apply LEgf, CLOR'].
+Qed.
 
 Lemma grespectful15_impl T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 (gf gf': rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 -> rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14) r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14
     (PR: gres15 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14)

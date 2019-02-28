@@ -179,22 +179,13 @@ Inductive rclo7 (clo: rel->rel) (r: rel): rel :=
     @rclo7 clo r e0 e1 e2 e3 e4 e5 e6
 .
 
-Lemma rclo7_mon_gen clo clo' r r' e0 e1 e2 e3 e4 e5 e6
-      (REL: @rclo7 clo r e0 e1 e2 e3 e4 e5 e6)
-      (LEclo: clo <8= clo')
-      (LEr: r <7= r') :
-  @rclo7 clo' r' e0 e1 e2 e3 e4 e5 e6.
-Proof.
-  induction REL.
-  - econstructor 1. apply LEr, R.
-  - econstructor 2; [intros; eapply H, PR| apply LEclo, CLOR'].
-  - econstructor 3; [intros; eapply H, PR| apply CLOR'].
-Qed.
-
 Lemma rclo7_mon clo:
   monotone7 (rclo7 clo).
 Proof.
-  repeat intro. eapply rclo7_mon_gen; intros; [apply IN | apply PR | apply LE, PR].
+  repeat intro. induction IN.
+  - econstructor 1. apply LE, R.
+  - econstructor 2; [intros; eapply H, PR| apply CLOR'].
+  - econstructor 3; [intros; eapply H, PR| apply CLOR'].
 Qed.
 Hint Resolve rclo7_mon: paco.
 
@@ -288,6 +279,19 @@ Proof.
 Qed.
 
 End Respectful7.
+
+Lemma rclo7_mon_gen T0 T1 T2 T3 T4 T5 T6 (gf gf': rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6) clo clo' r r' e0 e1 e2 e3 e4 e5 e6
+      (REL: rclo7 gf clo r e0 e1 e2 e3 e4 e5 e6)
+      (LEgf: gf <8= gf')
+      (LEclo: clo <8= clo')
+      (LEr: r <7= r') :
+  rclo7 gf' clo' r' e0 e1 e2 e3 e4 e5 e6.
+Proof.
+  induction REL.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR| apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR| apply LEgf, CLOR'].
+Qed.
 
 Lemma grespectful7_impl T0 T1 T2 T3 T4 T5 T6 (gf gf': rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6) r x0 x1 x2 x3 x4 x5 x6
     (PR: gres7 gf r x0 x1 x2 x3 x4 x5 x6)

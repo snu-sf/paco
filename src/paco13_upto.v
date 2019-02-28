@@ -185,22 +185,13 @@ Inductive rclo13 (clo: rel->rel) (r: rel): rel :=
     @rclo13 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12
 .
 
-Lemma rclo13_mon_gen clo clo' r r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12
-      (REL: @rclo13 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12)
-      (LEclo: clo <14= clo')
-      (LEr: r <13= r') :
-  @rclo13 clo' r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
-Proof.
-  induction REL.
-  - econstructor 1. apply LEr, R.
-  - econstructor 2; [intros; eapply H, PR| apply LEclo, CLOR'].
-  - econstructor 3; [intros; eapply H, PR| apply CLOR'].
-Qed.
-
 Lemma rclo13_mon clo:
   monotone13 (rclo13 clo).
 Proof.
-  repeat intro. eapply rclo13_mon_gen; intros; [apply IN | apply PR | apply LE, PR].
+  repeat intro. induction IN.
+  - econstructor 1. apply LE, R.
+  - econstructor 2; [intros; eapply H, PR| apply CLOR'].
+  - econstructor 3; [intros; eapply H, PR| apply CLOR'].
 Qed.
 Hint Resolve rclo13_mon: paco.
 
@@ -294,6 +285,19 @@ Proof.
 Qed.
 
 End Respectful13.
+
+Lemma rclo13_mon_gen T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 (gf gf': rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) clo clo' r r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12
+      (REL: rclo13 gf clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12)
+      (LEgf: gf <14= gf')
+      (LEclo: clo <14= clo')
+      (LEr: r <13= r') :
+  rclo13 gf' clo' r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+Proof.
+  induction REL.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR| apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR| apply LEgf, CLOR'].
+Qed.
 
 Lemma grespectful13_impl T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 (gf gf': rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12
     (PR: gres13 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12)

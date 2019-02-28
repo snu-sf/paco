@@ -174,22 +174,13 @@ Inductive rclo2 (clo: rel->rel) (r: rel): rel :=
     @rclo2 clo r e0 e1
 .
 
-Lemma rclo2_mon_gen clo clo' r r' e0 e1
-      (REL: @rclo2 clo r e0 e1)
-      (LEclo: clo <3= clo')
-      (LEr: r <2= r') :
-  @rclo2 clo' r' e0 e1.
-Proof.
-  induction REL.
-  - econstructor 1. apply LEr, R.
-  - econstructor 2; [intros; eapply H, PR| apply LEclo, CLOR'].
-  - econstructor 3; [intros; eapply H, PR| apply CLOR'].
-Qed.
-
 Lemma rclo2_mon clo:
   monotone2 (rclo2 clo).
 Proof.
-  repeat intro. eapply rclo2_mon_gen; intros; [apply IN | apply PR | apply LE, PR].
+  repeat intro. induction IN.
+  - econstructor 1. apply LE, R.
+  - econstructor 2; [intros; eapply H, PR| apply CLOR'].
+  - econstructor 3; [intros; eapply H, PR| apply CLOR'].
 Qed.
 Hint Resolve rclo2_mon: paco.
 
@@ -283,6 +274,19 @@ Proof.
 Qed.
 
 End Respectful2.
+
+Lemma rclo2_mon_gen T0 T1 (gf gf': rel2 T0 T1 -> rel2 T0 T1) clo clo' r r' e0 e1
+      (REL: rclo2 gf clo r e0 e1)
+      (LEgf: gf <3= gf')
+      (LEclo: clo <3= clo')
+      (LEr: r <2= r') :
+  rclo2 gf' clo' r' e0 e1.
+Proof.
+  induction REL.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR| apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR| apply LEgf, CLOR'].
+Qed.
 
 Lemma grespectful2_impl T0 T1 (gf gf': rel2 T0 T1 -> rel2 T0 T1) r x0 x1
     (PR: gres2 gf r x0 x1)
