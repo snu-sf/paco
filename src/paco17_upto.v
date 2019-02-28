@@ -52,6 +52,7 @@ Inductive gres17 (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 
     (CLO: clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16)
 .
 Hint Constructors gres17.
+
 Lemma gfclo17_mon: forall clo, sound17 clo -> monotone17 (compose gf clo).
 Proof.
   intros; destruct H; red; intros.
@@ -171,7 +172,7 @@ Proof.
   - right. eapply CIH0, H.
 Qed.
 
-Inductive rclo17 clo (r: rel): rel :=
+Inductive rclo17 (clo: rel->rel) (r: rel): rel :=
 | rclo17_incl
     e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16
     (R: r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16):
@@ -187,13 +188,23 @@ Inductive rclo17 clo (r: rel): rel :=
     (CLOR':@gf r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16):
     @rclo17 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16
 .
+
+Lemma rclo17_mon_gen clo clo' r r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16
+      (REL: @rclo17 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16)
+      (LEclo: clo <18= clo')
+      (LEr: r <17= r') :
+  @rclo17 clo' r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16.
+Proof.
+  induction REL.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR| apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR| apply CLOR'].
+Qed.
+
 Lemma rclo17_mon clo:
   monotone17 (rclo17 clo).
 Proof.
-  repeat intro. induction IN.
-  - econstructor 1. apply LE, R.
-  - econstructor 2; [intros; eapply H, PR| eapply CLOR'].
-  - econstructor 3; [intros; eapply H, PR| eapply CLOR'].
+  repeat intro. eapply rclo17_mon_gen; intros; [apply IN | apply PR | apply LE, PR].
 Qed.
 Hint Resolve rclo17_mon: paco.
 

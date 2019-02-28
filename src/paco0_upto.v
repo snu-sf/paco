@@ -35,6 +35,7 @@ Inductive gres0 (r: rel) : Prop :=
     (CLO: clo r)
 .
 Hint Constructors gres0.
+
 Lemma gfclo0_mon: forall clo, sound0 clo -> monotone0 (compose gf clo).
 Proof.
   intros; destruct H; red; intros.
@@ -154,7 +155,7 @@ Proof.
   - right. eapply CIH0, H.
 Qed.
 
-Inductive rclo0 clo (r: rel): rel :=
+Inductive rclo0 (clo: rel->rel) (r: rel): rel :=
 | rclo0_incl
    
     (R: r):
@@ -170,13 +171,23 @@ Inductive rclo0 clo (r: rel): rel :=
     (CLOR':@gf r'):
     @rclo0 clo r
 .
+
+Lemma rclo0_mon_gen clo clo' r r'
+      (REL: @rclo0 clo r)
+      (LEclo: clo <1= clo')
+      (LEr: r <0= r') :
+  @rclo0 clo' r'.
+Proof.
+  induction REL.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR| apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR| apply CLOR'].
+Qed.
+
 Lemma rclo0_mon clo:
   monotone0 (rclo0 clo).
 Proof.
-  repeat intro. induction IN.
-  - econstructor 1. apply LE, R.
-  - econstructor 2; [intros; eapply H, PR| eapply CLOR'].
-  - econstructor 3; [intros; eapply H, PR| eapply CLOR'].
+  repeat intro. eapply rclo0_mon_gen; intros; [apply IN | apply PR | apply LE, PR].
 Qed.
 Hint Resolve rclo0_mon: paco.
 

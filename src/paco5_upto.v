@@ -40,6 +40,7 @@ Inductive gres5 (r: rel) e0 e1 e2 e3 e4 : Prop :=
     (CLO: clo r e0 e1 e2 e3 e4)
 .
 Hint Constructors gres5.
+
 Lemma gfclo5_mon: forall clo, sound5 clo -> monotone5 (compose gf clo).
 Proof.
   intros; destruct H; red; intros.
@@ -159,7 +160,7 @@ Proof.
   - right. eapply CIH0, H.
 Qed.
 
-Inductive rclo5 clo (r: rel): rel :=
+Inductive rclo5 (clo: rel->rel) (r: rel): rel :=
 | rclo5_incl
     e0 e1 e2 e3 e4
     (R: r e0 e1 e2 e3 e4):
@@ -175,13 +176,23 @@ Inductive rclo5 clo (r: rel): rel :=
     (CLOR':@gf r' e0 e1 e2 e3 e4):
     @rclo5 clo r e0 e1 e2 e3 e4
 .
+
+Lemma rclo5_mon_gen clo clo' r r' e0 e1 e2 e3 e4
+      (REL: @rclo5 clo r e0 e1 e2 e3 e4)
+      (LEclo: clo <6= clo')
+      (LEr: r <5= r') :
+  @rclo5 clo' r' e0 e1 e2 e3 e4.
+Proof.
+  induction REL.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR| apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR| apply CLOR'].
+Qed.
+
 Lemma rclo5_mon clo:
   monotone5 (rclo5 clo).
 Proof.
-  repeat intro. induction IN.
-  - econstructor 1. apply LE, R.
-  - econstructor 2; [intros; eapply H, PR| eapply CLOR'].
-  - econstructor 3; [intros; eapply H, PR| eapply CLOR'].
+  repeat intro. eapply rclo5_mon_gen; intros; [apply IN | apply PR | apply LE, PR].
 Qed.
 Hint Resolve rclo5_mon: paco.
 

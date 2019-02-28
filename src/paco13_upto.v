@@ -48,6 +48,7 @@ Inductive gres13 (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 : Prop :=
     (CLO: clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12)
 .
 Hint Constructors gres13.
+
 Lemma gfclo13_mon: forall clo, sound13 clo -> monotone13 (compose gf clo).
 Proof.
   intros; destruct H; red; intros.
@@ -167,7 +168,7 @@ Proof.
   - right. eapply CIH0, H.
 Qed.
 
-Inductive rclo13 clo (r: rel): rel :=
+Inductive rclo13 (clo: rel->rel) (r: rel): rel :=
 | rclo13_incl
     e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12
     (R: r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12):
@@ -183,13 +184,23 @@ Inductive rclo13 clo (r: rel): rel :=
     (CLOR':@gf r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12):
     @rclo13 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12
 .
+
+Lemma rclo13_mon_gen clo clo' r r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12
+      (REL: @rclo13 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12)
+      (LEclo: clo <14= clo')
+      (LEr: r <13= r') :
+  @rclo13 clo' r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+Proof.
+  induction REL.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR| apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR| apply CLOR'].
+Qed.
+
 Lemma rclo13_mon clo:
   monotone13 (rclo13 clo).
 Proof.
-  repeat intro. induction IN.
-  - econstructor 1. apply LE, R.
-  - econstructor 2; [intros; eapply H, PR| eapply CLOR'].
-  - econstructor 3; [intros; eapply H, PR| eapply CLOR'].
+  repeat intro. eapply rclo13_mon_gen; intros; [apply IN | apply PR | apply LE, PR].
 Qed.
 Hint Resolve rclo13_mon: paco.
 

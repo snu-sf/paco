@@ -43,6 +43,7 @@ Inductive gres8 (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 : Prop :=
     (CLO: clo r e0 e1 e2 e3 e4 e5 e6 e7)
 .
 Hint Constructors gres8.
+
 Lemma gfclo8_mon: forall clo, sound8 clo -> monotone8 (compose gf clo).
 Proof.
   intros; destruct H; red; intros.
@@ -162,7 +163,7 @@ Proof.
   - right. eapply CIH0, H.
 Qed.
 
-Inductive rclo8 clo (r: rel): rel :=
+Inductive rclo8 (clo: rel->rel) (r: rel): rel :=
 | rclo8_incl
     e0 e1 e2 e3 e4 e5 e6 e7
     (R: r e0 e1 e2 e3 e4 e5 e6 e7):
@@ -178,13 +179,23 @@ Inductive rclo8 clo (r: rel): rel :=
     (CLOR':@gf r' e0 e1 e2 e3 e4 e5 e6 e7):
     @rclo8 clo r e0 e1 e2 e3 e4 e5 e6 e7
 .
+
+Lemma rclo8_mon_gen clo clo' r r' e0 e1 e2 e3 e4 e5 e6 e7
+      (REL: @rclo8 clo r e0 e1 e2 e3 e4 e5 e6 e7)
+      (LEclo: clo <9= clo')
+      (LEr: r <8= r') :
+  @rclo8 clo' r' e0 e1 e2 e3 e4 e5 e6 e7.
+Proof.
+  induction REL.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR| apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR| apply CLOR'].
+Qed.
+
 Lemma rclo8_mon clo:
   monotone8 (rclo8 clo).
 Proof.
-  repeat intro. induction IN.
-  - econstructor 1. apply LE, R.
-  - econstructor 2; [intros; eapply H, PR| eapply CLOR'].
-  - econstructor 3; [intros; eapply H, PR| eapply CLOR'].
+  repeat intro. eapply rclo8_mon_gen; intros; [apply IN | apply PR | apply LE, PR].
 Qed.
 Hint Resolve rclo8_mon: paco.
 

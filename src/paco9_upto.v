@@ -44,6 +44,7 @@ Inductive gres9 (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 : Prop :=
     (CLO: clo r e0 e1 e2 e3 e4 e5 e6 e7 e8)
 .
 Hint Constructors gres9.
+
 Lemma gfclo9_mon: forall clo, sound9 clo -> monotone9 (compose gf clo).
 Proof.
   intros; destruct H; red; intros.
@@ -163,7 +164,7 @@ Proof.
   - right. eapply CIH0, H.
 Qed.
 
-Inductive rclo9 clo (r: rel): rel :=
+Inductive rclo9 (clo: rel->rel) (r: rel): rel :=
 | rclo9_incl
     e0 e1 e2 e3 e4 e5 e6 e7 e8
     (R: r e0 e1 e2 e3 e4 e5 e6 e7 e8):
@@ -179,13 +180,23 @@ Inductive rclo9 clo (r: rel): rel :=
     (CLOR':@gf r' e0 e1 e2 e3 e4 e5 e6 e7 e8):
     @rclo9 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8
 .
+
+Lemma rclo9_mon_gen clo clo' r r' e0 e1 e2 e3 e4 e5 e6 e7 e8
+      (REL: @rclo9 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8)
+      (LEclo: clo <10= clo')
+      (LEr: r <9= r') :
+  @rclo9 clo' r' e0 e1 e2 e3 e4 e5 e6 e7 e8.
+Proof.
+  induction REL.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR| apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR| apply CLOR'].
+Qed.
+
 Lemma rclo9_mon clo:
   monotone9 (rclo9 clo).
 Proof.
-  repeat intro. induction IN.
-  - econstructor 1. apply LE, R.
-  - econstructor 2; [intros; eapply H, PR| eapply CLOR'].
-  - econstructor 3; [intros; eapply H, PR| eapply CLOR'].
+  repeat intro. eapply rclo9_mon_gen; intros; [apply IN | apply PR | apply LE, PR].
 Qed.
 Hint Resolve rclo9_mon: paco.
 
