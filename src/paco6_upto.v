@@ -258,23 +258,18 @@ Proof.
 Qed.
 
 Lemma upto6_step
-      r clo (RES: weak_respectful6 clo):
+      r clo (RES: respectful6 clo):
   clo (paco6 (compose gf gres6) r) <6= paco6 (compose gf gres6) r.
 Proof.
   intros. apply grespectful6_incl_rev.
-  assert (RES' := weak_respectful6_respectful6 RES).
-  eapply grespectful6_greatest; [apply RES'|].
-  eapply rclo6_base; [apply RES|].
-  inversion RES. apply PR.
+  eapply grespectful6_greatest; [apply RES|apply PR].
 Qed.
 
 Lemma upto6_step_under
-      r clo (RES: weak_respectful6 clo):
+      r clo (RES: respectful6 clo):
   clo (gres6 r) <6= gres6 r.
 Proof.
-  intros. apply weak_respectful6_respectful6 in RES.
-  eapply grespectful6_compose; [apply RES|].
-  econstructor 2; [intros; constructor 1; apply PR0 | apply PR].
+  intros. eapply grespectful6_compose; [apply RES|apply PR].
 Qed.
 
 End Respectful6.
@@ -323,5 +318,5 @@ Hint Constructors weak_respectful6.
 
 Ltac pupto6_init := eapply upto6_init; [eauto with paco|].
 Ltac pupto6_final := first [eapply upto6_final; [eauto with paco|] | eapply grespectful6_incl].
-Ltac pupto6 H := first [eapply upto6_step|eapply upto6_step_under]; [|eapply H|]; [eauto with paco|].
+Ltac pupto6 H := first [eapply upto6_step|eapply upto6_step_under]; [|(eapply H || eapply weak_respectful6_respectful6, H)|]; [eauto with paco|].
 

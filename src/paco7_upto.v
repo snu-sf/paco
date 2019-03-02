@@ -259,23 +259,18 @@ Proof.
 Qed.
 
 Lemma upto7_step
-      r clo (RES: weak_respectful7 clo):
+      r clo (RES: respectful7 clo):
   clo (paco7 (compose gf gres7) r) <7= paco7 (compose gf gres7) r.
 Proof.
   intros. apply grespectful7_incl_rev.
-  assert (RES' := weak_respectful7_respectful7 RES).
-  eapply grespectful7_greatest; [apply RES'|].
-  eapply rclo7_base; [apply RES|].
-  inversion RES. apply PR.
+  eapply grespectful7_greatest; [apply RES|apply PR].
 Qed.
 
 Lemma upto7_step_under
-      r clo (RES: weak_respectful7 clo):
+      r clo (RES: respectful7 clo):
   clo (gres7 r) <7= gres7 r.
 Proof.
-  intros. apply weak_respectful7_respectful7 in RES.
-  eapply grespectful7_compose; [apply RES|].
-  econstructor 2; [intros; constructor 1; apply PR0 | apply PR].
+  intros. eapply grespectful7_compose; [apply RES|apply PR].
 Qed.
 
 End Respectful7.
@@ -324,5 +319,5 @@ Hint Constructors weak_respectful7.
 
 Ltac pupto7_init := eapply upto7_init; [eauto with paco|].
 Ltac pupto7_final := first [eapply upto7_final; [eauto with paco|] | eapply grespectful7_incl].
-Ltac pupto7 H := first [eapply upto7_step|eapply upto7_step_under]; [|eapply H|]; [eauto with paco|].
+Ltac pupto7 H := first [eapply upto7_step|eapply upto7_step_under]; [|(eapply H || eapply weak_respectful7_respectful7, H)|]; [eauto with paco|].
 

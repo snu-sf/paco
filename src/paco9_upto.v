@@ -261,23 +261,18 @@ Proof.
 Qed.
 
 Lemma upto9_step
-      r clo (RES: weak_respectful9 clo):
+      r clo (RES: respectful9 clo):
   clo (paco9 (compose gf gres9) r) <9= paco9 (compose gf gres9) r.
 Proof.
   intros. apply grespectful9_incl_rev.
-  assert (RES' := weak_respectful9_respectful9 RES).
-  eapply grespectful9_greatest; [apply RES'|].
-  eapply rclo9_base; [apply RES|].
-  inversion RES. apply PR.
+  eapply grespectful9_greatest; [apply RES|apply PR].
 Qed.
 
 Lemma upto9_step_under
-      r clo (RES: weak_respectful9 clo):
+      r clo (RES: respectful9 clo):
   clo (gres9 r) <9= gres9 r.
 Proof.
-  intros. apply weak_respectful9_respectful9 in RES.
-  eapply grespectful9_compose; [apply RES|].
-  econstructor 2; [intros; constructor 1; apply PR0 | apply PR].
+  intros. eapply grespectful9_compose; [apply RES|apply PR].
 Qed.
 
 End Respectful9.
@@ -326,5 +321,5 @@ Hint Constructors weak_respectful9.
 
 Ltac pupto9_init := eapply upto9_init; [eauto with paco|].
 Ltac pupto9_final := first [eapply upto9_final; [eauto with paco|] | eapply grespectful9_incl].
-Ltac pupto9 H := first [eapply upto9_step|eapply upto9_step_under]; [|eapply H|]; [eauto with paco|].
+Ltac pupto9 H := first [eapply upto9_step|eapply upto9_step_under]; [|(eapply H || eapply weak_respectful9_respectful9, H)|]; [eauto with paco|].
 

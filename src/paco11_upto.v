@@ -263,23 +263,18 @@ Proof.
 Qed.
 
 Lemma upto11_step
-      r clo (RES: weak_respectful11 clo):
+      r clo (RES: respectful11 clo):
   clo (paco11 (compose gf gres11) r) <11= paco11 (compose gf gres11) r.
 Proof.
   intros. apply grespectful11_incl_rev.
-  assert (RES' := weak_respectful11_respectful11 RES).
-  eapply grespectful11_greatest; [apply RES'|].
-  eapply rclo11_base; [apply RES|].
-  inversion RES. apply PR.
+  eapply grespectful11_greatest; [apply RES|apply PR].
 Qed.
 
 Lemma upto11_step_under
-      r clo (RES: weak_respectful11 clo):
+      r clo (RES: respectful11 clo):
   clo (gres11 r) <11= gres11 r.
 Proof.
-  intros. apply weak_respectful11_respectful11 in RES.
-  eapply grespectful11_compose; [apply RES|].
-  econstructor 2; [intros; constructor 1; apply PR0 | apply PR].
+  intros. eapply grespectful11_compose; [apply RES|apply PR].
 Qed.
 
 End Respectful11.
@@ -328,5 +323,5 @@ Hint Constructors weak_respectful11.
 
 Ltac pupto11_init := eapply upto11_init; [eauto with paco|].
 Ltac pupto11_final := first [eapply upto11_final; [eauto with paco|] | eapply grespectful11_incl].
-Ltac pupto11 H := first [eapply upto11_step|eapply upto11_step_under]; [|eapply H|]; [eauto with paco|].
+Ltac pupto11 H := first [eapply upto11_step|eapply upto11_step_under]; [|(eapply H || eapply weak_respectful11_respectful11, H)|]; [eauto with paco|].
 
