@@ -320,7 +320,26 @@ Hint Resolve grespectful5_incl.
 Hint Resolve rclo5_mon: paco.
 Hint Constructors weak_respectful5.
 
+(* User Tactics *)
+
 Ltac pupto5_init := eapply upto5_init; [eauto with paco|].
 Ltac pupto5_final := first [eapply upto5_final; [eauto with paco|] | eapply grespectful5_incl].
 Ltac pupto5 H := first [eapply upto5_step|eapply upto5_step_under]; [|eapply H|]; [eauto with paco|].
+
+Ltac pfold5_reverse_ :=
+    match goal with
+    | [|- ?gf (upaco5 _ _ _ _ _) _ _ _ _ _] => eapply (paco5_unfold gf)
+    | [|- ?gf (?gres (upaco5 _ _ _ _ _)) _ _ _ _ _] => eapply (paco5_unfold (gf:=compose gf gres))
+    end.
+
+Ltac pfold5_reverse := pfold5_reverse_; eauto with paco.
+
+Ltac punfold5_reverse_ H :=
+  let PP := type of H in
+  match PP with
+  | ?gf (upaco5 _ _ _ _ _) _ _ _ _ _ => eapply (paco5_fold gf) in H
+  | ?gf (?gres (upaco5 _ _ _ _ _)) _ _ _ _ _ => eapply (paco5_fold (compose gf gres)) in H
+  end.
+
+Ltac punfold5_reverse H := punfold5_reverse_ H; eauto with paco.
 

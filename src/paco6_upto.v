@@ -321,7 +321,26 @@ Hint Resolve grespectful6_incl.
 Hint Resolve rclo6_mon: paco.
 Hint Constructors weak_respectful6.
 
+(* User Tactics *)
+
 Ltac pupto6_init := eapply upto6_init; [eauto with paco|].
 Ltac pupto6_final := first [eapply upto6_final; [eauto with paco|] | eapply grespectful6_incl].
 Ltac pupto6 H := first [eapply upto6_step|eapply upto6_step_under]; [|eapply H|]; [eauto with paco|].
+
+Ltac pfold6_reverse_ :=
+    match goal with
+    | [|- ?gf (upaco6 _ _ _ _ _ _) _ _ _ _ _ _] => eapply (paco6_unfold gf)
+    | [|- ?gf (?gres (upaco6 _ _ _ _ _ _)) _ _ _ _ _ _] => eapply (paco6_unfold (gf:=compose gf gres))
+    end.
+
+Ltac pfold6_reverse := pfold6_reverse_; eauto with paco.
+
+Ltac punfold6_reverse_ H :=
+  let PP := type of H in
+  match PP with
+  | ?gf (upaco6 _ _ _ _ _ _) _ _ _ _ _ _ => eapply (paco6_fold gf) in H
+  | ?gf (?gres (upaco6 _ _ _ _ _ _)) _ _ _ _ _ _ => eapply (paco6_fold (compose gf gres)) in H
+  end.
+
+Ltac punfold6_reverse H := punfold6_reverse_ H; eauto with paco.
 

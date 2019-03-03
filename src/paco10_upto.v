@@ -325,7 +325,26 @@ Hint Resolve grespectful10_incl.
 Hint Resolve rclo10_mon: paco.
 Hint Constructors weak_respectful10.
 
+(* User Tactics *)
+
 Ltac pupto10_init := eapply upto10_init; [eauto with paco|].
 Ltac pupto10_final := first [eapply upto10_final; [eauto with paco|] | eapply grespectful10_incl].
 Ltac pupto10 H := first [eapply upto10_step|eapply upto10_step_under]; [|eapply H|]; [eauto with paco|].
+
+Ltac pfold10_reverse_ :=
+    match goal with
+    | [|- ?gf (upaco10 _ _ _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ _ _] => eapply (paco10_unfold gf)
+    | [|- ?gf (?gres (upaco10 _ _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ _] => eapply (paco10_unfold (gf:=compose gf gres))
+    end.
+
+Ltac pfold10_reverse := pfold10_reverse_; eauto with paco.
+
+Ltac punfold10_reverse_ H :=
+  let PP := type of H in
+  match PP with
+  | ?gf (upaco10 _ _ _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ _ _ => eapply (paco10_fold gf) in H
+  | ?gf (?gres (upaco10 _ _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ _ => eapply (paco10_fold (compose gf gres)) in H
+  end.
+
+Ltac punfold10_reverse H := punfold10_reverse_ H; eauto with paco.
 

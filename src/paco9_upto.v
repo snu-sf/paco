@@ -324,7 +324,26 @@ Hint Resolve grespectful9_incl.
 Hint Resolve rclo9_mon: paco.
 Hint Constructors weak_respectful9.
 
+(* User Tactics *)
+
 Ltac pupto9_init := eapply upto9_init; [eauto with paco|].
 Ltac pupto9_final := first [eapply upto9_final; [eauto with paco|] | eapply grespectful9_incl].
 Ltac pupto9 H := first [eapply upto9_step|eapply upto9_step_under]; [|eapply H|]; [eauto with paco|].
+
+Ltac pfold9_reverse_ :=
+    match goal with
+    | [|- ?gf (upaco9 _ _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ _] => eapply (paco9_unfold gf)
+    | [|- ?gf (?gres (upaco9 _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _] => eapply (paco9_unfold (gf:=compose gf gres))
+    end.
+
+Ltac pfold9_reverse := pfold9_reverse_; eauto with paco.
+
+Ltac punfold9_reverse_ H :=
+  let PP := type of H in
+  match PP with
+  | ?gf (upaco9 _ _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ _ => eapply (paco9_fold gf) in H
+  | ?gf (?gres (upaco9 _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ => eapply (paco9_fold (compose gf gres)) in H
+  end.
+
+Ltac punfold9_reverse H := punfold9_reverse_ H; eauto with paco.
 

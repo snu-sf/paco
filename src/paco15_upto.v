@@ -330,7 +330,26 @@ Hint Resolve grespectful15_incl.
 Hint Resolve rclo15_mon: paco.
 Hint Constructors weak_respectful15.
 
+(* User Tactics *)
+
 Ltac pupto15_init := eapply upto15_init; [eauto with paco|].
 Ltac pupto15_final := first [eapply upto15_final; [eauto with paco|] | eapply grespectful15_incl].
 Ltac pupto15 H := first [eapply upto15_step|eapply upto15_step_under]; [|eapply H|]; [eauto with paco|].
+
+Ltac pfold15_reverse_ :=
+    match goal with
+    | [|- ?gf (upaco15 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco15_unfold gf)
+    | [|- ?gf (?gres (upaco15 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco15_unfold (gf:=compose gf gres))
+    end.
+
+Ltac pfold15_reverse := pfold15_reverse_; eauto with paco.
+
+Ltac punfold15_reverse_ H :=
+  let PP := type of H in
+  match PP with
+  | ?gf (upaco15 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco15_fold gf) in H
+  | ?gf (?gres (upaco15 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco15_fold (compose gf gres)) in H
+  end.
+
+Ltac punfold15_reverse H := punfold15_reverse_ H; eauto with paco.
 

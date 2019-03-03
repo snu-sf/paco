@@ -322,7 +322,26 @@ Hint Resolve grespectful7_incl.
 Hint Resolve rclo7_mon: paco.
 Hint Constructors weak_respectful7.
 
+(* User Tactics *)
+
 Ltac pupto7_init := eapply upto7_init; [eauto with paco|].
 Ltac pupto7_final := first [eapply upto7_final; [eauto with paco|] | eapply grespectful7_incl].
 Ltac pupto7 H := first [eapply upto7_step|eapply upto7_step_under]; [|eapply H|]; [eauto with paco|].
+
+Ltac pfold7_reverse_ :=
+    match goal with
+    | [|- ?gf (upaco7 _ _ _ _ _ _ _) _ _ _ _ _ _ _] => eapply (paco7_unfold gf)
+    | [|- ?gf (?gres (upaco7 _ _ _ _ _ _ _)) _ _ _ _ _ _ _] => eapply (paco7_unfold (gf:=compose gf gres))
+    end.
+
+Ltac pfold7_reverse := pfold7_reverse_; eauto with paco.
+
+Ltac punfold7_reverse_ H :=
+  let PP := type of H in
+  match PP with
+  | ?gf (upaco7 _ _ _ _ _ _ _) _ _ _ _ _ _ _ => eapply (paco7_fold gf) in H
+  | ?gf (?gres (upaco7 _ _ _ _ _ _ _)) _ _ _ _ _ _ _ => eapply (paco7_fold (compose gf gres)) in H
+  end.
+
+Ltac punfold7_reverse H := punfold7_reverse_ H; eauto with paco.
 

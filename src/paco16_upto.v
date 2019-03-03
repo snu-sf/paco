@@ -331,7 +331,26 @@ Hint Resolve grespectful16_incl.
 Hint Resolve rclo16_mon: paco.
 Hint Constructors weak_respectful16.
 
+(* User Tactics *)
+
 Ltac pupto16_init := eapply upto16_init; [eauto with paco|].
 Ltac pupto16_final := first [eapply upto16_final; [eauto with paco|] | eapply grespectful16_incl].
 Ltac pupto16 H := first [eapply upto16_step|eapply upto16_step_under]; [|eapply H|]; [eauto with paco|].
+
+Ltac pfold16_reverse_ :=
+    match goal with
+    | [|- ?gf (upaco16 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco16_unfold gf)
+    | [|- ?gf (?gres (upaco16 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco16_unfold (gf:=compose gf gres))
+    end.
+
+Ltac pfold16_reverse := pfold16_reverse_; eauto with paco.
+
+Ltac punfold16_reverse_ H :=
+  let PP := type of H in
+  match PP with
+  | ?gf (upaco16 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco16_fold gf) in H
+  | ?gf (?gres (upaco16 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco16_fold (compose gf gres)) in H
+  end.
+
+Ltac punfold16_reverse H := punfold16_reverse_ H; eauto with paco.
 

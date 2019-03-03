@@ -329,7 +329,26 @@ Hint Resolve grespectful14_incl.
 Hint Resolve rclo14_mon: paco.
 Hint Constructors weak_respectful14.
 
+(* User Tactics *)
+
 Ltac pupto14_init := eapply upto14_init; [eauto with paco|].
 Ltac pupto14_final := first [eapply upto14_final; [eauto with paco|] | eapply grespectful14_incl].
 Ltac pupto14 H := first [eapply upto14_step|eapply upto14_step_under]; [|eapply H|]; [eauto with paco|].
+
+Ltac pfold14_reverse_ :=
+    match goal with
+    | [|- ?gf (upaco14 _ _ _ _ _ _ _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco14_unfold gf)
+    | [|- ?gf (?gres (upaco14 _ _ _ _ _ _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco14_unfold (gf:=compose gf gres))
+    end.
+
+Ltac pfold14_reverse := pfold14_reverse_; eauto with paco.
+
+Ltac punfold14_reverse_ H :=
+  let PP := type of H in
+  match PP with
+  | ?gf (upaco14 _ _ _ _ _ _ _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco14_fold gf) in H
+  | ?gf (?gres (upaco14 _ _ _ _ _ _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco14_fold (compose gf gres)) in H
+  end.
+
+Ltac punfold14_reverse H := punfold14_reverse_ H; eauto with paco.
 

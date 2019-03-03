@@ -319,7 +319,26 @@ Hint Resolve grespectful4_incl.
 Hint Resolve rclo4_mon: paco.
 Hint Constructors weak_respectful4.
 
+(* User Tactics *)
+
 Ltac pupto4_init := eapply upto4_init; [eauto with paco|].
 Ltac pupto4_final := first [eapply upto4_final; [eauto with paco|] | eapply grespectful4_incl].
 Ltac pupto4 H := first [eapply upto4_step|eapply upto4_step_under]; [|eapply H|]; [eauto with paco|].
+
+Ltac pfold4_reverse_ :=
+    match goal with
+    | [|- ?gf (upaco4 _ _ _ _) _ _ _ _] => eapply (paco4_unfold gf)
+    | [|- ?gf (?gres (upaco4 _ _ _ _)) _ _ _ _] => eapply (paco4_unfold (gf:=compose gf gres))
+    end.
+
+Ltac pfold4_reverse := pfold4_reverse_; eauto with paco.
+
+Ltac punfold4_reverse_ H :=
+  let PP := type of H in
+  match PP with
+  | ?gf (upaco4 _ _ _ _) _ _ _ _ => eapply (paco4_fold gf) in H
+  | ?gf (?gres (upaco4 _ _ _ _)) _ _ _ _ => eapply (paco4_fold (compose gf gres)) in H
+  end.
+
+Ltac punfold4_reverse H := punfold4_reverse_ H; eauto with paco.
 

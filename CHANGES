@@ -2,6 +2,7 @@ changes from v2.0.2 to v2.0.3
 =========================
 - add the lemmas "[u]paco{n}_mon_bot".
 - add the lemmas "rclo{n}_mon_gen".
+- add the tactic "p[un]fold{n}_reverse".
 
 changes from v2.0.1 to v2.0.2
 =========================

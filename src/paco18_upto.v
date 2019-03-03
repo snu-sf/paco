@@ -333,7 +333,26 @@ Hint Resolve grespectful18_incl.
 Hint Resolve rclo18_mon: paco.
 Hint Constructors weak_respectful18.
 
+(* User Tactics *)
+
 Ltac pupto18_init := eapply upto18_init; [eauto with paco|].
 Ltac pupto18_final := first [eapply upto18_final; [eauto with paco|] | eapply grespectful18_incl].
 Ltac pupto18 H := first [eapply upto18_step|eapply upto18_step_under]; [|eapply H|]; [eauto with paco|].
+
+Ltac pfold18_reverse_ :=
+    match goal with
+    | [|- ?gf (upaco18 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco18_unfold gf)
+    | [|- ?gf (?gres (upaco18 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco18_unfold (gf:=compose gf gres))
+    end.
+
+Ltac pfold18_reverse := pfold18_reverse_; eauto with paco.
+
+Ltac punfold18_reverse_ H :=
+  let PP := type of H in
+  match PP with
+  | ?gf (upaco18 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco18_fold gf) in H
+  | ?gf (?gres (upaco18 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco18_fold (compose gf gres)) in H
+  end.
+
+Ltac punfold18_reverse H := punfold18_reverse_ H; eauto with paco.
 

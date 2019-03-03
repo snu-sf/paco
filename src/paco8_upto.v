@@ -323,7 +323,26 @@ Hint Resolve grespectful8_incl.
 Hint Resolve rclo8_mon: paco.
 Hint Constructors weak_respectful8.
 
+(* User Tactics *)
+
 Ltac pupto8_init := eapply upto8_init; [eauto with paco|].
 Ltac pupto8_final := first [eapply upto8_final; [eauto with paco|] | eapply grespectful8_incl].
 Ltac pupto8 H := first [eapply upto8_step|eapply upto8_step_under]; [|eapply H|]; [eauto with paco|].
+
+Ltac pfold8_reverse_ :=
+    match goal with
+    | [|- ?gf (upaco8 _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _] => eapply (paco8_unfold gf)
+    | [|- ?gf (?gres (upaco8 _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _] => eapply (paco8_unfold (gf:=compose gf gres))
+    end.
+
+Ltac pfold8_reverse := pfold8_reverse_; eauto with paco.
+
+Ltac punfold8_reverse_ H :=
+  let PP := type of H in
+  match PP with
+  | ?gf (upaco8 _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ => eapply (paco8_fold gf) in H
+  | ?gf (?gres (upaco8 _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ => eapply (paco8_fold (compose gf gres)) in H
+  end.
+
+Ltac punfold8_reverse H := punfold8_reverse_ H; eauto with paco.
 
