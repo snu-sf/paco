@@ -262,18 +262,23 @@ Proof.
 Qed.
 
 Lemma upto10_step
-      r clo (RES: respectful10 clo):
+      r clo (RES: weak_respectful10 clo):
   clo (paco10 (compose gf gres10) r) <10= paco10 (compose gf gres10) r.
 Proof.
   intros. apply grespectful10_incl_rev.
-  eapply grespectful10_greatest; [apply RES|apply PR].
+  assert (RES' := weak_respectful10_respectful10 RES).
+  eapply grespectful10_greatest; [apply RES'|].
+  eapply rclo10_base; [apply RES|].
+  inversion RES. apply PR.
 Qed.
 
 Lemma upto10_step_under
-      r clo (RES: respectful10 clo):
+      r clo (RES: weak_respectful10 clo):
   clo (gres10 r) <10= gres10 r.
 Proof.
-  intros. eapply grespectful10_compose; [apply RES|apply PR].
+  intros. apply weak_respectful10_respectful10 in RES.
+  eapply grespectful10_compose; [apply RES|].
+  econstructor 2; [intros; constructor 1; apply PR0 | apply PR].
 Qed.
 
 End Respectful10.
@@ -322,5 +327,5 @@ Hint Constructors weak_respectful10.
 
 Ltac pupto10_init := eapply upto10_init; [eauto with paco|].
 Ltac pupto10_final := first [eapply upto10_final; [eauto with paco|] | eapply grespectful10_incl].
-Ltac pupto10 H := first [eapply upto10_step|eapply upto10_step_under]; [|(eapply H || eapply weak_respectful10_respectful10, H)|]; [eauto with paco|].
+Ltac pupto10 H := first [eapply upto10_step|eapply upto10_step_under]; [|eapply H|]; [eauto with paco|].
 

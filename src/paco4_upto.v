@@ -256,18 +256,23 @@ Proof.
 Qed.
 
 Lemma upto4_step
-      r clo (RES: respectful4 clo):
+      r clo (RES: weak_respectful4 clo):
   clo (paco4 (compose gf gres4) r) <4= paco4 (compose gf gres4) r.
 Proof.
   intros. apply grespectful4_incl_rev.
-  eapply grespectful4_greatest; [apply RES|apply PR].
+  assert (RES' := weak_respectful4_respectful4 RES).
+  eapply grespectful4_greatest; [apply RES'|].
+  eapply rclo4_base; [apply RES|].
+  inversion RES. apply PR.
 Qed.
 
 Lemma upto4_step_under
-      r clo (RES: respectful4 clo):
+      r clo (RES: weak_respectful4 clo):
   clo (gres4 r) <4= gres4 r.
 Proof.
-  intros. eapply grespectful4_compose; [apply RES|apply PR].
+  intros. apply weak_respectful4_respectful4 in RES.
+  eapply grespectful4_compose; [apply RES|].
+  econstructor 2; [intros; constructor 1; apply PR0 | apply PR].
 Qed.
 
 End Respectful4.
@@ -316,5 +321,5 @@ Hint Constructors weak_respectful4.
 
 Ltac pupto4_init := eapply upto4_init; [eauto with paco|].
 Ltac pupto4_final := first [eapply upto4_final; [eauto with paco|] | eapply grespectful4_incl].
-Ltac pupto4 H := first [eapply upto4_step|eapply upto4_step_under]; [|(eapply H || eapply weak_respectful4_respectful4, H)|]; [eauto with paco|].
+Ltac pupto4 H := first [eapply upto4_step|eapply upto4_step_under]; [|eapply H|]; [eauto with paco|].
 

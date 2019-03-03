@@ -265,18 +265,23 @@ Proof.
 Qed.
 
 Lemma upto13_step
-      r clo (RES: respectful13 clo):
+      r clo (RES: weak_respectful13 clo):
   clo (paco13 (compose gf gres13) r) <13= paco13 (compose gf gres13) r.
 Proof.
   intros. apply grespectful13_incl_rev.
-  eapply grespectful13_greatest; [apply RES|apply PR].
+  assert (RES' := weak_respectful13_respectful13 RES).
+  eapply grespectful13_greatest; [apply RES'|].
+  eapply rclo13_base; [apply RES|].
+  inversion RES. apply PR.
 Qed.
 
 Lemma upto13_step_under
-      r clo (RES: respectful13 clo):
+      r clo (RES: weak_respectful13 clo):
   clo (gres13 r) <13= gres13 r.
 Proof.
-  intros. eapply grespectful13_compose; [apply RES|apply PR].
+  intros. apply weak_respectful13_respectful13 in RES.
+  eapply grespectful13_compose; [apply RES|].
+  econstructor 2; [intros; constructor 1; apply PR0 | apply PR].
 Qed.
 
 End Respectful13.
@@ -325,5 +330,5 @@ Hint Constructors weak_respectful13.
 
 Ltac pupto13_init := eapply upto13_init; [eauto with paco|].
 Ltac pupto13_final := first [eapply upto13_final; [eauto with paco|] | eapply grespectful13_incl].
-Ltac pupto13 H := first [eapply upto13_step|eapply upto13_step_under]; [|(eapply H || eapply weak_respectful13_respectful13, H)|]; [eauto with paco|].
+Ltac pupto13 H := first [eapply upto13_step|eapply upto13_step_under]; [|eapply H|]; [eauto with paco|].
 

@@ -267,18 +267,23 @@ Proof.
 Qed.
 
 Lemma upto15_step
-      r clo (RES: respectful15 clo):
+      r clo (RES: weak_respectful15 clo):
   clo (paco15 (compose gf gres15) r) <15= paco15 (compose gf gres15) r.
 Proof.
   intros. apply grespectful15_incl_rev.
-  eapply grespectful15_greatest; [apply RES|apply PR].
+  assert (RES' := weak_respectful15_respectful15 RES).
+  eapply grespectful15_greatest; [apply RES'|].
+  eapply rclo15_base; [apply RES|].
+  inversion RES. apply PR.
 Qed.
 
 Lemma upto15_step_under
-      r clo (RES: respectful15 clo):
+      r clo (RES: weak_respectful15 clo):
   clo (gres15 r) <15= gres15 r.
 Proof.
-  intros. eapply grespectful15_compose; [apply RES|apply PR].
+  intros. apply weak_respectful15_respectful15 in RES.
+  eapply grespectful15_compose; [apply RES|].
+  econstructor 2; [intros; constructor 1; apply PR0 | apply PR].
 Qed.
 
 End Respectful15.
@@ -327,5 +332,5 @@ Hint Constructors weak_respectful15.
 
 Ltac pupto15_init := eapply upto15_init; [eauto with paco|].
 Ltac pupto15_final := first [eapply upto15_final; [eauto with paco|] | eapply grespectful15_incl].
-Ltac pupto15 H := first [eapply upto15_step|eapply upto15_step_under]; [|(eapply H || eapply weak_respectful15_respectful15, H)|]; [eauto with paco|].
+Ltac pupto15 H := first [eapply upto15_step|eapply upto15_step_under]; [|eapply H|]; [eauto with paco|].
 

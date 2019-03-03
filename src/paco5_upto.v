@@ -257,18 +257,23 @@ Proof.
 Qed.
 
 Lemma upto5_step
-      r clo (RES: respectful5 clo):
+      r clo (RES: weak_respectful5 clo):
   clo (paco5 (compose gf gres5) r) <5= paco5 (compose gf gres5) r.
 Proof.
   intros. apply grespectful5_incl_rev.
-  eapply grespectful5_greatest; [apply RES|apply PR].
+  assert (RES' := weak_respectful5_respectful5 RES).
+  eapply grespectful5_greatest; [apply RES'|].
+  eapply rclo5_base; [apply RES|].
+  inversion RES. apply PR.
 Qed.
 
 Lemma upto5_step_under
-      r clo (RES: respectful5 clo):
+      r clo (RES: weak_respectful5 clo):
   clo (gres5 r) <5= gres5 r.
 Proof.
-  intros. eapply grespectful5_compose; [apply RES|apply PR].
+  intros. apply weak_respectful5_respectful5 in RES.
+  eapply grespectful5_compose; [apply RES|].
+  econstructor 2; [intros; constructor 1; apply PR0 | apply PR].
 Qed.
 
 End Respectful5.
@@ -317,5 +322,5 @@ Hint Constructors weak_respectful5.
 
 Ltac pupto5_init := eapply upto5_init; [eauto with paco|].
 Ltac pupto5_final := first [eapply upto5_final; [eauto with paco|] | eapply grespectful5_incl].
-Ltac pupto5 H := first [eapply upto5_step|eapply upto5_step_under]; [|(eapply H || eapply weak_respectful5_respectful5, H)|]; [eauto with paco|].
+Ltac pupto5 H := first [eapply upto5_step|eapply upto5_step_under]; [|eapply H|]; [eauto with paco|].
 

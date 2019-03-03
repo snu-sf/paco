@@ -268,18 +268,23 @@ Proof.
 Qed.
 
 Lemma upto16_step
-      r clo (RES: respectful16 clo):
+      r clo (RES: weak_respectful16 clo):
   clo (paco16 (compose gf gres16) r) <16= paco16 (compose gf gres16) r.
 Proof.
   intros. apply grespectful16_incl_rev.
-  eapply grespectful16_greatest; [apply RES|apply PR].
+  assert (RES' := weak_respectful16_respectful16 RES).
+  eapply grespectful16_greatest; [apply RES'|].
+  eapply rclo16_base; [apply RES|].
+  inversion RES. apply PR.
 Qed.
 
 Lemma upto16_step_under
-      r clo (RES: respectful16 clo):
+      r clo (RES: weak_respectful16 clo):
   clo (gres16 r) <16= gres16 r.
 Proof.
-  intros. eapply grespectful16_compose; [apply RES|apply PR].
+  intros. apply weak_respectful16_respectful16 in RES.
+  eapply grespectful16_compose; [apply RES|].
+  econstructor 2; [intros; constructor 1; apply PR0 | apply PR].
 Qed.
 
 End Respectful16.
@@ -328,5 +333,5 @@ Hint Constructors weak_respectful16.
 
 Ltac pupto16_init := eapply upto16_init; [eauto with paco|].
 Ltac pupto16_final := first [eapply upto16_final; [eauto with paco|] | eapply grespectful16_incl].
-Ltac pupto16 H := first [eapply upto16_step|eapply upto16_step_under]; [|(eapply H || eapply weak_respectful16_respectful16, H)|]; [eauto with paco|].
+Ltac pupto16 H := first [eapply upto16_step|eapply upto16_step_under]; [|eapply H|]; [eauto with paco|].
 

@@ -260,18 +260,23 @@ Proof.
 Qed.
 
 Lemma upto8_step
-      r clo (RES: respectful8 clo):
+      r clo (RES: weak_respectful8 clo):
   clo (paco8 (compose gf gres8) r) <8= paco8 (compose gf gres8) r.
 Proof.
   intros. apply grespectful8_incl_rev.
-  eapply grespectful8_greatest; [apply RES|apply PR].
+  assert (RES' := weak_respectful8_respectful8 RES).
+  eapply grespectful8_greatest; [apply RES'|].
+  eapply rclo8_base; [apply RES|].
+  inversion RES. apply PR.
 Qed.
 
 Lemma upto8_step_under
-      r clo (RES: respectful8 clo):
+      r clo (RES: weak_respectful8 clo):
   clo (gres8 r) <8= gres8 r.
 Proof.
-  intros. eapply grespectful8_compose; [apply RES|apply PR].
+  intros. apply weak_respectful8_respectful8 in RES.
+  eapply grespectful8_compose; [apply RES|].
+  econstructor 2; [intros; constructor 1; apply PR0 | apply PR].
 Qed.
 
 End Respectful8.
@@ -320,5 +325,5 @@ Hint Constructors weak_respectful8.
 
 Ltac pupto8_init := eapply upto8_init; [eauto with paco|].
 Ltac pupto8_final := first [eapply upto8_final; [eauto with paco|] | eapply grespectful8_incl].
-Ltac pupto8 H := first [eapply upto8_step|eapply upto8_step_under]; [|(eapply H || eapply weak_respectful8_respectful8, H)|]; [eauto with paco|].
+Ltac pupto8 H := first [eapply upto8_step|eapply upto8_step_under]; [|eapply H|]; [eauto with paco|].
 
