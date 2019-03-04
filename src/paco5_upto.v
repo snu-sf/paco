@@ -239,8 +239,10 @@ Proof.
     intros. eapply rclo5_mon; [apply R', PR| apply LE].
 Qed.
 
+Definition cgres5 := compose gf gres5.
+
 Lemma upto5_init:
-  paco5 (compose gf gres5) bot5 <5= paco5 gf bot5.
+  paco5 cgres5 bot5 <5= paco5 gf bot5.
 Proof.
   apply sound5_is_gf.
   apply respectful5_is_sound5.
@@ -248,7 +250,7 @@ Proof.
 Qed.
 
 Lemma upto5_final:
-  paco5 gf <6= paco5 (compose gf gres5).
+  paco5 gf <6= paco5 cgres5.
 Proof.
   pcofix CIH. intros. _punfold PR; [|apply gf_mon]. pfold.
   eapply gf_mon; [|apply grespectful5_incl].
@@ -258,7 +260,7 @@ Qed.
 
 Lemma upto5_step
       r clo (RES: weak_respectful5 clo):
-  clo (paco5 (compose gf gres5) r) <5= paco5 (compose gf gres5) r.
+  clo (paco5 cgres5 r) <5= paco5 cgres5 r.
 Proof.
   intros. apply grespectful5_incl_rev.
   assert (RES' := weak_respectful5_respectful5 RES).
@@ -319,6 +321,7 @@ Hint Resolve gfgres5_mon : paco.
 Hint Resolve grespectful5_incl.
 Hint Resolve rclo5_mon: paco.
 Hint Constructors weak_respectful5.
+Hint Unfold cgres5.
 
 (* User Tactics *)
 
@@ -327,18 +330,20 @@ Ltac pupto5_final := first [eapply upto5_final; [eauto with paco|] | eapply gres
 Ltac pupto5 H := first [eapply upto5_step|eapply upto5_step_under]; [|eapply H|]; [eauto with paco|].
 
 Ltac pfold5_reverse_ :=
-    match goal with
-    | [|- ?gf (upaco5 _ _ _ _ _) _ _ _ _ _] => eapply (paco5_unfold gf)
-    | [|- ?gf (?gres (upaco5 _ _ _ _ _)) _ _ _ _ _] => eapply (paco5_unfold (gf:=compose gf gres))
-    end.
+  repeat red;
+  match goal with
+  | [|- ?gf (upaco5 _ _ _ _ _) _ _ _ _ _] => eapply (paco5_unfold (gf := gf))
+  | [|- ?gf (?gres (upaco5 _ _ _ _ _)) _ _ _ _ _] => eapply (paco5_unfold (gf := cgres5 gf))
+  end.
 
 Ltac pfold5_reverse := pfold5_reverse_; eauto with paco.
 
 Ltac punfold5_reverse_ H :=
+  repeat red in H;
   let PP := type of H in
   match PP with
   | ?gf (upaco5 _ _ _ _ _) _ _ _ _ _ => eapply (paco5_fold gf) in H
-  | ?gf (?gres (upaco5 _ _ _ _ _)) _ _ _ _ _ => eapply (paco5_fold (compose gf gres)) in H
+  | ?gf (?gres (upaco5 _ _ _ _ _)) _ _ _ _ _ => eapply (paco5_fold (cgres5 gf)) in H
   end.
 
 Ltac punfold5_reverse H := punfold5_reverse_ H; eauto with paco.

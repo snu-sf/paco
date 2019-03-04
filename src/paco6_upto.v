@@ -240,8 +240,10 @@ Proof.
     intros. eapply rclo6_mon; [apply R', PR| apply LE].
 Qed.
 
+Definition cgres6 := compose gf gres6.
+
 Lemma upto6_init:
-  paco6 (compose gf gres6) bot6 <6= paco6 gf bot6.
+  paco6 cgres6 bot6 <6= paco6 gf bot6.
 Proof.
   apply sound6_is_gf.
   apply respectful6_is_sound6.
@@ -249,7 +251,7 @@ Proof.
 Qed.
 
 Lemma upto6_final:
-  paco6 gf <7= paco6 (compose gf gres6).
+  paco6 gf <7= paco6 cgres6.
 Proof.
   pcofix CIH. intros. _punfold PR; [|apply gf_mon]. pfold.
   eapply gf_mon; [|apply grespectful6_incl].
@@ -259,7 +261,7 @@ Qed.
 
 Lemma upto6_step
       r clo (RES: weak_respectful6 clo):
-  clo (paco6 (compose gf gres6) r) <6= paco6 (compose gf gres6) r.
+  clo (paco6 cgres6 r) <6= paco6 cgres6 r.
 Proof.
   intros. apply grespectful6_incl_rev.
   assert (RES' := weak_respectful6_respectful6 RES).
@@ -320,6 +322,7 @@ Hint Resolve gfgres6_mon : paco.
 Hint Resolve grespectful6_incl.
 Hint Resolve rclo6_mon: paco.
 Hint Constructors weak_respectful6.
+Hint Unfold cgres6.
 
 (* User Tactics *)
 
@@ -328,18 +331,20 @@ Ltac pupto6_final := first [eapply upto6_final; [eauto with paco|] | eapply gres
 Ltac pupto6 H := first [eapply upto6_step|eapply upto6_step_under]; [|eapply H|]; [eauto with paco|].
 
 Ltac pfold6_reverse_ :=
-    match goal with
-    | [|- ?gf (upaco6 _ _ _ _ _ _) _ _ _ _ _ _] => eapply (paco6_unfold gf)
-    | [|- ?gf (?gres (upaco6 _ _ _ _ _ _)) _ _ _ _ _ _] => eapply (paco6_unfold (gf:=compose gf gres))
-    end.
+  repeat red;
+  match goal with
+  | [|- ?gf (upaco6 _ _ _ _ _ _) _ _ _ _ _ _] => eapply (paco6_unfold (gf := gf))
+  | [|- ?gf (?gres (upaco6 _ _ _ _ _ _)) _ _ _ _ _ _] => eapply (paco6_unfold (gf := cgres6 gf))
+  end.
 
 Ltac pfold6_reverse := pfold6_reverse_; eauto with paco.
 
 Ltac punfold6_reverse_ H :=
+  repeat red in H;
   let PP := type of H in
   match PP with
   | ?gf (upaco6 _ _ _ _ _ _) _ _ _ _ _ _ => eapply (paco6_fold gf) in H
-  | ?gf (?gres (upaco6 _ _ _ _ _ _)) _ _ _ _ _ _ => eapply (paco6_fold (compose gf gres)) in H
+  | ?gf (?gres (upaco6 _ _ _ _ _ _)) _ _ _ _ _ _ => eapply (paco6_fold (cgres6 gf)) in H
   end.
 
 Ltac punfold6_reverse H := punfold6_reverse_ H; eauto with paco.

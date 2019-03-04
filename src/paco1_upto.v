@@ -235,8 +235,10 @@ Proof.
     intros. eapply rclo1_mon; [apply R', PR| apply LE].
 Qed.
 
+Definition cgres1 := compose gf gres1.
+
 Lemma upto1_init:
-  paco1 (compose gf gres1) bot1 <1= paco1 gf bot1.
+  paco1 cgres1 bot1 <1= paco1 gf bot1.
 Proof.
   apply sound1_is_gf.
   apply respectful1_is_sound1.
@@ -244,7 +246,7 @@ Proof.
 Qed.
 
 Lemma upto1_final:
-  paco1 gf <2= paco1 (compose gf gres1).
+  paco1 gf <2= paco1 cgres1.
 Proof.
   pcofix CIH. intros. _punfold PR; [|apply gf_mon]. pfold.
   eapply gf_mon; [|apply grespectful1_incl].
@@ -254,7 +256,7 @@ Qed.
 
 Lemma upto1_step
       r clo (RES: weak_respectful1 clo):
-  clo (paco1 (compose gf gres1) r) <1= paco1 (compose gf gres1) r.
+  clo (paco1 cgres1 r) <1= paco1 cgres1 r.
 Proof.
   intros. apply grespectful1_incl_rev.
   assert (RES' := weak_respectful1_respectful1 RES).
@@ -315,6 +317,7 @@ Hint Resolve gfgres1_mon : paco.
 Hint Resolve grespectful1_incl.
 Hint Resolve rclo1_mon: paco.
 Hint Constructors weak_respectful1.
+Hint Unfold cgres1.
 
 (* User Tactics *)
 
@@ -323,18 +326,20 @@ Ltac pupto1_final := first [eapply upto1_final; [eauto with paco|] | eapply gres
 Ltac pupto1 H := first [eapply upto1_step|eapply upto1_step_under]; [|eapply H|]; [eauto with paco|].
 
 Ltac pfold1_reverse_ :=
-    match goal with
-    | [|- ?gf (upaco1 _) _] => eapply (paco1_unfold gf)
-    | [|- ?gf (?gres (upaco1 _)) _] => eapply (paco1_unfold (gf:=compose gf gres))
-    end.
+  repeat red;
+  match goal with
+  | [|- ?gf (upaco1 _) _] => eapply (paco1_unfold (gf := gf))
+  | [|- ?gf (?gres (upaco1 _)) _] => eapply (paco1_unfold (gf := cgres1 gf))
+  end.
 
 Ltac pfold1_reverse := pfold1_reverse_; eauto with paco.
 
 Ltac punfold1_reverse_ H :=
+  repeat red in H;
   let PP := type of H in
   match PP with
   | ?gf (upaco1 _) _ => eapply (paco1_fold gf) in H
-  | ?gf (?gres (upaco1 _)) _ => eapply (paco1_fold (compose gf gres)) in H
+  | ?gf (?gres (upaco1 _)) _ => eapply (paco1_fold (cgres1 gf)) in H
   end.
 
 Ltac punfold1_reverse H := punfold1_reverse_ H; eauto with paco.

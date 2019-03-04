@@ -251,8 +251,10 @@ Proof.
     intros. eapply rclo17_mon; [apply R', PR| apply LE].
 Qed.
 
+Definition cgres17 := compose gf gres17.
+
 Lemma upto17_init:
-  paco17 (compose gf gres17) bot17 <17= paco17 gf bot17.
+  paco17 cgres17 bot17 <17= paco17 gf bot17.
 Proof.
   apply sound17_is_gf.
   apply respectful17_is_sound17.
@@ -260,7 +262,7 @@ Proof.
 Qed.
 
 Lemma upto17_final:
-  paco17 gf <18= paco17 (compose gf gres17).
+  paco17 gf <18= paco17 cgres17.
 Proof.
   pcofix CIH. intros. _punfold PR; [|apply gf_mon]. pfold.
   eapply gf_mon; [|apply grespectful17_incl].
@@ -270,7 +272,7 @@ Qed.
 
 Lemma upto17_step
       r clo (RES: weak_respectful17 clo):
-  clo (paco17 (compose gf gres17) r) <17= paco17 (compose gf gres17) r.
+  clo (paco17 cgres17 r) <17= paco17 cgres17 r.
 Proof.
   intros. apply grespectful17_incl_rev.
   assert (RES' := weak_respectful17_respectful17 RES).
@@ -331,6 +333,7 @@ Hint Resolve gfgres17_mon : paco.
 Hint Resolve grespectful17_incl.
 Hint Resolve rclo17_mon: paco.
 Hint Constructors weak_respectful17.
+Hint Unfold cgres17.
 
 (* User Tactics *)
 
@@ -339,18 +342,20 @@ Ltac pupto17_final := first [eapply upto17_final; [eauto with paco|] | eapply gr
 Ltac pupto17 H := first [eapply upto17_step|eapply upto17_step_under]; [|eapply H|]; [eauto with paco|].
 
 Ltac pfold17_reverse_ :=
-    match goal with
-    | [|- ?gf (upaco17 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco17_unfold gf)
-    | [|- ?gf (?gres (upaco17 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco17_unfold (gf:=compose gf gres))
-    end.
+  repeat red;
+  match goal with
+  | [|- ?gf (upaco17 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco17_unfold (gf := gf))
+  | [|- ?gf (?gres (upaco17 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco17_unfold (gf := cgres17 gf))
+  end.
 
 Ltac pfold17_reverse := pfold17_reverse_; eauto with paco.
 
 Ltac punfold17_reverse_ H :=
+  repeat red in H;
   let PP := type of H in
   match PP with
   | ?gf (upaco17 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco17_fold gf) in H
-  | ?gf (?gres (upaco17 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco17_fold (compose gf gres)) in H
+  | ?gf (?gres (upaco17 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco17_fold (cgres17 gf)) in H
   end.
 
 Ltac punfold17_reverse H := punfold17_reverse_ H; eauto with paco.

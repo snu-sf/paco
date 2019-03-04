@@ -234,8 +234,10 @@ Proof.
     intros. eapply rclo0_mon; [apply R', PR| apply LE].
 Qed.
 
+Definition cgres0 := compose gf gres0.
+
 Lemma upto0_init:
-  paco0 (compose gf gres0) bot0 <0= paco0 gf bot0.
+  paco0 cgres0 bot0 <0= paco0 gf bot0.
 Proof.
   apply sound0_is_gf.
   apply respectful0_is_sound0.
@@ -243,7 +245,7 @@ Proof.
 Qed.
 
 Lemma upto0_final:
-  paco0 gf <1= paco0 (compose gf gres0).
+  paco0 gf <1= paco0 cgres0.
 Proof.
   pcofix CIH. intros. _punfold PR; [|apply gf_mon]. pfold.
   eapply gf_mon; [|apply grespectful0_incl].
@@ -253,7 +255,7 @@ Qed.
 
 Lemma upto0_step
       r clo (RES: weak_respectful0 clo):
-  clo (paco0 (compose gf gres0) r) <0= paco0 (compose gf gres0) r.
+  clo (paco0 cgres0 r) <0= paco0 cgres0 r.
 Proof.
   intros. apply grespectful0_incl_rev.
   assert (RES' := weak_respectful0_respectful0 RES).
@@ -314,6 +316,7 @@ Hint Resolve gfgres0_mon : paco.
 Hint Resolve grespectful0_incl.
 Hint Resolve rclo0_mon: paco.
 Hint Constructors weak_respectful0.
+Hint Unfold cgres0.
 
 (* User Tactics *)
 
@@ -322,18 +325,20 @@ Ltac pupto0_final := first [eapply upto0_final; [eauto with paco|] | eapply gres
 Ltac pupto0 H := first [eapply upto0_step|eapply upto0_step_under]; [|eapply H|]; [eauto with paco|].
 
 Ltac pfold0_reverse_ :=
-    match goal with
-    | [|- ?gf (upaco0)] => eapply (paco0_unfold gf)
-    | [|- ?gf (?gres (upaco0))] => eapply (paco0_unfold (gf:=compose gf gres))
-    end.
+  repeat red;
+  match goal with
+  | [|- ?gf (upaco0)] => eapply (paco0_unfold (gf := gf))
+  | [|- ?gf (?gres (upaco0))] => eapply (paco0_unfold (gf := cgres0 gf))
+  end.
 
 Ltac pfold0_reverse := pfold0_reverse_; eauto with paco.
 
 Ltac punfold0_reverse_ H :=
+  repeat red in H;
   let PP := type of H in
   match PP with
   | ?gf (upaco0) => eapply (paco0_fold gf) in H
-  | ?gf (?gres (upaco0)) => eapply (paco0_fold (compose gf gres)) in H
+  | ?gf (?gres (upaco0)) => eapply (paco0_fold (cgres0 gf)) in H
   end.
 
 Ltac punfold0_reverse H := punfold0_reverse_ H; eauto with paco.

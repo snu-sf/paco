@@ -245,8 +245,10 @@ Proof.
     intros. eapply rclo11_mon; [apply R', PR| apply LE].
 Qed.
 
+Definition cgres11 := compose gf gres11.
+
 Lemma upto11_init:
-  paco11 (compose gf gres11) bot11 <11= paco11 gf bot11.
+  paco11 cgres11 bot11 <11= paco11 gf bot11.
 Proof.
   apply sound11_is_gf.
   apply respectful11_is_sound11.
@@ -254,7 +256,7 @@ Proof.
 Qed.
 
 Lemma upto11_final:
-  paco11 gf <12= paco11 (compose gf gres11).
+  paco11 gf <12= paco11 cgres11.
 Proof.
   pcofix CIH. intros. _punfold PR; [|apply gf_mon]. pfold.
   eapply gf_mon; [|apply grespectful11_incl].
@@ -264,7 +266,7 @@ Qed.
 
 Lemma upto11_step
       r clo (RES: weak_respectful11 clo):
-  clo (paco11 (compose gf gres11) r) <11= paco11 (compose gf gres11) r.
+  clo (paco11 cgres11 r) <11= paco11 cgres11 r.
 Proof.
   intros. apply grespectful11_incl_rev.
   assert (RES' := weak_respectful11_respectful11 RES).
@@ -325,6 +327,7 @@ Hint Resolve gfgres11_mon : paco.
 Hint Resolve grespectful11_incl.
 Hint Resolve rclo11_mon: paco.
 Hint Constructors weak_respectful11.
+Hint Unfold cgres11.
 
 (* User Tactics *)
 
@@ -333,18 +336,20 @@ Ltac pupto11_final := first [eapply upto11_final; [eauto with paco|] | eapply gr
 Ltac pupto11 H := first [eapply upto11_step|eapply upto11_step_under]; [|eapply H|]; [eauto with paco|].
 
 Ltac pfold11_reverse_ :=
-    match goal with
-    | [|- ?gf (upaco11 _ _ _ _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ _ _ _] => eapply (paco11_unfold gf)
-    | [|- ?gf (?gres (upaco11 _ _ _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ _ _] => eapply (paco11_unfold (gf:=compose gf gres))
-    end.
+  repeat red;
+  match goal with
+  | [|- ?gf (upaco11 _ _ _ _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ _ _ _] => eapply (paco11_unfold (gf := gf))
+  | [|- ?gf (?gres (upaco11 _ _ _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ _ _] => eapply (paco11_unfold (gf := cgres11 gf))
+  end.
 
 Ltac pfold11_reverse := pfold11_reverse_; eauto with paco.
 
 Ltac punfold11_reverse_ H :=
+  repeat red in H;
   let PP := type of H in
   match PP with
   | ?gf (upaco11 _ _ _ _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ _ _ _ => eapply (paco11_fold gf) in H
-  | ?gf (?gres (upaco11 _ _ _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ _ _ => eapply (paco11_fold (compose gf gres)) in H
+  | ?gf (?gres (upaco11 _ _ _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ _ _ => eapply (paco11_fold (cgres11 gf)) in H
   end.
 
 Ltac punfold11_reverse H := punfold11_reverse_ H; eauto with paco.

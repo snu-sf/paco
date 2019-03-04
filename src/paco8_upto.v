@@ -242,8 +242,10 @@ Proof.
     intros. eapply rclo8_mon; [apply R', PR| apply LE].
 Qed.
 
+Definition cgres8 := compose gf gres8.
+
 Lemma upto8_init:
-  paco8 (compose gf gres8) bot8 <8= paco8 gf bot8.
+  paco8 cgres8 bot8 <8= paco8 gf bot8.
 Proof.
   apply sound8_is_gf.
   apply respectful8_is_sound8.
@@ -251,7 +253,7 @@ Proof.
 Qed.
 
 Lemma upto8_final:
-  paco8 gf <9= paco8 (compose gf gres8).
+  paco8 gf <9= paco8 cgres8.
 Proof.
   pcofix CIH. intros. _punfold PR; [|apply gf_mon]. pfold.
   eapply gf_mon; [|apply grespectful8_incl].
@@ -261,7 +263,7 @@ Qed.
 
 Lemma upto8_step
       r clo (RES: weak_respectful8 clo):
-  clo (paco8 (compose gf gres8) r) <8= paco8 (compose gf gres8) r.
+  clo (paco8 cgres8 r) <8= paco8 cgres8 r.
 Proof.
   intros. apply grespectful8_incl_rev.
   assert (RES' := weak_respectful8_respectful8 RES).
@@ -322,6 +324,7 @@ Hint Resolve gfgres8_mon : paco.
 Hint Resolve grespectful8_incl.
 Hint Resolve rclo8_mon: paco.
 Hint Constructors weak_respectful8.
+Hint Unfold cgres8.
 
 (* User Tactics *)
 
@@ -330,18 +333,20 @@ Ltac pupto8_final := first [eapply upto8_final; [eauto with paco|] | eapply gres
 Ltac pupto8 H := first [eapply upto8_step|eapply upto8_step_under]; [|eapply H|]; [eauto with paco|].
 
 Ltac pfold8_reverse_ :=
-    match goal with
-    | [|- ?gf (upaco8 _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _] => eapply (paco8_unfold gf)
-    | [|- ?gf (?gres (upaco8 _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _] => eapply (paco8_unfold (gf:=compose gf gres))
-    end.
+  repeat red;
+  match goal with
+  | [|- ?gf (upaco8 _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _] => eapply (paco8_unfold (gf := gf))
+  | [|- ?gf (?gres (upaco8 _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _] => eapply (paco8_unfold (gf := cgres8 gf))
+  end.
 
 Ltac pfold8_reverse := pfold8_reverse_; eauto with paco.
 
 Ltac punfold8_reverse_ H :=
+  repeat red in H;
   let PP := type of H in
   match PP with
   | ?gf (upaco8 _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ => eapply (paco8_fold gf) in H
-  | ?gf (?gres (upaco8 _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ => eapply (paco8_fold (compose gf gres)) in H
+  | ?gf (?gres (upaco8 _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ => eapply (paco8_fold (cgres8 gf)) in H
   end.
 
 Ltac punfold8_reverse H := punfold8_reverse_ H; eauto with paco.

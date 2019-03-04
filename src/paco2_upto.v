@@ -236,8 +236,10 @@ Proof.
     intros. eapply rclo2_mon; [apply R', PR| apply LE].
 Qed.
 
+Definition cgres2 := compose gf gres2.
+
 Lemma upto2_init:
-  paco2 (compose gf gres2) bot2 <2= paco2 gf bot2.
+  paco2 cgres2 bot2 <2= paco2 gf bot2.
 Proof.
   apply sound2_is_gf.
   apply respectful2_is_sound2.
@@ -245,7 +247,7 @@ Proof.
 Qed.
 
 Lemma upto2_final:
-  paco2 gf <3= paco2 (compose gf gres2).
+  paco2 gf <3= paco2 cgres2.
 Proof.
   pcofix CIH. intros. _punfold PR; [|apply gf_mon]. pfold.
   eapply gf_mon; [|apply grespectful2_incl].
@@ -255,7 +257,7 @@ Qed.
 
 Lemma upto2_step
       r clo (RES: weak_respectful2 clo):
-  clo (paco2 (compose gf gres2) r) <2= paco2 (compose gf gres2) r.
+  clo (paco2 cgres2 r) <2= paco2 cgres2 r.
 Proof.
   intros. apply grespectful2_incl_rev.
   assert (RES' := weak_respectful2_respectful2 RES).
@@ -316,6 +318,7 @@ Hint Resolve gfgres2_mon : paco.
 Hint Resolve grespectful2_incl.
 Hint Resolve rclo2_mon: paco.
 Hint Constructors weak_respectful2.
+Hint Unfold cgres2.
 
 (* User Tactics *)
 
@@ -324,18 +327,20 @@ Ltac pupto2_final := first [eapply upto2_final; [eauto with paco|] | eapply gres
 Ltac pupto2 H := first [eapply upto2_step|eapply upto2_step_under]; [|eapply H|]; [eauto with paco|].
 
 Ltac pfold2_reverse_ :=
-    match goal with
-    | [|- ?gf (upaco2 _ _) _ _] => eapply (paco2_unfold gf)
-    | [|- ?gf (?gres (upaco2 _ _)) _ _] => eapply (paco2_unfold (gf:=compose gf gres))
-    end.
+  repeat red;
+  match goal with
+  | [|- ?gf (upaco2 _ _) _ _] => eapply (paco2_unfold (gf := gf))
+  | [|- ?gf (?gres (upaco2 _ _)) _ _] => eapply (paco2_unfold (gf := cgres2 gf))
+  end.
 
 Ltac pfold2_reverse := pfold2_reverse_; eauto with paco.
 
 Ltac punfold2_reverse_ H :=
+  repeat red in H;
   let PP := type of H in
   match PP with
   | ?gf (upaco2 _ _) _ _ => eapply (paco2_fold gf) in H
-  | ?gf (?gres (upaco2 _ _)) _ _ => eapply (paco2_fold (compose gf gres)) in H
+  | ?gf (?gres (upaco2 _ _)) _ _ => eapply (paco2_fold (cgres2 gf)) in H
   end.
 
 Ltac punfold2_reverse H := punfold2_reverse_ H; eauto with paco.

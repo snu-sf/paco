@@ -237,8 +237,10 @@ Proof.
     intros. eapply rclo3_mon; [apply R', PR| apply LE].
 Qed.
 
+Definition cgres3 := compose gf gres3.
+
 Lemma upto3_init:
-  paco3 (compose gf gres3) bot3 <3= paco3 gf bot3.
+  paco3 cgres3 bot3 <3= paco3 gf bot3.
 Proof.
   apply sound3_is_gf.
   apply respectful3_is_sound3.
@@ -246,7 +248,7 @@ Proof.
 Qed.
 
 Lemma upto3_final:
-  paco3 gf <4= paco3 (compose gf gres3).
+  paco3 gf <4= paco3 cgres3.
 Proof.
   pcofix CIH. intros. _punfold PR; [|apply gf_mon]. pfold.
   eapply gf_mon; [|apply grespectful3_incl].
@@ -256,7 +258,7 @@ Qed.
 
 Lemma upto3_step
       r clo (RES: weak_respectful3 clo):
-  clo (paco3 (compose gf gres3) r) <3= paco3 (compose gf gres3) r.
+  clo (paco3 cgres3 r) <3= paco3 cgres3 r.
 Proof.
   intros. apply grespectful3_incl_rev.
   assert (RES' := weak_respectful3_respectful3 RES).
@@ -317,6 +319,7 @@ Hint Resolve gfgres3_mon : paco.
 Hint Resolve grespectful3_incl.
 Hint Resolve rclo3_mon: paco.
 Hint Constructors weak_respectful3.
+Hint Unfold cgres3.
 
 (* User Tactics *)
 
@@ -325,18 +328,20 @@ Ltac pupto3_final := first [eapply upto3_final; [eauto with paco|] | eapply gres
 Ltac pupto3 H := first [eapply upto3_step|eapply upto3_step_under]; [|eapply H|]; [eauto with paco|].
 
 Ltac pfold3_reverse_ :=
-    match goal with
-    | [|- ?gf (upaco3 _ _ _) _ _ _] => eapply (paco3_unfold gf)
-    | [|- ?gf (?gres (upaco3 _ _ _)) _ _ _] => eapply (paco3_unfold (gf:=compose gf gres))
-    end.
+  repeat red;
+  match goal with
+  | [|- ?gf (upaco3 _ _ _) _ _ _] => eapply (paco3_unfold (gf := gf))
+  | [|- ?gf (?gres (upaco3 _ _ _)) _ _ _] => eapply (paco3_unfold (gf := cgres3 gf))
+  end.
 
 Ltac pfold3_reverse := pfold3_reverse_; eauto with paco.
 
 Ltac punfold3_reverse_ H :=
+  repeat red in H;
   let PP := type of H in
   match PP with
   | ?gf (upaco3 _ _ _) _ _ _ => eapply (paco3_fold gf) in H
-  | ?gf (?gres (upaco3 _ _ _)) _ _ _ => eapply (paco3_fold (compose gf gres)) in H
+  | ?gf (?gres (upaco3 _ _ _)) _ _ _ => eapply (paco3_fold (cgres3 gf)) in H
   end.
 
 Ltac punfold3_reverse H := punfold3_reverse_ H; eauto with paco.

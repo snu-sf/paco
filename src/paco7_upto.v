@@ -241,8 +241,10 @@ Proof.
     intros. eapply rclo7_mon; [apply R', PR| apply LE].
 Qed.
 
+Definition cgres7 := compose gf gres7.
+
 Lemma upto7_init:
-  paco7 (compose gf gres7) bot7 <7= paco7 gf bot7.
+  paco7 cgres7 bot7 <7= paco7 gf bot7.
 Proof.
   apply sound7_is_gf.
   apply respectful7_is_sound7.
@@ -250,7 +252,7 @@ Proof.
 Qed.
 
 Lemma upto7_final:
-  paco7 gf <8= paco7 (compose gf gres7).
+  paco7 gf <8= paco7 cgres7.
 Proof.
   pcofix CIH. intros. _punfold PR; [|apply gf_mon]. pfold.
   eapply gf_mon; [|apply grespectful7_incl].
@@ -260,7 +262,7 @@ Qed.
 
 Lemma upto7_step
       r clo (RES: weak_respectful7 clo):
-  clo (paco7 (compose gf gres7) r) <7= paco7 (compose gf gres7) r.
+  clo (paco7 cgres7 r) <7= paco7 cgres7 r.
 Proof.
   intros. apply grespectful7_incl_rev.
   assert (RES' := weak_respectful7_respectful7 RES).
@@ -321,6 +323,7 @@ Hint Resolve gfgres7_mon : paco.
 Hint Resolve grespectful7_incl.
 Hint Resolve rclo7_mon: paco.
 Hint Constructors weak_respectful7.
+Hint Unfold cgres7.
 
 (* User Tactics *)
 
@@ -329,18 +332,20 @@ Ltac pupto7_final := first [eapply upto7_final; [eauto with paco|] | eapply gres
 Ltac pupto7 H := first [eapply upto7_step|eapply upto7_step_under]; [|eapply H|]; [eauto with paco|].
 
 Ltac pfold7_reverse_ :=
-    match goal with
-    | [|- ?gf (upaco7 _ _ _ _ _ _ _) _ _ _ _ _ _ _] => eapply (paco7_unfold gf)
-    | [|- ?gf (?gres (upaco7 _ _ _ _ _ _ _)) _ _ _ _ _ _ _] => eapply (paco7_unfold (gf:=compose gf gres))
-    end.
+  repeat red;
+  match goal with
+  | [|- ?gf (upaco7 _ _ _ _ _ _ _) _ _ _ _ _ _ _] => eapply (paco7_unfold (gf := gf))
+  | [|- ?gf (?gres (upaco7 _ _ _ _ _ _ _)) _ _ _ _ _ _ _] => eapply (paco7_unfold (gf := cgres7 gf))
+  end.
 
 Ltac pfold7_reverse := pfold7_reverse_; eauto with paco.
 
 Ltac punfold7_reverse_ H :=
+  repeat red in H;
   let PP := type of H in
   match PP with
   | ?gf (upaco7 _ _ _ _ _ _ _) _ _ _ _ _ _ _ => eapply (paco7_fold gf) in H
-  | ?gf (?gres (upaco7 _ _ _ _ _ _ _)) _ _ _ _ _ _ _ => eapply (paco7_fold (compose gf gres)) in H
+  | ?gf (?gres (upaco7 _ _ _ _ _ _ _)) _ _ _ _ _ _ _ => eapply (paco7_fold (cgres7 gf)) in H
   end.
 
 Ltac punfold7_reverse H := punfold7_reverse_ H; eauto with paco.
