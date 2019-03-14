@@ -2,7 +2,7 @@ Require Export Program.Basics. Open Scope program_scope.
 Require Import paco5.
 Set Implicit Arguments.
 
-Section Respectful5.
+Section Companion5.
 
 Variable T0 : Type.
 Variable T1 : forall (x0: @T0), Type.
@@ -15,336 +15,348 @@ Local Notation rel := (rel5 T0 T1 T2 T3 T4).
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone5 gf.
 
-Inductive sound5 (clo: rel -> rel): Prop :=
-| sound5_intro
-    (MON: monotone5 clo)
-    (SOUND:
-       forall r (PFIX: r <5= gf (clo r)),
-         r <5= paco5 gf bot5)
-.
-Hint Constructors sound5.
+(** 
+  Compatibility, Companion & Guarded Companion
+*)
 
-Structure respectful5 (clo: rel -> rel) : Prop :=
-  respectful5_intro {
-      MON: monotone5 clo;
-      RESPECTFUL:
-        forall l r (LE: l <5= r) (GF: l <5= gf r),
-          clo l <5= gf (clo r);
+Structure compatible5 (clo: rel -> rel) : Prop :=
+  compat5_intro {
+      compat5_mon: monotone5 clo;
+      compat5_compat : forall r,
+          clo (gf r) <5= gf (clo r);
     }.
-Hint Constructors respectful5.
 
-Inductive gres5 (r: rel) e0 e1 e2 e3 e4 : Prop :=
-| gres5_intro
+Inductive cpn5 (r: rel) e0 e1 e2 e3 e4 : Prop :=
+| cpn5_intro
     clo
-    (RES: respectful5 clo)
+    (COM: compatible5 clo)
     (CLO: clo r e0 e1 e2 e3 e4)
 .
-Hint Constructors gres5.
 
-Lemma gfclo5_mon: forall clo, sound5 clo -> monotone5 (compose gf clo).
-Proof.
-  intros; destruct H; red; intros.
-  eapply gf_mon; [apply IN|intros; eapply MON0; [apply PR|apply LE]].
-Qed.
-Hint Resolve gfclo5_mon : paco.
+Definition gcpn5 := compose gf cpn5.
 
-Lemma sound5_is_gf: forall clo (UPTO: sound5 clo),
-    paco5 (compose gf clo) bot5 <5= paco5 gf bot5.
+Lemma cpn5_mon: monotone5 cpn5.
 Proof.
-  intros. _punfold PR; [|apply gfclo5_mon, UPTO]. edestruct UPTO.
-  eapply (SOUND (paco5 (compose gf clo) bot5)).
-  - intros. _punfold PR0; [|apply gfclo5_mon, UPTO].
-    eapply (gfclo5_mon UPTO); [apply PR0| intros; destruct PR1; [apply H|destruct H]].
-  - pfold. apply PR.
+  red. intros.
+  destruct IN. exists clo.
+  - apply COM.
+  - eapply compat5_mon; [apply COM|apply CLO|apply LE].
 Qed.
 
-Lemma respectful5_is_sound5: respectful5 <1= sound5.
+Lemma cpn5_compat: compatible5 cpn5.
 Proof.
-  intro clo.
+  econstructor; [apply cpn5_mon|intros].
+  destruct PR; eapply gf_mon with (r:=clo r).
+  - eapply (compat5_compat COM); apply CLO.
+  - intros. econstructor; [apply COM|apply PR].
+Qed.
+
+Lemma cpn5_greatest: forall clo (COM: compatible5 clo), clo <6= cpn5.
+Proof. intros. econstructor;[apply COM|apply PR]. Qed.
+
+Lemma cpn5_id: forall r, r <5= cpn5 r.
+Proof.
+  intros. exists id.
+  - econstructor; repeat intro.
+    + apply LE, IN.
+    + apply PR0.
+  - apply PR.
+Qed.
+
+Lemma cpn5_comp: forall r,
+    cpn5 (cpn5 r) <5= cpn5 r.
+Proof.
+  intros. exists (compose cpn5 cpn5); [|apply PR].
+  econstructor.
+  - repeat intro. eapply cpn5_mon; [apply IN|].
+    intros. eapply cpn5_mon; [apply PR0|apply LE].
+  - intros. eapply (compat5_compat cpn5_compat).
+    eapply cpn5_mon; [apply PR0|].
+    intros. eapply (compat5_compat cpn5_compat), PR1. 
+Qed.
+
+Lemma gcpn5_mon: monotone5 gcpn5.
+Proof.
+  repeat intro. eapply gf_mon; [eapply IN|].
+  intros. eapply cpn5_mon; [apply PR|apply LE].
+Qed.
+
+Lemma gcpn5_sound:
+  paco5 gcpn5 bot5 <5= paco5 gf bot5.
+Proof.
+  intros.
   set (rclo := fix rclo clo n (r: rel) :=
          match n with
          | 0 => r
          | S n' => rclo clo n' r \5/ clo (rclo clo n' r)
          end).
-  intros. destruct PR. econstructor; [apply MON0|].
-  intros. set (rr e0 e1 e2 e3 e4 := exists n, rclo clo n r e0 e1 e2 e3 e4).
-  assert (rr x0 x1 x2 x3 x4) by (exists 0; apply PR); clear PR.
-  cut (forall n, rclo clo n r <5= gf (rclo clo (S n) r)).
-  { intro X; revert x0 x1 x2 x3 x4 H; pcofix CIH; intros.
-    unfold rr in *; destruct H0.
+  assert (RC: exists n, rclo cpn5 n (paco5 gcpn5 bot5) x0 x1 x2 x3 x4) by (exists 0; apply PR); clear PR.
+  
+  cut (forall n, rclo cpn5 n (paco5 gcpn5 bot5) <5= gf (rclo cpn5 (S n) (paco5 gcpn5 bot5))).
+  { intro X. revert x0 x1 x2 x3 x4 RC; pcofix CIH; intros.
     pfold. eapply gf_mon.
-    - apply X. apply H.
-    - intros. right. apply CIH. exists (S x). apply PR.
+    - apply X. apply RC.
+    - intros. right. eapply CIH. apply PR.
   }
+
   induction n; intros.
   - eapply gf_mon.
-    + clear RESPECTFUL0. eapply PFIX, PR.
-    + intros. right. eapply PR0.
+    + _punfold PR; [apply PR|apply gcpn5_mon].
+    + intros. right. eapply cpn5_mon; [apply PR0|].
+      intros. pclearbot. apply PR1.
   - destruct PR.
-    + eapply gf_mon; [eapply IHn, H0|]. intros. left. apply PR.
-    + eapply gf_mon; [eapply RESPECTFUL0; [|apply IHn|]|]; intros.
-      * left; apply PR.
-      * apply H0.
-      * right; apply PR.
+    + eapply gf_mon; [eapply IHn, H|]. intros. left. apply PR.
+    + eapply gf_mon.
+      * eapply (compat5_compat cpn5_compat).
+        eapply (compat5_mon cpn5_compat); [apply H|apply IHn].
+      * intros. econstructor 2. apply PR.
 Qed.
 
-Lemma respectful5_compose
-      clo0 clo1
-      (RES0: respectful5 clo0)
-      (RES1: respectful5 clo1):
-  respectful5 (compose clo0 clo1).
-Proof.
-  intros. destruct RES0, RES1.
-  econstructor.
-  - repeat intro. eapply MON0; [apply IN|].
-    intros. eapply MON1; [apply PR|apply LE].
-  - intros. eapply RESPECTFUL0; [| |apply PR].
-    + intros. eapply MON1; [apply PR0|apply LE].
-    + intros. eapply RESPECTFUL1; [apply LE| apply GF| apply PR0].
-Qed.
-
-Lemma grespectful5_mon: monotone5 gres5.
-Proof.
-  red. intros.
-  destruct IN; destruct RES; exists clo; [|eapply MON0; [eapply CLO| eapply LE]].
-  constructor; [eapply MON0|].
-  intros. eapply RESPECTFUL0; [apply LE0|apply GF|apply PR].
-Qed.
-
-Lemma grespectful5_respectful5: respectful5 gres5.
-Proof.
-  econstructor; [apply grespectful5_mon|intros].
-  destruct PR; destruct RES; eapply gf_mon with (r:=clo r).
-  eapply RESPECTFUL0; [apply LE|apply GF|apply CLO].
-  intros. econstructor; [constructor; [apply MON0|apply RESPECTFUL0]|apply PR].
-Qed.
-
-Lemma gfgres5_mon: monotone5 (compose gf gres5).
-Proof.
-  destruct grespectful5_respectful5.
-  unfold monotone5. intros. eapply gf_mon; [eapply IN|].
-  intros. eapply MON0;[apply PR|apply LE].
-Qed.
-Hint Resolve gfgres5_mon : paco.
-
-Lemma grespectful5_greatest: forall clo (RES: respectful5 clo), clo <6= gres5.
-Proof. intros. econstructor;[apply RES|apply PR]. Qed.
-
-Lemma grespectful5_incl: forall r, r <5= gres5 r.
-Proof.
-  intros; eexists (fun x => x).
-  - econstructor.
-    + red; intros; apply LE, IN.
-    + intros; apply GF, PR0.
-  - apply PR.
-Qed.
-Hint Resolve grespectful5_incl.
-
-Lemma grespectful5_compose: forall clo (RES: respectful5 clo) r,
-    clo (gres5 r) <5= gres5 r.
-Proof.
-  intros; eapply grespectful5_greatest with (clo := compose clo gres5); [|apply PR].
-  apply respectful5_compose; [apply RES|apply grespectful5_respectful5].
-Qed.
-
-Lemma grespectful5_incl_rev: forall r,
-    gres5 (paco5 (compose gf gres5) r) <5= paco5 (compose gf gres5) r.
-Proof.
-  intro r; pcofix CIH; intros; pfold.
-  eapply gf_mon, grespectful5_compose, grespectful5_respectful5.
-  destruct grespectful5_respectful5; eapply RESPECTFUL0, PR; intros; [apply grespectful5_incl; right; apply CIH, grespectful5_incl, PR0|].
-  _punfold PR0; [|apply gfgres5_mon].
-  eapply gfgres5_mon; [apply PR0|].
-  intros; destruct PR1.
-  - left. eapply paco5_mon; [apply H| apply CIH0].
-  - right. eapply CIH0, H.
-Qed.
+(** 
+  Recursive Closure & Weak Compatibility
+*)
 
 Inductive rclo5 (clo: rel->rel) (r: rel): rel :=
-| rclo5_incl
+| rclo5_id
     e0 e1 e2 e3 e4
     (R: r e0 e1 e2 e3 e4):
+    @rclo5 clo r e0 e1 e2 e3 e4
+| rclo5_clo'
+    r' e0 e1 e2 e3 e4
+    (R': r' <5= rclo5 clo r)
+    (CLOR': clo r' e0 e1 e2 e3 e4):
     @rclo5 clo r e0 e1 e2 e3 e4
 | rclo5_step'
     r' e0 e1 e2 e3 e4
     (R': r' <5= rclo5 clo r)
-    (CLOR':clo r' e0 e1 e2 e3 e4):
+    (CLOR': @gf r' e0 e1 e2 e3 e4):
     @rclo5 clo r e0 e1 e2 e3 e4
-| rclo5_gf
+| rclo5_cpn'
     r' e0 e1 e2 e3 e4
     (R': r' <5= rclo5 clo r)
-    (CLOR':@gf r' e0 e1 e2 e3 e4):
+    (CLOR': @cpn5 r' e0 e1 e2 e3 e4):
     @rclo5 clo r e0 e1 e2 e3 e4
 .
+
+Structure wcompatible5 (clo: rel -> rel) : Prop :=
+  wcompat5_intro {
+      wcompat5_mon: monotone5 clo;
+      wcompat5_wcompat: forall r,
+          clo (gf r) <5= gf (rclo5 clo r);
+    }.
+
+Lemma rclo5_mon_gen clo clo' r r' e0 e1 e2 e3 e4
+      (IN: @rclo5 clo r e0 e1 e2 e3 e4)
+      (LEclo: clo <6= clo')
+      (LEr: r <5= r') :
+  @rclo5 clo' r' e0 e1 e2 e3 e4.
+Proof.
+  induction IN; intros.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR|apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR|apply CLOR'].
+  - econstructor 4; [intros; eapply H, PR|].
+    eapply cpn5_mon; [apply CLOR'|].
+    intros. apply PR.
+Qed.
 
 Lemma rclo5_mon clo:
   monotone5 (rclo5 clo).
 Proof.
-  repeat intro. induction IN.
-  - econstructor 1. apply LE, R.
-  - econstructor 2; [intros; eapply H, PR| apply CLOR'].
-  - econstructor 3; [intros; eapply H, PR| apply CLOR'].
-Qed.
-Hint Resolve rclo5_mon: paco.
-
-Lemma rclo5_base
-      clo
-      (MON: monotone5 clo):
-  clo <6= rclo5 clo.
-Proof.
-  intros. econstructor 2; [intros; apply PR0|].
-  eapply MON; [apply PR|intros; constructor; apply PR0].
+  repeat intro. eapply rclo5_mon_gen; [apply IN|intros; apply PR|apply LE].
 Qed.
 
-Lemma rclo5_step
-      (clo: rel -> rel) r:
+Lemma rclo5_clo clo r:
   clo (rclo5 clo r) <5= rclo5 clo r.
 Proof.
-  intros. econstructor 2; [intros; apply PR0|apply PR].
+  intros. econstructor 2; [|apply PR]. 
+  intros. apply PR0.
 Qed.
 
-Lemma rclo5_rclo5
-      clo r
-      (MON: monotone5 clo):
+Lemma rclo5_step clo r:
+  gf (rclo5 clo r) <5= rclo5 clo r.
+Proof.
+  intros. econstructor 3; [|apply PR].
+  intros. apply PR0.
+Qed.
+
+Lemma rclo5_cpn clo r:
+  cpn5 (rclo5 clo r) <5= rclo5 clo r.
+Proof.
+  intros. econstructor 4; [|apply PR]. 
+  intros. apply PR0.
+Qed.
+
+Lemma rclo5_mult clo r:
   rclo5 clo (rclo5 clo r) <5= rclo5 clo r.
 Proof.
   intros. induction PR.
   - eapply R.
   - econstructor 2; [eapply H | eapply CLOR'].
   - econstructor 3; [eapply H | eapply CLOR'].
+  - econstructor 4; [eapply H | eapply CLOR'].
 Qed.
 
-Structure weak_respectful5 (clo: rel -> rel) : Prop :=
-  weak_respectful5_intro {
-      WEAK_MON: monotone5 clo;
-      WEAK_RESPECTFUL:
-        forall l r (LE: l <5= r) (GF: l <5= gf r),
-          clo l <5= gf (rclo5 clo r);
-    }.
-Hint Constructors weak_respectful5.
-
-Lemma weak_respectful5_respectful5
-      clo (RES: weak_respectful5 clo):
-  respectful5 (rclo5 clo).
+Lemma rclo5_compose clo r:
+  rclo5 (rclo5 clo) r <5= rclo5 clo r.
 Proof.
-  inversion RES. econstructor; [eapply rclo5_mon|]. intros.
+  intros. induction PR.
+  - apply rclo5_id, R.
+  - apply rclo5_mult.
+    eapply rclo5_mon; [apply CLOR'|apply H].
+  - apply rclo5_step.
+    eapply gf_mon; [apply CLOR'|apply H].
+  - apply rclo5_cpn.
+    eapply cpn5_mon; [apply CLOR'|apply H].
+Qed.
+
+Lemma wcompat5_compat
+      clo (WCOM: wcompatible5 clo):
+  compatible5 (rclo5 clo).
+Proof.
+  econstructor; [eapply rclo5_mon|]. intros.
   induction PR; intros.
-  - eapply gf_mon; [apply GF, R|]. intros.
-    apply rclo5_incl. apply PR.
+  - eapply gf_mon; [apply R|]. intros.
+    apply rclo5_id. apply PR.
   - eapply gf_mon.
-    + eapply WEAK_RESPECTFUL0; [|apply H|apply CLOR'].
-      intros. eapply rclo5_mon; [apply R', PR|apply LE].
-    + intros. apply rclo5_rclo5;[apply WEAK_MON0|apply PR].
+    + eapply (wcompat5_wcompat WCOM).
+      eapply (wcompat5_mon WCOM); [apply CLOR'|apply H].
+    + intros. apply rclo5_mult, PR.
   - eapply gf_mon; [apply CLOR'|].
-    intros. eapply rclo5_mon; [apply R', PR| apply LE].
+    intros. apply H in PR. apply rclo5_step, PR.
+  - eapply gf_mon; [|intros; apply rclo5_cpn, PR].
+    apply (compat5_compat cpn5_compat).
+    eapply cpn5_mon; [apply CLOR'|apply H].
 Qed.
 
-Definition cgres5 := compose gf gres5.
-
-Lemma upto5_init:
-  paco5 cgres5 bot5 <5= paco5 gf bot5.
+Lemma wcompat5_sound clo (WCOM: wcompatible5 clo):
+  clo <6= cpn5.
 Proof.
-  apply sound5_is_gf.
-  apply respectful5_is_sound5.
-  apply grespectful5_respectful5.
+  intros. exists (rclo5 clo).
+  - apply wcompat5_compat, WCOM.
+  - apply rclo5_clo.
+    eapply (wcompat5_mon WCOM); [apply PR|].
+    intros. apply rclo5_id, PR0.
 Qed.
 
-Lemma upto5_final:
-  paco5 gf <6= paco5 cgres5.
+(** 
+  Lemmas for tactics
+*)
+
+Lemma cpn5_from_upaco r:
+  upaco5 gcpn5 r <5= cpn5 r.
 Proof.
-  pcofix CIH. intros. _punfold PR; [|apply gf_mon]. pfold.
-  eapply gf_mon; [|apply grespectful5_incl].
-  eapply gf_mon; [apply PR|]. intros. right.
-  inversion PR0; [apply CIH, H | apply CIH0, H].
+  intros. destruct PR; [| apply cpn5_id, H].
+  exists (rclo5 (paco5 gcpn5)).
+  - apply wcompat5_compat.
+    econstructor; [apply paco5_mon|].
+    intros. _punfold PR; [|apply gcpn5_mon].
+    eapply gf_mon; [apply PR|].
+    intros. apply rclo5_cpn.
+    eapply cpn5_mon; [apply PR0|].
+    intros. destruct PR1.
+    + apply rclo5_clo.
+      eapply paco5_mon; [apply H0|].
+      intros. apply rclo5_step.
+      eapply gf_mon; [apply PR1|].
+      intros. apply rclo5_id, PR2.
+    + apply rclo5_step.
+      eapply gf_mon; [apply H0|].
+      intros. apply rclo5_id, PR1.
+  - apply rclo5_clo.
+    eapply paco5_mon; [apply H|].
+    intros. apply rclo5_id, PR.
 Qed.
 
-Lemma upto5_step
-      r clo (RES: weak_respectful5 clo):
-  clo (paco5 cgres5 r) <5= paco5 cgres5 r.
+Lemma cpn5_from_paco r:
+  paco5 gcpn5 r <5= cpn5 r.
+Proof. intros. apply cpn5_from_upaco. left. apply PR. Qed.
+
+Lemma gcpn5_from_paco r:
+  paco5 gcpn5 r <5= gcpn5 r.
 Proof.
-  intros. apply grespectful5_incl_rev.
-  assert (RES' := weak_respectful5_respectful5 RES).
-  eapply grespectful5_greatest; [apply RES'|].
-  eapply rclo5_base; [apply RES|].
-  inversion RES. apply PR.
+  intros. _punfold PR; [|apply gcpn5_mon].
+  eapply gf_mon; [apply PR|].
+  intros. apply cpn5_comp.
+  eapply cpn5_mon; [apply PR0|].
+  apply cpn5_from_upaco.
 Qed.
 
-Lemma upto5_step_under
-      r clo (RES: weak_respectful5 clo):
-  clo (gres5 r) <5= gres5 r.
+Lemma gcpn5_to_paco r:
+  gcpn5 r <5= paco5 gcpn5 r.
 Proof.
-  intros. apply weak_respectful5_respectful5 in RES.
-  eapply grespectful5_compose; [apply RES|].
-  econstructor 2; [intros; constructor 1; apply PR0 | apply PR].
-Qed.
+  intros. pfold. eapply gcpn5_mon; [apply PR|].
+  intros. right. apply PR0.
+Qed.  
 
-End Respectful5.
-
-Lemma rclo5_mon_gen T0 T1 T2 T3 T4 (gf gf': rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4) clo clo' r r' e0 e1 e2 e3 e4
-      (REL: rclo5 gf clo r e0 e1 e2 e3 e4)
-      (LEgf: gf <6= gf')
-      (LEclo: clo <6= clo')
-      (LEr: r <5= r') :
-  rclo5 gf' clo' r' e0 e1 e2 e3 e4.
+Lemma cpn5_init:
+  cpn5 bot5 <5= paco5 gf bot5.
 Proof.
-  induction REL.
-  - econstructor 1. apply LEr, R.
-  - econstructor 2; [intros; eapply H, PR| apply LEclo, CLOR'].
-  - econstructor 3; [intros; eapply H, PR| apply LEgf, CLOR'].
+  intros. apply gcpn5_sound, gcpn5_to_paco, (compat5_compat cpn5_compat).
+  eapply cpn5_mon; [apply PR|contradiction].
 Qed.
 
-Lemma grespectful5_impl T0 T1 T2 T3 T4 (gf gf': rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4) r x0 x1 x2 x3 x4
-    (PR: gres5 gf r x0 x1 x2 x3 x4)
-    (EQ: forall r x0 x1 x2 x3 x4, gf r x0 x1 x2 x3 x4 <-> gf' r x0 x1 x2 x3 x4):
-  gres5 gf' r x0 x1 x2 x3 x4.
+Lemma cpn5_clo
+      r clo (LE: clo <6= cpn5):
+  clo (cpn5 r) <5= cpn5 r.
 Proof.
-  intros. destruct PR. econstructor; [|apply CLO].
-  destruct RES. econstructor; [apply MON0|].
-  intros. eapply EQ. eapply RESPECTFUL0; [apply LE| |apply PR].
-  intros. eapply EQ. apply GF, PR0.
+  intros. apply cpn5_comp, LE, PR.
 Qed.
 
-Lemma grespectful5_iff T0 T1 T2 T3 T4 (gf gf': rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4) r x0 x1 x2 x3 x4
-    (EQ: forall r x0 x1 x2 x3 x4, gf r x0 x1 x2 x3 x4 <-> gf' r x0 x1 x2 x3 x4):
-  gres5 gf r x0 x1 x2 x3 x4 <-> gres5 gf' r x0 x1 x2 x3 x4.
+Lemma gcpn5_clo
+      r clo (LE: clo <6= cpn5):
+  clo (gcpn5 r) <5= gcpn5 r.
 Proof.
-  split; intros.
-  - eapply grespectful5_impl; [apply H | apply EQ].
-  - eapply grespectful5_impl; [apply H | split; apply EQ].
+  intros. apply LE, (compat5_compat cpn5_compat) in PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply cpn5_comp, PR0.
 Qed.
 
-Hint Constructors sound5.
-Hint Constructors respectful5.
-Hint Constructors gres5.
-Hint Resolve gfclo5_mon : paco.
-Hint Resolve gfgres5_mon : paco.
-Hint Resolve grespectful5_incl.
-Hint Resolve rclo5_mon: paco.
-Hint Constructors weak_respectful5.
-Hint Unfold cgres5.
+Lemma cpn5_step r:
+  gcpn5 r <5= cpn5 r.
+Proof.
+  intros. eapply cpn5_clo, PR.
+  intros. eapply wcompat5_sound, PR0.
+  econstructor; [apply gf_mon|].
+  intros. eapply gf_mon; [apply PR1|].
+  intros. apply rclo5_step.
+  eapply gf_mon; [apply PR2|].
+  intros. apply rclo5_id, PR3.
+Qed.
 
-(* User Tactics *)
+Lemma cpn5_final: forall r, upaco5 gf r <5= cpn5 r.
+Proof.
+  intros. eapply cpn5_from_upaco.
+  intros. eapply upaco5_mon_gen; [apply PR| |intros; apply PR0].
+  intros. eapply gf_mon; [apply PR0|].
+  intros. apply cpn5_id, PR1.
+Qed.
 
-Ltac pupto5_init := eapply upto5_init; [eauto with paco|].
-Ltac pupto5_final := first [eapply upto5_final; [eauto with paco|] | eapply grespectful5_incl].
-Ltac pupto5 H := first [eapply upto5_step|eapply upto5_step_under]; [|eapply H|]; [eauto with paco|].
+Lemma gcpn5_final: forall r, paco5 gf r <5= gcpn5 r.
+Proof.
+  intros. _punfold PR; [|apply gf_mon].
+  eapply gf_mon; [apply PR | apply cpn5_final].
+Qed.
 
-Ltac pfold5_reverse_ :=
-  repeat red;
-  match goal with
-  | [|- ?gf (upaco5 _ _ _ _ _) _ _ _ _ _] => eapply (paco5_unfold (gf := gf))
-  | [|- ?gf (?gres (upaco5 _ _ _ _ _)) _ _ _ _ _] => eapply (paco5_unfold (gf := cgres5 gf))
-  end.
+Lemma cpn5_complete:
+  paco5 gf bot5 <5= cpn5 bot5.
+Proof.
+  intros. apply cpn5_from_paco.
+  eapply paco5_mon_gen.
+  - apply PR.
+  - intros. eapply gf_mon; [apply PR0|apply cpn5_id].
+  - intros. apply PR0.
+Qed.
 
-Ltac pfold5_reverse := pfold5_reverse_; eauto with paco.
+End Companion5.
 
-Ltac punfold5_reverse_ H :=
-  repeat red in H;
-  let PP := type of H in
-  match PP with
-  | ?gf (upaco5 _ _ _ _ _) _ _ _ _ _ => eapply (paco5_fold gf) in H
-  | ?gf (?gres (upaco5 _ _ _ _ _)) _ _ _ _ _ => eapply (paco5_fold (cgres5 gf)) in H
-  end.
+Hint Resolve cpn5_mon : paco.
+Hint Resolve gcpn5_mon : paco.
+Hint Resolve rclo5_mon : paco.
+Hint Resolve cpn5_final gcpn5_final : paco.
 
-Ltac punfold5_reverse H := punfold5_reverse_ H; eauto with paco.
+Hint Constructors cpn5 compatible5 wcompatible5.
+
+Hint Constructors rclo5 : rclo.
+Hint Resolve rclo5_clo rclo5_step rclo5_cpn : rclo.
 

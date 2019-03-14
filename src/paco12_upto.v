@@ -2,7 +2,7 @@ Require Export Program.Basics. Open Scope program_scope.
 Require Import paco12.
 Set Implicit Arguments.
 
-Section Respectful12.
+Section Companion12.
 
 Variable T0 : Type.
 Variable T1 : forall (x0: @T0), Type.
@@ -22,336 +22,348 @@ Local Notation rel := (rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11).
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone12 gf.
 
-Inductive sound12 (clo: rel -> rel): Prop :=
-| sound12_intro
-    (MON: monotone12 clo)
-    (SOUND:
-       forall r (PFIX: r <12= gf (clo r)),
-         r <12= paco12 gf bot12)
-.
-Hint Constructors sound12.
+(** 
+  Compatibility, Companion & Guarded Companion
+*)
 
-Structure respectful12 (clo: rel -> rel) : Prop :=
-  respectful12_intro {
-      MON: monotone12 clo;
-      RESPECTFUL:
-        forall l r (LE: l <12= r) (GF: l <12= gf r),
-          clo l <12= gf (clo r);
+Structure compatible12 (clo: rel -> rel) : Prop :=
+  compat12_intro {
+      compat12_mon: monotone12 clo;
+      compat12_compat : forall r,
+          clo (gf r) <12= gf (clo r);
     }.
-Hint Constructors respectful12.
 
-Inductive gres12 (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 : Prop :=
-| gres12_intro
+Inductive cpn12 (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 : Prop :=
+| cpn12_intro
     clo
-    (RES: respectful12 clo)
+    (COM: compatible12 clo)
     (CLO: clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11)
 .
-Hint Constructors gres12.
 
-Lemma gfclo12_mon: forall clo, sound12 clo -> monotone12 (compose gf clo).
-Proof.
-  intros; destruct H; red; intros.
-  eapply gf_mon; [apply IN|intros; eapply MON0; [apply PR|apply LE]].
-Qed.
-Hint Resolve gfclo12_mon : paco.
+Definition gcpn12 := compose gf cpn12.
 
-Lemma sound12_is_gf: forall clo (UPTO: sound12 clo),
-    paco12 (compose gf clo) bot12 <12= paco12 gf bot12.
+Lemma cpn12_mon: monotone12 cpn12.
 Proof.
-  intros. _punfold PR; [|apply gfclo12_mon, UPTO]. edestruct UPTO.
-  eapply (SOUND (paco12 (compose gf clo) bot12)).
-  - intros. _punfold PR0; [|apply gfclo12_mon, UPTO].
-    eapply (gfclo12_mon UPTO); [apply PR0| intros; destruct PR1; [apply H|destruct H]].
-  - pfold. apply PR.
+  red. intros.
+  destruct IN. exists clo.
+  - apply COM.
+  - eapply compat12_mon; [apply COM|apply CLO|apply LE].
 Qed.
 
-Lemma respectful12_is_sound12: respectful12 <1= sound12.
+Lemma cpn12_compat: compatible12 cpn12.
 Proof.
-  intro clo.
+  econstructor; [apply cpn12_mon|intros].
+  destruct PR; eapply gf_mon with (r:=clo r).
+  - eapply (compat12_compat COM); apply CLO.
+  - intros. econstructor; [apply COM|apply PR].
+Qed.
+
+Lemma cpn12_greatest: forall clo (COM: compatible12 clo), clo <13= cpn12.
+Proof. intros. econstructor;[apply COM|apply PR]. Qed.
+
+Lemma cpn12_id: forall r, r <12= cpn12 r.
+Proof.
+  intros. exists id.
+  - econstructor; repeat intro.
+    + apply LE, IN.
+    + apply PR0.
+  - apply PR.
+Qed.
+
+Lemma cpn12_comp: forall r,
+    cpn12 (cpn12 r) <12= cpn12 r.
+Proof.
+  intros. exists (compose cpn12 cpn12); [|apply PR].
+  econstructor.
+  - repeat intro. eapply cpn12_mon; [apply IN|].
+    intros. eapply cpn12_mon; [apply PR0|apply LE].
+  - intros. eapply (compat12_compat cpn12_compat).
+    eapply cpn12_mon; [apply PR0|].
+    intros. eapply (compat12_compat cpn12_compat), PR1. 
+Qed.
+
+Lemma gcpn12_mon: monotone12 gcpn12.
+Proof.
+  repeat intro. eapply gf_mon; [eapply IN|].
+  intros. eapply cpn12_mon; [apply PR|apply LE].
+Qed.
+
+Lemma gcpn12_sound:
+  paco12 gcpn12 bot12 <12= paco12 gf bot12.
+Proof.
+  intros.
   set (rclo := fix rclo clo n (r: rel) :=
          match n with
          | 0 => r
          | S n' => rclo clo n' r \12/ clo (rclo clo n' r)
          end).
-  intros. destruct PR. econstructor; [apply MON0|].
-  intros. set (rr e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 := exists n, rclo clo n r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11).
-  assert (rr x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) by (exists 0; apply PR); clear PR.
-  cut (forall n, rclo clo n r <12= gf (rclo clo (S n) r)).
-  { intro X; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 H; pcofix CIH; intros.
-    unfold rr in *; destruct H0.
+  assert (RC: exists n, rclo cpn12 n (paco12 gcpn12 bot12) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) by (exists 0; apply PR); clear PR.
+  
+  cut (forall n, rclo cpn12 n (paco12 gcpn12 bot12) <12= gf (rclo cpn12 (S n) (paco12 gcpn12 bot12))).
+  { intro X. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 RC; pcofix CIH; intros.
     pfold. eapply gf_mon.
-    - apply X. apply H.
-    - intros. right. apply CIH. exists (S x). apply PR.
+    - apply X. apply RC.
+    - intros. right. eapply CIH. apply PR.
   }
+
   induction n; intros.
   - eapply gf_mon.
-    + clear RESPECTFUL0. eapply PFIX, PR.
-    + intros. right. eapply PR0.
+    + _punfold PR; [apply PR|apply gcpn12_mon].
+    + intros. right. eapply cpn12_mon; [apply PR0|].
+      intros. pclearbot. apply PR1.
   - destruct PR.
-    + eapply gf_mon; [eapply IHn, H0|]. intros. left. apply PR.
-    + eapply gf_mon; [eapply RESPECTFUL0; [|apply IHn|]|]; intros.
-      * left; apply PR.
-      * apply H0.
-      * right; apply PR.
+    + eapply gf_mon; [eapply IHn, H|]. intros. left. apply PR.
+    + eapply gf_mon.
+      * eapply (compat12_compat cpn12_compat).
+        eapply (compat12_mon cpn12_compat); [apply H|apply IHn].
+      * intros. econstructor 2. apply PR.
 Qed.
 
-Lemma respectful12_compose
-      clo0 clo1
-      (RES0: respectful12 clo0)
-      (RES1: respectful12 clo1):
-  respectful12 (compose clo0 clo1).
-Proof.
-  intros. destruct RES0, RES1.
-  econstructor.
-  - repeat intro. eapply MON0; [apply IN|].
-    intros. eapply MON1; [apply PR|apply LE].
-  - intros. eapply RESPECTFUL0; [| |apply PR].
-    + intros. eapply MON1; [apply PR0|apply LE].
-    + intros. eapply RESPECTFUL1; [apply LE| apply GF| apply PR0].
-Qed.
-
-Lemma grespectful12_mon: monotone12 gres12.
-Proof.
-  red. intros.
-  destruct IN; destruct RES; exists clo; [|eapply MON0; [eapply CLO| eapply LE]].
-  constructor; [eapply MON0|].
-  intros. eapply RESPECTFUL0; [apply LE0|apply GF|apply PR].
-Qed.
-
-Lemma grespectful12_respectful12: respectful12 gres12.
-Proof.
-  econstructor; [apply grespectful12_mon|intros].
-  destruct PR; destruct RES; eapply gf_mon with (r:=clo r).
-  eapply RESPECTFUL0; [apply LE|apply GF|apply CLO].
-  intros. econstructor; [constructor; [apply MON0|apply RESPECTFUL0]|apply PR].
-Qed.
-
-Lemma gfgres12_mon: monotone12 (compose gf gres12).
-Proof.
-  destruct grespectful12_respectful12.
-  unfold monotone12. intros. eapply gf_mon; [eapply IN|].
-  intros. eapply MON0;[apply PR|apply LE].
-Qed.
-Hint Resolve gfgres12_mon : paco.
-
-Lemma grespectful12_greatest: forall clo (RES: respectful12 clo), clo <13= gres12.
-Proof. intros. econstructor;[apply RES|apply PR]. Qed.
-
-Lemma grespectful12_incl: forall r, r <12= gres12 r.
-Proof.
-  intros; eexists (fun x => x).
-  - econstructor.
-    + red; intros; apply LE, IN.
-    + intros; apply GF, PR0.
-  - apply PR.
-Qed.
-Hint Resolve grespectful12_incl.
-
-Lemma grespectful12_compose: forall clo (RES: respectful12 clo) r,
-    clo (gres12 r) <12= gres12 r.
-Proof.
-  intros; eapply grespectful12_greatest with (clo := compose clo gres12); [|apply PR].
-  apply respectful12_compose; [apply RES|apply grespectful12_respectful12].
-Qed.
-
-Lemma grespectful12_incl_rev: forall r,
-    gres12 (paco12 (compose gf gres12) r) <12= paco12 (compose gf gres12) r.
-Proof.
-  intro r; pcofix CIH; intros; pfold.
-  eapply gf_mon, grespectful12_compose, grespectful12_respectful12.
-  destruct grespectful12_respectful12; eapply RESPECTFUL0, PR; intros; [apply grespectful12_incl; right; apply CIH, grespectful12_incl, PR0|].
-  _punfold PR0; [|apply gfgres12_mon].
-  eapply gfgres12_mon; [apply PR0|].
-  intros; destruct PR1.
-  - left. eapply paco12_mon; [apply H| apply CIH0].
-  - right. eapply CIH0, H.
-Qed.
+(** 
+  Recursive Closure & Weak Compatibility
+*)
 
 Inductive rclo12 (clo: rel->rel) (r: rel): rel :=
-| rclo12_incl
+| rclo12_id
     e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11
     (R: r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11):
+    @rclo12 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11
+| rclo12_clo'
+    r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11
+    (R': r' <12= rclo12 clo r)
+    (CLOR': clo r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11):
     @rclo12 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11
 | rclo12_step'
     r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11
     (R': r' <12= rclo12 clo r)
-    (CLOR':clo r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11):
+    (CLOR': @gf r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11):
     @rclo12 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11
-| rclo12_gf
+| rclo12_cpn'
     r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11
     (R': r' <12= rclo12 clo r)
-    (CLOR':@gf r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11):
+    (CLOR': @cpn12 r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11):
     @rclo12 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11
 .
+
+Structure wcompatible12 (clo: rel -> rel) : Prop :=
+  wcompat12_intro {
+      wcompat12_mon: monotone12 clo;
+      wcompat12_wcompat: forall r,
+          clo (gf r) <12= gf (rclo12 clo r);
+    }.
+
+Lemma rclo12_mon_gen clo clo' r r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11
+      (IN: @rclo12 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11)
+      (LEclo: clo <13= clo')
+      (LEr: r <12= r') :
+  @rclo12 clo' r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+Proof.
+  induction IN; intros.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR|apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR|apply CLOR'].
+  - econstructor 4; [intros; eapply H, PR|].
+    eapply cpn12_mon; [apply CLOR'|].
+    intros. apply PR.
+Qed.
 
 Lemma rclo12_mon clo:
   monotone12 (rclo12 clo).
 Proof.
-  repeat intro. induction IN.
-  - econstructor 1. apply LE, R.
-  - econstructor 2; [intros; eapply H, PR| apply CLOR'].
-  - econstructor 3; [intros; eapply H, PR| apply CLOR'].
-Qed.
-Hint Resolve rclo12_mon: paco.
-
-Lemma rclo12_base
-      clo
-      (MON: monotone12 clo):
-  clo <13= rclo12 clo.
-Proof.
-  intros. econstructor 2; [intros; apply PR0|].
-  eapply MON; [apply PR|intros; constructor; apply PR0].
+  repeat intro. eapply rclo12_mon_gen; [apply IN|intros; apply PR|apply LE].
 Qed.
 
-Lemma rclo12_step
-      (clo: rel -> rel) r:
+Lemma rclo12_clo clo r:
   clo (rclo12 clo r) <12= rclo12 clo r.
 Proof.
-  intros. econstructor 2; [intros; apply PR0|apply PR].
+  intros. econstructor 2; [|apply PR]. 
+  intros. apply PR0.
 Qed.
 
-Lemma rclo12_rclo12
-      clo r
-      (MON: monotone12 clo):
+Lemma rclo12_step clo r:
+  gf (rclo12 clo r) <12= rclo12 clo r.
+Proof.
+  intros. econstructor 3; [|apply PR].
+  intros. apply PR0.
+Qed.
+
+Lemma rclo12_cpn clo r:
+  cpn12 (rclo12 clo r) <12= rclo12 clo r.
+Proof.
+  intros. econstructor 4; [|apply PR]. 
+  intros. apply PR0.
+Qed.
+
+Lemma rclo12_mult clo r:
   rclo12 clo (rclo12 clo r) <12= rclo12 clo r.
 Proof.
   intros. induction PR.
   - eapply R.
   - econstructor 2; [eapply H | eapply CLOR'].
   - econstructor 3; [eapply H | eapply CLOR'].
+  - econstructor 4; [eapply H | eapply CLOR'].
 Qed.
 
-Structure weak_respectful12 (clo: rel -> rel) : Prop :=
-  weak_respectful12_intro {
-      WEAK_MON: monotone12 clo;
-      WEAK_RESPECTFUL:
-        forall l r (LE: l <12= r) (GF: l <12= gf r),
-          clo l <12= gf (rclo12 clo r);
-    }.
-Hint Constructors weak_respectful12.
-
-Lemma weak_respectful12_respectful12
-      clo (RES: weak_respectful12 clo):
-  respectful12 (rclo12 clo).
+Lemma rclo12_compose clo r:
+  rclo12 (rclo12 clo) r <12= rclo12 clo r.
 Proof.
-  inversion RES. econstructor; [eapply rclo12_mon|]. intros.
+  intros. induction PR.
+  - apply rclo12_id, R.
+  - apply rclo12_mult.
+    eapply rclo12_mon; [apply CLOR'|apply H].
+  - apply rclo12_step.
+    eapply gf_mon; [apply CLOR'|apply H].
+  - apply rclo12_cpn.
+    eapply cpn12_mon; [apply CLOR'|apply H].
+Qed.
+
+Lemma wcompat12_compat
+      clo (WCOM: wcompatible12 clo):
+  compatible12 (rclo12 clo).
+Proof.
+  econstructor; [eapply rclo12_mon|]. intros.
   induction PR; intros.
-  - eapply gf_mon; [apply GF, R|]. intros.
-    apply rclo12_incl. apply PR.
+  - eapply gf_mon; [apply R|]. intros.
+    apply rclo12_id. apply PR.
   - eapply gf_mon.
-    + eapply WEAK_RESPECTFUL0; [|apply H|apply CLOR'].
-      intros. eapply rclo12_mon; [apply R', PR|apply LE].
-    + intros. apply rclo12_rclo12;[apply WEAK_MON0|apply PR].
+    + eapply (wcompat12_wcompat WCOM).
+      eapply (wcompat12_mon WCOM); [apply CLOR'|apply H].
+    + intros. apply rclo12_mult, PR.
   - eapply gf_mon; [apply CLOR'|].
-    intros. eapply rclo12_mon; [apply R', PR| apply LE].
+    intros. apply H in PR. apply rclo12_step, PR.
+  - eapply gf_mon; [|intros; apply rclo12_cpn, PR].
+    apply (compat12_compat cpn12_compat).
+    eapply cpn12_mon; [apply CLOR'|apply H].
 Qed.
 
-Definition cgres12 := compose gf gres12.
-
-Lemma upto12_init:
-  paco12 cgres12 bot12 <12= paco12 gf bot12.
+Lemma wcompat12_sound clo (WCOM: wcompatible12 clo):
+  clo <13= cpn12.
 Proof.
-  apply sound12_is_gf.
-  apply respectful12_is_sound12.
-  apply grespectful12_respectful12.
+  intros. exists (rclo12 clo).
+  - apply wcompat12_compat, WCOM.
+  - apply rclo12_clo.
+    eapply (wcompat12_mon WCOM); [apply PR|].
+    intros. apply rclo12_id, PR0.
 Qed.
 
-Lemma upto12_final:
-  paco12 gf <13= paco12 cgres12.
+(** 
+  Lemmas for tactics
+*)
+
+Lemma cpn12_from_upaco r:
+  upaco12 gcpn12 r <12= cpn12 r.
 Proof.
-  pcofix CIH. intros. _punfold PR; [|apply gf_mon]. pfold.
-  eapply gf_mon; [|apply grespectful12_incl].
-  eapply gf_mon; [apply PR|]. intros. right.
-  inversion PR0; [apply CIH, H | apply CIH0, H].
+  intros. destruct PR; [| apply cpn12_id, H].
+  exists (rclo12 (paco12 gcpn12)).
+  - apply wcompat12_compat.
+    econstructor; [apply paco12_mon|].
+    intros. _punfold PR; [|apply gcpn12_mon].
+    eapply gf_mon; [apply PR|].
+    intros. apply rclo12_cpn.
+    eapply cpn12_mon; [apply PR0|].
+    intros. destruct PR1.
+    + apply rclo12_clo.
+      eapply paco12_mon; [apply H0|].
+      intros. apply rclo12_step.
+      eapply gf_mon; [apply PR1|].
+      intros. apply rclo12_id, PR2.
+    + apply rclo12_step.
+      eapply gf_mon; [apply H0|].
+      intros. apply rclo12_id, PR1.
+  - apply rclo12_clo.
+    eapply paco12_mon; [apply H|].
+    intros. apply rclo12_id, PR.
 Qed.
 
-Lemma upto12_step
-      r clo (RES: weak_respectful12 clo):
-  clo (paco12 cgres12 r) <12= paco12 cgres12 r.
+Lemma cpn12_from_paco r:
+  paco12 gcpn12 r <12= cpn12 r.
+Proof. intros. apply cpn12_from_upaco. left. apply PR. Qed.
+
+Lemma gcpn12_from_paco r:
+  paco12 gcpn12 r <12= gcpn12 r.
 Proof.
-  intros. apply grespectful12_incl_rev.
-  assert (RES' := weak_respectful12_respectful12 RES).
-  eapply grespectful12_greatest; [apply RES'|].
-  eapply rclo12_base; [apply RES|].
-  inversion RES. apply PR.
+  intros. _punfold PR; [|apply gcpn12_mon].
+  eapply gf_mon; [apply PR|].
+  intros. apply cpn12_comp.
+  eapply cpn12_mon; [apply PR0|].
+  apply cpn12_from_upaco.
 Qed.
 
-Lemma upto12_step_under
-      r clo (RES: weak_respectful12 clo):
-  clo (gres12 r) <12= gres12 r.
+Lemma gcpn12_to_paco r:
+  gcpn12 r <12= paco12 gcpn12 r.
 Proof.
-  intros. apply weak_respectful12_respectful12 in RES.
-  eapply grespectful12_compose; [apply RES|].
-  econstructor 2; [intros; constructor 1; apply PR0 | apply PR].
-Qed.
+  intros. pfold. eapply gcpn12_mon; [apply PR|].
+  intros. right. apply PR0.
+Qed.  
 
-End Respectful12.
-
-Lemma rclo12_mon_gen T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 (gf gf': rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) clo clo' r r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11
-      (REL: rclo12 gf clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11)
-      (LEgf: gf <13= gf')
-      (LEclo: clo <13= clo')
-      (LEr: r <12= r') :
-  rclo12 gf' clo' r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+Lemma cpn12_init:
+  cpn12 bot12 <12= paco12 gf bot12.
 Proof.
-  induction REL.
-  - econstructor 1. apply LEr, R.
-  - econstructor 2; [intros; eapply H, PR| apply LEclo, CLOR'].
-  - econstructor 3; [intros; eapply H, PR| apply LEgf, CLOR'].
+  intros. apply gcpn12_sound, gcpn12_to_paco, (compat12_compat cpn12_compat).
+  eapply cpn12_mon; [apply PR|contradiction].
 Qed.
 
-Lemma grespectful12_impl T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 (gf gf': rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11
-    (PR: gres12 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
-    (EQ: forall r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11, gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 <-> gf' r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11):
-  gres12 gf' r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11.
+Lemma cpn12_clo
+      r clo (LE: clo <13= cpn12):
+  clo (cpn12 r) <12= cpn12 r.
 Proof.
-  intros. destruct PR. econstructor; [|apply CLO].
-  destruct RES. econstructor; [apply MON0|].
-  intros. eapply EQ. eapply RESPECTFUL0; [apply LE| |apply PR].
-  intros. eapply EQ. apply GF, PR0.
+  intros. apply cpn12_comp, LE, PR.
 Qed.
 
-Lemma grespectful12_iff T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 (gf gf': rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11
-    (EQ: forall r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11, gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 <-> gf' r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11):
-  gres12 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 <-> gres12 gf' r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11.
+Lemma gcpn12_clo
+      r clo (LE: clo <13= cpn12):
+  clo (gcpn12 r) <12= gcpn12 r.
 Proof.
-  split; intros.
-  - eapply grespectful12_impl; [apply H | apply EQ].
-  - eapply grespectful12_impl; [apply H | split; apply EQ].
+  intros. apply LE, (compat12_compat cpn12_compat) in PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply cpn12_comp, PR0.
 Qed.
 
-Hint Constructors sound12.
-Hint Constructors respectful12.
-Hint Constructors gres12.
-Hint Resolve gfclo12_mon : paco.
-Hint Resolve gfgres12_mon : paco.
-Hint Resolve grespectful12_incl.
-Hint Resolve rclo12_mon: paco.
-Hint Constructors weak_respectful12.
-Hint Unfold cgres12.
+Lemma cpn12_step r:
+  gcpn12 r <12= cpn12 r.
+Proof.
+  intros. eapply cpn12_clo, PR.
+  intros. eapply wcompat12_sound, PR0.
+  econstructor; [apply gf_mon|].
+  intros. eapply gf_mon; [apply PR1|].
+  intros. apply rclo12_step.
+  eapply gf_mon; [apply PR2|].
+  intros. apply rclo12_id, PR3.
+Qed.
 
-(* User Tactics *)
+Lemma cpn12_final: forall r, upaco12 gf r <12= cpn12 r.
+Proof.
+  intros. eapply cpn12_from_upaco.
+  intros. eapply upaco12_mon_gen; [apply PR| |intros; apply PR0].
+  intros. eapply gf_mon; [apply PR0|].
+  intros. apply cpn12_id, PR1.
+Qed.
 
-Ltac pupto12_init := eapply upto12_init; [eauto with paco|].
-Ltac pupto12_final := first [eapply upto12_final; [eauto with paco|] | eapply grespectful12_incl].
-Ltac pupto12 H := first [eapply upto12_step|eapply upto12_step_under]; [|eapply H|]; [eauto with paco|].
+Lemma gcpn12_final: forall r, paco12 gf r <12= gcpn12 r.
+Proof.
+  intros. _punfold PR; [|apply gf_mon].
+  eapply gf_mon; [apply PR | apply cpn12_final].
+Qed.
 
-Ltac pfold12_reverse_ :=
-  repeat red;
-  match goal with
-  | [|- ?gf (upaco12 _ _ _ _ _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco12_unfold (gf := gf))
-  | [|- ?gf (?gres (upaco12 _ _ _ _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco12_unfold (gf := cgres12 gf))
-  end.
+Lemma cpn12_complete:
+  paco12 gf bot12 <12= cpn12 bot12.
+Proof.
+  intros. apply cpn12_from_paco.
+  eapply paco12_mon_gen.
+  - apply PR.
+  - intros. eapply gf_mon; [apply PR0|apply cpn12_id].
+  - intros. apply PR0.
+Qed.
 
-Ltac pfold12_reverse := pfold12_reverse_; eauto with paco.
+End Companion12.
 
-Ltac punfold12_reverse_ H :=
-  repeat red in H;
-  let PP := type of H in
-  match PP with
-  | ?gf (upaco12 _ _ _ _ _ _ _ _ _ _ _ _) _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco12_fold gf) in H
-  | ?gf (?gres (upaco12 _ _ _ _ _ _ _ _ _ _ _ _)) _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco12_fold (cgres12 gf)) in H
-  end.
+Hint Resolve cpn12_mon : paco.
+Hint Resolve gcpn12_mon : paco.
+Hint Resolve rclo12_mon : paco.
+Hint Resolve cpn12_final gcpn12_final : paco.
 
-Ltac punfold12_reverse H := punfold12_reverse_ H; eauto with paco.
+Hint Constructors cpn12 compatible12 wcompatible12.
+
+Hint Constructors rclo12 : rclo.
+Hint Resolve rclo12_clo rclo12_step rclo12_cpn : rclo.
 

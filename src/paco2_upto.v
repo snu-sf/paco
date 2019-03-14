@@ -2,7 +2,7 @@ Require Export Program.Basics. Open Scope program_scope.
 Require Import paco2.
 Set Implicit Arguments.
 
-Section Respectful2.
+Section Companion2.
 
 Variable T0 : Type.
 Variable T1 : forall (x0: @T0), Type.
@@ -12,336 +12,348 @@ Local Notation rel := (rel2 T0 T1).
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone2 gf.
 
-Inductive sound2 (clo: rel -> rel): Prop :=
-| sound2_intro
-    (MON: monotone2 clo)
-    (SOUND:
-       forall r (PFIX: r <2= gf (clo r)),
-         r <2= paco2 gf bot2)
-.
-Hint Constructors sound2.
+(** 
+  Compatibility, Companion & Guarded Companion
+*)
 
-Structure respectful2 (clo: rel -> rel) : Prop :=
-  respectful2_intro {
-      MON: monotone2 clo;
-      RESPECTFUL:
-        forall l r (LE: l <2= r) (GF: l <2= gf r),
-          clo l <2= gf (clo r);
+Structure compatible2 (clo: rel -> rel) : Prop :=
+  compat2_intro {
+      compat2_mon: monotone2 clo;
+      compat2_compat : forall r,
+          clo (gf r) <2= gf (clo r);
     }.
-Hint Constructors respectful2.
 
-Inductive gres2 (r: rel) e0 e1 : Prop :=
-| gres2_intro
+Inductive cpn2 (r: rel) e0 e1 : Prop :=
+| cpn2_intro
     clo
-    (RES: respectful2 clo)
+    (COM: compatible2 clo)
     (CLO: clo r e0 e1)
 .
-Hint Constructors gres2.
 
-Lemma gfclo2_mon: forall clo, sound2 clo -> monotone2 (compose gf clo).
-Proof.
-  intros; destruct H; red; intros.
-  eapply gf_mon; [apply IN|intros; eapply MON0; [apply PR|apply LE]].
-Qed.
-Hint Resolve gfclo2_mon : paco.
+Definition gcpn2 := compose gf cpn2.
 
-Lemma sound2_is_gf: forall clo (UPTO: sound2 clo),
-    paco2 (compose gf clo) bot2 <2= paco2 gf bot2.
+Lemma cpn2_mon: monotone2 cpn2.
 Proof.
-  intros. _punfold PR; [|apply gfclo2_mon, UPTO]. edestruct UPTO.
-  eapply (SOUND (paco2 (compose gf clo) bot2)).
-  - intros. _punfold PR0; [|apply gfclo2_mon, UPTO].
-    eapply (gfclo2_mon UPTO); [apply PR0| intros; destruct PR1; [apply H|destruct H]].
-  - pfold. apply PR.
+  red. intros.
+  destruct IN. exists clo.
+  - apply COM.
+  - eapply compat2_mon; [apply COM|apply CLO|apply LE].
 Qed.
 
-Lemma respectful2_is_sound2: respectful2 <1= sound2.
+Lemma cpn2_compat: compatible2 cpn2.
 Proof.
-  intro clo.
+  econstructor; [apply cpn2_mon|intros].
+  destruct PR; eapply gf_mon with (r:=clo r).
+  - eapply (compat2_compat COM); apply CLO.
+  - intros. econstructor; [apply COM|apply PR].
+Qed.
+
+Lemma cpn2_greatest: forall clo (COM: compatible2 clo), clo <3= cpn2.
+Proof. intros. econstructor;[apply COM|apply PR]. Qed.
+
+Lemma cpn2_id: forall r, r <2= cpn2 r.
+Proof.
+  intros. exists id.
+  - econstructor; repeat intro.
+    + apply LE, IN.
+    + apply PR0.
+  - apply PR.
+Qed.
+
+Lemma cpn2_comp: forall r,
+    cpn2 (cpn2 r) <2= cpn2 r.
+Proof.
+  intros. exists (compose cpn2 cpn2); [|apply PR].
+  econstructor.
+  - repeat intro. eapply cpn2_mon; [apply IN|].
+    intros. eapply cpn2_mon; [apply PR0|apply LE].
+  - intros. eapply (compat2_compat cpn2_compat).
+    eapply cpn2_mon; [apply PR0|].
+    intros. eapply (compat2_compat cpn2_compat), PR1. 
+Qed.
+
+Lemma gcpn2_mon: monotone2 gcpn2.
+Proof.
+  repeat intro. eapply gf_mon; [eapply IN|].
+  intros. eapply cpn2_mon; [apply PR|apply LE].
+Qed.
+
+Lemma gcpn2_sound:
+  paco2 gcpn2 bot2 <2= paco2 gf bot2.
+Proof.
+  intros.
   set (rclo := fix rclo clo n (r: rel) :=
          match n with
          | 0 => r
          | S n' => rclo clo n' r \2/ clo (rclo clo n' r)
          end).
-  intros. destruct PR. econstructor; [apply MON0|].
-  intros. set (rr e0 e1 := exists n, rclo clo n r e0 e1).
-  assert (rr x0 x1) by (exists 0; apply PR); clear PR.
-  cut (forall n, rclo clo n r <2= gf (rclo clo (S n) r)).
-  { intro X; revert x0 x1 H; pcofix CIH; intros.
-    unfold rr in *; destruct H0.
+  assert (RC: exists n, rclo cpn2 n (paco2 gcpn2 bot2) x0 x1) by (exists 0; apply PR); clear PR.
+  
+  cut (forall n, rclo cpn2 n (paco2 gcpn2 bot2) <2= gf (rclo cpn2 (S n) (paco2 gcpn2 bot2))).
+  { intro X. revert x0 x1 RC; pcofix CIH; intros.
     pfold. eapply gf_mon.
-    - apply X. apply H.
-    - intros. right. apply CIH. exists (S x). apply PR.
+    - apply X. apply RC.
+    - intros. right. eapply CIH. apply PR.
   }
+
   induction n; intros.
   - eapply gf_mon.
-    + clear RESPECTFUL0. eapply PFIX, PR.
-    + intros. right. eapply PR0.
+    + _punfold PR; [apply PR|apply gcpn2_mon].
+    + intros. right. eapply cpn2_mon; [apply PR0|].
+      intros. pclearbot. apply PR1.
   - destruct PR.
-    + eapply gf_mon; [eapply IHn, H0|]. intros. left. apply PR.
-    + eapply gf_mon; [eapply RESPECTFUL0; [|apply IHn|]|]; intros.
-      * left; apply PR.
-      * apply H0.
-      * right; apply PR.
+    + eapply gf_mon; [eapply IHn, H|]. intros. left. apply PR.
+    + eapply gf_mon.
+      * eapply (compat2_compat cpn2_compat).
+        eapply (compat2_mon cpn2_compat); [apply H|apply IHn].
+      * intros. econstructor 2. apply PR.
 Qed.
 
-Lemma respectful2_compose
-      clo0 clo1
-      (RES0: respectful2 clo0)
-      (RES1: respectful2 clo1):
-  respectful2 (compose clo0 clo1).
-Proof.
-  intros. destruct RES0, RES1.
-  econstructor.
-  - repeat intro. eapply MON0; [apply IN|].
-    intros. eapply MON1; [apply PR|apply LE].
-  - intros. eapply RESPECTFUL0; [| |apply PR].
-    + intros. eapply MON1; [apply PR0|apply LE].
-    + intros. eapply RESPECTFUL1; [apply LE| apply GF| apply PR0].
-Qed.
-
-Lemma grespectful2_mon: monotone2 gres2.
-Proof.
-  red. intros.
-  destruct IN; destruct RES; exists clo; [|eapply MON0; [eapply CLO| eapply LE]].
-  constructor; [eapply MON0|].
-  intros. eapply RESPECTFUL0; [apply LE0|apply GF|apply PR].
-Qed.
-
-Lemma grespectful2_respectful2: respectful2 gres2.
-Proof.
-  econstructor; [apply grespectful2_mon|intros].
-  destruct PR; destruct RES; eapply gf_mon with (r:=clo r).
-  eapply RESPECTFUL0; [apply LE|apply GF|apply CLO].
-  intros. econstructor; [constructor; [apply MON0|apply RESPECTFUL0]|apply PR].
-Qed.
-
-Lemma gfgres2_mon: monotone2 (compose gf gres2).
-Proof.
-  destruct grespectful2_respectful2.
-  unfold monotone2. intros. eapply gf_mon; [eapply IN|].
-  intros. eapply MON0;[apply PR|apply LE].
-Qed.
-Hint Resolve gfgres2_mon : paco.
-
-Lemma grespectful2_greatest: forall clo (RES: respectful2 clo), clo <3= gres2.
-Proof. intros. econstructor;[apply RES|apply PR]. Qed.
-
-Lemma grespectful2_incl: forall r, r <2= gres2 r.
-Proof.
-  intros; eexists (fun x => x).
-  - econstructor.
-    + red; intros; apply LE, IN.
-    + intros; apply GF, PR0.
-  - apply PR.
-Qed.
-Hint Resolve grespectful2_incl.
-
-Lemma grespectful2_compose: forall clo (RES: respectful2 clo) r,
-    clo (gres2 r) <2= gres2 r.
-Proof.
-  intros; eapply grespectful2_greatest with (clo := compose clo gres2); [|apply PR].
-  apply respectful2_compose; [apply RES|apply grespectful2_respectful2].
-Qed.
-
-Lemma grespectful2_incl_rev: forall r,
-    gres2 (paco2 (compose gf gres2) r) <2= paco2 (compose gf gres2) r.
-Proof.
-  intro r; pcofix CIH; intros; pfold.
-  eapply gf_mon, grespectful2_compose, grespectful2_respectful2.
-  destruct grespectful2_respectful2; eapply RESPECTFUL0, PR; intros; [apply grespectful2_incl; right; apply CIH, grespectful2_incl, PR0|].
-  _punfold PR0; [|apply gfgres2_mon].
-  eapply gfgres2_mon; [apply PR0|].
-  intros; destruct PR1.
-  - left. eapply paco2_mon; [apply H| apply CIH0].
-  - right. eapply CIH0, H.
-Qed.
+(** 
+  Recursive Closure & Weak Compatibility
+*)
 
 Inductive rclo2 (clo: rel->rel) (r: rel): rel :=
-| rclo2_incl
+| rclo2_id
     e0 e1
     (R: r e0 e1):
+    @rclo2 clo r e0 e1
+| rclo2_clo'
+    r' e0 e1
+    (R': r' <2= rclo2 clo r)
+    (CLOR': clo r' e0 e1):
     @rclo2 clo r e0 e1
 | rclo2_step'
     r' e0 e1
     (R': r' <2= rclo2 clo r)
-    (CLOR':clo r' e0 e1):
+    (CLOR': @gf r' e0 e1):
     @rclo2 clo r e0 e1
-| rclo2_gf
+| rclo2_cpn'
     r' e0 e1
     (R': r' <2= rclo2 clo r)
-    (CLOR':@gf r' e0 e1):
+    (CLOR': @cpn2 r' e0 e1):
     @rclo2 clo r e0 e1
 .
+
+Structure wcompatible2 (clo: rel -> rel) : Prop :=
+  wcompat2_intro {
+      wcompat2_mon: monotone2 clo;
+      wcompat2_wcompat: forall r,
+          clo (gf r) <2= gf (rclo2 clo r);
+    }.
+
+Lemma rclo2_mon_gen clo clo' r r' e0 e1
+      (IN: @rclo2 clo r e0 e1)
+      (LEclo: clo <3= clo')
+      (LEr: r <2= r') :
+  @rclo2 clo' r' e0 e1.
+Proof.
+  induction IN; intros.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR|apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR|apply CLOR'].
+  - econstructor 4; [intros; eapply H, PR|].
+    eapply cpn2_mon; [apply CLOR'|].
+    intros. apply PR.
+Qed.
 
 Lemma rclo2_mon clo:
   monotone2 (rclo2 clo).
 Proof.
-  repeat intro. induction IN.
-  - econstructor 1. apply LE, R.
-  - econstructor 2; [intros; eapply H, PR| apply CLOR'].
-  - econstructor 3; [intros; eapply H, PR| apply CLOR'].
-Qed.
-Hint Resolve rclo2_mon: paco.
-
-Lemma rclo2_base
-      clo
-      (MON: monotone2 clo):
-  clo <3= rclo2 clo.
-Proof.
-  intros. econstructor 2; [intros; apply PR0|].
-  eapply MON; [apply PR|intros; constructor; apply PR0].
+  repeat intro. eapply rclo2_mon_gen; [apply IN|intros; apply PR|apply LE].
 Qed.
 
-Lemma rclo2_step
-      (clo: rel -> rel) r:
+Lemma rclo2_clo clo r:
   clo (rclo2 clo r) <2= rclo2 clo r.
 Proof.
-  intros. econstructor 2; [intros; apply PR0|apply PR].
+  intros. econstructor 2; [|apply PR]. 
+  intros. apply PR0.
 Qed.
 
-Lemma rclo2_rclo2
-      clo r
-      (MON: monotone2 clo):
+Lemma rclo2_step clo r:
+  gf (rclo2 clo r) <2= rclo2 clo r.
+Proof.
+  intros. econstructor 3; [|apply PR].
+  intros. apply PR0.
+Qed.
+
+Lemma rclo2_cpn clo r:
+  cpn2 (rclo2 clo r) <2= rclo2 clo r.
+Proof.
+  intros. econstructor 4; [|apply PR]. 
+  intros. apply PR0.
+Qed.
+
+Lemma rclo2_mult clo r:
   rclo2 clo (rclo2 clo r) <2= rclo2 clo r.
 Proof.
   intros. induction PR.
   - eapply R.
   - econstructor 2; [eapply H | eapply CLOR'].
   - econstructor 3; [eapply H | eapply CLOR'].
+  - econstructor 4; [eapply H | eapply CLOR'].
 Qed.
 
-Structure weak_respectful2 (clo: rel -> rel) : Prop :=
-  weak_respectful2_intro {
-      WEAK_MON: monotone2 clo;
-      WEAK_RESPECTFUL:
-        forall l r (LE: l <2= r) (GF: l <2= gf r),
-          clo l <2= gf (rclo2 clo r);
-    }.
-Hint Constructors weak_respectful2.
-
-Lemma weak_respectful2_respectful2
-      clo (RES: weak_respectful2 clo):
-  respectful2 (rclo2 clo).
+Lemma rclo2_compose clo r:
+  rclo2 (rclo2 clo) r <2= rclo2 clo r.
 Proof.
-  inversion RES. econstructor; [eapply rclo2_mon|]. intros.
+  intros. induction PR.
+  - apply rclo2_id, R.
+  - apply rclo2_mult.
+    eapply rclo2_mon; [apply CLOR'|apply H].
+  - apply rclo2_step.
+    eapply gf_mon; [apply CLOR'|apply H].
+  - apply rclo2_cpn.
+    eapply cpn2_mon; [apply CLOR'|apply H].
+Qed.
+
+Lemma wcompat2_compat
+      clo (WCOM: wcompatible2 clo):
+  compatible2 (rclo2 clo).
+Proof.
+  econstructor; [eapply rclo2_mon|]. intros.
   induction PR; intros.
-  - eapply gf_mon; [apply GF, R|]. intros.
-    apply rclo2_incl. apply PR.
+  - eapply gf_mon; [apply R|]. intros.
+    apply rclo2_id. apply PR.
   - eapply gf_mon.
-    + eapply WEAK_RESPECTFUL0; [|apply H|apply CLOR'].
-      intros. eapply rclo2_mon; [apply R', PR|apply LE].
-    + intros. apply rclo2_rclo2;[apply WEAK_MON0|apply PR].
+    + eapply (wcompat2_wcompat WCOM).
+      eapply (wcompat2_mon WCOM); [apply CLOR'|apply H].
+    + intros. apply rclo2_mult, PR.
   - eapply gf_mon; [apply CLOR'|].
-    intros. eapply rclo2_mon; [apply R', PR| apply LE].
+    intros. apply H in PR. apply rclo2_step, PR.
+  - eapply gf_mon; [|intros; apply rclo2_cpn, PR].
+    apply (compat2_compat cpn2_compat).
+    eapply cpn2_mon; [apply CLOR'|apply H].
 Qed.
 
-Definition cgres2 := compose gf gres2.
-
-Lemma upto2_init:
-  paco2 cgres2 bot2 <2= paco2 gf bot2.
+Lemma wcompat2_sound clo (WCOM: wcompatible2 clo):
+  clo <3= cpn2.
 Proof.
-  apply sound2_is_gf.
-  apply respectful2_is_sound2.
-  apply grespectful2_respectful2.
+  intros. exists (rclo2 clo).
+  - apply wcompat2_compat, WCOM.
+  - apply rclo2_clo.
+    eapply (wcompat2_mon WCOM); [apply PR|].
+    intros. apply rclo2_id, PR0.
 Qed.
 
-Lemma upto2_final:
-  paco2 gf <3= paco2 cgres2.
+(** 
+  Lemmas for tactics
+*)
+
+Lemma cpn2_from_upaco r:
+  upaco2 gcpn2 r <2= cpn2 r.
 Proof.
-  pcofix CIH. intros. _punfold PR; [|apply gf_mon]. pfold.
-  eapply gf_mon; [|apply grespectful2_incl].
-  eapply gf_mon; [apply PR|]. intros. right.
-  inversion PR0; [apply CIH, H | apply CIH0, H].
+  intros. destruct PR; [| apply cpn2_id, H].
+  exists (rclo2 (paco2 gcpn2)).
+  - apply wcompat2_compat.
+    econstructor; [apply paco2_mon|].
+    intros. _punfold PR; [|apply gcpn2_mon].
+    eapply gf_mon; [apply PR|].
+    intros. apply rclo2_cpn.
+    eapply cpn2_mon; [apply PR0|].
+    intros. destruct PR1.
+    + apply rclo2_clo.
+      eapply paco2_mon; [apply H0|].
+      intros. apply rclo2_step.
+      eapply gf_mon; [apply PR1|].
+      intros. apply rclo2_id, PR2.
+    + apply rclo2_step.
+      eapply gf_mon; [apply H0|].
+      intros. apply rclo2_id, PR1.
+  - apply rclo2_clo.
+    eapply paco2_mon; [apply H|].
+    intros. apply rclo2_id, PR.
 Qed.
 
-Lemma upto2_step
-      r clo (RES: weak_respectful2 clo):
-  clo (paco2 cgres2 r) <2= paco2 cgres2 r.
+Lemma cpn2_from_paco r:
+  paco2 gcpn2 r <2= cpn2 r.
+Proof. intros. apply cpn2_from_upaco. left. apply PR. Qed.
+
+Lemma gcpn2_from_paco r:
+  paco2 gcpn2 r <2= gcpn2 r.
 Proof.
-  intros. apply grespectful2_incl_rev.
-  assert (RES' := weak_respectful2_respectful2 RES).
-  eapply grespectful2_greatest; [apply RES'|].
-  eapply rclo2_base; [apply RES|].
-  inversion RES. apply PR.
+  intros. _punfold PR; [|apply gcpn2_mon].
+  eapply gf_mon; [apply PR|].
+  intros. apply cpn2_comp.
+  eapply cpn2_mon; [apply PR0|].
+  apply cpn2_from_upaco.
 Qed.
 
-Lemma upto2_step_under
-      r clo (RES: weak_respectful2 clo):
-  clo (gres2 r) <2= gres2 r.
+Lemma gcpn2_to_paco r:
+  gcpn2 r <2= paco2 gcpn2 r.
 Proof.
-  intros. apply weak_respectful2_respectful2 in RES.
-  eapply grespectful2_compose; [apply RES|].
-  econstructor 2; [intros; constructor 1; apply PR0 | apply PR].
-Qed.
+  intros. pfold. eapply gcpn2_mon; [apply PR|].
+  intros. right. apply PR0.
+Qed.  
 
-End Respectful2.
-
-Lemma rclo2_mon_gen T0 T1 (gf gf': rel2 T0 T1 -> rel2 T0 T1) clo clo' r r' e0 e1
-      (REL: rclo2 gf clo r e0 e1)
-      (LEgf: gf <3= gf')
-      (LEclo: clo <3= clo')
-      (LEr: r <2= r') :
-  rclo2 gf' clo' r' e0 e1.
+Lemma cpn2_init:
+  cpn2 bot2 <2= paco2 gf bot2.
 Proof.
-  induction REL.
-  - econstructor 1. apply LEr, R.
-  - econstructor 2; [intros; eapply H, PR| apply LEclo, CLOR'].
-  - econstructor 3; [intros; eapply H, PR| apply LEgf, CLOR'].
+  intros. apply gcpn2_sound, gcpn2_to_paco, (compat2_compat cpn2_compat).
+  eapply cpn2_mon; [apply PR|contradiction].
 Qed.
 
-Lemma grespectful2_impl T0 T1 (gf gf': rel2 T0 T1 -> rel2 T0 T1) r x0 x1
-    (PR: gres2 gf r x0 x1)
-    (EQ: forall r x0 x1, gf r x0 x1 <-> gf' r x0 x1):
-  gres2 gf' r x0 x1.
+Lemma cpn2_clo
+      r clo (LE: clo <3= cpn2):
+  clo (cpn2 r) <2= cpn2 r.
 Proof.
-  intros. destruct PR. econstructor; [|apply CLO].
-  destruct RES. econstructor; [apply MON0|].
-  intros. eapply EQ. eapply RESPECTFUL0; [apply LE| |apply PR].
-  intros. eapply EQ. apply GF, PR0.
+  intros. apply cpn2_comp, LE, PR.
 Qed.
 
-Lemma grespectful2_iff T0 T1 (gf gf': rel2 T0 T1 -> rel2 T0 T1) r x0 x1
-    (EQ: forall r x0 x1, gf r x0 x1 <-> gf' r x0 x1):
-  gres2 gf r x0 x1 <-> gres2 gf' r x0 x1.
+Lemma gcpn2_clo
+      r clo (LE: clo <3= cpn2):
+  clo (gcpn2 r) <2= gcpn2 r.
 Proof.
-  split; intros.
-  - eapply grespectful2_impl; [apply H | apply EQ].
-  - eapply grespectful2_impl; [apply H | split; apply EQ].
+  intros. apply LE, (compat2_compat cpn2_compat) in PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply cpn2_comp, PR0.
 Qed.
 
-Hint Constructors sound2.
-Hint Constructors respectful2.
-Hint Constructors gres2.
-Hint Resolve gfclo2_mon : paco.
-Hint Resolve gfgres2_mon : paco.
-Hint Resolve grespectful2_incl.
-Hint Resolve rclo2_mon: paco.
-Hint Constructors weak_respectful2.
-Hint Unfold cgres2.
+Lemma cpn2_step r:
+  gcpn2 r <2= cpn2 r.
+Proof.
+  intros. eapply cpn2_clo, PR.
+  intros. eapply wcompat2_sound, PR0.
+  econstructor; [apply gf_mon|].
+  intros. eapply gf_mon; [apply PR1|].
+  intros. apply rclo2_step.
+  eapply gf_mon; [apply PR2|].
+  intros. apply rclo2_id, PR3.
+Qed.
 
-(* User Tactics *)
+Lemma cpn2_final: forall r, upaco2 gf r <2= cpn2 r.
+Proof.
+  intros. eapply cpn2_from_upaco.
+  intros. eapply upaco2_mon_gen; [apply PR| |intros; apply PR0].
+  intros. eapply gf_mon; [apply PR0|].
+  intros. apply cpn2_id, PR1.
+Qed.
 
-Ltac pupto2_init := eapply upto2_init; [eauto with paco|].
-Ltac pupto2_final := first [eapply upto2_final; [eauto with paco|] | eapply grespectful2_incl].
-Ltac pupto2 H := first [eapply upto2_step|eapply upto2_step_under]; [|eapply H|]; [eauto with paco|].
+Lemma gcpn2_final: forall r, paco2 gf r <2= gcpn2 r.
+Proof.
+  intros. _punfold PR; [|apply gf_mon].
+  eapply gf_mon; [apply PR | apply cpn2_final].
+Qed.
 
-Ltac pfold2_reverse_ :=
-  repeat red;
-  match goal with
-  | [|- ?gf (upaco2 _ _) _ _] => eapply (paco2_unfold (gf := gf))
-  | [|- ?gf (?gres (upaco2 _ _)) _ _] => eapply (paco2_unfold (gf := cgres2 gf))
-  end.
+Lemma cpn2_complete:
+  paco2 gf bot2 <2= cpn2 bot2.
+Proof.
+  intros. apply cpn2_from_paco.
+  eapply paco2_mon_gen.
+  - apply PR.
+  - intros. eapply gf_mon; [apply PR0|apply cpn2_id].
+  - intros. apply PR0.
+Qed.
 
-Ltac pfold2_reverse := pfold2_reverse_; eauto with paco.
+End Companion2.
 
-Ltac punfold2_reverse_ H :=
-  repeat red in H;
-  let PP := type of H in
-  match PP with
-  | ?gf (upaco2 _ _) _ _ => eapply (paco2_fold gf) in H
-  | ?gf (?gres (upaco2 _ _)) _ _ => eapply (paco2_fold (cgres2 gf)) in H
-  end.
+Hint Resolve cpn2_mon : paco.
+Hint Resolve gcpn2_mon : paco.
+Hint Resolve rclo2_mon : paco.
+Hint Resolve cpn2_final gcpn2_final : paco.
 
-Ltac punfold2_reverse H := punfold2_reverse_ H; eauto with paco.
+Hint Constructors cpn2 compatible2 wcompatible2.
+
+Hint Constructors rclo2 : rclo.
+Hint Resolve rclo2_clo rclo2_step rclo2_cpn : rclo.
 
