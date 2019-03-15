@@ -33,7 +33,7 @@ Ltac paco_class TGT method :=
     clear CLS; exact I);
   clear TMP; unfold typ in *; clear typ; revert lem.
 
-Ltac ptac tac := generalize _paco_mark_cons; intros; tac; paco_revert_hyp _paco_mark.
+Ltac under_forall tac := generalize _paco_mark_cons; intros; tac; paco_revert_hyp _paco_mark.
 
 (** ** pfold tactic
   - [pfold]
@@ -43,7 +43,7 @@ Ltac pfold_ := let x := fresh "_x_" in
   repeat red;
   match goal with [|- ?G] => paco_class G (@pacofold) end;
   intro x; match goal with [x:=?lem|-_] => clear x; eapply lem end.
-Ltac pfold := ptac pfold_.
+Ltac pfold := under_forall pfold_.
 
 (** ** punfold tactic
   - [punfold H]
