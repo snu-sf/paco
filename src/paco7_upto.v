@@ -56,15 +56,6 @@ Qed.
 Lemma cpn7_greatest: forall clo (COM: compatible7 clo), clo <8= cpn7.
 Proof. intros. econstructor;[apply COM|apply PR]. Qed.
 
-Lemma cpn7_id: forall r, r <7= cpn7 r.
-Proof.
-  intros. exists id.
-  - econstructor; repeat intro.
-    + apply LE, IN.
-    + apply PR0.
-  - apply PR.
-Qed.
-
 Lemma cpn7_comp: forall r,
     cpn7 (cpn7 r) <7= cpn7 r.
 Proof.
@@ -119,7 +110,7 @@ Qed.
 *)
 
 Inductive rclo7 (clo: rel->rel) (r: rel): rel :=
-| rclo7_id
+| rclo7_base
     e0 e1 e2 e3 e4 e5 e6
     (R: r e0 e1 e2 e3 e4 e5 e6):
     @rclo7 clo r e0 e1 e2 e3 e4 e5 e6
@@ -203,7 +194,7 @@ Lemma rclo7_compose clo r:
   rclo7 (rclo7 clo) r <7= rclo7 clo r.
 Proof.
   intros. induction PR.
-  - apply rclo7_id, R.
+  - apply rclo7_base, R.
   - apply rclo7_mult.
     eapply rclo7_mon; [apply CLOR'|apply H].
   - apply rclo7_step.
@@ -219,7 +210,7 @@ Proof.
   econstructor; [eapply rclo7_mon|]. intros.
   induction PR; intros.
   - eapply gf_mon; [apply R|]. intros.
-    apply rclo7_id. apply PR.
+    apply rclo7_base. apply PR.
   - eapply gf_mon.
     + eapply (wcompat7_wcompat WCOM).
       eapply (wcompat7_mon WCOM); [apply CLOR'|apply H].
@@ -238,17 +229,26 @@ Proof.
   - apply wcompat7_compat, WCOM.
   - apply rclo7_clo.
     eapply (wcompat7_mon WCOM); [apply PR|].
-    intros. apply rclo7_id, PR0.
+    intros. apply rclo7_base, PR0.
 Qed.
 
 (** 
   Lemmas for tactics
 *)
 
+Lemma cpn7_base: forall r, r <7= cpn7 r.
+Proof.
+  intros. exists id.
+  - econstructor; repeat intro.
+    + apply LE, IN.
+    + apply PR0.
+  - apply PR.
+Qed.
+
 Lemma cpn7_from_upaco r:
   upaco7 gcpn7 r <7= cpn7 r.
 Proof.
-  intros. destruct PR; [| apply cpn7_id, H].
+  intros. destruct PR; [| apply cpn7_base, H].
   exists (rclo7 (paco7 gcpn7)).
   - apply wcompat7_compat.
     econstructor; [apply paco7_mon|].
@@ -261,13 +261,13 @@ Proof.
       eapply paco7_mon; [apply H0|].
       intros. apply rclo7_step.
       eapply gf_mon; [apply PR1|].
-      intros. apply rclo7_id, PR2.
+      intros. apply rclo7_base, PR2.
     + apply rclo7_step.
       eapply gf_mon; [apply H0|].
-      intros. apply rclo7_id, PR1.
+      intros. apply rclo7_base, PR1.
   - apply rclo7_clo.
     eapply paco7_mon; [apply H|].
-    intros. apply rclo7_id, PR.
+    intros. apply rclo7_base, PR.
 Qed.
 
 Lemma cpn7_from_paco r:
@@ -323,7 +323,7 @@ Proof.
   intros. eapply gf_mon; [apply PR1|].
   intros. apply rclo7_step.
   eapply gf_mon; [apply PR2|].
-  intros. apply rclo7_id, PR3.
+  intros. apply rclo7_base, PR3.
 Qed.
 
 Lemma cpn7_final: forall r, upaco7 gf r <7= cpn7 r.
@@ -331,7 +331,7 @@ Proof.
   intros. eapply cpn7_from_upaco.
   intros. eapply upaco7_mon_gen; [apply PR| |intros; apply PR0].
   intros. eapply gf_mon; [apply PR0|].
-  intros. apply cpn7_id, PR1.
+  intros. apply cpn7_base, PR1.
 Qed.
 
 Lemma gcpn7_final: forall r, paco7 gf r <7= gcpn7 r.
@@ -346,12 +346,13 @@ Proof.
   intros. apply cpn7_from_paco.
   eapply paco7_mon_gen.
   - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn7_id].
+  - intros. eapply gf_mon; [apply PR0|apply cpn7_base].
   - intros. apply PR0.
 Qed.
 
 End Companion7.
 
+Hint Resolve cpn7_base : paco.
 Hint Resolve cpn7_mon : paco.
 Hint Resolve gcpn7_mon : paco.
 Hint Resolve rclo7_mon : paco.

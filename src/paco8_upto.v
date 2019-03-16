@@ -57,15 +57,6 @@ Qed.
 Lemma cpn8_greatest: forall clo (COM: compatible8 clo), clo <9= cpn8.
 Proof. intros. econstructor;[apply COM|apply PR]. Qed.
 
-Lemma cpn8_id: forall r, r <8= cpn8 r.
-Proof.
-  intros. exists id.
-  - econstructor; repeat intro.
-    + apply LE, IN.
-    + apply PR0.
-  - apply PR.
-Qed.
-
 Lemma cpn8_comp: forall r,
     cpn8 (cpn8 r) <8= cpn8 r.
 Proof.
@@ -120,7 +111,7 @@ Qed.
 *)
 
 Inductive rclo8 (clo: rel->rel) (r: rel): rel :=
-| rclo8_id
+| rclo8_base
     e0 e1 e2 e3 e4 e5 e6 e7
     (R: r e0 e1 e2 e3 e4 e5 e6 e7):
     @rclo8 clo r e0 e1 e2 e3 e4 e5 e6 e7
@@ -204,7 +195,7 @@ Lemma rclo8_compose clo r:
   rclo8 (rclo8 clo) r <8= rclo8 clo r.
 Proof.
   intros. induction PR.
-  - apply rclo8_id, R.
+  - apply rclo8_base, R.
   - apply rclo8_mult.
     eapply rclo8_mon; [apply CLOR'|apply H].
   - apply rclo8_step.
@@ -220,7 +211,7 @@ Proof.
   econstructor; [eapply rclo8_mon|]. intros.
   induction PR; intros.
   - eapply gf_mon; [apply R|]. intros.
-    apply rclo8_id. apply PR.
+    apply rclo8_base. apply PR.
   - eapply gf_mon.
     + eapply (wcompat8_wcompat WCOM).
       eapply (wcompat8_mon WCOM); [apply CLOR'|apply H].
@@ -239,17 +230,26 @@ Proof.
   - apply wcompat8_compat, WCOM.
   - apply rclo8_clo.
     eapply (wcompat8_mon WCOM); [apply PR|].
-    intros. apply rclo8_id, PR0.
+    intros. apply rclo8_base, PR0.
 Qed.
 
 (** 
   Lemmas for tactics
 *)
 
+Lemma cpn8_base: forall r, r <8= cpn8 r.
+Proof.
+  intros. exists id.
+  - econstructor; repeat intro.
+    + apply LE, IN.
+    + apply PR0.
+  - apply PR.
+Qed.
+
 Lemma cpn8_from_upaco r:
   upaco8 gcpn8 r <8= cpn8 r.
 Proof.
-  intros. destruct PR; [| apply cpn8_id, H].
+  intros. destruct PR; [| apply cpn8_base, H].
   exists (rclo8 (paco8 gcpn8)).
   - apply wcompat8_compat.
     econstructor; [apply paco8_mon|].
@@ -262,13 +262,13 @@ Proof.
       eapply paco8_mon; [apply H0|].
       intros. apply rclo8_step.
       eapply gf_mon; [apply PR1|].
-      intros. apply rclo8_id, PR2.
+      intros. apply rclo8_base, PR2.
     + apply rclo8_step.
       eapply gf_mon; [apply H0|].
-      intros. apply rclo8_id, PR1.
+      intros. apply rclo8_base, PR1.
   - apply rclo8_clo.
     eapply paco8_mon; [apply H|].
-    intros. apply rclo8_id, PR.
+    intros. apply rclo8_base, PR.
 Qed.
 
 Lemma cpn8_from_paco r:
@@ -324,7 +324,7 @@ Proof.
   intros. eapply gf_mon; [apply PR1|].
   intros. apply rclo8_step.
   eapply gf_mon; [apply PR2|].
-  intros. apply rclo8_id, PR3.
+  intros. apply rclo8_base, PR3.
 Qed.
 
 Lemma cpn8_final: forall r, upaco8 gf r <8= cpn8 r.
@@ -332,7 +332,7 @@ Proof.
   intros. eapply cpn8_from_upaco.
   intros. eapply upaco8_mon_gen; [apply PR| |intros; apply PR0].
   intros. eapply gf_mon; [apply PR0|].
-  intros. apply cpn8_id, PR1.
+  intros. apply cpn8_base, PR1.
 Qed.
 
 Lemma gcpn8_final: forall r, paco8 gf r <8= gcpn8 r.
@@ -347,12 +347,13 @@ Proof.
   intros. apply cpn8_from_paco.
   eapply paco8_mon_gen.
   - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn8_id].
+  - intros. eapply gf_mon; [apply PR0|apply cpn8_base].
   - intros. apply PR0.
 Qed.
 
 End Companion8.
 
+Hint Resolve cpn8_base : paco.
 Hint Resolve cpn8_mon : paco.
 Hint Resolve gcpn8_mon : paco.
 Hint Resolve rclo8_mon : paco.

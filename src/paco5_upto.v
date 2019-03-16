@@ -54,15 +54,6 @@ Qed.
 Lemma cpn5_greatest: forall clo (COM: compatible5 clo), clo <6= cpn5.
 Proof. intros. econstructor;[apply COM|apply PR]. Qed.
 
-Lemma cpn5_id: forall r, r <5= cpn5 r.
-Proof.
-  intros. exists id.
-  - econstructor; repeat intro.
-    + apply LE, IN.
-    + apply PR0.
-  - apply PR.
-Qed.
-
 Lemma cpn5_comp: forall r,
     cpn5 (cpn5 r) <5= cpn5 r.
 Proof.
@@ -117,7 +108,7 @@ Qed.
 *)
 
 Inductive rclo5 (clo: rel->rel) (r: rel): rel :=
-| rclo5_id
+| rclo5_base
     e0 e1 e2 e3 e4
     (R: r e0 e1 e2 e3 e4):
     @rclo5 clo r e0 e1 e2 e3 e4
@@ -201,7 +192,7 @@ Lemma rclo5_compose clo r:
   rclo5 (rclo5 clo) r <5= rclo5 clo r.
 Proof.
   intros. induction PR.
-  - apply rclo5_id, R.
+  - apply rclo5_base, R.
   - apply rclo5_mult.
     eapply rclo5_mon; [apply CLOR'|apply H].
   - apply rclo5_step.
@@ -217,7 +208,7 @@ Proof.
   econstructor; [eapply rclo5_mon|]. intros.
   induction PR; intros.
   - eapply gf_mon; [apply R|]. intros.
-    apply rclo5_id. apply PR.
+    apply rclo5_base. apply PR.
   - eapply gf_mon.
     + eapply (wcompat5_wcompat WCOM).
       eapply (wcompat5_mon WCOM); [apply CLOR'|apply H].
@@ -236,17 +227,26 @@ Proof.
   - apply wcompat5_compat, WCOM.
   - apply rclo5_clo.
     eapply (wcompat5_mon WCOM); [apply PR|].
-    intros. apply rclo5_id, PR0.
+    intros. apply rclo5_base, PR0.
 Qed.
 
 (** 
   Lemmas for tactics
 *)
 
+Lemma cpn5_base: forall r, r <5= cpn5 r.
+Proof.
+  intros. exists id.
+  - econstructor; repeat intro.
+    + apply LE, IN.
+    + apply PR0.
+  - apply PR.
+Qed.
+
 Lemma cpn5_from_upaco r:
   upaco5 gcpn5 r <5= cpn5 r.
 Proof.
-  intros. destruct PR; [| apply cpn5_id, H].
+  intros. destruct PR; [| apply cpn5_base, H].
   exists (rclo5 (paco5 gcpn5)).
   - apply wcompat5_compat.
     econstructor; [apply paco5_mon|].
@@ -259,13 +259,13 @@ Proof.
       eapply paco5_mon; [apply H0|].
       intros. apply rclo5_step.
       eapply gf_mon; [apply PR1|].
-      intros. apply rclo5_id, PR2.
+      intros. apply rclo5_base, PR2.
     + apply rclo5_step.
       eapply gf_mon; [apply H0|].
-      intros. apply rclo5_id, PR1.
+      intros. apply rclo5_base, PR1.
   - apply rclo5_clo.
     eapply paco5_mon; [apply H|].
-    intros. apply rclo5_id, PR.
+    intros. apply rclo5_base, PR.
 Qed.
 
 Lemma cpn5_from_paco r:
@@ -321,7 +321,7 @@ Proof.
   intros. eapply gf_mon; [apply PR1|].
   intros. apply rclo5_step.
   eapply gf_mon; [apply PR2|].
-  intros. apply rclo5_id, PR3.
+  intros. apply rclo5_base, PR3.
 Qed.
 
 Lemma cpn5_final: forall r, upaco5 gf r <5= cpn5 r.
@@ -329,7 +329,7 @@ Proof.
   intros. eapply cpn5_from_upaco.
   intros. eapply upaco5_mon_gen; [apply PR| |intros; apply PR0].
   intros. eapply gf_mon; [apply PR0|].
-  intros. apply cpn5_id, PR1.
+  intros. apply cpn5_base, PR1.
 Qed.
 
 Lemma gcpn5_final: forall r, paco5 gf r <5= gcpn5 r.
@@ -344,12 +344,13 @@ Proof.
   intros. apply cpn5_from_paco.
   eapply paco5_mon_gen.
   - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn5_id].
+  - intros. eapply gf_mon; [apply PR0|apply cpn5_base].
   - intros. apply PR0.
 Qed.
 
 End Companion5.
 
+Hint Resolve cpn5_base : paco.
 Hint Resolve cpn5_mon : paco.
 Hint Resolve gcpn5_mon : paco.
 Hint Resolve rclo5_mon : paco.

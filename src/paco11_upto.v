@@ -60,15 +60,6 @@ Qed.
 Lemma cpn11_greatest: forall clo (COM: compatible11 clo), clo <12= cpn11.
 Proof. intros. econstructor;[apply COM|apply PR]. Qed.
 
-Lemma cpn11_id: forall r, r <11= cpn11 r.
-Proof.
-  intros. exists id.
-  - econstructor; repeat intro.
-    + apply LE, IN.
-    + apply PR0.
-  - apply PR.
-Qed.
-
 Lemma cpn11_comp: forall r,
     cpn11 (cpn11 r) <11= cpn11 r.
 Proof.
@@ -123,7 +114,7 @@ Qed.
 *)
 
 Inductive rclo11 (clo: rel->rel) (r: rel): rel :=
-| rclo11_id
+| rclo11_base
     e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10
     (R: r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10):
     @rclo11 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10
@@ -207,7 +198,7 @@ Lemma rclo11_compose clo r:
   rclo11 (rclo11 clo) r <11= rclo11 clo r.
 Proof.
   intros. induction PR.
-  - apply rclo11_id, R.
+  - apply rclo11_base, R.
   - apply rclo11_mult.
     eapply rclo11_mon; [apply CLOR'|apply H].
   - apply rclo11_step.
@@ -223,7 +214,7 @@ Proof.
   econstructor; [eapply rclo11_mon|]. intros.
   induction PR; intros.
   - eapply gf_mon; [apply R|]. intros.
-    apply rclo11_id. apply PR.
+    apply rclo11_base. apply PR.
   - eapply gf_mon.
     + eapply (wcompat11_wcompat WCOM).
       eapply (wcompat11_mon WCOM); [apply CLOR'|apply H].
@@ -242,17 +233,26 @@ Proof.
   - apply wcompat11_compat, WCOM.
   - apply rclo11_clo.
     eapply (wcompat11_mon WCOM); [apply PR|].
-    intros. apply rclo11_id, PR0.
+    intros. apply rclo11_base, PR0.
 Qed.
 
 (** 
   Lemmas for tactics
 *)
 
+Lemma cpn11_base: forall r, r <11= cpn11 r.
+Proof.
+  intros. exists id.
+  - econstructor; repeat intro.
+    + apply LE, IN.
+    + apply PR0.
+  - apply PR.
+Qed.
+
 Lemma cpn11_from_upaco r:
   upaco11 gcpn11 r <11= cpn11 r.
 Proof.
-  intros. destruct PR; [| apply cpn11_id, H].
+  intros. destruct PR; [| apply cpn11_base, H].
   exists (rclo11 (paco11 gcpn11)).
   - apply wcompat11_compat.
     econstructor; [apply paco11_mon|].
@@ -265,13 +265,13 @@ Proof.
       eapply paco11_mon; [apply H0|].
       intros. apply rclo11_step.
       eapply gf_mon; [apply PR1|].
-      intros. apply rclo11_id, PR2.
+      intros. apply rclo11_base, PR2.
     + apply rclo11_step.
       eapply gf_mon; [apply H0|].
-      intros. apply rclo11_id, PR1.
+      intros. apply rclo11_base, PR1.
   - apply rclo11_clo.
     eapply paco11_mon; [apply H|].
-    intros. apply rclo11_id, PR.
+    intros. apply rclo11_base, PR.
 Qed.
 
 Lemma cpn11_from_paco r:
@@ -327,7 +327,7 @@ Proof.
   intros. eapply gf_mon; [apply PR1|].
   intros. apply rclo11_step.
   eapply gf_mon; [apply PR2|].
-  intros. apply rclo11_id, PR3.
+  intros. apply rclo11_base, PR3.
 Qed.
 
 Lemma cpn11_final: forall r, upaco11 gf r <11= cpn11 r.
@@ -335,7 +335,7 @@ Proof.
   intros. eapply cpn11_from_upaco.
   intros. eapply upaco11_mon_gen; [apply PR| |intros; apply PR0].
   intros. eapply gf_mon; [apply PR0|].
-  intros. apply cpn11_id, PR1.
+  intros. apply cpn11_base, PR1.
 Qed.
 
 Lemma gcpn11_final: forall r, paco11 gf r <11= gcpn11 r.
@@ -350,12 +350,13 @@ Proof.
   intros. apply cpn11_from_paco.
   eapply paco11_mon_gen.
   - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn11_id].
+  - intros. eapply gf_mon; [apply PR0|apply cpn11_base].
   - intros. apply PR0.
 Qed.
 
 End Companion11.
 
+Hint Resolve cpn11_base : paco.
 Hint Resolve cpn11_mon : paco.
 Hint Resolve gcpn11_mon : paco.
 Hint Resolve rclo11_mon : paco.

@@ -58,15 +58,6 @@ Qed.
 Lemma cpn9_greatest: forall clo (COM: compatible9 clo), clo <10= cpn9.
 Proof. intros. econstructor;[apply COM|apply PR]. Qed.
 
-Lemma cpn9_id: forall r, r <9= cpn9 r.
-Proof.
-  intros. exists id.
-  - econstructor; repeat intro.
-    + apply LE, IN.
-    + apply PR0.
-  - apply PR.
-Qed.
-
 Lemma cpn9_comp: forall r,
     cpn9 (cpn9 r) <9= cpn9 r.
 Proof.
@@ -121,7 +112,7 @@ Qed.
 *)
 
 Inductive rclo9 (clo: rel->rel) (r: rel): rel :=
-| rclo9_id
+| rclo9_base
     e0 e1 e2 e3 e4 e5 e6 e7 e8
     (R: r e0 e1 e2 e3 e4 e5 e6 e7 e8):
     @rclo9 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8
@@ -205,7 +196,7 @@ Lemma rclo9_compose clo r:
   rclo9 (rclo9 clo) r <9= rclo9 clo r.
 Proof.
   intros. induction PR.
-  - apply rclo9_id, R.
+  - apply rclo9_base, R.
   - apply rclo9_mult.
     eapply rclo9_mon; [apply CLOR'|apply H].
   - apply rclo9_step.
@@ -221,7 +212,7 @@ Proof.
   econstructor; [eapply rclo9_mon|]. intros.
   induction PR; intros.
   - eapply gf_mon; [apply R|]. intros.
-    apply rclo9_id. apply PR.
+    apply rclo9_base. apply PR.
   - eapply gf_mon.
     + eapply (wcompat9_wcompat WCOM).
       eapply (wcompat9_mon WCOM); [apply CLOR'|apply H].
@@ -240,17 +231,26 @@ Proof.
   - apply wcompat9_compat, WCOM.
   - apply rclo9_clo.
     eapply (wcompat9_mon WCOM); [apply PR|].
-    intros. apply rclo9_id, PR0.
+    intros. apply rclo9_base, PR0.
 Qed.
 
 (** 
   Lemmas for tactics
 *)
 
+Lemma cpn9_base: forall r, r <9= cpn9 r.
+Proof.
+  intros. exists id.
+  - econstructor; repeat intro.
+    + apply LE, IN.
+    + apply PR0.
+  - apply PR.
+Qed.
+
 Lemma cpn9_from_upaco r:
   upaco9 gcpn9 r <9= cpn9 r.
 Proof.
-  intros. destruct PR; [| apply cpn9_id, H].
+  intros. destruct PR; [| apply cpn9_base, H].
   exists (rclo9 (paco9 gcpn9)).
   - apply wcompat9_compat.
     econstructor; [apply paco9_mon|].
@@ -263,13 +263,13 @@ Proof.
       eapply paco9_mon; [apply H0|].
       intros. apply rclo9_step.
       eapply gf_mon; [apply PR1|].
-      intros. apply rclo9_id, PR2.
+      intros. apply rclo9_base, PR2.
     + apply rclo9_step.
       eapply gf_mon; [apply H0|].
-      intros. apply rclo9_id, PR1.
+      intros. apply rclo9_base, PR1.
   - apply rclo9_clo.
     eapply paco9_mon; [apply H|].
-    intros. apply rclo9_id, PR.
+    intros. apply rclo9_base, PR.
 Qed.
 
 Lemma cpn9_from_paco r:
@@ -325,7 +325,7 @@ Proof.
   intros. eapply gf_mon; [apply PR1|].
   intros. apply rclo9_step.
   eapply gf_mon; [apply PR2|].
-  intros. apply rclo9_id, PR3.
+  intros. apply rclo9_base, PR3.
 Qed.
 
 Lemma cpn9_final: forall r, upaco9 gf r <9= cpn9 r.
@@ -333,7 +333,7 @@ Proof.
   intros. eapply cpn9_from_upaco.
   intros. eapply upaco9_mon_gen; [apply PR| |intros; apply PR0].
   intros. eapply gf_mon; [apply PR0|].
-  intros. apply cpn9_id, PR1.
+  intros. apply cpn9_base, PR1.
 Qed.
 
 Lemma gcpn9_final: forall r, paco9 gf r <9= gcpn9 r.
@@ -348,12 +348,13 @@ Proof.
   intros. apply cpn9_from_paco.
   eapply paco9_mon_gen.
   - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn9_id].
+  - intros. eapply gf_mon; [apply PR0|apply cpn9_base].
   - intros. apply PR0.
 Qed.
 
 End Companion9.
 
+Hint Resolve cpn9_base : paco.
 Hint Resolve cpn9_mon : paco.
 Hint Resolve gcpn9_mon : paco.
 Hint Resolve rclo9_mon : paco.

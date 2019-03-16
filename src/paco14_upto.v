@@ -63,15 +63,6 @@ Qed.
 Lemma cpn14_greatest: forall clo (COM: compatible14 clo), clo <15= cpn14.
 Proof. intros. econstructor;[apply COM|apply PR]. Qed.
 
-Lemma cpn14_id: forall r, r <14= cpn14 r.
-Proof.
-  intros. exists id.
-  - econstructor; repeat intro.
-    + apply LE, IN.
-    + apply PR0.
-  - apply PR.
-Qed.
-
 Lemma cpn14_comp: forall r,
     cpn14 (cpn14 r) <14= cpn14 r.
 Proof.
@@ -126,7 +117,7 @@ Qed.
 *)
 
 Inductive rclo14 (clo: rel->rel) (r: rel): rel :=
-| rclo14_id
+| rclo14_base
     e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13
     (R: r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13):
     @rclo14 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13
@@ -210,7 +201,7 @@ Lemma rclo14_compose clo r:
   rclo14 (rclo14 clo) r <14= rclo14 clo r.
 Proof.
   intros. induction PR.
-  - apply rclo14_id, R.
+  - apply rclo14_base, R.
   - apply rclo14_mult.
     eapply rclo14_mon; [apply CLOR'|apply H].
   - apply rclo14_step.
@@ -226,7 +217,7 @@ Proof.
   econstructor; [eapply rclo14_mon|]. intros.
   induction PR; intros.
   - eapply gf_mon; [apply R|]. intros.
-    apply rclo14_id. apply PR.
+    apply rclo14_base. apply PR.
   - eapply gf_mon.
     + eapply (wcompat14_wcompat WCOM).
       eapply (wcompat14_mon WCOM); [apply CLOR'|apply H].
@@ -245,17 +236,26 @@ Proof.
   - apply wcompat14_compat, WCOM.
   - apply rclo14_clo.
     eapply (wcompat14_mon WCOM); [apply PR|].
-    intros. apply rclo14_id, PR0.
+    intros. apply rclo14_base, PR0.
 Qed.
 
 (** 
   Lemmas for tactics
 *)
 
+Lemma cpn14_base: forall r, r <14= cpn14 r.
+Proof.
+  intros. exists id.
+  - econstructor; repeat intro.
+    + apply LE, IN.
+    + apply PR0.
+  - apply PR.
+Qed.
+
 Lemma cpn14_from_upaco r:
   upaco14 gcpn14 r <14= cpn14 r.
 Proof.
-  intros. destruct PR; [| apply cpn14_id, H].
+  intros. destruct PR; [| apply cpn14_base, H].
   exists (rclo14 (paco14 gcpn14)).
   - apply wcompat14_compat.
     econstructor; [apply paco14_mon|].
@@ -268,13 +268,13 @@ Proof.
       eapply paco14_mon; [apply H0|].
       intros. apply rclo14_step.
       eapply gf_mon; [apply PR1|].
-      intros. apply rclo14_id, PR2.
+      intros. apply rclo14_base, PR2.
     + apply rclo14_step.
       eapply gf_mon; [apply H0|].
-      intros. apply rclo14_id, PR1.
+      intros. apply rclo14_base, PR1.
   - apply rclo14_clo.
     eapply paco14_mon; [apply H|].
-    intros. apply rclo14_id, PR.
+    intros. apply rclo14_base, PR.
 Qed.
 
 Lemma cpn14_from_paco r:
@@ -330,7 +330,7 @@ Proof.
   intros. eapply gf_mon; [apply PR1|].
   intros. apply rclo14_step.
   eapply gf_mon; [apply PR2|].
-  intros. apply rclo14_id, PR3.
+  intros. apply rclo14_base, PR3.
 Qed.
 
 Lemma cpn14_final: forall r, upaco14 gf r <14= cpn14 r.
@@ -338,7 +338,7 @@ Proof.
   intros. eapply cpn14_from_upaco.
   intros. eapply upaco14_mon_gen; [apply PR| |intros; apply PR0].
   intros. eapply gf_mon; [apply PR0|].
-  intros. apply cpn14_id, PR1.
+  intros. apply cpn14_base, PR1.
 Qed.
 
 Lemma gcpn14_final: forall r, paco14 gf r <14= gcpn14 r.
@@ -353,12 +353,13 @@ Proof.
   intros. apply cpn14_from_paco.
   eapply paco14_mon_gen.
   - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn14_id].
+  - intros. eapply gf_mon; [apply PR0|apply cpn14_base].
   - intros. apply PR0.
 Qed.
 
 End Companion14.
 
+Hint Resolve cpn14_base : paco.
 Hint Resolve cpn14_mon : paco.
 Hint Resolve gcpn14_mon : paco.
 Hint Resolve rclo14_mon : paco.

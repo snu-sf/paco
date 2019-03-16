@@ -64,15 +64,6 @@ Qed.
 Lemma cpn15_greatest: forall clo (COM: compatible15 clo), clo <16= cpn15.
 Proof. intros. econstructor;[apply COM|apply PR]. Qed.
 
-Lemma cpn15_id: forall r, r <15= cpn15 r.
-Proof.
-  intros. exists id.
-  - econstructor; repeat intro.
-    + apply LE, IN.
-    + apply PR0.
-  - apply PR.
-Qed.
-
 Lemma cpn15_comp: forall r,
     cpn15 (cpn15 r) <15= cpn15 r.
 Proof.
@@ -127,7 +118,7 @@ Qed.
 *)
 
 Inductive rclo15 (clo: rel->rel) (r: rel): rel :=
-| rclo15_id
+| rclo15_base
     e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14
     (R: r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14):
     @rclo15 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14
@@ -211,7 +202,7 @@ Lemma rclo15_compose clo r:
   rclo15 (rclo15 clo) r <15= rclo15 clo r.
 Proof.
   intros. induction PR.
-  - apply rclo15_id, R.
+  - apply rclo15_base, R.
   - apply rclo15_mult.
     eapply rclo15_mon; [apply CLOR'|apply H].
   - apply rclo15_step.
@@ -227,7 +218,7 @@ Proof.
   econstructor; [eapply rclo15_mon|]. intros.
   induction PR; intros.
   - eapply gf_mon; [apply R|]. intros.
-    apply rclo15_id. apply PR.
+    apply rclo15_base. apply PR.
   - eapply gf_mon.
     + eapply (wcompat15_wcompat WCOM).
       eapply (wcompat15_mon WCOM); [apply CLOR'|apply H].
@@ -246,17 +237,26 @@ Proof.
   - apply wcompat15_compat, WCOM.
   - apply rclo15_clo.
     eapply (wcompat15_mon WCOM); [apply PR|].
-    intros. apply rclo15_id, PR0.
+    intros. apply rclo15_base, PR0.
 Qed.
 
 (** 
   Lemmas for tactics
 *)
 
+Lemma cpn15_base: forall r, r <15= cpn15 r.
+Proof.
+  intros. exists id.
+  - econstructor; repeat intro.
+    + apply LE, IN.
+    + apply PR0.
+  - apply PR.
+Qed.
+
 Lemma cpn15_from_upaco r:
   upaco15 gcpn15 r <15= cpn15 r.
 Proof.
-  intros. destruct PR; [| apply cpn15_id, H].
+  intros. destruct PR; [| apply cpn15_base, H].
   exists (rclo15 (paco15 gcpn15)).
   - apply wcompat15_compat.
     econstructor; [apply paco15_mon|].
@@ -269,13 +269,13 @@ Proof.
       eapply paco15_mon; [apply H0|].
       intros. apply rclo15_step.
       eapply gf_mon; [apply PR1|].
-      intros. apply rclo15_id, PR2.
+      intros. apply rclo15_base, PR2.
     + apply rclo15_step.
       eapply gf_mon; [apply H0|].
-      intros. apply rclo15_id, PR1.
+      intros. apply rclo15_base, PR1.
   - apply rclo15_clo.
     eapply paco15_mon; [apply H|].
-    intros. apply rclo15_id, PR.
+    intros. apply rclo15_base, PR.
 Qed.
 
 Lemma cpn15_from_paco r:
@@ -331,7 +331,7 @@ Proof.
   intros. eapply gf_mon; [apply PR1|].
   intros. apply rclo15_step.
   eapply gf_mon; [apply PR2|].
-  intros. apply rclo15_id, PR3.
+  intros. apply rclo15_base, PR3.
 Qed.
 
 Lemma cpn15_final: forall r, upaco15 gf r <15= cpn15 r.
@@ -339,7 +339,7 @@ Proof.
   intros. eapply cpn15_from_upaco.
   intros. eapply upaco15_mon_gen; [apply PR| |intros; apply PR0].
   intros. eapply gf_mon; [apply PR0|].
-  intros. apply cpn15_id, PR1.
+  intros. apply cpn15_base, PR1.
 Qed.
 
 Lemma gcpn15_final: forall r, paco15 gf r <15= gcpn15 r.
@@ -354,12 +354,13 @@ Proof.
   intros. apply cpn15_from_paco.
   eapply paco15_mon_gen.
   - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn15_id].
+  - intros. eapply gf_mon; [apply PR0|apply cpn15_base].
   - intros. apply PR0.
 Qed.
 
 End Companion15.
 
+Hint Resolve cpn15_base : paco.
 Hint Resolve cpn15_mon : paco.
 Hint Resolve gcpn15_mon : paco.
 Hint Resolve rclo15_mon : paco.

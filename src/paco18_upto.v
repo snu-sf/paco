@@ -67,15 +67,6 @@ Qed.
 Lemma cpn18_greatest: forall clo (COM: compatible18 clo), clo <19= cpn18.
 Proof. intros. econstructor;[apply COM|apply PR]. Qed.
 
-Lemma cpn18_id: forall r, r <18= cpn18 r.
-Proof.
-  intros. exists id.
-  - econstructor; repeat intro.
-    + apply LE, IN.
-    + apply PR0.
-  - apply PR.
-Qed.
-
 Lemma cpn18_comp: forall r,
     cpn18 (cpn18 r) <18= cpn18 r.
 Proof.
@@ -130,7 +121,7 @@ Qed.
 *)
 
 Inductive rclo18 (clo: rel->rel) (r: rel): rel :=
-| rclo18_id
+| rclo18_base
     e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17
     (R: r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17):
     @rclo18 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17
@@ -214,7 +205,7 @@ Lemma rclo18_compose clo r:
   rclo18 (rclo18 clo) r <18= rclo18 clo r.
 Proof.
   intros. induction PR.
-  - apply rclo18_id, R.
+  - apply rclo18_base, R.
   - apply rclo18_mult.
     eapply rclo18_mon; [apply CLOR'|apply H].
   - apply rclo18_step.
@@ -230,7 +221,7 @@ Proof.
   econstructor; [eapply rclo18_mon|]. intros.
   induction PR; intros.
   - eapply gf_mon; [apply R|]. intros.
-    apply rclo18_id. apply PR.
+    apply rclo18_base. apply PR.
   - eapply gf_mon.
     + eapply (wcompat18_wcompat WCOM).
       eapply (wcompat18_mon WCOM); [apply CLOR'|apply H].
@@ -249,17 +240,26 @@ Proof.
   - apply wcompat18_compat, WCOM.
   - apply rclo18_clo.
     eapply (wcompat18_mon WCOM); [apply PR|].
-    intros. apply rclo18_id, PR0.
+    intros. apply rclo18_base, PR0.
 Qed.
 
 (** 
   Lemmas for tactics
 *)
 
+Lemma cpn18_base: forall r, r <18= cpn18 r.
+Proof.
+  intros. exists id.
+  - econstructor; repeat intro.
+    + apply LE, IN.
+    + apply PR0.
+  - apply PR.
+Qed.
+
 Lemma cpn18_from_upaco r:
   upaco18 gcpn18 r <18= cpn18 r.
 Proof.
-  intros. destruct PR; [| apply cpn18_id, H].
+  intros. destruct PR; [| apply cpn18_base, H].
   exists (rclo18 (paco18 gcpn18)).
   - apply wcompat18_compat.
     econstructor; [apply paco18_mon|].
@@ -272,13 +272,13 @@ Proof.
       eapply paco18_mon; [apply H0|].
       intros. apply rclo18_step.
       eapply gf_mon; [apply PR1|].
-      intros. apply rclo18_id, PR2.
+      intros. apply rclo18_base, PR2.
     + apply rclo18_step.
       eapply gf_mon; [apply H0|].
-      intros. apply rclo18_id, PR1.
+      intros. apply rclo18_base, PR1.
   - apply rclo18_clo.
     eapply paco18_mon; [apply H|].
-    intros. apply rclo18_id, PR.
+    intros. apply rclo18_base, PR.
 Qed.
 
 Lemma cpn18_from_paco r:
@@ -334,7 +334,7 @@ Proof.
   intros. eapply gf_mon; [apply PR1|].
   intros. apply rclo18_step.
   eapply gf_mon; [apply PR2|].
-  intros. apply rclo18_id, PR3.
+  intros. apply rclo18_base, PR3.
 Qed.
 
 Lemma cpn18_final: forall r, upaco18 gf r <18= cpn18 r.
@@ -342,7 +342,7 @@ Proof.
   intros. eapply cpn18_from_upaco.
   intros. eapply upaco18_mon_gen; [apply PR| |intros; apply PR0].
   intros. eapply gf_mon; [apply PR0|].
-  intros. apply cpn18_id, PR1.
+  intros. apply cpn18_base, PR1.
 Qed.
 
 Lemma gcpn18_final: forall r, paco18 gf r <18= gcpn18 r.
@@ -357,12 +357,13 @@ Proof.
   intros. apply cpn18_from_paco.
   eapply paco18_mon_gen.
   - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn18_id].
+  - intros. eapply gf_mon; [apply PR0|apply cpn18_base].
   - intros. apply PR0.
 Qed.
 
 End Companion18.
 
+Hint Resolve cpn18_base : paco.
 Hint Resolve cpn18_mon : paco.
 Hint Resolve gcpn18_mon : paco.
 Hint Resolve rclo18_mon : paco.

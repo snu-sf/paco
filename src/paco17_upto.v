@@ -66,15 +66,6 @@ Qed.
 Lemma cpn17_greatest: forall clo (COM: compatible17 clo), clo <18= cpn17.
 Proof. intros. econstructor;[apply COM|apply PR]. Qed.
 
-Lemma cpn17_id: forall r, r <17= cpn17 r.
-Proof.
-  intros. exists id.
-  - econstructor; repeat intro.
-    + apply LE, IN.
-    + apply PR0.
-  - apply PR.
-Qed.
-
 Lemma cpn17_comp: forall r,
     cpn17 (cpn17 r) <17= cpn17 r.
 Proof.
@@ -129,7 +120,7 @@ Qed.
 *)
 
 Inductive rclo17 (clo: rel->rel) (r: rel): rel :=
-| rclo17_id
+| rclo17_base
     e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16
     (R: r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16):
     @rclo17 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16
@@ -213,7 +204,7 @@ Lemma rclo17_compose clo r:
   rclo17 (rclo17 clo) r <17= rclo17 clo r.
 Proof.
   intros. induction PR.
-  - apply rclo17_id, R.
+  - apply rclo17_base, R.
   - apply rclo17_mult.
     eapply rclo17_mon; [apply CLOR'|apply H].
   - apply rclo17_step.
@@ -229,7 +220,7 @@ Proof.
   econstructor; [eapply rclo17_mon|]. intros.
   induction PR; intros.
   - eapply gf_mon; [apply R|]. intros.
-    apply rclo17_id. apply PR.
+    apply rclo17_base. apply PR.
   - eapply gf_mon.
     + eapply (wcompat17_wcompat WCOM).
       eapply (wcompat17_mon WCOM); [apply CLOR'|apply H].
@@ -248,17 +239,26 @@ Proof.
   - apply wcompat17_compat, WCOM.
   - apply rclo17_clo.
     eapply (wcompat17_mon WCOM); [apply PR|].
-    intros. apply rclo17_id, PR0.
+    intros. apply rclo17_base, PR0.
 Qed.
 
 (** 
   Lemmas for tactics
 *)
 
+Lemma cpn17_base: forall r, r <17= cpn17 r.
+Proof.
+  intros. exists id.
+  - econstructor; repeat intro.
+    + apply LE, IN.
+    + apply PR0.
+  - apply PR.
+Qed.
+
 Lemma cpn17_from_upaco r:
   upaco17 gcpn17 r <17= cpn17 r.
 Proof.
-  intros. destruct PR; [| apply cpn17_id, H].
+  intros. destruct PR; [| apply cpn17_base, H].
   exists (rclo17 (paco17 gcpn17)).
   - apply wcompat17_compat.
     econstructor; [apply paco17_mon|].
@@ -271,13 +271,13 @@ Proof.
       eapply paco17_mon; [apply H0|].
       intros. apply rclo17_step.
       eapply gf_mon; [apply PR1|].
-      intros. apply rclo17_id, PR2.
+      intros. apply rclo17_base, PR2.
     + apply rclo17_step.
       eapply gf_mon; [apply H0|].
-      intros. apply rclo17_id, PR1.
+      intros. apply rclo17_base, PR1.
   - apply rclo17_clo.
     eapply paco17_mon; [apply H|].
-    intros. apply rclo17_id, PR.
+    intros. apply rclo17_base, PR.
 Qed.
 
 Lemma cpn17_from_paco r:
@@ -333,7 +333,7 @@ Proof.
   intros. eapply gf_mon; [apply PR1|].
   intros. apply rclo17_step.
   eapply gf_mon; [apply PR2|].
-  intros. apply rclo17_id, PR3.
+  intros. apply rclo17_base, PR3.
 Qed.
 
 Lemma cpn17_final: forall r, upaco17 gf r <17= cpn17 r.
@@ -341,7 +341,7 @@ Proof.
   intros. eapply cpn17_from_upaco.
   intros. eapply upaco17_mon_gen; [apply PR| |intros; apply PR0].
   intros. eapply gf_mon; [apply PR0|].
-  intros. apply cpn17_id, PR1.
+  intros. apply cpn17_base, PR1.
 Qed.
 
 Lemma gcpn17_final: forall r, paco17 gf r <17= gcpn17 r.
@@ -356,12 +356,13 @@ Proof.
   intros. apply cpn17_from_paco.
   eapply paco17_mon_gen.
   - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn17_id].
+  - intros. eapply gf_mon; [apply PR0|apply cpn17_base].
   - intros. apply PR0.
 Qed.
 
 End Companion17.
 
+Hint Resolve cpn17_base : paco.
 Hint Resolve cpn17_mon : paco.
 Hint Resolve gcpn17_mon : paco.
 Hint Resolve rclo17_mon : paco.

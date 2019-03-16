@@ -55,15 +55,6 @@ Qed.
 Lemma cpn6_greatest: forall clo (COM: compatible6 clo), clo <7= cpn6.
 Proof. intros. econstructor;[apply COM|apply PR]. Qed.
 
-Lemma cpn6_id: forall r, r <6= cpn6 r.
-Proof.
-  intros. exists id.
-  - econstructor; repeat intro.
-    + apply LE, IN.
-    + apply PR0.
-  - apply PR.
-Qed.
-
 Lemma cpn6_comp: forall r,
     cpn6 (cpn6 r) <6= cpn6 r.
 Proof.
@@ -118,7 +109,7 @@ Qed.
 *)
 
 Inductive rclo6 (clo: rel->rel) (r: rel): rel :=
-| rclo6_id
+| rclo6_base
     e0 e1 e2 e3 e4 e5
     (R: r e0 e1 e2 e3 e4 e5):
     @rclo6 clo r e0 e1 e2 e3 e4 e5
@@ -202,7 +193,7 @@ Lemma rclo6_compose clo r:
   rclo6 (rclo6 clo) r <6= rclo6 clo r.
 Proof.
   intros. induction PR.
-  - apply rclo6_id, R.
+  - apply rclo6_base, R.
   - apply rclo6_mult.
     eapply rclo6_mon; [apply CLOR'|apply H].
   - apply rclo6_step.
@@ -218,7 +209,7 @@ Proof.
   econstructor; [eapply rclo6_mon|]. intros.
   induction PR; intros.
   - eapply gf_mon; [apply R|]. intros.
-    apply rclo6_id. apply PR.
+    apply rclo6_base. apply PR.
   - eapply gf_mon.
     + eapply (wcompat6_wcompat WCOM).
       eapply (wcompat6_mon WCOM); [apply CLOR'|apply H].
@@ -237,17 +228,26 @@ Proof.
   - apply wcompat6_compat, WCOM.
   - apply rclo6_clo.
     eapply (wcompat6_mon WCOM); [apply PR|].
-    intros. apply rclo6_id, PR0.
+    intros. apply rclo6_base, PR0.
 Qed.
 
 (** 
   Lemmas for tactics
 *)
 
+Lemma cpn6_base: forall r, r <6= cpn6 r.
+Proof.
+  intros. exists id.
+  - econstructor; repeat intro.
+    + apply LE, IN.
+    + apply PR0.
+  - apply PR.
+Qed.
+
 Lemma cpn6_from_upaco r:
   upaco6 gcpn6 r <6= cpn6 r.
 Proof.
-  intros. destruct PR; [| apply cpn6_id, H].
+  intros. destruct PR; [| apply cpn6_base, H].
   exists (rclo6 (paco6 gcpn6)).
   - apply wcompat6_compat.
     econstructor; [apply paco6_mon|].
@@ -260,13 +260,13 @@ Proof.
       eapply paco6_mon; [apply H0|].
       intros. apply rclo6_step.
       eapply gf_mon; [apply PR1|].
-      intros. apply rclo6_id, PR2.
+      intros. apply rclo6_base, PR2.
     + apply rclo6_step.
       eapply gf_mon; [apply H0|].
-      intros. apply rclo6_id, PR1.
+      intros. apply rclo6_base, PR1.
   - apply rclo6_clo.
     eapply paco6_mon; [apply H|].
-    intros. apply rclo6_id, PR.
+    intros. apply rclo6_base, PR.
 Qed.
 
 Lemma cpn6_from_paco r:
@@ -322,7 +322,7 @@ Proof.
   intros. eapply gf_mon; [apply PR1|].
   intros. apply rclo6_step.
   eapply gf_mon; [apply PR2|].
-  intros. apply rclo6_id, PR3.
+  intros. apply rclo6_base, PR3.
 Qed.
 
 Lemma cpn6_final: forall r, upaco6 gf r <6= cpn6 r.
@@ -330,7 +330,7 @@ Proof.
   intros. eapply cpn6_from_upaco.
   intros. eapply upaco6_mon_gen; [apply PR| |intros; apply PR0].
   intros. eapply gf_mon; [apply PR0|].
-  intros. apply cpn6_id, PR1.
+  intros. apply cpn6_base, PR1.
 Qed.
 
 Lemma gcpn6_final: forall r, paco6 gf r <6= gcpn6 r.
@@ -345,12 +345,13 @@ Proof.
   intros. apply cpn6_from_paco.
   eapply paco6_mon_gen.
   - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn6_id].
+  - intros. eapply gf_mon; [apply PR0|apply cpn6_base].
   - intros. apply PR0.
 Qed.
 
 End Companion6.
 
+Hint Resolve cpn6_base : paco.
 Hint Resolve cpn6_mon : paco.
 Hint Resolve gcpn6_mon : paco.
 Hint Resolve rclo6_mon : paco.
