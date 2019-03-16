@@ -195,14 +195,14 @@ Ltac ufinal :=
   | [|- context[gcpn18]] => under_forall ltac:(eapply gcpn18_final; [eauto with paco|])
   end.
 
-(** ** ucofix CIH
+(** ** ucofix CIH [with r]
 *)
 
-Ltac ucofix CIH :=
+Tactic Notation "ucofix" ident(CIH) "with" ident(r) :=
   match goal with 
   | [|- context[cpn0]]  =>
     under_forall ltac:(eapply cpn0_from_paco; [eauto with paco|]);
-    pcofix CIH;
+    pcofix CIH with r;
     under_forall ltac:(eapply gcpn0_to_paco; [eauto with paco|])
   | [|- context[gcpn0]] =>
     under_forall ltac:(eapply gcpn0_from_paco; [eauto with paco|]);
@@ -210,7 +210,7 @@ Ltac ucofix CIH :=
     under_forall ltac:(eapply gcpn0_to_paco; [eauto with paco|])
   | [|- context[cpn1]]  =>
     under_forall ltac:(eapply cpn1_from_paco; [eauto with paco|]);
-    pcofix CIH;
+    pcofix CIH with r;
     under_forall ltac:(eapply gcpn1_to_paco; [eauto with paco|])
   | [|- context[gcpn1]] =>
     under_forall ltac:(eapply gcpn1_from_paco; [eauto with paco|]);
@@ -218,7 +218,7 @@ Ltac ucofix CIH :=
     under_forall ltac:(eapply gcpn1_to_paco; [eauto with paco|])
   | [|- context[cpn2]]  =>
     under_forall ltac:(eapply cpn2_from_paco; [eauto with paco|]);
-    pcofix CIH;
+    pcofix CIH with r;
     under_forall ltac:(eapply gcpn2_to_paco; [eauto with paco|])
   | [|- context[gcpn2]] =>
     under_forall ltac:(eapply gcpn2_from_paco; [eauto with paco|]);
@@ -226,7 +226,7 @@ Ltac ucofix CIH :=
     under_forall ltac:(eapply gcpn2_to_paco; [eauto with paco|])
   | [|- context[cpn3]]  =>
     under_forall ltac:(eapply cpn3_from_paco; [eauto with paco|]);
-    pcofix CIH;
+    pcofix CIH with r;
     under_forall ltac:(eapply gcpn3_to_paco; [eauto with paco|])
   | [|- context[gcpn3]] =>
     under_forall ltac:(eapply gcpn3_from_paco; [eauto with paco|]);
@@ -234,7 +234,7 @@ Ltac ucofix CIH :=
     under_forall ltac:(eapply gcpn3_to_paco; [eauto with paco|])
   | [|- context[cpn4]]  =>
     under_forall ltac:(eapply cpn4_from_paco; [eauto with paco|]);
-    pcofix CIH;
+    pcofix CIH with r;
     under_forall ltac:(eapply gcpn4_to_paco; [eauto with paco|])
   | [|- context[gcpn4]] =>
     under_forall ltac:(eapply gcpn4_from_paco; [eauto with paco|]);
@@ -242,7 +242,7 @@ Ltac ucofix CIH :=
     under_forall ltac:(eapply gcpn4_to_paco; [eauto with paco|])
   | [|- context[cpn5]]  =>
     under_forall ltac:(eapply cpn5_from_paco; [eauto with paco|]);
-    pcofix CIH;
+    pcofix CIH with r;
     under_forall ltac:(eapply gcpn5_to_paco; [eauto with paco|])
   | [|- context[gcpn5]] =>
     under_forall ltac:(eapply gcpn5_from_paco; [eauto with paco|]);
@@ -250,7 +250,7 @@ Ltac ucofix CIH :=
     under_forall ltac:(eapply gcpn5_to_paco; [eauto with paco|])
   | [|- context[cpn6]]  =>
     under_forall ltac:(eapply cpn6_from_paco; [eauto with paco|]);
-    pcofix CIH;
+    pcofix CIH with r;
     under_forall ltac:(eapply gcpn6_to_paco; [eauto with paco|])
   | [|- context[gcpn6]] =>
     under_forall ltac:(eapply gcpn6_from_paco; [eauto with paco|]);
@@ -258,7 +258,7 @@ Ltac ucofix CIH :=
     under_forall ltac:(eapply gcpn6_to_paco; [eauto with paco|])
   | [|- context[cpn7]]  =>
     under_forall ltac:(eapply cpn7_from_paco; [eauto with paco|]);
-    pcofix CIH;
+    pcofix CIH with r;
     under_forall ltac:(eapply gcpn7_to_paco; [eauto with paco|])
   | [|- context[gcpn7]] =>
     under_forall ltac:(eapply gcpn7_from_paco; [eauto with paco|]);
@@ -266,7 +266,7 @@ Ltac ucofix CIH :=
     under_forall ltac:(eapply gcpn7_to_paco; [eauto with paco|])
   | [|- context[cpn8]]  =>
     under_forall ltac:(eapply cpn8_from_paco; [eauto with paco|]);
-    pcofix CIH;
+    pcofix CIH with r;
     under_forall ltac:(eapply gcpn8_to_paco; [eauto with paco|])
   | [|- context[gcpn8]] =>
     under_forall ltac:(eapply gcpn8_from_paco; [eauto with paco|]);
@@ -274,7 +274,7 @@ Ltac ucofix CIH :=
     under_forall ltac:(eapply gcpn8_to_paco; [eauto with paco|])
   | [|- context[cpn9]]  =>
     under_forall ltac:(eapply cpn9_from_paco; [eauto with paco|]);
-    pcofix CIH;
+    pcofix CIH with r;
     under_forall ltac:(eapply gcpn9_to_paco; [eauto with paco|])
   | [|- context[gcpn9]] =>
     under_forall ltac:(eapply gcpn9_from_paco; [eauto with paco|]);
@@ -282,7 +282,7 @@ Ltac ucofix CIH :=
     under_forall ltac:(eapply gcpn9_to_paco; [eauto with paco|])
   | [|- context[cpn10]]  =>
     under_forall ltac:(eapply cpn10_from_paco; [eauto with paco|]);
-    pcofix CIH;
+    pcofix CIH with r;
     under_forall ltac:(eapply gcpn10_to_paco; [eauto with paco|])
   | [|- context[gcpn10]] =>
     under_forall ltac:(eapply gcpn10_from_paco; [eauto with paco|]);
@@ -290,7 +290,7 @@ Ltac ucofix CIH :=
     under_forall ltac:(eapply gcpn10_to_paco; [eauto with paco|])
   | [|- context[cpn11]]  =>
     under_forall ltac:(eapply cpn11_from_paco; [eauto with paco|]);
-    pcofix CIH;
+    pcofix CIH with r;
     under_forall ltac:(eapply gcpn11_to_paco; [eauto with paco|])
   | [|- context[gcpn11]] =>
     under_forall ltac:(eapply gcpn11_from_paco; [eauto with paco|]);
@@ -298,7 +298,7 @@ Ltac ucofix CIH :=
     under_forall ltac:(eapply gcpn11_to_paco; [eauto with paco|])
   | [|- context[cpn12]]  =>
     under_forall ltac:(eapply cpn12_from_paco; [eauto with paco|]);
-    pcofix CIH;
+    pcofix CIH with r;
     under_forall ltac:(eapply gcpn12_to_paco; [eauto with paco|])
   | [|- context[gcpn12]] =>
     under_forall ltac:(eapply gcpn12_from_paco; [eauto with paco|]);
@@ -306,7 +306,7 @@ Ltac ucofix CIH :=
     under_forall ltac:(eapply gcpn12_to_paco; [eauto with paco|])
   | [|- context[cpn13]]  =>
     under_forall ltac:(eapply cpn13_from_paco; [eauto with paco|]);
-    pcofix CIH;
+    pcofix CIH with r;
     under_forall ltac:(eapply gcpn13_to_paco; [eauto with paco|])
   | [|- context[gcpn13]] =>
     under_forall ltac:(eapply gcpn13_from_paco; [eauto with paco|]);
@@ -314,7 +314,7 @@ Ltac ucofix CIH :=
     under_forall ltac:(eapply gcpn13_to_paco; [eauto with paco|])
   | [|- context[cpn14]]  =>
     under_forall ltac:(eapply cpn14_from_paco; [eauto with paco|]);
-    pcofix CIH;
+    pcofix CIH with r;
     under_forall ltac:(eapply gcpn14_to_paco; [eauto with paco|])
   | [|- context[gcpn14]] =>
     under_forall ltac:(eapply gcpn14_from_paco; [eauto with paco|]);
@@ -322,7 +322,7 @@ Ltac ucofix CIH :=
     under_forall ltac:(eapply gcpn14_to_paco; [eauto with paco|])
   | [|- context[cpn15]]  =>
     under_forall ltac:(eapply cpn15_from_paco; [eauto with paco|]);
-    pcofix CIH;
+    pcofix CIH with r;
     under_forall ltac:(eapply gcpn15_to_paco; [eauto with paco|])
   | [|- context[gcpn15]] =>
     under_forall ltac:(eapply gcpn15_from_paco; [eauto with paco|]);
@@ -330,7 +330,7 @@ Ltac ucofix CIH :=
     under_forall ltac:(eapply gcpn15_to_paco; [eauto with paco|])
   | [|- context[cpn16]]  =>
     under_forall ltac:(eapply cpn16_from_paco; [eauto with paco|]);
-    pcofix CIH;
+    pcofix CIH with r;
     under_forall ltac:(eapply gcpn16_to_paco; [eauto with paco|])
   | [|- context[gcpn16]] =>
     under_forall ltac:(eapply gcpn16_from_paco; [eauto with paco|]);
@@ -338,7 +338,7 @@ Ltac ucofix CIH :=
     under_forall ltac:(eapply gcpn16_to_paco; [eauto with paco|])
   | [|- context[cpn17]]  =>
     under_forall ltac:(eapply cpn17_from_paco; [eauto with paco|]);
-    pcofix CIH;
+    pcofix CIH with r;
     under_forall ltac:(eapply gcpn17_to_paco; [eauto with paco|])
   | [|- context[gcpn17]] =>
     under_forall ltac:(eapply gcpn17_from_paco; [eauto with paco|]);
@@ -346,19 +346,19 @@ Ltac ucofix CIH :=
     under_forall ltac:(eapply gcpn17_to_paco; [eauto with paco|])
   | [|- context[cpn18]]  =>
     under_forall ltac:(eapply cpn18_from_paco; [eauto with paco|]);
-    pcofix CIH;
+    pcofix CIH with r;
     under_forall ltac:(eapply gcpn18_to_paco; [eauto with paco|])
   | [|- context[gcpn18]] =>
     under_forall ltac:(eapply gcpn18_from_paco; [eauto with paco|]);
     pcofix CIH;
     under_forall ltac:(eapply gcpn18_to_paco; [eauto with paco|])
   end.
+Tactic Notation "ucofix" ident(CIH) := ucofix CIH with r.
 
 (** ** pfold_reverse 
 *)
 
-Ltac pfold_reverse :=
-  repeat red;
+Ltac pfold_reverse_ :=
   match goal with 
   | [|- _ (upaco0 ?gf _)] => eapply (paco0_unfold (gf := gf))
   | [|- _ (upaco1 ?gf _) _] => eapply (paco1_unfold (gf := gf))
@@ -381,12 +381,12 @@ Ltac pfold_reverse :=
   | [|- _ (upaco18 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco18_unfold (gf := gf))
   end;
   eauto with paco.
+Ltac pfold_reverse := under_forall pfold_reverse_.
 
 (** ** punfold_reverse H 
 *)
 
 Ltac punfold_reverse H :=
-  repeat red in H;
   let PP := type of H in
   match PP with
   | _ (upaco0 ?gf _) => eapply (paco0_fold gf) in H
