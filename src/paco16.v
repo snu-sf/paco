@@ -1,5 +1,5 @@
-Require Export paconotation pacotacuser.
-Require Import paconotation_internal pacotac pacon.
+Require Export paconotation.
+Require Import paconotation_internal pacotac_internal paco_internal.
 Set Implicit Arguments.
 
 Section PACO16.

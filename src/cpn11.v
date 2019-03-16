@@ -1,5 +1,5 @@
 Require Export Program.Basics. Open Scope program_scope.
-Require Import paco11.
+Require Import paco11 pacotac.
 Set Implicit Arguments.
 
 Section Companion11.

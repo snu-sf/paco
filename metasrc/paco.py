@@ -8,8 +8,8 @@ if len(sys.argv) < 2:
 
 n = int(sys.argv[1])
 
-print ('Require Export paconotation pacotacuser.')
-print ('Require Import paconotation_internal pacotac pacon.')
+print ('Require Export paconotation.')
+print ('Require Import paconotation_internal pacotac_internal paco_internal.')
 print ('Set Implicit Arguments.')
 print ('')
 

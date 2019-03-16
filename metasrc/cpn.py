@@ -10,7 +10,7 @@ relsize = int(sys.argv[1])
 n = relsize
 
 print ("Require Export Program.Basics. Open Scope program_scope.")
-print ("Require Import paco"+str(n)+".")
+print ("Require Import paco"+str(n)+" pacotac.")
 print ("Set Implicit Arguments.")
 print ("")
 
