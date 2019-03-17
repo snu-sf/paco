@@ -122,9 +122,6 @@ Tactic Notation "pfold_reverse_" :=
   | [|- _ (upaco13 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco13_unfold (gf := gf))
   | [|- _ (upaco14 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco14_unfold (gf := gf))
   | [|- _ (upaco15 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco15_unfold (gf := gf))
-  | [|- _ (upaco16 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco16_unfold (gf := gf))
-  | [|- _ (upaco17 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco17_unfold (gf := gf))
-  | [|- _ (upaco18 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco18_unfold (gf := gf))
   end;
   eauto with paco.
 Ltac pfold_reverse := under_forall ltac:(pfold_reverse_).
@@ -151,9 +148,6 @@ Ltac punfold_reverse H :=
   | _ (upaco13 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco13_fold gf) in H
   | _ (upaco14 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco14_fold gf) in H
   | _ (upaco15 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco15_fold gf) in H
-  | _ (upaco16 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco16_fold gf) in H
-  | _ (upaco17 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco17_fold gf) in H
-  | _ (upaco18 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco18_fold gf) in H
   end;
   eauto with paco.
 

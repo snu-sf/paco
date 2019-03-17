@@ -14,6 +14,8 @@ Variable T6 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (
 
 Local Notation rel := (rel7 T0 T1 T2 T3 T4 T5 T6).
 
+Section Companion7_main.
+
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone7 gf.
 
@@ -291,6 +293,16 @@ Proof.
   intros. right. apply PR0.
 Qed.  
 
+Lemma cpn7_complete:
+  paco7 gf bot7 <7= cpn7 bot7.
+Proof.
+  intros. apply cpn7_from_paco.
+  eapply paco7_mon_gen.
+  - apply PR.
+  - intros. eapply gf_mon; [apply PR0|apply cpn7_base].
+  - intros. apply PR0.
+Qed.
+
 Lemma cpn7_init:
   cpn7 bot7 <7= paco7 gf bot7.
 Proof.
@@ -305,13 +317,12 @@ Proof.
   intros. apply cpn7_comp, LE, PR.
 Qed.
 
-Lemma gcpn7_clo
-      r clo (LE: clo <8= cpn7):
-  clo (gcpn7 r) <7= gcpn7 r.
+Lemma cpn7_unfold:
+  cpn7 bot7 <7= gcpn7 bot7.
 Proof.
-  intros. apply LE, (compat7_compat cpn7_compat) in PR.
+  intros. apply cpn7_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn7_comp, PR0.
+  intros. pclearbot. apply cpn7_complete, PR0.
 Qed.
 
 Lemma cpn7_step r:
@@ -324,6 +335,15 @@ Proof.
   intros. apply rclo7_step.
   eapply gf_mon; [apply PR2|].
   intros. apply rclo7_base, PR3.
+Qed.
+
+Lemma gcpn7_clo
+      r clo (LE: clo <8= cpn7):
+  clo (gcpn7 r) <7= gcpn7 r.
+Proof.
+  intros. apply LE, (compat7_compat cpn7_compat) in PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply cpn7_comp, PR0.
 Qed.
 
 Lemma cpn7_final: forall r, upaco7 gf r <7= cpn7 r.
@@ -340,23 +360,30 @@ Proof.
   eapply gf_mon; [apply PR | apply cpn7_final].
 Qed.
 
-Lemma cpn7_complete:
-  paco7 gf bot7 <7= cpn7 bot7.
+End Companion7_main.
+
+Lemma cpn7_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 r
+      (IN: @cpn7 gf bot7 e0 e1 e2 e3 e4 e5 e6)
+      (MONgf: monotone7 gf)
+      (MONgf': monotone7 gf')
+      (LE: gf <8= gf'):
+  @cpn7 gf' r e0 e1 e2 e3 e4 e5 e6.
 Proof.
-  intros. apply cpn7_from_paco.
-  eapply paco7_mon_gen.
-  - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn7_base].
-  - intros. apply PR0.
+  apply cpn7_init in IN; [|apply MONgf].
+  apply cpn7_final; [apply MONgf'|].
+  left. eapply paco7_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
 End Companion7.
 
+Hint Unfold gcpn7 : paco.
+
 Hint Resolve cpn7_base : paco.
-Hint Resolve cpn7_mon : paco.
-Hint Resolve gcpn7_mon : paco.
-Hint Resolve rclo7_mon : paco.
+Hint Resolve cpn7_step : paco.
 Hint Resolve cpn7_final gcpn7_final : paco.
+(* Hint Resolve cpn7_mon : paco.
+Hint Resolve gcpn7_mon : paco.
+Hint Resolve rclo7_mon : paco. *)
 
 Hint Constructors cpn7 compatible7 wcompatible7.
 

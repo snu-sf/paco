@@ -70,18 +70,6 @@ Definition le15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 (p q : rel15 T
   (forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 (PR: p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 : Prop), q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 : Prop).
 Arguments le15 [ T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14].
 
-Definition le16 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 (p q : rel16 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15) :=
-  (forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 (PR: p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 : Prop), q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 : Prop).
-Arguments le16 [ T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15].
-
-Definition le17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 (p q : rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16) :=
-  (forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 (PR: p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 : Prop), q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 : Prop).
-Arguments le17 [ T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16].
-
-Definition le18 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17 (p q : rel18 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17) :=
-  (forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 (PR: p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 : Prop), q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 : Prop).
-Arguments le18 [ T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17].
-
 Notation "p <0== q" :=
   (le0 p q)
   (at level 50, no associativity, only parsing).
@@ -144,18 +132,6 @@ Notation "p <14== q" :=
 
 Notation "p <15== q" :=
   (le15 p q)
-  (at level 50, no associativity).
-
-Notation "p <16== q" :=
-  (le16 p q)
-  (at level 50, no associativity).
-
-Notation "p <17== q" :=
-  (le17 p q)
-  (at level 50, no associativity).
-
-Notation "p <18== q" :=
-  (le18 p q)
   (at level 50, no associativity).
 
 (** ** Tranisitivity and Reflexivity *)
@@ -240,21 +216,6 @@ Lemma le15_trans T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14(r0 r1 r2 : re
   r0 <15== r2.
 Proof. repeat_intros 15. intros H. eapply LE1, LE0, H. Qed.
 
-Lemma le16_trans T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15(r0 r1 r2 : rel16 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15)
-      (LE0 : r0 <16== r1) (LE1 : r1 <16== r2) :
-  r0 <16== r2.
-Proof. repeat_intros 16. intros H. eapply LE1, LE0, H. Qed.
-
-Lemma le17_trans T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16(r0 r1 r2 : rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16)
-      (LE0 : r0 <17== r1) (LE1 : r1 <17== r2) :
-  r0 <17== r2.
-Proof. repeat_intros 17. intros H. eapply LE1, LE0, H. Qed.
-
-Lemma le18_trans T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17(r0 r1 r2 : rel18 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17)
-      (LE0 : r0 <18== r1) (LE1 : r1 <18== r2) :
-  r0 <18== r2.
-Proof. repeat_intros 18. intros H. eapply LE1, LE0, H. Qed.
-
 Lemma le0_refl(r : rel0) :
   r <0== r.
 Proof. repeat_intros 0. intros H. apply H. Qed.
@@ -318,16 +279,4 @@ Proof. repeat_intros 14. intros H. apply H. Qed.
 Lemma le15_refl T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14(r : rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14) :
   r <15== r.
 Proof. repeat_intros 15. intros H. apply H. Qed.
-
-Lemma le16_refl T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15(r : rel16 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15) :
-  r <16== r.
-Proof. repeat_intros 16. intros H. apply H. Qed.
-
-Lemma le17_refl T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16(r : rel17 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16) :
-  r <17== r.
-Proof. repeat_intros 17. intros H. apply H. Qed.
-
-Lemma le18_refl T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17(r : rel18 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 T15 T16 T17) :
-  r <18== r.
-Proof. repeat_intros 18. intros H. apply H. Qed.
 

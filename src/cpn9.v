@@ -16,6 +16,8 @@ Variable T8 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (
 
 Local Notation rel := (rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8).
 
+Section Companion9_main.
+
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone9 gf.
 
@@ -293,6 +295,16 @@ Proof.
   intros. right. apply PR0.
 Qed.  
 
+Lemma cpn9_complete:
+  paco9 gf bot9 <9= cpn9 bot9.
+Proof.
+  intros. apply cpn9_from_paco.
+  eapply paco9_mon_gen.
+  - apply PR.
+  - intros. eapply gf_mon; [apply PR0|apply cpn9_base].
+  - intros. apply PR0.
+Qed.
+
 Lemma cpn9_init:
   cpn9 bot9 <9= paco9 gf bot9.
 Proof.
@@ -307,13 +319,12 @@ Proof.
   intros. apply cpn9_comp, LE, PR.
 Qed.
 
-Lemma gcpn9_clo
-      r clo (LE: clo <10= cpn9):
-  clo (gcpn9 r) <9= gcpn9 r.
+Lemma cpn9_unfold:
+  cpn9 bot9 <9= gcpn9 bot9.
 Proof.
-  intros. apply LE, (compat9_compat cpn9_compat) in PR.
+  intros. apply cpn9_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn9_comp, PR0.
+  intros. pclearbot. apply cpn9_complete, PR0.
 Qed.
 
 Lemma cpn9_step r:
@@ -326,6 +337,15 @@ Proof.
   intros. apply rclo9_step.
   eapply gf_mon; [apply PR2|].
   intros. apply rclo9_base, PR3.
+Qed.
+
+Lemma gcpn9_clo
+      r clo (LE: clo <10= cpn9):
+  clo (gcpn9 r) <9= gcpn9 r.
+Proof.
+  intros. apply LE, (compat9_compat cpn9_compat) in PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply cpn9_comp, PR0.
 Qed.
 
 Lemma cpn9_final: forall r, upaco9 gf r <9= cpn9 r.
@@ -342,23 +362,30 @@ Proof.
   eapply gf_mon; [apply PR | apply cpn9_final].
 Qed.
 
-Lemma cpn9_complete:
-  paco9 gf bot9 <9= cpn9 bot9.
+End Companion9_main.
+
+Lemma cpn9_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 r
+      (IN: @cpn9 gf bot9 e0 e1 e2 e3 e4 e5 e6 e7 e8)
+      (MONgf: monotone9 gf)
+      (MONgf': monotone9 gf')
+      (LE: gf <10= gf'):
+  @cpn9 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8.
 Proof.
-  intros. apply cpn9_from_paco.
-  eapply paco9_mon_gen.
-  - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn9_base].
-  - intros. apply PR0.
+  apply cpn9_init in IN; [|apply MONgf].
+  apply cpn9_final; [apply MONgf'|].
+  left. eapply paco9_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
 End Companion9.
 
+Hint Unfold gcpn9 : paco.
+
 Hint Resolve cpn9_base : paco.
-Hint Resolve cpn9_mon : paco.
-Hint Resolve gcpn9_mon : paco.
-Hint Resolve rclo9_mon : paco.
+Hint Resolve cpn9_step : paco.
 Hint Resolve cpn9_final gcpn9_final : paco.
+(* Hint Resolve cpn9_mon : paco.
+Hint Resolve gcpn9_mon : paco.
+Hint Resolve rclo9_mon : paco. *)
 
 Hint Constructors cpn9 compatible9 wcompatible9.
 

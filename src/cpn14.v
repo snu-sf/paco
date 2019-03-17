@@ -21,6 +21,8 @@ Variable T13 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) 
 
 Local Notation rel := (rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13).
 
+Section Companion14_main.
+
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone14 gf.
 
@@ -298,6 +300,16 @@ Proof.
   intros. right. apply PR0.
 Qed.  
 
+Lemma cpn14_complete:
+  paco14 gf bot14 <14= cpn14 bot14.
+Proof.
+  intros. apply cpn14_from_paco.
+  eapply paco14_mon_gen.
+  - apply PR.
+  - intros. eapply gf_mon; [apply PR0|apply cpn14_base].
+  - intros. apply PR0.
+Qed.
+
 Lemma cpn14_init:
   cpn14 bot14 <14= paco14 gf bot14.
 Proof.
@@ -312,13 +324,12 @@ Proof.
   intros. apply cpn14_comp, LE, PR.
 Qed.
 
-Lemma gcpn14_clo
-      r clo (LE: clo <15= cpn14):
-  clo (gcpn14 r) <14= gcpn14 r.
+Lemma cpn14_unfold:
+  cpn14 bot14 <14= gcpn14 bot14.
 Proof.
-  intros. apply LE, (compat14_compat cpn14_compat) in PR.
+  intros. apply cpn14_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn14_comp, PR0.
+  intros. pclearbot. apply cpn14_complete, PR0.
 Qed.
 
 Lemma cpn14_step r:
@@ -331,6 +342,15 @@ Proof.
   intros. apply rclo14_step.
   eapply gf_mon; [apply PR2|].
   intros. apply rclo14_base, PR3.
+Qed.
+
+Lemma gcpn14_clo
+      r clo (LE: clo <15= cpn14):
+  clo (gcpn14 r) <14= gcpn14 r.
+Proof.
+  intros. apply LE, (compat14_compat cpn14_compat) in PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply cpn14_comp, PR0.
 Qed.
 
 Lemma cpn14_final: forall r, upaco14 gf r <14= cpn14 r.
@@ -347,23 +367,30 @@ Proof.
   eapply gf_mon; [apply PR | apply cpn14_final].
 Qed.
 
-Lemma cpn14_complete:
-  paco14 gf bot14 <14= cpn14 bot14.
+End Companion14_main.
+
+Lemma cpn14_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 r
+      (IN: @cpn14 gf bot14 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13)
+      (MONgf: monotone14 gf)
+      (MONgf': monotone14 gf')
+      (LE: gf <15= gf'):
+  @cpn14 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
 Proof.
-  intros. apply cpn14_from_paco.
-  eapply paco14_mon_gen.
-  - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn14_base].
-  - intros. apply PR0.
+  apply cpn14_init in IN; [|apply MONgf].
+  apply cpn14_final; [apply MONgf'|].
+  left. eapply paco14_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
 End Companion14.
 
+Hint Unfold gcpn14 : paco.
+
 Hint Resolve cpn14_base : paco.
-Hint Resolve cpn14_mon : paco.
-Hint Resolve gcpn14_mon : paco.
-Hint Resolve rclo14_mon : paco.
+Hint Resolve cpn14_step : paco.
 Hint Resolve cpn14_final gcpn14_final : paco.
+(* Hint Resolve cpn14_mon : paco.
+Hint Resolve gcpn14_mon : paco.
+Hint Resolve rclo14_mon : paco. *)
 
 Hint Constructors cpn14 compatible14 wcompatible14.
 

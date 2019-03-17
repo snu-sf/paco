@@ -10,6 +10,8 @@ Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
 
 Local Notation rel := (rel3 T0 T1 T2).
 
+Section Companion3_main.
+
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone3 gf.
 
@@ -287,6 +289,16 @@ Proof.
   intros. right. apply PR0.
 Qed.  
 
+Lemma cpn3_complete:
+  paco3 gf bot3 <3= cpn3 bot3.
+Proof.
+  intros. apply cpn3_from_paco.
+  eapply paco3_mon_gen.
+  - apply PR.
+  - intros. eapply gf_mon; [apply PR0|apply cpn3_base].
+  - intros. apply PR0.
+Qed.
+
 Lemma cpn3_init:
   cpn3 bot3 <3= paco3 gf bot3.
 Proof.
@@ -301,13 +313,12 @@ Proof.
   intros. apply cpn3_comp, LE, PR.
 Qed.
 
-Lemma gcpn3_clo
-      r clo (LE: clo <4= cpn3):
-  clo (gcpn3 r) <3= gcpn3 r.
+Lemma cpn3_unfold:
+  cpn3 bot3 <3= gcpn3 bot3.
 Proof.
-  intros. apply LE, (compat3_compat cpn3_compat) in PR.
+  intros. apply cpn3_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn3_comp, PR0.
+  intros. pclearbot. apply cpn3_complete, PR0.
 Qed.
 
 Lemma cpn3_step r:
@@ -320,6 +331,15 @@ Proof.
   intros. apply rclo3_step.
   eapply gf_mon; [apply PR2|].
   intros. apply rclo3_base, PR3.
+Qed.
+
+Lemma gcpn3_clo
+      r clo (LE: clo <4= cpn3):
+  clo (gcpn3 r) <3= gcpn3 r.
+Proof.
+  intros. apply LE, (compat3_compat cpn3_compat) in PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply cpn3_comp, PR0.
 Qed.
 
 Lemma cpn3_final: forall r, upaco3 gf r <3= cpn3 r.
@@ -336,23 +356,30 @@ Proof.
   eapply gf_mon; [apply PR | apply cpn3_final].
 Qed.
 
-Lemma cpn3_complete:
-  paco3 gf bot3 <3= cpn3 bot3.
+End Companion3_main.
+
+Lemma cpn3_mon_bot (gf gf': rel -> rel) e0 e1 e2 r
+      (IN: @cpn3 gf bot3 e0 e1 e2)
+      (MONgf: monotone3 gf)
+      (MONgf': monotone3 gf')
+      (LE: gf <4= gf'):
+  @cpn3 gf' r e0 e1 e2.
 Proof.
-  intros. apply cpn3_from_paco.
-  eapply paco3_mon_gen.
-  - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn3_base].
-  - intros. apply PR0.
+  apply cpn3_init in IN; [|apply MONgf].
+  apply cpn3_final; [apply MONgf'|].
+  left. eapply paco3_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
 End Companion3.
 
+Hint Unfold gcpn3 : paco.
+
 Hint Resolve cpn3_base : paco.
-Hint Resolve cpn3_mon : paco.
-Hint Resolve gcpn3_mon : paco.
-Hint Resolve rclo3_mon : paco.
+Hint Resolve cpn3_step : paco.
 Hint Resolve cpn3_final gcpn3_final : paco.
+(* Hint Resolve cpn3_mon : paco.
+Hint Resolve gcpn3_mon : paco.
+Hint Resolve rclo3_mon : paco. *)
 
 Hint Constructors cpn3 compatible3 wcompatible3.
 

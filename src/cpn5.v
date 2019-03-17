@@ -12,6 +12,8 @@ Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), 
 
 Local Notation rel := (rel5 T0 T1 T2 T3 T4).
 
+Section Companion5_main.
+
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone5 gf.
 
@@ -289,6 +291,16 @@ Proof.
   intros. right. apply PR0.
 Qed.  
 
+Lemma cpn5_complete:
+  paco5 gf bot5 <5= cpn5 bot5.
+Proof.
+  intros. apply cpn5_from_paco.
+  eapply paco5_mon_gen.
+  - apply PR.
+  - intros. eapply gf_mon; [apply PR0|apply cpn5_base].
+  - intros. apply PR0.
+Qed.
+
 Lemma cpn5_init:
   cpn5 bot5 <5= paco5 gf bot5.
 Proof.
@@ -303,13 +315,12 @@ Proof.
   intros. apply cpn5_comp, LE, PR.
 Qed.
 
-Lemma gcpn5_clo
-      r clo (LE: clo <6= cpn5):
-  clo (gcpn5 r) <5= gcpn5 r.
+Lemma cpn5_unfold:
+  cpn5 bot5 <5= gcpn5 bot5.
 Proof.
-  intros. apply LE, (compat5_compat cpn5_compat) in PR.
+  intros. apply cpn5_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn5_comp, PR0.
+  intros. pclearbot. apply cpn5_complete, PR0.
 Qed.
 
 Lemma cpn5_step r:
@@ -322,6 +333,15 @@ Proof.
   intros. apply rclo5_step.
   eapply gf_mon; [apply PR2|].
   intros. apply rclo5_base, PR3.
+Qed.
+
+Lemma gcpn5_clo
+      r clo (LE: clo <6= cpn5):
+  clo (gcpn5 r) <5= gcpn5 r.
+Proof.
+  intros. apply LE, (compat5_compat cpn5_compat) in PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply cpn5_comp, PR0.
 Qed.
 
 Lemma cpn5_final: forall r, upaco5 gf r <5= cpn5 r.
@@ -338,23 +358,30 @@ Proof.
   eapply gf_mon; [apply PR | apply cpn5_final].
 Qed.
 
-Lemma cpn5_complete:
-  paco5 gf bot5 <5= cpn5 bot5.
+End Companion5_main.
+
+Lemma cpn5_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 r
+      (IN: @cpn5 gf bot5 e0 e1 e2 e3 e4)
+      (MONgf: monotone5 gf)
+      (MONgf': monotone5 gf')
+      (LE: gf <6= gf'):
+  @cpn5 gf' r e0 e1 e2 e3 e4.
 Proof.
-  intros. apply cpn5_from_paco.
-  eapply paco5_mon_gen.
-  - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn5_base].
-  - intros. apply PR0.
+  apply cpn5_init in IN; [|apply MONgf].
+  apply cpn5_final; [apply MONgf'|].
+  left. eapply paco5_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
 End Companion5.
 
+Hint Unfold gcpn5 : paco.
+
 Hint Resolve cpn5_base : paco.
-Hint Resolve cpn5_mon : paco.
-Hint Resolve gcpn5_mon : paco.
-Hint Resolve rclo5_mon : paco.
+Hint Resolve cpn5_step : paco.
 Hint Resolve cpn5_final gcpn5_final : paco.
+(* Hint Resolve cpn5_mon : paco.
+Hint Resolve gcpn5_mon : paco.
+Hint Resolve rclo5_mon : paco. *)
 
 Hint Constructors cpn5 compatible5 wcompatible5.
 

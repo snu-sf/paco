@@ -18,6 +18,8 @@ Variable T10 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) 
 
 Local Notation rel := (rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10).
 
+Section Companion11_main.
+
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone11 gf.
 
@@ -295,6 +297,16 @@ Proof.
   intros. right. apply PR0.
 Qed.  
 
+Lemma cpn11_complete:
+  paco11 gf bot11 <11= cpn11 bot11.
+Proof.
+  intros. apply cpn11_from_paco.
+  eapply paco11_mon_gen.
+  - apply PR.
+  - intros. eapply gf_mon; [apply PR0|apply cpn11_base].
+  - intros. apply PR0.
+Qed.
+
 Lemma cpn11_init:
   cpn11 bot11 <11= paco11 gf bot11.
 Proof.
@@ -309,13 +321,12 @@ Proof.
   intros. apply cpn11_comp, LE, PR.
 Qed.
 
-Lemma gcpn11_clo
-      r clo (LE: clo <12= cpn11):
-  clo (gcpn11 r) <11= gcpn11 r.
+Lemma cpn11_unfold:
+  cpn11 bot11 <11= gcpn11 bot11.
 Proof.
-  intros. apply LE, (compat11_compat cpn11_compat) in PR.
+  intros. apply cpn11_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn11_comp, PR0.
+  intros. pclearbot. apply cpn11_complete, PR0.
 Qed.
 
 Lemma cpn11_step r:
@@ -328,6 +339,15 @@ Proof.
   intros. apply rclo11_step.
   eapply gf_mon; [apply PR2|].
   intros. apply rclo11_base, PR3.
+Qed.
+
+Lemma gcpn11_clo
+      r clo (LE: clo <12= cpn11):
+  clo (gcpn11 r) <11= gcpn11 r.
+Proof.
+  intros. apply LE, (compat11_compat cpn11_compat) in PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply cpn11_comp, PR0.
 Qed.
 
 Lemma cpn11_final: forall r, upaco11 gf r <11= cpn11 r.
@@ -344,23 +364,30 @@ Proof.
   eapply gf_mon; [apply PR | apply cpn11_final].
 Qed.
 
-Lemma cpn11_complete:
-  paco11 gf bot11 <11= cpn11 bot11.
+End Companion11_main.
+
+Lemma cpn11_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 r
+      (IN: @cpn11 gf bot11 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10)
+      (MONgf: monotone11 gf)
+      (MONgf': monotone11 gf')
+      (LE: gf <12= gf'):
+  @cpn11 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
 Proof.
-  intros. apply cpn11_from_paco.
-  eapply paco11_mon_gen.
-  - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn11_base].
-  - intros. apply PR0.
+  apply cpn11_init in IN; [|apply MONgf].
+  apply cpn11_final; [apply MONgf'|].
+  left. eapply paco11_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
 End Companion11.
 
+Hint Unfold gcpn11 : paco.
+
 Hint Resolve cpn11_base : paco.
-Hint Resolve cpn11_mon : paco.
-Hint Resolve gcpn11_mon : paco.
-Hint Resolve rclo11_mon : paco.
+Hint Resolve cpn11_step : paco.
 Hint Resolve cpn11_final gcpn11_final : paco.
+(* Hint Resolve cpn11_mon : paco.
+Hint Resolve gcpn11_mon : paco.
+Hint Resolve rclo11_mon : paco. *)
 
 Hint Constructors cpn11 compatible11 wcompatible11.
 

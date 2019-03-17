@@ -11,6 +11,8 @@ Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
 
 Local Notation rel := (rel4 T0 T1 T2 T3).
 
+Section Companion4_main.
+
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone4 gf.
 
@@ -288,6 +290,16 @@ Proof.
   intros. right. apply PR0.
 Qed.  
 
+Lemma cpn4_complete:
+  paco4 gf bot4 <4= cpn4 bot4.
+Proof.
+  intros. apply cpn4_from_paco.
+  eapply paco4_mon_gen.
+  - apply PR.
+  - intros. eapply gf_mon; [apply PR0|apply cpn4_base].
+  - intros. apply PR0.
+Qed.
+
 Lemma cpn4_init:
   cpn4 bot4 <4= paco4 gf bot4.
 Proof.
@@ -302,13 +314,12 @@ Proof.
   intros. apply cpn4_comp, LE, PR.
 Qed.
 
-Lemma gcpn4_clo
-      r clo (LE: clo <5= cpn4):
-  clo (gcpn4 r) <4= gcpn4 r.
+Lemma cpn4_unfold:
+  cpn4 bot4 <4= gcpn4 bot4.
 Proof.
-  intros. apply LE, (compat4_compat cpn4_compat) in PR.
+  intros. apply cpn4_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn4_comp, PR0.
+  intros. pclearbot. apply cpn4_complete, PR0.
 Qed.
 
 Lemma cpn4_step r:
@@ -321,6 +332,15 @@ Proof.
   intros. apply rclo4_step.
   eapply gf_mon; [apply PR2|].
   intros. apply rclo4_base, PR3.
+Qed.
+
+Lemma gcpn4_clo
+      r clo (LE: clo <5= cpn4):
+  clo (gcpn4 r) <4= gcpn4 r.
+Proof.
+  intros. apply LE, (compat4_compat cpn4_compat) in PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply cpn4_comp, PR0.
 Qed.
 
 Lemma cpn4_final: forall r, upaco4 gf r <4= cpn4 r.
@@ -337,23 +357,30 @@ Proof.
   eapply gf_mon; [apply PR | apply cpn4_final].
 Qed.
 
-Lemma cpn4_complete:
-  paco4 gf bot4 <4= cpn4 bot4.
+End Companion4_main.
+
+Lemma cpn4_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 r
+      (IN: @cpn4 gf bot4 e0 e1 e2 e3)
+      (MONgf: monotone4 gf)
+      (MONgf': monotone4 gf')
+      (LE: gf <5= gf'):
+  @cpn4 gf' r e0 e1 e2 e3.
 Proof.
-  intros. apply cpn4_from_paco.
-  eapply paco4_mon_gen.
-  - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn4_base].
-  - intros. apply PR0.
+  apply cpn4_init in IN; [|apply MONgf].
+  apply cpn4_final; [apply MONgf'|].
+  left. eapply paco4_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
 End Companion4.
 
+Hint Unfold gcpn4 : paco.
+
 Hint Resolve cpn4_base : paco.
-Hint Resolve cpn4_mon : paco.
-Hint Resolve gcpn4_mon : paco.
-Hint Resolve rclo4_mon : paco.
+Hint Resolve cpn4_step : paco.
 Hint Resolve cpn4_final gcpn4_final : paco.
+(* Hint Resolve cpn4_mon : paco.
+Hint Resolve gcpn4_mon : paco.
+Hint Resolve rclo4_mon : paco. *)
 
 Hint Constructors cpn4 compatible4 wcompatible4.
 

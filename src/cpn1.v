@@ -8,6 +8,8 @@ Variable T0 : Type.
 
 Local Notation rel := (rel1 T0).
 
+Section Companion1_main.
+
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone1 gf.
 
@@ -285,6 +287,16 @@ Proof.
   intros. right. apply PR0.
 Qed.  
 
+Lemma cpn1_complete:
+  paco1 gf bot1 <1= cpn1 bot1.
+Proof.
+  intros. apply cpn1_from_paco.
+  eapply paco1_mon_gen.
+  - apply PR.
+  - intros. eapply gf_mon; [apply PR0|apply cpn1_base].
+  - intros. apply PR0.
+Qed.
+
 Lemma cpn1_init:
   cpn1 bot1 <1= paco1 gf bot1.
 Proof.
@@ -299,13 +311,12 @@ Proof.
   intros. apply cpn1_comp, LE, PR.
 Qed.
 
-Lemma gcpn1_clo
-      r clo (LE: clo <2= cpn1):
-  clo (gcpn1 r) <1= gcpn1 r.
+Lemma cpn1_unfold:
+  cpn1 bot1 <1= gcpn1 bot1.
 Proof.
-  intros. apply LE, (compat1_compat cpn1_compat) in PR.
+  intros. apply cpn1_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn1_comp, PR0.
+  intros. pclearbot. apply cpn1_complete, PR0.
 Qed.
 
 Lemma cpn1_step r:
@@ -318,6 +329,15 @@ Proof.
   intros. apply rclo1_step.
   eapply gf_mon; [apply PR2|].
   intros. apply rclo1_base, PR3.
+Qed.
+
+Lemma gcpn1_clo
+      r clo (LE: clo <2= cpn1):
+  clo (gcpn1 r) <1= gcpn1 r.
+Proof.
+  intros. apply LE, (compat1_compat cpn1_compat) in PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply cpn1_comp, PR0.
 Qed.
 
 Lemma cpn1_final: forall r, upaco1 gf r <1= cpn1 r.
@@ -334,23 +354,30 @@ Proof.
   eapply gf_mon; [apply PR | apply cpn1_final].
 Qed.
 
-Lemma cpn1_complete:
-  paco1 gf bot1 <1= cpn1 bot1.
+End Companion1_main.
+
+Lemma cpn1_mon_bot (gf gf': rel -> rel) e0 r
+      (IN: @cpn1 gf bot1 e0)
+      (MONgf: monotone1 gf)
+      (MONgf': monotone1 gf')
+      (LE: gf <2= gf'):
+  @cpn1 gf' r e0.
 Proof.
-  intros. apply cpn1_from_paco.
-  eapply paco1_mon_gen.
-  - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn1_base].
-  - intros. apply PR0.
+  apply cpn1_init in IN; [|apply MONgf].
+  apply cpn1_final; [apply MONgf'|].
+  left. eapply paco1_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
 End Companion1.
 
+Hint Unfold gcpn1 : paco.
+
 Hint Resolve cpn1_base : paco.
-Hint Resolve cpn1_mon : paco.
-Hint Resolve gcpn1_mon : paco.
-Hint Resolve rclo1_mon : paco.
+Hint Resolve cpn1_step : paco.
 Hint Resolve cpn1_final gcpn1_final : paco.
+(* Hint Resolve cpn1_mon : paco.
+Hint Resolve gcpn1_mon : paco.
+Hint Resolve rclo1_mon : paco. *)
 
 Hint Constructors cpn1 compatible1 wcompatible1.
 

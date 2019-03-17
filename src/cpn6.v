@@ -13,6 +13,8 @@ Variable T5 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (
 
 Local Notation rel := (rel6 T0 T1 T2 T3 T4 T5).
 
+Section Companion6_main.
+
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone6 gf.
 
@@ -290,6 +292,16 @@ Proof.
   intros. right. apply PR0.
 Qed.  
 
+Lemma cpn6_complete:
+  paco6 gf bot6 <6= cpn6 bot6.
+Proof.
+  intros. apply cpn6_from_paco.
+  eapply paco6_mon_gen.
+  - apply PR.
+  - intros. eapply gf_mon; [apply PR0|apply cpn6_base].
+  - intros. apply PR0.
+Qed.
+
 Lemma cpn6_init:
   cpn6 bot6 <6= paco6 gf bot6.
 Proof.
@@ -304,13 +316,12 @@ Proof.
   intros. apply cpn6_comp, LE, PR.
 Qed.
 
-Lemma gcpn6_clo
-      r clo (LE: clo <7= cpn6):
-  clo (gcpn6 r) <6= gcpn6 r.
+Lemma cpn6_unfold:
+  cpn6 bot6 <6= gcpn6 bot6.
 Proof.
-  intros. apply LE, (compat6_compat cpn6_compat) in PR.
+  intros. apply cpn6_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn6_comp, PR0.
+  intros. pclearbot. apply cpn6_complete, PR0.
 Qed.
 
 Lemma cpn6_step r:
@@ -323,6 +334,15 @@ Proof.
   intros. apply rclo6_step.
   eapply gf_mon; [apply PR2|].
   intros. apply rclo6_base, PR3.
+Qed.
+
+Lemma gcpn6_clo
+      r clo (LE: clo <7= cpn6):
+  clo (gcpn6 r) <6= gcpn6 r.
+Proof.
+  intros. apply LE, (compat6_compat cpn6_compat) in PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply cpn6_comp, PR0.
 Qed.
 
 Lemma cpn6_final: forall r, upaco6 gf r <6= cpn6 r.
@@ -339,23 +359,30 @@ Proof.
   eapply gf_mon; [apply PR | apply cpn6_final].
 Qed.
 
-Lemma cpn6_complete:
-  paco6 gf bot6 <6= cpn6 bot6.
+End Companion6_main.
+
+Lemma cpn6_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 r
+      (IN: @cpn6 gf bot6 e0 e1 e2 e3 e4 e5)
+      (MONgf: monotone6 gf)
+      (MONgf': monotone6 gf')
+      (LE: gf <7= gf'):
+  @cpn6 gf' r e0 e1 e2 e3 e4 e5.
 Proof.
-  intros. apply cpn6_from_paco.
-  eapply paco6_mon_gen.
-  - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn6_base].
-  - intros. apply PR0.
+  apply cpn6_init in IN; [|apply MONgf].
+  apply cpn6_final; [apply MONgf'|].
+  left. eapply paco6_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
 End Companion6.
 
+Hint Unfold gcpn6 : paco.
+
 Hint Resolve cpn6_base : paco.
-Hint Resolve cpn6_mon : paco.
-Hint Resolve gcpn6_mon : paco.
-Hint Resolve rclo6_mon : paco.
+Hint Resolve cpn6_step : paco.
 Hint Resolve cpn6_final gcpn6_final : paco.
+(* Hint Resolve cpn6_mon : paco.
+Hint Resolve gcpn6_mon : paco.
+Hint Resolve rclo6_mon : paco. *)
 
 Hint Constructors cpn6 compatible6 wcompatible6.
 

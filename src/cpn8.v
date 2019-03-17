@@ -15,6 +15,8 @@ Variable T7 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (
 
 Local Notation rel := (rel8 T0 T1 T2 T3 T4 T5 T6 T7).
 
+Section Companion8_main.
+
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone8 gf.
 
@@ -292,6 +294,16 @@ Proof.
   intros. right. apply PR0.
 Qed.  
 
+Lemma cpn8_complete:
+  paco8 gf bot8 <8= cpn8 bot8.
+Proof.
+  intros. apply cpn8_from_paco.
+  eapply paco8_mon_gen.
+  - apply PR.
+  - intros. eapply gf_mon; [apply PR0|apply cpn8_base].
+  - intros. apply PR0.
+Qed.
+
 Lemma cpn8_init:
   cpn8 bot8 <8= paco8 gf bot8.
 Proof.
@@ -306,13 +318,12 @@ Proof.
   intros. apply cpn8_comp, LE, PR.
 Qed.
 
-Lemma gcpn8_clo
-      r clo (LE: clo <9= cpn8):
-  clo (gcpn8 r) <8= gcpn8 r.
+Lemma cpn8_unfold:
+  cpn8 bot8 <8= gcpn8 bot8.
 Proof.
-  intros. apply LE, (compat8_compat cpn8_compat) in PR.
+  intros. apply cpn8_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn8_comp, PR0.
+  intros. pclearbot. apply cpn8_complete, PR0.
 Qed.
 
 Lemma cpn8_step r:
@@ -325,6 +336,15 @@ Proof.
   intros. apply rclo8_step.
   eapply gf_mon; [apply PR2|].
   intros. apply rclo8_base, PR3.
+Qed.
+
+Lemma gcpn8_clo
+      r clo (LE: clo <9= cpn8):
+  clo (gcpn8 r) <8= gcpn8 r.
+Proof.
+  intros. apply LE, (compat8_compat cpn8_compat) in PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply cpn8_comp, PR0.
 Qed.
 
 Lemma cpn8_final: forall r, upaco8 gf r <8= cpn8 r.
@@ -341,23 +361,30 @@ Proof.
   eapply gf_mon; [apply PR | apply cpn8_final].
 Qed.
 
-Lemma cpn8_complete:
-  paco8 gf bot8 <8= cpn8 bot8.
+End Companion8_main.
+
+Lemma cpn8_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 r
+      (IN: @cpn8 gf bot8 e0 e1 e2 e3 e4 e5 e6 e7)
+      (MONgf: monotone8 gf)
+      (MONgf': monotone8 gf')
+      (LE: gf <9= gf'):
+  @cpn8 gf' r e0 e1 e2 e3 e4 e5 e6 e7.
 Proof.
-  intros. apply cpn8_from_paco.
-  eapply paco8_mon_gen.
-  - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn8_base].
-  - intros. apply PR0.
+  apply cpn8_init in IN; [|apply MONgf].
+  apply cpn8_final; [apply MONgf'|].
+  left. eapply paco8_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
 End Companion8.
 
+Hint Unfold gcpn8 : paco.
+
 Hint Resolve cpn8_base : paco.
-Hint Resolve cpn8_mon : paco.
-Hint Resolve gcpn8_mon : paco.
-Hint Resolve rclo8_mon : paco.
+Hint Resolve cpn8_step : paco.
 Hint Resolve cpn8_final gcpn8_final : paco.
+(* Hint Resolve cpn8_mon : paco.
+Hint Resolve gcpn8_mon : paco.
+Hint Resolve rclo8_mon : paco. *)
 
 Hint Constructors cpn8 compatible8 wcompatible8.
 

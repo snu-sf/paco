@@ -9,6 +9,8 @@ Variable T1 : forall (x0: @T0), Type.
 
 Local Notation rel := (rel2 T0 T1).
 
+Section Companion2_main.
+
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone2 gf.
 
@@ -286,6 +288,16 @@ Proof.
   intros. right. apply PR0.
 Qed.  
 
+Lemma cpn2_complete:
+  paco2 gf bot2 <2= cpn2 bot2.
+Proof.
+  intros. apply cpn2_from_paco.
+  eapply paco2_mon_gen.
+  - apply PR.
+  - intros. eapply gf_mon; [apply PR0|apply cpn2_base].
+  - intros. apply PR0.
+Qed.
+
 Lemma cpn2_init:
   cpn2 bot2 <2= paco2 gf bot2.
 Proof.
@@ -300,13 +312,12 @@ Proof.
   intros. apply cpn2_comp, LE, PR.
 Qed.
 
-Lemma gcpn2_clo
-      r clo (LE: clo <3= cpn2):
-  clo (gcpn2 r) <2= gcpn2 r.
+Lemma cpn2_unfold:
+  cpn2 bot2 <2= gcpn2 bot2.
 Proof.
-  intros. apply LE, (compat2_compat cpn2_compat) in PR.
+  intros. apply cpn2_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn2_comp, PR0.
+  intros. pclearbot. apply cpn2_complete, PR0.
 Qed.
 
 Lemma cpn2_step r:
@@ -319,6 +330,15 @@ Proof.
   intros. apply rclo2_step.
   eapply gf_mon; [apply PR2|].
   intros. apply rclo2_base, PR3.
+Qed.
+
+Lemma gcpn2_clo
+      r clo (LE: clo <3= cpn2):
+  clo (gcpn2 r) <2= gcpn2 r.
+Proof.
+  intros. apply LE, (compat2_compat cpn2_compat) in PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply cpn2_comp, PR0.
 Qed.
 
 Lemma cpn2_final: forall r, upaco2 gf r <2= cpn2 r.
@@ -335,23 +355,30 @@ Proof.
   eapply gf_mon; [apply PR | apply cpn2_final].
 Qed.
 
-Lemma cpn2_complete:
-  paco2 gf bot2 <2= cpn2 bot2.
+End Companion2_main.
+
+Lemma cpn2_mon_bot (gf gf': rel -> rel) e0 e1 r
+      (IN: @cpn2 gf bot2 e0 e1)
+      (MONgf: monotone2 gf)
+      (MONgf': monotone2 gf')
+      (LE: gf <3= gf'):
+  @cpn2 gf' r e0 e1.
 Proof.
-  intros. apply cpn2_from_paco.
-  eapply paco2_mon_gen.
-  - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn2_base].
-  - intros. apply PR0.
+  apply cpn2_init in IN; [|apply MONgf].
+  apply cpn2_final; [apply MONgf'|].
+  left. eapply paco2_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
 End Companion2.
 
+Hint Unfold gcpn2 : paco.
+
 Hint Resolve cpn2_base : paco.
-Hint Resolve cpn2_mon : paco.
-Hint Resolve gcpn2_mon : paco.
-Hint Resolve rclo2_mon : paco.
+Hint Resolve cpn2_step : paco.
 Hint Resolve cpn2_final gcpn2_final : paco.
+(* Hint Resolve cpn2_mon : paco.
+Hint Resolve gcpn2_mon : paco.
+Hint Resolve rclo2_mon : paco. *)
 
 Hint Constructors cpn2 compatible2 wcompatible2.
 

@@ -17,6 +17,8 @@ Variable T9 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (
 
 Local Notation rel := (rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9).
 
+Section Companion10_main.
+
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone10 gf.
 
@@ -294,6 +296,16 @@ Proof.
   intros. right. apply PR0.
 Qed.  
 
+Lemma cpn10_complete:
+  paco10 gf bot10 <10= cpn10 bot10.
+Proof.
+  intros. apply cpn10_from_paco.
+  eapply paco10_mon_gen.
+  - apply PR.
+  - intros. eapply gf_mon; [apply PR0|apply cpn10_base].
+  - intros. apply PR0.
+Qed.
+
 Lemma cpn10_init:
   cpn10 bot10 <10= paco10 gf bot10.
 Proof.
@@ -308,13 +320,12 @@ Proof.
   intros. apply cpn10_comp, LE, PR.
 Qed.
 
-Lemma gcpn10_clo
-      r clo (LE: clo <11= cpn10):
-  clo (gcpn10 r) <10= gcpn10 r.
+Lemma cpn10_unfold:
+  cpn10 bot10 <10= gcpn10 bot10.
 Proof.
-  intros. apply LE, (compat10_compat cpn10_compat) in PR.
+  intros. apply cpn10_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn10_comp, PR0.
+  intros. pclearbot. apply cpn10_complete, PR0.
 Qed.
 
 Lemma cpn10_step r:
@@ -327,6 +338,15 @@ Proof.
   intros. apply rclo10_step.
   eapply gf_mon; [apply PR2|].
   intros. apply rclo10_base, PR3.
+Qed.
+
+Lemma gcpn10_clo
+      r clo (LE: clo <11= cpn10):
+  clo (gcpn10 r) <10= gcpn10 r.
+Proof.
+  intros. apply LE, (compat10_compat cpn10_compat) in PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply cpn10_comp, PR0.
 Qed.
 
 Lemma cpn10_final: forall r, upaco10 gf r <10= cpn10 r.
@@ -343,23 +363,30 @@ Proof.
   eapply gf_mon; [apply PR | apply cpn10_final].
 Qed.
 
-Lemma cpn10_complete:
-  paco10 gf bot10 <10= cpn10 bot10.
+End Companion10_main.
+
+Lemma cpn10_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 r
+      (IN: @cpn10 gf bot10 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9)
+      (MONgf: monotone10 gf)
+      (MONgf': monotone10 gf')
+      (LE: gf <11= gf'):
+  @cpn10 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9.
 Proof.
-  intros. apply cpn10_from_paco.
-  eapply paco10_mon_gen.
-  - apply PR.
-  - intros. eapply gf_mon; [apply PR0|apply cpn10_base].
-  - intros. apply PR0.
+  apply cpn10_init in IN; [|apply MONgf].
+  apply cpn10_final; [apply MONgf'|].
+  left. eapply paco10_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
 End Companion10.
 
+Hint Unfold gcpn10 : paco.
+
 Hint Resolve cpn10_base : paco.
-Hint Resolve cpn10_mon : paco.
-Hint Resolve gcpn10_mon : paco.
-Hint Resolve rclo10_mon : paco.
+Hint Resolve cpn10_step : paco.
 Hint Resolve cpn10_final gcpn10_final : paco.
+(* Hint Resolve cpn10_mon : paco.
+Hint Resolve gcpn10_mon : paco.
+Hint Resolve rclo10_mon : paco. *)
 
 Hint Constructors cpn10 compatible10 wcompatible10.
 
