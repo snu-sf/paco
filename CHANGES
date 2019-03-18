@@ -3,7 +3,7 @@ changes from v2.0.3 to v2.1.0
 - Simplify the upto technique using "companion" following the following paper:
   * Damien Pous, Coinduction All the Way Up, LICS 2016.
 - Add tactics for upto reasoning:
-  uinit, ustep, uclo, ucofix, ufinal, ucompat, gcpn_fold. 
+  uinit, uunfold, ubase, ustep, uclo, ucofix, ufinal, ucompat, gcpn_fold. 
 
 changes from v2.0.2 to v2.0.3
 =========================
