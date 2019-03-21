@@ -22,13 +22,28 @@ for n in range (relsize+1):
     print ("Arguments rel"+str(n)+" : clear implicits.")
     print ()
 
+print ("(** ** Signatures *)")
+print ()
+for n in range (relsize+1):
+    print ("Record sig"+str(n)+"T "+ifpstr(n,"{"+itrstr(" T",n)+"}")+" :=")
+    print ("  exist"+str(n)+"T {")
+    for i in range(n):
+        print ("      proj"+str(n)+"T"+str(i)+": @T"+str(i)+itrstr(" proj"+str(n)+"T", i)+";")
+    print ("    }.")
+    print (ifpstr(n,"Arguments exist"+str(n)+"T "+ifpstr(n,"{"+itrstr(" T",n)+"}")+ifpstr(n-1," ["+itrstr(" proj"+str(n)+"T",n-1) +"]")+"."))
+    print ("Definition uncurry"+str(n)+" "+ifpstr(n,"{"+itrstr(" T",n)+"}")+" (R: rel"+str(n)+itrstr(" T",n)+"): rel1 sig"+str(n)+"T :=")
+    print ("  fun x => R"+itrstr(" (proj"+str(n)+"T", n, " x)")+".")
+    print ("Definition curry"+str(n)+" "+ifpstr(n,"{"+itrstr(" T",n)+"}")+" (R: rel1 sig"+str(n)+"T): rel"+str(n)+itrstr(" T", n)+" :=")
+    print ("  "+ifpstr(n, "fun"+itrstr(" x", n)+" => ")+"R (exist"+str(n)+"T"+ifpstr(n, " x"+str(n-1))+").")
+    print()
+
 print ("(** ** Bottom *)")
 print ()
 print ("Definition pacoid {A : Type} (a: A) : A := a.")
 print ()
 for n in range (relsize+1):
     print ("Notation bot"+str(n)+" :=")
-    print ("  (pacoid("+ifpstr(n,"fun")+n*" _"+ifpstr(n," => ")+"False)).")
+    print ("  (pacoid(curry"+str(n)+"(fun _ => False))).")
     print ()
 
 print ("(** ** Less than or equal *)")

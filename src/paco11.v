@@ -16,25 +16,8 @@ Variable T8 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (
 Variable T9 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6) (x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7), Type.
 Variable T10 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6) (x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8), Type.
 
-Record sig11T :=
-  exist11T { 
-      proj11T0: @T0;
-      proj11T1: @T1 proj11T0;
-      proj11T2: @T2 proj11T0 proj11T1;
-      proj11T3: @T3 proj11T0 proj11T1 proj11T2;
-      proj11T4: @T4 proj11T0 proj11T1 proj11T2 proj11T3;
-      proj11T5: @T5 proj11T0 proj11T1 proj11T2 proj11T3 proj11T4;
-      proj11T6: @T6 proj11T0 proj11T1 proj11T2 proj11T3 proj11T4 proj11T5;
-      proj11T7: @T7 proj11T0 proj11T1 proj11T2 proj11T3 proj11T4 proj11T5 proj11T6;
-      proj11T8: @T8 proj11T0 proj11T1 proj11T2 proj11T3 proj11T4 proj11T5 proj11T6 proj11T7;
-      proj11T9: @T9 proj11T0 proj11T1 proj11T2 proj11T3 proj11T4 proj11T5 proj11T6 proj11T7 proj11T8;
-      proj11T10: @T10 proj11T0 proj11T1 proj11T2 proj11T3 proj11T4 proj11T5 proj11T6 proj11T7 proj11T8 proj11T9;
-    }.
-
-Definition uncurry11 (R: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10): rel1 sig11T := fun x => R (proj11T0 x) (proj11T1 x) (proj11T2 x) (proj11T3 x) (proj11T4 x) (proj11T5 x) (proj11T6 x) (proj11T7 x) (proj11T8 x) (proj11T9 x) (proj11T10 x).
-
-Definition curry11 (R: rel1 sig11T): rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 :=
-  fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 => R (exist11T x10).
+Local Notation curry11 := (@curry11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10).
+Local Notation uncurry11 := (@uncurry11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10).
 
 Lemma uncurry_map11 r0 r1 (LE : r0 <11== r1) : uncurry11 r0 <1== uncurry11 r1.
 Proof. intros [] H. apply LE. apply H. Qed.

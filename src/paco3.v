@@ -8,17 +8,8 @@ Variable T0 : Type.
 Variable T1 : forall (x0: @T0), Type.
 Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
 
-Record sig3T :=
-  exist3T { 
-      proj3T0: @T0;
-      proj3T1: @T1 proj3T0;
-      proj3T2: @T2 proj3T0 proj3T1;
-    }.
-
-Definition uncurry3 (R: rel3 T0 T1 T2): rel1 sig3T := fun x => R (proj3T0 x) (proj3T1 x) (proj3T2 x).
-
-Definition curry3 (R: rel1 sig3T): rel3 T0 T1 T2 :=
-  fun x0 x1 x2 => R (exist3T x2).
+Local Notation curry3 := (@curry3 T0 T1 T2).
+Local Notation uncurry3 := (@uncurry3 T0 T1 T2).
 
 Lemma uncurry_map3 r0 r1 (LE : r0 <3== r1) : uncurry3 r0 <1== uncurry3 r1.
 Proof. intros [] H. apply LE. apply H. Qed.

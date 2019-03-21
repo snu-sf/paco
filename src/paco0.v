@@ -5,14 +5,8 @@ Set Implicit Arguments.
 Section PACO0.
 
 
-Record sig0T :=
-  exist0T { 
-    }.
-
-Definition uncurry0 (R: rel0): rel1 sig0T := fun x => R.
-
-Definition curry0 (R: rel1 sig0T): rel0 :=
-  R (exist0T).
+Local Notation curry0 := (@curry0).
+Local Notation uncurry0 := (@uncurry0).
 
 Lemma uncurry_map0 r0 r1 (LE : r0 <0== r1) : uncurry0 r0 <1== uncurry0 r1.
 Proof. intros [] H. apply LE. apply H. Qed.

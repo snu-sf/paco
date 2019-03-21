@@ -15,24 +15,8 @@ Variable T7 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (
 Variable T8 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6), Type.
 Variable T9 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6) (x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7), Type.
 
-Record sig10T :=
-  exist10T { 
-      proj10T0: @T0;
-      proj10T1: @T1 proj10T0;
-      proj10T2: @T2 proj10T0 proj10T1;
-      proj10T3: @T3 proj10T0 proj10T1 proj10T2;
-      proj10T4: @T4 proj10T0 proj10T1 proj10T2 proj10T3;
-      proj10T5: @T5 proj10T0 proj10T1 proj10T2 proj10T3 proj10T4;
-      proj10T6: @T6 proj10T0 proj10T1 proj10T2 proj10T3 proj10T4 proj10T5;
-      proj10T7: @T7 proj10T0 proj10T1 proj10T2 proj10T3 proj10T4 proj10T5 proj10T6;
-      proj10T8: @T8 proj10T0 proj10T1 proj10T2 proj10T3 proj10T4 proj10T5 proj10T6 proj10T7;
-      proj10T9: @T9 proj10T0 proj10T1 proj10T2 proj10T3 proj10T4 proj10T5 proj10T6 proj10T7 proj10T8;
-    }.
-
-Definition uncurry10 (R: rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9): rel1 sig10T := fun x => R (proj10T0 x) (proj10T1 x) (proj10T2 x) (proj10T3 x) (proj10T4 x) (proj10T5 x) (proj10T6 x) (proj10T7 x) (proj10T8 x) (proj10T9 x).
-
-Definition curry10 (R: rel1 sig10T): rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 :=
-  fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 => R (exist10T x9).
+Local Notation curry10 := (@curry10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9).
+Local Notation uncurry10 := (@uncurry10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9).
 
 Lemma uncurry_map10 r0 r1 (LE : r0 <10== r1) : uncurry10 r0 <1== uncurry10 r1.
 Proof. intros [] H. apply LE. apply H. Qed.

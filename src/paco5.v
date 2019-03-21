@@ -10,19 +10,8 @@ Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
 Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
 Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), Type.
 
-Record sig5T :=
-  exist5T { 
-      proj5T0: @T0;
-      proj5T1: @T1 proj5T0;
-      proj5T2: @T2 proj5T0 proj5T1;
-      proj5T3: @T3 proj5T0 proj5T1 proj5T2;
-      proj5T4: @T4 proj5T0 proj5T1 proj5T2 proj5T3;
-    }.
-
-Definition uncurry5 (R: rel5 T0 T1 T2 T3 T4): rel1 sig5T := fun x => R (proj5T0 x) (proj5T1 x) (proj5T2 x) (proj5T3 x) (proj5T4 x).
-
-Definition curry5 (R: rel1 sig5T): rel5 T0 T1 T2 T3 T4 :=
-  fun x0 x1 x2 x3 x4 => R (exist5T x4).
+Local Notation curry5 := (@curry5 T0 T1 T2 T3 T4).
+Local Notation uncurry5 := (@uncurry5 T0 T1 T2 T3 T4).
 
 Lemma uncurry_map5 r0 r1 (LE : r0 <5== r1) : uncurry5 r0 <1== uncurry5 r1.
 Proof. intros [] H. apply LE. apply H. Qed.

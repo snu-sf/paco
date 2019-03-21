@@ -23,19 +23,9 @@ for i in range(n):
     print (ifpstr(i,', ')+'Type.')
 print ('')
 
-print ('Record sig'+str(n)+'T :=')
-print ('  exist'+str(n)+'T { ')
-for i in range(n):
-    print ('      proj'+str(n)+'T'+str(i)+': @T'+str(i)+itrstr(' proj'+str(n)+'T', i)+';')
-print ('    }.')
-print ('')
-
-print ('Definition uncurry'+str(n)+' (R: rel'+str(n)+itrstr(' T',n)+'): rel1 sig'+str(n)+'T := fun x => R'+itrstr(' (proj'+str(n)+'T', n, ' x)')+'.')
-print ('')
-
-print ('Definition curry'+str(n)+' (R: rel1 sig'+str(n)+'T): rel'+str(n)+itrstr(' T', n)+' :=')
-print ('  '+ifpstr(n, 'fun'+itrstr(' x', n)+' => ')+'R (exist'+str(n)+'T'+ifpstr(n, ' x'+str(n-1))+').')
-print ('')
+print ("Local Notation curry"+str(n)+" := (@curry"+str(n)+itrstr(" T",n)+").")
+print ("Local Notation uncurry"+str(n)+" := (@uncurry"+str(n)+itrstr(" T",n)+").")
+print ()
 
 print ('Lemma uncurry_map'+str(n)+' r0 r1 (LE : r0 <'+str(n)+'== r1) : uncurry'+str(n)+' r0 <1== uncurry'+str(n)+' r1.')
 print ('Proof. intros [] H. apply LE. apply H. Qed.')

@@ -7,16 +7,8 @@ Section PACO2.
 Variable T0 : Type.
 Variable T1 : forall (x0: @T0), Type.
 
-Record sig2T :=
-  exist2T { 
-      proj2T0: @T0;
-      proj2T1: @T1 proj2T0;
-    }.
-
-Definition uncurry2 (R: rel2 T0 T1): rel1 sig2T := fun x => R (proj2T0 x) (proj2T1 x).
-
-Definition curry2 (R: rel1 sig2T): rel2 T0 T1 :=
-  fun x0 x1 => R (exist2T x1).
+Local Notation curry2 := (@curry2 T0 T1).
+Local Notation uncurry2 := (@uncurry2 T0 T1).
 
 Lemma uncurry_map2 r0 r1 (LE : r0 <2== r1) : uncurry2 r0 <1== uncurry2 r1.
 Proof. intros [] H. apply LE. apply H. Qed.
