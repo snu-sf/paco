@@ -77,6 +77,17 @@ for n in range(relsize+1):
 print ("  end.")
 print ()
 
+print ("(** ** ucpn")
+print ("*)")
+print ()
+print ('Tactic Notation "ucpn_" :=')
+print ("  match goal with")
+for n in range(relsize+1):
+    print ("  | [|- context[cpn"+str(n)+"]] => eapply cpn"+str(n)+"_comp; [eauto with paco|]")
+print ("  end.")
+print ("Ltac ucpn := repeat red; under_forall ltac:(ucpn_).")
+print ()
+
 print ("(** ** ustep")
 print ("*)")
 print ()

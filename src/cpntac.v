@@ -159,6 +159,30 @@ Ltac uunfold H :=
   | context[cpn15] => eapply cpn15_unfold in H; [|eauto with paco]
   end.
 
+(** ** ucpn
+*)
+
+Tactic Notation "ucpn_" :=
+  match goal with
+  | [|- context[cpn0]] => eapply cpn0_comp; [eauto with paco|]
+  | [|- context[cpn1]] => eapply cpn1_comp; [eauto with paco|]
+  | [|- context[cpn2]] => eapply cpn2_comp; [eauto with paco|]
+  | [|- context[cpn3]] => eapply cpn3_comp; [eauto with paco|]
+  | [|- context[cpn4]] => eapply cpn4_comp; [eauto with paco|]
+  | [|- context[cpn5]] => eapply cpn5_comp; [eauto with paco|]
+  | [|- context[cpn6]] => eapply cpn6_comp; [eauto with paco|]
+  | [|- context[cpn7]] => eapply cpn7_comp; [eauto with paco|]
+  | [|- context[cpn8]] => eapply cpn8_comp; [eauto with paco|]
+  | [|- context[cpn9]] => eapply cpn9_comp; [eauto with paco|]
+  | [|- context[cpn10]] => eapply cpn10_comp; [eauto with paco|]
+  | [|- context[cpn11]] => eapply cpn11_comp; [eauto with paco|]
+  | [|- context[cpn12]] => eapply cpn12_comp; [eauto with paco|]
+  | [|- context[cpn13]] => eapply cpn13_comp; [eauto with paco|]
+  | [|- context[cpn14]] => eapply cpn14_comp; [eauto with paco|]
+  | [|- context[cpn15]] => eapply cpn15_comp; [eauto with paco|]
+  end.
+Ltac ucpn := repeat red; under_forall ltac:(ucpn_).
+
 (** ** ustep
 *)
 
