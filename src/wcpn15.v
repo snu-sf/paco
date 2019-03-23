@@ -67,6 +67,14 @@ Proof.
   intros. left. apply PR0.
 Qed.
 
+Lemma wcpn15_unfold:
+  wcpn15 bot15 bot15 <15= gf (wcpn15 bot15 bot15).
+Proof.
+  intros. apply wcpn15_init in PR. uunfold PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply wcpn15_final. apply PR0.
+Qed.
+
 Lemma wcpn15_base r rg:
   r <15= wcpn15 r rg.
 Proof.
@@ -207,5 +215,4 @@ Hint Constructors wcpn15 : paco.
 
 Hint Resolve wcpn15_base : paco.
 Hint Resolve wcpn15_step : paco.
-Hint Resolve wcpn15_final : paco.
 

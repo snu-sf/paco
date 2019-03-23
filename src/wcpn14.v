@@ -66,6 +66,14 @@ Proof.
   intros. left. apply PR0.
 Qed.
 
+Lemma wcpn14_unfold:
+  wcpn14 bot14 bot14 <14= gf (wcpn14 bot14 bot14).
+Proof.
+  intros. apply wcpn14_init in PR. uunfold PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply wcpn14_final. apply PR0.
+Qed.
+
 Lemma wcpn14_base r rg:
   r <14= wcpn14 r rg.
 Proof.
@@ -206,5 +214,4 @@ Hint Constructors wcpn14 : paco.
 
 Hint Resolve wcpn14_base : paco.
 Hint Resolve wcpn14_step : paco.
-Hint Resolve wcpn14_final : paco.
 

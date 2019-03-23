@@ -57,6 +57,14 @@ Proof.
   intros. left. apply PR0.
 Qed.
 
+Lemma wcpn5_unfold:
+  wcpn5 bot5 bot5 <5= gf (wcpn5 bot5 bot5).
+Proof.
+  intros. apply wcpn5_init in PR. uunfold PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply wcpn5_final. apply PR0.
+Qed.
+
 Lemma wcpn5_base r rg:
   r <5= wcpn5 r rg.
 Proof.
@@ -197,5 +205,4 @@ Hint Constructors wcpn5 : paco.
 
 Hint Resolve wcpn5_base : paco.
 Hint Resolve wcpn5_step : paco.
-Hint Resolve wcpn5_final : paco.
 

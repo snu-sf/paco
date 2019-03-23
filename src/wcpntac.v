@@ -48,6 +48,31 @@ Tactic Notation "wfinal_" :=
   end.
 Ltac wfinal := repeat red; under_forall ltac:(wfinal_).
 
+(** ** wunfold H
+*)
+
+Ltac wunfold H :=
+  repeat red in H;
+  let G := type of H in
+  match G with
+  | context[wcpn0] => eapply wcpn0_unfold in H; [|eauto with paco]
+  | context[wcpn1] => eapply wcpn1_unfold in H; [|eauto with paco]
+  | context[wcpn2] => eapply wcpn2_unfold in H; [|eauto with paco]
+  | context[wcpn3] => eapply wcpn3_unfold in H; [|eauto with paco]
+  | context[wcpn4] => eapply wcpn4_unfold in H; [|eauto with paco]
+  | context[wcpn5] => eapply wcpn5_unfold in H; [|eauto with paco]
+  | context[wcpn6] => eapply wcpn6_unfold in H; [|eauto with paco]
+  | context[wcpn7] => eapply wcpn7_unfold in H; [|eauto with paco]
+  | context[wcpn8] => eapply wcpn8_unfold in H; [|eauto with paco]
+  | context[wcpn9] => eapply wcpn9_unfold in H; [|eauto with paco]
+  | context[wcpn10] => eapply wcpn10_unfold in H; [|eauto with paco]
+  | context[wcpn11] => eapply wcpn11_unfold in H; [|eauto with paco]
+  | context[wcpn12] => eapply wcpn12_unfold in H; [|eauto with paco]
+  | context[wcpn13] => eapply wcpn13_unfold in H; [|eauto with paco]
+  | context[wcpn14] => eapply wcpn14_unfold in H; [|eauto with paco]
+  | context[wcpn15] => eapply wcpn15_unfold in H; [|eauto with paco]
+  end.
+
 (** ** wbase
 *)
 

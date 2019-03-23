@@ -59,6 +59,14 @@ Proof.
   intros. left. apply PR0.
 Qed.
 
+Lemma wcpn7_unfold:
+  wcpn7 bot7 bot7 <7= gf (wcpn7 bot7 bot7).
+Proof.
+  intros. apply wcpn7_init in PR. uunfold PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply wcpn7_final. apply PR0.
+Qed.
+
 Lemma wcpn7_base r rg:
   r <7= wcpn7 r rg.
 Proof.
@@ -199,5 +207,4 @@ Hint Constructors wcpn7 : paco.
 
 Hint Resolve wcpn7_base : paco.
 Hint Resolve wcpn7_step : paco.
-Hint Resolve wcpn7_final : paco.
 

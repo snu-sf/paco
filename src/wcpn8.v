@@ -60,6 +60,14 @@ Proof.
   intros. left. apply PR0.
 Qed.
 
+Lemma wcpn8_unfold:
+  wcpn8 bot8 bot8 <8= gf (wcpn8 bot8 bot8).
+Proof.
+  intros. apply wcpn8_init in PR. uunfold PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply wcpn8_final. apply PR0.
+Qed.
+
 Lemma wcpn8_base r rg:
   r <8= wcpn8 r rg.
 Proof.
@@ -200,5 +208,4 @@ Hint Constructors wcpn8 : paco.
 
 Hint Resolve wcpn8_base : paco.
 Hint Resolve wcpn8_step : paco.
-Hint Resolve wcpn8_final : paco.
 

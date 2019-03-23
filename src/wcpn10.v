@@ -62,6 +62,14 @@ Proof.
   intros. left. apply PR0.
 Qed.
 
+Lemma wcpn10_unfold:
+  wcpn10 bot10 bot10 <10= gf (wcpn10 bot10 bot10).
+Proof.
+  intros. apply wcpn10_init in PR. uunfold PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply wcpn10_final. apply PR0.
+Qed.
+
 Lemma wcpn10_base r rg:
   r <10= wcpn10 r rg.
 Proof.
@@ -202,5 +210,4 @@ Hint Constructors wcpn10 : paco.
 
 Hint Resolve wcpn10_base : paco.
 Hint Resolve wcpn10_step : paco.
-Hint Resolve wcpn10_final : paco.
 

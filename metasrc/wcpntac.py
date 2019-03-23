@@ -33,6 +33,18 @@ print ("  end.")
 print ("Ltac wfinal := repeat red; under_forall ltac:(wfinal_).")
 print ()
 
+print ("(** ** wunfold H")
+print ("*)")
+print ()
+print ('Ltac wunfold H :=')
+print ("  repeat red in H;")
+print ("  let G := type of H in");
+print ("  match G with")
+for n in range(relsize+1):
+    print ("  | context[wcpn"+str(n)+"] => eapply wcpn"+str(n)+"_unfold in H; [|eauto with paco]")
+print ("  end.")
+print ()
+
 print ("(** ** wbase")
 print ("*)")
 print ()
@@ -91,3 +103,4 @@ for n in range(relsize+1):
 print ("  end.")
 print ('Tactic Notation "wcofix" ident(CIH) := wcofix CIH with r.')
 print ()
+

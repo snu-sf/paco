@@ -55,6 +55,14 @@ Proof.
   intros. left. apply PR0.
 Qed.
 
+Lemma wcpn3_unfold:
+  wcpn3 bot3 bot3 <3= gf (wcpn3 bot3 bot3).
+Proof.
+  intros. apply wcpn3_init in PR. uunfold PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply wcpn3_final. apply PR0.
+Qed.
+
 Lemma wcpn3_base r rg:
   r <3= wcpn3 r rg.
 Proof.
@@ -195,5 +203,4 @@ Hint Constructors wcpn3 : paco.
 
 Hint Resolve wcpn3_base : paco.
 Hint Resolve wcpn3_step : paco.
-Hint Resolve wcpn3_final : paco.
 

@@ -58,6 +58,14 @@ Proof.
   intros. left. apply PR0.
 Qed.
 
+Lemma wcpn6_unfold:
+  wcpn6 bot6 bot6 <6= gf (wcpn6 bot6 bot6).
+Proof.
+  intros. apply wcpn6_init in PR. uunfold PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply wcpn6_final. apply PR0.
+Qed.
+
 Lemma wcpn6_base r rg:
   r <6= wcpn6 r rg.
 Proof.
@@ -198,5 +206,4 @@ Hint Constructors wcpn6 : paco.
 
 Hint Resolve wcpn6_base : paco.
 Hint Resolve wcpn6_step : paco.
-Hint Resolve wcpn6_final : paco.
 

@@ -61,6 +61,14 @@ Proof.
   intros. left. apply PR0.
 Qed.
 
+Lemma wcpn9_unfold:
+  wcpn9 bot9 bot9 <9= gf (wcpn9 bot9 bot9).
+Proof.
+  intros. apply wcpn9_init in PR. uunfold PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply wcpn9_final. apply PR0.
+Qed.
+
 Lemma wcpn9_base r rg:
   r <9= wcpn9 r rg.
 Proof.
@@ -201,5 +209,4 @@ Hint Constructors wcpn9 : paco.
 
 Hint Resolve wcpn9_base : paco.
 Hint Resolve wcpn9_step : paco.
-Hint Resolve wcpn9_final : paco.
 

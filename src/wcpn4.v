@@ -56,6 +56,14 @@ Proof.
   intros. left. apply PR0.
 Qed.
 
+Lemma wcpn4_unfold:
+  wcpn4 bot4 bot4 <4= gf (wcpn4 bot4 bot4).
+Proof.
+  intros. apply wcpn4_init in PR. uunfold PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply wcpn4_final. apply PR0.
+Qed.
+
 Lemma wcpn4_base r rg:
   r <4= wcpn4 r rg.
 Proof.
@@ -196,5 +204,4 @@ Hint Constructors wcpn4 : paco.
 
 Hint Resolve wcpn4_base : paco.
 Hint Resolve wcpn4_step : paco.
-Hint Resolve wcpn4_final : paco.
 

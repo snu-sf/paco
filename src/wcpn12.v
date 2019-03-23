@@ -64,6 +64,14 @@ Proof.
   intros. left. apply PR0.
 Qed.
 
+Lemma wcpn12_unfold:
+  wcpn12 bot12 bot12 <12= gf (wcpn12 bot12 bot12).
+Proof.
+  intros. apply wcpn12_init in PR. uunfold PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply wcpn12_final. apply PR0.
+Qed.
+
 Lemma wcpn12_base r rg:
   r <12= wcpn12 r rg.
 Proof.
@@ -204,5 +212,4 @@ Hint Constructors wcpn12 : paco.
 
 Hint Resolve wcpn12_base : paco.
 Hint Resolve wcpn12_step : paco.
-Hint Resolve wcpn12_final : paco.
 

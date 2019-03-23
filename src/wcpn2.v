@@ -54,6 +54,14 @@ Proof.
   intros. left. apply PR0.
 Qed.
 
+Lemma wcpn2_unfold:
+  wcpn2 bot2 bot2 <2= gf (wcpn2 bot2 bot2).
+Proof.
+  intros. apply wcpn2_init in PR. uunfold PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply wcpn2_final. apply PR0.
+Qed.
+
 Lemma wcpn2_base r rg:
   r <2= wcpn2 r rg.
 Proof.
@@ -194,5 +202,4 @@ Hint Constructors wcpn2 : paco.
 
 Hint Resolve wcpn2_base : paco.
 Hint Resolve wcpn2_step : paco.
-Hint Resolve wcpn2_final : paco.
 

@@ -53,6 +53,14 @@ Proof.
   intros. left. apply PR0.
 Qed.
 
+Lemma wcpn1_unfold:
+  wcpn1 bot1 bot1 <1= gf (wcpn1 bot1 bot1).
+Proof.
+  intros. apply wcpn1_init in PR. uunfold PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply wcpn1_final. apply PR0.
+Qed.
+
 Lemma wcpn1_base r rg:
   r <1= wcpn1 r rg.
 Proof.
@@ -193,5 +201,4 @@ Hint Constructors wcpn1 : paco.
 
 Hint Resolve wcpn1_base : paco.
 Hint Resolve wcpn1_step : paco.
-Hint Resolve wcpn1_final : paco.
 

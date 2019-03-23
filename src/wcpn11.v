@@ -63,6 +63,14 @@ Proof.
   intros. left. apply PR0.
 Qed.
 
+Lemma wcpn11_unfold:
+  wcpn11 bot11 bot11 <11= gf (wcpn11 bot11 bot11).
+Proof.
+  intros. apply wcpn11_init in PR. uunfold PR.
+  eapply gf_mon; [apply PR|].
+  intros. apply wcpn11_final. apply PR0.
+Qed.
+
 Lemma wcpn11_base r rg:
   r <11= wcpn11 r rg.
 Proof.
@@ -203,5 +211,4 @@ Hint Constructors wcpn11 : paco.
 
 Hint Resolve wcpn11_base : paco.
 Hint Resolve wcpn11_step : paco.
-Hint Resolve wcpn11_final : paco.
 
