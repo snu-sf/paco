@@ -58,7 +58,7 @@ Qed.
 Lemma cpn7_greatest: forall clo (COM: compatible7 clo), clo <8= cpn7.
 Proof. intros. econstructor;[apply COM|apply PR]. Qed.
 
-Lemma cpn7_comp: forall r,
+Lemma cpn7_cpn: forall r,
     cpn7 (cpn7 r) <7= cpn7 r.
 Proof.
   intros. exists (compose cpn7 cpn7); [|apply PR].
@@ -281,7 +281,7 @@ Lemma gcpn7_from_paco r:
 Proof.
   intros. _punfold PR; [|apply gcpn7_mon].
   eapply gf_mon; [apply PR|].
-  intros. apply cpn7_comp.
+  intros. apply cpn7_cpn.
   eapply cpn7_mon; [apply PR0|].
   apply cpn7_from_upaco.
 Qed.
@@ -314,7 +314,7 @@ Lemma cpn7_clo
       r clo (LE: clo <8= cpn7):
   clo (cpn7 r) <7= cpn7 r.
 Proof.
-  intros. apply cpn7_comp, LE, PR.
+  intros. apply cpn7_cpn, LE, PR.
 Qed.
 
 Lemma cpn7_unfold:
@@ -343,7 +343,7 @@ Lemma gcpn7_clo
 Proof.
   intros. apply LE, (compat7_compat cpn7_compat) in PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn7_comp, PR0.
+  intros. apply cpn7_cpn, PR0.
 Qed.
 
 Lemma cpn7_final: forall r, upaco7 gf r <7= cpn7 r.

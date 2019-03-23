@@ -56,7 +56,7 @@ Qed.
 Lemma cpn5_greatest: forall clo (COM: compatible5 clo), clo <6= cpn5.
 Proof. intros. econstructor;[apply COM|apply PR]. Qed.
 
-Lemma cpn5_comp: forall r,
+Lemma cpn5_cpn: forall r,
     cpn5 (cpn5 r) <5= cpn5 r.
 Proof.
   intros. exists (compose cpn5 cpn5); [|apply PR].
@@ -279,7 +279,7 @@ Lemma gcpn5_from_paco r:
 Proof.
   intros. _punfold PR; [|apply gcpn5_mon].
   eapply gf_mon; [apply PR|].
-  intros. apply cpn5_comp.
+  intros. apply cpn5_cpn.
   eapply cpn5_mon; [apply PR0|].
   apply cpn5_from_upaco.
 Qed.
@@ -312,7 +312,7 @@ Lemma cpn5_clo
       r clo (LE: clo <6= cpn5):
   clo (cpn5 r) <5= cpn5 r.
 Proof.
-  intros. apply cpn5_comp, LE, PR.
+  intros. apply cpn5_cpn, LE, PR.
 Qed.
 
 Lemma cpn5_unfold:
@@ -341,7 +341,7 @@ Lemma gcpn5_clo
 Proof.
   intros. apply LE, (compat5_compat cpn5_compat) in PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn5_comp, PR0.
+  intros. apply cpn5_cpn, PR0.
 Qed.
 
 Lemma cpn5_final: forall r, upaco5 gf r <5= cpn5 r.

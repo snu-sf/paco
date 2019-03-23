@@ -64,7 +64,7 @@ Qed.
 Lemma cpn13_greatest: forall clo (COM: compatible13 clo), clo <14= cpn13.
 Proof. intros. econstructor;[apply COM|apply PR]. Qed.
 
-Lemma cpn13_comp: forall r,
+Lemma cpn13_cpn: forall r,
     cpn13 (cpn13 r) <13= cpn13 r.
 Proof.
   intros. exists (compose cpn13 cpn13); [|apply PR].
@@ -287,7 +287,7 @@ Lemma gcpn13_from_paco r:
 Proof.
   intros. _punfold PR; [|apply gcpn13_mon].
   eapply gf_mon; [apply PR|].
-  intros. apply cpn13_comp.
+  intros. apply cpn13_cpn.
   eapply cpn13_mon; [apply PR0|].
   apply cpn13_from_upaco.
 Qed.
@@ -320,7 +320,7 @@ Lemma cpn13_clo
       r clo (LE: clo <14= cpn13):
   clo (cpn13 r) <13= cpn13 r.
 Proof.
-  intros. apply cpn13_comp, LE, PR.
+  intros. apply cpn13_cpn, LE, PR.
 Qed.
 
 Lemma cpn13_unfold:
@@ -349,7 +349,7 @@ Lemma gcpn13_clo
 Proof.
   intros. apply LE, (compat13_compat cpn13_compat) in PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn13_comp, PR0.
+  intros. apply cpn13_cpn, PR0.
 Qed.
 
 Lemma cpn13_final: forall r, upaco13 gf r <13= cpn13 r.

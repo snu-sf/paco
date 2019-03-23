@@ -53,7 +53,7 @@ Qed.
 Lemma cpn2_greatest: forall clo (COM: compatible2 clo), clo <3= cpn2.
 Proof. intros. econstructor;[apply COM|apply PR]. Qed.
 
-Lemma cpn2_comp: forall r,
+Lemma cpn2_cpn: forall r,
     cpn2 (cpn2 r) <2= cpn2 r.
 Proof.
   intros. exists (compose cpn2 cpn2); [|apply PR].
@@ -276,7 +276,7 @@ Lemma gcpn2_from_paco r:
 Proof.
   intros. _punfold PR; [|apply gcpn2_mon].
   eapply gf_mon; [apply PR|].
-  intros. apply cpn2_comp.
+  intros. apply cpn2_cpn.
   eapply cpn2_mon; [apply PR0|].
   apply cpn2_from_upaco.
 Qed.
@@ -309,7 +309,7 @@ Lemma cpn2_clo
       r clo (LE: clo <3= cpn2):
   clo (cpn2 r) <2= cpn2 r.
 Proof.
-  intros. apply cpn2_comp, LE, PR.
+  intros. apply cpn2_cpn, LE, PR.
 Qed.
 
 Lemma cpn2_unfold:
@@ -338,7 +338,7 @@ Lemma gcpn2_clo
 Proof.
   intros. apply LE, (compat2_compat cpn2_compat) in PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn2_comp, PR0.
+  intros. apply cpn2_cpn, PR0.
 Qed.
 
 Lemma cpn2_final: forall r, upaco2 gf r <2= cpn2 r.

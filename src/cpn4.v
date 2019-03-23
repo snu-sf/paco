@@ -55,7 +55,7 @@ Qed.
 Lemma cpn4_greatest: forall clo (COM: compatible4 clo), clo <5= cpn4.
 Proof. intros. econstructor;[apply COM|apply PR]. Qed.
 
-Lemma cpn4_comp: forall r,
+Lemma cpn4_cpn: forall r,
     cpn4 (cpn4 r) <4= cpn4 r.
 Proof.
   intros. exists (compose cpn4 cpn4); [|apply PR].
@@ -278,7 +278,7 @@ Lemma gcpn4_from_paco r:
 Proof.
   intros. _punfold PR; [|apply gcpn4_mon].
   eapply gf_mon; [apply PR|].
-  intros. apply cpn4_comp.
+  intros. apply cpn4_cpn.
   eapply cpn4_mon; [apply PR0|].
   apply cpn4_from_upaco.
 Qed.
@@ -311,7 +311,7 @@ Lemma cpn4_clo
       r clo (LE: clo <5= cpn4):
   clo (cpn4 r) <4= cpn4 r.
 Proof.
-  intros. apply cpn4_comp, LE, PR.
+  intros. apply cpn4_cpn, LE, PR.
 Qed.
 
 Lemma cpn4_unfold:
@@ -340,7 +340,7 @@ Lemma gcpn4_clo
 Proof.
   intros. apply LE, (compat4_compat cpn4_compat) in PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn4_comp, PR0.
+  intros. apply cpn4_cpn, PR0.
 Qed.
 
 Lemma cpn4_final: forall r, upaco4 gf r <4= cpn4 r.

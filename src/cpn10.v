@@ -61,7 +61,7 @@ Qed.
 Lemma cpn10_greatest: forall clo (COM: compatible10 clo), clo <11= cpn10.
 Proof. intros. econstructor;[apply COM|apply PR]. Qed.
 
-Lemma cpn10_comp: forall r,
+Lemma cpn10_cpn: forall r,
     cpn10 (cpn10 r) <10= cpn10 r.
 Proof.
   intros. exists (compose cpn10 cpn10); [|apply PR].
@@ -284,7 +284,7 @@ Lemma gcpn10_from_paco r:
 Proof.
   intros. _punfold PR; [|apply gcpn10_mon].
   eapply gf_mon; [apply PR|].
-  intros. apply cpn10_comp.
+  intros. apply cpn10_cpn.
   eapply cpn10_mon; [apply PR0|].
   apply cpn10_from_upaco.
 Qed.
@@ -317,7 +317,7 @@ Lemma cpn10_clo
       r clo (LE: clo <11= cpn10):
   clo (cpn10 r) <10= cpn10 r.
 Proof.
-  intros. apply cpn10_comp, LE, PR.
+  intros. apply cpn10_cpn, LE, PR.
 Qed.
 
 Lemma cpn10_unfold:
@@ -346,7 +346,7 @@ Lemma gcpn10_clo
 Proof.
   intros. apply LE, (compat10_compat cpn10_compat) in PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn10_comp, PR0.
+  intros. apply cpn10_cpn, PR0.
 Qed.
 
 Lemma cpn10_final: forall r, upaco10 gf r <10= cpn10 r.

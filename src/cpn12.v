@@ -63,7 +63,7 @@ Qed.
 Lemma cpn12_greatest: forall clo (COM: compatible12 clo), clo <13= cpn12.
 Proof. intros. econstructor;[apply COM|apply PR]. Qed.
 
-Lemma cpn12_comp: forall r,
+Lemma cpn12_cpn: forall r,
     cpn12 (cpn12 r) <12= cpn12 r.
 Proof.
   intros. exists (compose cpn12 cpn12); [|apply PR].
@@ -286,7 +286,7 @@ Lemma gcpn12_from_paco r:
 Proof.
   intros. _punfold PR; [|apply gcpn12_mon].
   eapply gf_mon; [apply PR|].
-  intros. apply cpn12_comp.
+  intros. apply cpn12_cpn.
   eapply cpn12_mon; [apply PR0|].
   apply cpn12_from_upaco.
 Qed.
@@ -319,7 +319,7 @@ Lemma cpn12_clo
       r clo (LE: clo <13= cpn12):
   clo (cpn12 r) <12= cpn12 r.
 Proof.
-  intros. apply cpn12_comp, LE, PR.
+  intros. apply cpn12_cpn, LE, PR.
 Qed.
 
 Lemma cpn12_unfold:
@@ -348,7 +348,7 @@ Lemma gcpn12_clo
 Proof.
   intros. apply LE, (compat12_compat cpn12_compat) in PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn12_comp, PR0.
+  intros. apply cpn12_cpn, PR0.
 Qed.
 
 Lemma cpn12_final: forall r, upaco12 gf r <12= cpn12 r.

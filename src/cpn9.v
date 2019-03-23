@@ -60,7 +60,7 @@ Qed.
 Lemma cpn9_greatest: forall clo (COM: compatible9 clo), clo <10= cpn9.
 Proof. intros. econstructor;[apply COM|apply PR]. Qed.
 
-Lemma cpn9_comp: forall r,
+Lemma cpn9_cpn: forall r,
     cpn9 (cpn9 r) <9= cpn9 r.
 Proof.
   intros. exists (compose cpn9 cpn9); [|apply PR].
@@ -283,7 +283,7 @@ Lemma gcpn9_from_paco r:
 Proof.
   intros. _punfold PR; [|apply gcpn9_mon].
   eapply gf_mon; [apply PR|].
-  intros. apply cpn9_comp.
+  intros. apply cpn9_cpn.
   eapply cpn9_mon; [apply PR0|].
   apply cpn9_from_upaco.
 Qed.
@@ -316,7 +316,7 @@ Lemma cpn9_clo
       r clo (LE: clo <10= cpn9):
   clo (cpn9 r) <9= cpn9 r.
 Proof.
-  intros. apply cpn9_comp, LE, PR.
+  intros. apply cpn9_cpn, LE, PR.
 Qed.
 
 Lemma cpn9_unfold:
@@ -345,7 +345,7 @@ Lemma gcpn9_clo
 Proof.
   intros. apply LE, (compat9_compat cpn9_compat) in PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn9_comp, PR0.
+  intros. apply cpn9_cpn, PR0.
 Qed.
 
 Lemma cpn9_final: forall r, upaco9 gf r <9= cpn9 r.

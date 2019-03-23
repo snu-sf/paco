@@ -59,7 +59,7 @@ Qed.
 Lemma cpn8_greatest: forall clo (COM: compatible8 clo), clo <9= cpn8.
 Proof. intros. econstructor;[apply COM|apply PR]. Qed.
 
-Lemma cpn8_comp: forall r,
+Lemma cpn8_cpn: forall r,
     cpn8 (cpn8 r) <8= cpn8 r.
 Proof.
   intros. exists (compose cpn8 cpn8); [|apply PR].
@@ -282,7 +282,7 @@ Lemma gcpn8_from_paco r:
 Proof.
   intros. _punfold PR; [|apply gcpn8_mon].
   eapply gf_mon; [apply PR|].
-  intros. apply cpn8_comp.
+  intros. apply cpn8_cpn.
   eapply cpn8_mon; [apply PR0|].
   apply cpn8_from_upaco.
 Qed.
@@ -315,7 +315,7 @@ Lemma cpn8_clo
       r clo (LE: clo <9= cpn8):
   clo (cpn8 r) <8= cpn8 r.
 Proof.
-  intros. apply cpn8_comp, LE, PR.
+  intros. apply cpn8_cpn, LE, PR.
 Qed.
 
 Lemma cpn8_unfold:
@@ -344,7 +344,7 @@ Lemma gcpn8_clo
 Proof.
   intros. apply LE, (compat8_compat cpn8_compat) in PR.
   eapply gf_mon; [apply PR|].
-  intros. apply cpn8_comp, PR0.
+  intros. apply cpn8_cpn, PR0.
 Qed.
 
 Lemma cpn8_final: forall r, upaco8 gf r <8= cpn8 r.
