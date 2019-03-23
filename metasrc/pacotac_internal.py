@@ -280,7 +280,7 @@ print ()
 
 for n in range(relsize+1):
     print ('Tactic Notation "pcofix'+str(n)+'" ident(CIH) "using" constr(lem) "with" ident(r) :=')
-    print ('paco_pre'+str(n)+'; eapply lem; paco_post'+str(n)+' CIH with r.')
+    print ('paco_pre'+str(n)+'; eapply lem; [..|paco_post'+str(n)+' CIH with r].')
     print ()
 
 print ('(** [pcofix] automatically figures out the appropriate index [n] from')

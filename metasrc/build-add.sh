@@ -12,5 +12,7 @@ relsize=$1
 
 python paco.py ${relsize} > $PACOSRCDIR/paco${relsize}.v;
 python cpn.py ${relsize} > $PACOSRCDIR/cpn${relsize}.v;
+python wcpn.py ${relsize} > $PACOSRCDIR/wcpn${relsize}.v;
 echo "Require Export paco${relsize}." >> $PACOSRCDIR/pacoall.v;
 echo "Require Export cpn${relsize}." >> $PACOSRCDIR/cpnall.v;
+echo "Require Export wcpn${relsize}." >> $PACOSRCDIR/wcpnall.v;

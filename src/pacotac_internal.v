@@ -1062,52 +1062,52 @@ let CIH' := fresh CIH in try rename INC into CIH'.
 *)
 
 Tactic Notation "pcofix0" ident(CIH) "using" constr(lem) "with" ident(r) :=
-paco_pre0; eapply lem; paco_post0 CIH with r.
+paco_pre0; eapply lem; [..|paco_post0 CIH with r].
 
 Tactic Notation "pcofix1" ident(CIH) "using" constr(lem) "with" ident(r) :=
-paco_pre1; eapply lem; paco_post1 CIH with r.
+paco_pre1; eapply lem; [..|paco_post1 CIH with r].
 
 Tactic Notation "pcofix2" ident(CIH) "using" constr(lem) "with" ident(r) :=
-paco_pre2; eapply lem; paco_post2 CIH with r.
+paco_pre2; eapply lem; [..|paco_post2 CIH with r].
 
 Tactic Notation "pcofix3" ident(CIH) "using" constr(lem) "with" ident(r) :=
-paco_pre3; eapply lem; paco_post3 CIH with r.
+paco_pre3; eapply lem; [..|paco_post3 CIH with r].
 
 Tactic Notation "pcofix4" ident(CIH) "using" constr(lem) "with" ident(r) :=
-paco_pre4; eapply lem; paco_post4 CIH with r.
+paco_pre4; eapply lem; [..|paco_post4 CIH with r].
 
 Tactic Notation "pcofix5" ident(CIH) "using" constr(lem) "with" ident(r) :=
-paco_pre5; eapply lem; paco_post5 CIH with r.
+paco_pre5; eapply lem; [..|paco_post5 CIH with r].
 
 Tactic Notation "pcofix6" ident(CIH) "using" constr(lem) "with" ident(r) :=
-paco_pre6; eapply lem; paco_post6 CIH with r.
+paco_pre6; eapply lem; [..|paco_post6 CIH with r].
 
 Tactic Notation "pcofix7" ident(CIH) "using" constr(lem) "with" ident(r) :=
-paco_pre7; eapply lem; paco_post7 CIH with r.
+paco_pre7; eapply lem; [..|paco_post7 CIH with r].
 
 Tactic Notation "pcofix8" ident(CIH) "using" constr(lem) "with" ident(r) :=
-paco_pre8; eapply lem; paco_post8 CIH with r.
+paco_pre8; eapply lem; [..|paco_post8 CIH with r].
 
 Tactic Notation "pcofix9" ident(CIH) "using" constr(lem) "with" ident(r) :=
-paco_pre9; eapply lem; paco_post9 CIH with r.
+paco_pre9; eapply lem; [..|paco_post9 CIH with r].
 
 Tactic Notation "pcofix10" ident(CIH) "using" constr(lem) "with" ident(r) :=
-paco_pre10; eapply lem; paco_post10 CIH with r.
+paco_pre10; eapply lem; [..|paco_post10 CIH with r].
 
 Tactic Notation "pcofix11" ident(CIH) "using" constr(lem) "with" ident(r) :=
-paco_pre11; eapply lem; paco_post11 CIH with r.
+paco_pre11; eapply lem; [..|paco_post11 CIH with r].
 
 Tactic Notation "pcofix12" ident(CIH) "using" constr(lem) "with" ident(r) :=
-paco_pre12; eapply lem; paco_post12 CIH with r.
+paco_pre12; eapply lem; [..|paco_post12 CIH with r].
 
 Tactic Notation "pcofix13" ident(CIH) "using" constr(lem) "with" ident(r) :=
-paco_pre13; eapply lem; paco_post13 CIH with r.
+paco_pre13; eapply lem; [..|paco_post13 CIH with r].
 
 Tactic Notation "pcofix14" ident(CIH) "using" constr(lem) "with" ident(r) :=
-paco_pre14; eapply lem; paco_post14 CIH with r.
+paco_pre14; eapply lem; [..|paco_post14 CIH with r].
 
 Tactic Notation "pcofix15" ident(CIH) "using" constr(lem) "with" ident(r) :=
-paco_pre15; eapply lem; paco_post15 CIH with r.
+paco_pre15; eapply lem; [..|paco_post15 CIH with r].
 
 (** [pcofix] automatically figures out the appropriate index [n] from
     the type of the accumulation lemma [lem] and applies [pcofix{n}].
