@@ -17,7 +17,6 @@ Hypothesis gf_mon: monotone3 gf.
 Inductive wcpn3 (r rg : rel) e0 e1 e2 : Prop :=
 | wcpn3_intro (IN: cpn3 gf (r \3/ gcpn3 gf rg) e0 e1 e2)
 .              
-Hint Constructors wcpn3.
 
 Lemma wcpn3_mon r r' rg rg' e0 e1 e2
       (IN: @wcpn3 r rg e0 e1 e2)
@@ -198,8 +197,6 @@ Proof.
 Qed.
 
 End WCompanion3.
-
-Hint Constructors wcpn3 : paco.
 
 Hint Resolve wcpn3_base : paco.
 Hint Resolve wcpn3_step : paco.

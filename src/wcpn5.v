@@ -19,7 +19,6 @@ Hypothesis gf_mon: monotone5 gf.
 Inductive wcpn5 (r rg : rel) e0 e1 e2 e3 e4 : Prop :=
 | wcpn5_intro (IN: cpn5 gf (r \5/ gcpn5 gf rg) e0 e1 e2 e3 e4)
 .              
-Hint Constructors wcpn5.
 
 Lemma wcpn5_mon r r' rg rg' e0 e1 e2 e3 e4
       (IN: @wcpn5 r rg e0 e1 e2 e3 e4)
@@ -200,8 +199,6 @@ Proof.
 Qed.
 
 End WCompanion5.
-
-Hint Constructors wcpn5 : paco.
 
 Hint Resolve wcpn5_base : paco.
 Hint Resolve wcpn5_step : paco.

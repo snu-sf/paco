@@ -398,8 +398,6 @@ Hint Unfold gcpn3 : paco.
 Hint Resolve cpn3_base : paco.
 Hint Resolve cpn3_step : paco.
 
-Hint Constructors cpn3 compatible3 wcompatible3.
-
 Hint Constructors rclo3 : rclo.
 Hint Resolve rclo3_clo rclo3_step rclo3_cpn : rclo.
 

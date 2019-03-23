@@ -399,8 +399,6 @@ Hint Unfold gcpn4 : paco.
 Hint Resolve cpn4_base : paco.
 Hint Resolve cpn4_step : paco.
 
-Hint Constructors cpn4 compatible4 wcompatible4.
-
 Hint Constructors rclo4 : rclo.
 Hint Resolve rclo4_clo rclo4_step rclo4_cpn : rclo.
 

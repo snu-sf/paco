@@ -23,7 +23,6 @@ Hypothesis gf_mon: monotone9 gf.
 Inductive wcpn9 (r rg : rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 : Prop :=
 | wcpn9_intro (IN: cpn9 gf (r \9/ gcpn9 gf rg) e0 e1 e2 e3 e4 e5 e6 e7 e8)
 .              
-Hint Constructors wcpn9.
 
 Lemma wcpn9_mon r r' rg rg' e0 e1 e2 e3 e4 e5 e6 e7 e8
       (IN: @wcpn9 r rg e0 e1 e2 e3 e4 e5 e6 e7 e8)
@@ -204,8 +203,6 @@ Proof.
 Qed.
 
 End WCompanion9.
-
-Hint Constructors wcpn9 : paco.
 
 Hint Resolve wcpn9_base : paco.
 Hint Resolve wcpn9_step : paco.

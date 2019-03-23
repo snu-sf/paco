@@ -15,7 +15,6 @@ Hypothesis gf_mon: monotone1 gf.
 Inductive wcpn1 (r rg : rel) e0 : Prop :=
 | wcpn1_intro (IN: cpn1 gf (r \1/ gcpn1 gf rg) e0)
 .              
-Hint Constructors wcpn1.
 
 Lemma wcpn1_mon r r' rg rg' e0
       (IN: @wcpn1 r rg e0)
@@ -196,8 +195,6 @@ Proof.
 Qed.
 
 End WCompanion1.
-
-Hint Constructors wcpn1 : paco.
 
 Hint Resolve wcpn1_base : paco.
 Hint Resolve wcpn1_step : paco.

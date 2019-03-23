@@ -22,7 +22,6 @@ Hypothesis gf_mon: monotone8 gf.
 Inductive wcpn8 (r rg : rel) e0 e1 e2 e3 e4 e5 e6 e7 : Prop :=
 | wcpn8_intro (IN: cpn8 gf (r \8/ gcpn8 gf rg) e0 e1 e2 e3 e4 e5 e6 e7)
 .              
-Hint Constructors wcpn8.
 
 Lemma wcpn8_mon r r' rg rg' e0 e1 e2 e3 e4 e5 e6 e7
       (IN: @wcpn8 r rg e0 e1 e2 e3 e4 e5 e6 e7)
@@ -203,8 +202,6 @@ Proof.
 Qed.
 
 End WCompanion8.
-
-Hint Constructors wcpn8 : paco.
 
 Hint Resolve wcpn8_base : paco.
 Hint Resolve wcpn8_step : paco.

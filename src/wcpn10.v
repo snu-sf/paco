@@ -24,7 +24,6 @@ Hypothesis gf_mon: monotone10 gf.
 Inductive wcpn10 (r rg : rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 : Prop :=
 | wcpn10_intro (IN: cpn10 gf (r \10/ gcpn10 gf rg) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9)
 .              
-Hint Constructors wcpn10.
 
 Lemma wcpn10_mon r r' rg rg' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9
       (IN: @wcpn10 r rg e0 e1 e2 e3 e4 e5 e6 e7 e8 e9)
@@ -205,8 +204,6 @@ Proof.
 Qed.
 
 End WCompanion10.
-
-Hint Constructors wcpn10 : paco.
 
 Hint Resolve wcpn10_base : paco.
 Hint Resolve wcpn10_step : paco.

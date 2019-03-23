@@ -403,8 +403,6 @@ Hint Unfold gcpn8 : paco.
 Hint Resolve cpn8_base : paco.
 Hint Resolve cpn8_step : paco.
 
-Hint Constructors cpn8 compatible8 wcompatible8.
-
 Hint Constructors rclo8 : rclo.
 Hint Resolve rclo8_clo rclo8_step rclo8_cpn : rclo.
 

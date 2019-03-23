@@ -21,7 +21,6 @@ Hypothesis gf_mon: monotone7 gf.
 Inductive wcpn7 (r rg : rel) e0 e1 e2 e3 e4 e5 e6 : Prop :=
 | wcpn7_intro (IN: cpn7 gf (r \7/ gcpn7 gf rg) e0 e1 e2 e3 e4 e5 e6)
 .              
-Hint Constructors wcpn7.
 
 Lemma wcpn7_mon r r' rg rg' e0 e1 e2 e3 e4 e5 e6
       (IN: @wcpn7 r rg e0 e1 e2 e3 e4 e5 e6)
@@ -202,8 +201,6 @@ Proof.
 Qed.
 
 End WCompanion7.
-
-Hint Constructors wcpn7 : paco.
 
 Hint Resolve wcpn7_base : paco.
 Hint Resolve wcpn7_step : paco.

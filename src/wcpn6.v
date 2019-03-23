@@ -20,7 +20,6 @@ Hypothesis gf_mon: monotone6 gf.
 Inductive wcpn6 (r rg : rel) e0 e1 e2 e3 e4 e5 : Prop :=
 | wcpn6_intro (IN: cpn6 gf (r \6/ gcpn6 gf rg) e0 e1 e2 e3 e4 e5)
 .              
-Hint Constructors wcpn6.
 
 Lemma wcpn6_mon r r' rg rg' e0 e1 e2 e3 e4 e5
       (IN: @wcpn6 r rg e0 e1 e2 e3 e4 e5)
@@ -201,8 +200,6 @@ Proof.
 Qed.
 
 End WCompanion6.
-
-Hint Constructors wcpn6 : paco.
 
 Hint Resolve wcpn6_base : paco.
 Hint Resolve wcpn6_step : paco.

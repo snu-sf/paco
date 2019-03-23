@@ -25,7 +25,6 @@ Hypothesis gf_mon: monotone11 gf.
 Inductive wcpn11 (r rg : rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 : Prop :=
 | wcpn11_intro (IN: cpn11 gf (r \11/ gcpn11 gf rg) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10)
 .              
-Hint Constructors wcpn11.
 
 Lemma wcpn11_mon r r' rg rg' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10
       (IN: @wcpn11 r rg e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10)
@@ -206,8 +205,6 @@ Proof.
 Qed.
 
 End WCompanion11.
-
-Hint Constructors wcpn11 : paco.
 
 Hint Resolve wcpn11_base : paco.
 Hint Resolve wcpn11_step : paco.

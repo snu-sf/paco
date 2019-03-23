@@ -404,8 +404,6 @@ Hint Unfold gcpn9 : paco.
 Hint Resolve cpn9_base : paco.
 Hint Resolve cpn9_step : paco.
 
-Hint Constructors cpn9 compatible9 wcompatible9.
-
 Hint Constructors rclo9 : rclo.
 Hint Resolve rclo9_clo rclo9_step rclo9_cpn : rclo.
 

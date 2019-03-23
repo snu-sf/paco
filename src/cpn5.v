@@ -400,8 +400,6 @@ Hint Unfold gcpn5 : paco.
 Hint Resolve cpn5_base : paco.
 Hint Resolve cpn5_step : paco.
 
-Hint Constructors cpn5 compatible5 wcompatible5.
-
 Hint Constructors rclo5 : rclo.
 Hint Resolve rclo5_clo rclo5_step rclo5_cpn : rclo.
 

@@ -407,8 +407,6 @@ Hint Unfold gcpn12 : paco.
 Hint Resolve cpn12_base : paco.
 Hint Resolve cpn12_step : paco.
 
-Hint Constructors cpn12 compatible12 wcompatible12.
-
 Hint Constructors rclo12 : rclo.
 Hint Resolve rclo12_clo rclo12_step rclo12_cpn : rclo.
 

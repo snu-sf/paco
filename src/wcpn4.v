@@ -18,7 +18,6 @@ Hypothesis gf_mon: monotone4 gf.
 Inductive wcpn4 (r rg : rel) e0 e1 e2 e3 : Prop :=
 | wcpn4_intro (IN: cpn4 gf (r \4/ gcpn4 gf rg) e0 e1 e2 e3)
 .              
-Hint Constructors wcpn4.
 
 Lemma wcpn4_mon r r' rg rg' e0 e1 e2 e3
       (IN: @wcpn4 r rg e0 e1 e2 e3)
@@ -199,8 +198,6 @@ Proof.
 Qed.
 
 End WCompanion4.
-
-Hint Constructors wcpn4 : paco.
 
 Hint Resolve wcpn4_base : paco.
 Hint Resolve wcpn4_step : paco.

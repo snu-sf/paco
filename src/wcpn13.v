@@ -27,7 +27,6 @@ Hypothesis gf_mon: monotone13 gf.
 Inductive wcpn13 (r rg : rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 : Prop :=
 | wcpn13_intro (IN: cpn13 gf (r \13/ gcpn13 gf rg) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12)
 .              
-Hint Constructors wcpn13.
 
 Lemma wcpn13_mon r r' rg rg' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12
       (IN: @wcpn13 r rg e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12)
@@ -208,8 +207,6 @@ Proof.
 Qed.
 
 End WCompanion13.
-
-Hint Constructors wcpn13 : paco.
 
 Hint Resolve wcpn13_base : paco.
 Hint Resolve wcpn13_step : paco.
