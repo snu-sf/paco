@@ -396,10 +396,6 @@ Hint Unfold gcpn2 : paco.
 
 Hint Resolve cpn2_base : paco.
 Hint Resolve cpn2_step : paco.
-Hint Resolve cpn2_final gcpn2_final : paco.
-(* Hint Resolve cpn2_mon : paco.
-Hint Resolve gcpn2_mon : paco.
-Hint Resolve rclo2_mon : paco. *)
 
 Hint Constructors cpn2 compatible2 wcompatible2.
 

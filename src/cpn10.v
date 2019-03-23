@@ -404,10 +404,6 @@ Hint Unfold gcpn10 : paco.
 
 Hint Resolve cpn10_base : paco.
 Hint Resolve cpn10_step : paco.
-Hint Resolve cpn10_final gcpn10_final : paco.
-(* Hint Resolve cpn10_mon : paco.
-Hint Resolve gcpn10_mon : paco.
-Hint Resolve rclo10_mon : paco. *)
 
 Hint Constructors cpn10 compatible10 wcompatible10.
 

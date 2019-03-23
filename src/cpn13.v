@@ -407,10 +407,6 @@ Hint Unfold gcpn13 : paco.
 
 Hint Resolve cpn13_base : paco.
 Hint Resolve cpn13_step : paco.
-Hint Resolve cpn13_final gcpn13_final : paco.
-(* Hint Resolve cpn13_mon : paco.
-Hint Resolve gcpn13_mon : paco.
-Hint Resolve rclo13_mon : paco. *)
 
 Hint Constructors cpn13 compatible13 wcompatible13.
 

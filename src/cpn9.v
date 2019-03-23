@@ -403,10 +403,6 @@ Hint Unfold gcpn9 : paco.
 
 Hint Resolve cpn9_base : paco.
 Hint Resolve cpn9_step : paco.
-Hint Resolve cpn9_final gcpn9_final : paco.
-(* Hint Resolve cpn9_mon : paco.
-Hint Resolve gcpn9_mon : paco.
-Hint Resolve rclo9_mon : paco. *)
 
 Hint Constructors cpn9 compatible9 wcompatible9.
 

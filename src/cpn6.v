@@ -400,10 +400,6 @@ Hint Unfold gcpn6 : paco.
 
 Hint Resolve cpn6_base : paco.
 Hint Resolve cpn6_step : paco.
-Hint Resolve cpn6_final gcpn6_final : paco.
-(* Hint Resolve cpn6_mon : paco.
-Hint Resolve gcpn6_mon : paco.
-Hint Resolve rclo6_mon : paco. *)
 
 Hint Constructors cpn6 compatible6 wcompatible6.
 

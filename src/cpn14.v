@@ -408,10 +408,6 @@ Hint Unfold gcpn14 : paco.
 
 Hint Resolve cpn14_base : paco.
 Hint Resolve cpn14_step : paco.
-Hint Resolve cpn14_final gcpn14_final : paco.
-(* Hint Resolve cpn14_mon : paco.
-Hint Resolve gcpn14_mon : paco.
-Hint Resolve rclo14_mon : paco. *)
 
 Hint Constructors cpn14 compatible14 wcompatible14.
 

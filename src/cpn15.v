@@ -409,10 +409,6 @@ Hint Unfold gcpn15 : paco.
 
 Hint Resolve cpn15_base : paco.
 Hint Resolve cpn15_step : paco.
-Hint Resolve cpn15_final gcpn15_final : paco.
-(* Hint Resolve cpn15_mon : paco.
-Hint Resolve gcpn15_mon : paco.
-Hint Resolve rclo15_mon : paco. *)
 
 Hint Constructors cpn15 compatible15 wcompatible15.
 

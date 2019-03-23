@@ -406,10 +406,6 @@ Hint Unfold gcpn12 : paco.
 
 Hint Resolve cpn12_base : paco.
 Hint Resolve cpn12_step : paco.
-Hint Resolve cpn12_final gcpn12_final : paco.
-(* Hint Resolve cpn12_mon : paco.
-Hint Resolve gcpn12_mon : paco.
-Hint Resolve rclo12_mon : paco. *)
 
 Hint Constructors cpn12 compatible12 wcompatible12.
 
