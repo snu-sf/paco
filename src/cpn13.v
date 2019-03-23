@@ -366,6 +366,16 @@ Proof.
   eapply gf_mon; [apply PR | apply cpn13_final].
 Qed.
 
+Lemma cpn13_algebra r :
+  r <13= gf r -> r <13= cpn13 bot13.
+Proof.
+  intros. apply cpn13_final. left.
+  revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 PR.
+  pcofix CIH. intros.
+  pfold. eapply gf_mon. apply H, PR.
+  intros. right. apply CIH, PR0.
+Qed.
+
 End Companion13_main.
 
 Lemma cpn13_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 r

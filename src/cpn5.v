@@ -358,6 +358,16 @@ Proof.
   eapply gf_mon; [apply PR | apply cpn5_final].
 Qed.
 
+Lemma cpn5_algebra r :
+  r <5= gf r -> r <5= cpn5 bot5.
+Proof.
+  intros. apply cpn5_final. left.
+  revert x0 x1 x2 x3 x4 PR.
+  pcofix CIH. intros.
+  pfold. eapply gf_mon. apply H, PR.
+  intros. right. apply CIH, PR0.
+Qed.
+
 End Companion5_main.
 
 Lemma cpn5_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 r

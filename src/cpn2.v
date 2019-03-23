@@ -355,6 +355,16 @@ Proof.
   eapply gf_mon; [apply PR | apply cpn2_final].
 Qed.
 
+Lemma cpn2_algebra r :
+  r <2= gf r -> r <2= cpn2 bot2.
+Proof.
+  intros. apply cpn2_final. left.
+  revert x0 x1 PR.
+  pcofix CIH. intros.
+  pfold. eapply gf_mon. apply H, PR.
+  intros. right. apply CIH, PR0.
+Qed.
+
 End Companion2_main.
 
 Lemma cpn2_mon_bot (gf gf': rel -> rel) e0 e1 r

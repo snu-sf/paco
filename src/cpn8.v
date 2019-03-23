@@ -361,6 +361,16 @@ Proof.
   eapply gf_mon; [apply PR | apply cpn8_final].
 Qed.
 
+Lemma cpn8_algebra r :
+  r <8= gf r -> r <8= cpn8 bot8.
+Proof.
+  intros. apply cpn8_final. left.
+  revert x0 x1 x2 x3 x4 x5 x6 x7 PR.
+  pcofix CIH. intros.
+  pfold. eapply gf_mon. apply H, PR.
+  intros. right. apply CIH, PR0.
+Qed.
+
 End Companion8_main.
 
 Lemma cpn8_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 r

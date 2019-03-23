@@ -354,6 +354,16 @@ Proof.
   eapply gf_mon; [apply PR | apply cpn1_final].
 Qed.
 
+Lemma cpn1_algebra r :
+  r <1= gf r -> r <1= cpn1 bot1.
+Proof.
+  intros. apply cpn1_final. left.
+  revert x0 PR.
+  pcofix CIH. intros.
+  pfold. eapply gf_mon. apply H, PR.
+  intros. right. apply CIH, PR0.
+Qed.
+
 End Companion1_main.
 
 Lemma cpn1_mon_bot (gf gf': rel -> rel) e0 r

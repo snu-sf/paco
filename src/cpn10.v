@@ -363,6 +363,16 @@ Proof.
   eapply gf_mon; [apply PR | apply cpn10_final].
 Qed.
 
+Lemma cpn10_algebra r :
+  r <10= gf r -> r <10= cpn10 bot10.
+Proof.
+  intros. apply cpn10_final. left.
+  revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 PR.
+  pcofix CIH. intros.
+  pfold. eapply gf_mon. apply H, PR.
+  intros. right. apply CIH, PR0.
+Qed.
+
 End Companion10_main.
 
 Lemma cpn10_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 r

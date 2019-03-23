@@ -356,6 +356,16 @@ Proof.
   eapply gf_mon; [apply PR | apply cpn3_final].
 Qed.
 
+Lemma cpn3_algebra r :
+  r <3= gf r -> r <3= cpn3 bot3.
+Proof.
+  intros. apply cpn3_final. left.
+  revert x0 x1 x2 PR.
+  pcofix CIH. intros.
+  pfold. eapply gf_mon. apply H, PR.
+  intros. right. apply CIH, PR0.
+Qed.
+
 End Companion3_main.
 
 Lemma cpn3_mon_bot (gf gf': rel -> rel) e0 e1 e2 r
