@@ -386,6 +386,17 @@ Proof.
   left. eapply paco9_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
+Lemma gcpn9_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 r
+      (IN: @gcpn9 gf bot9 e0 e1 e2 e3 e4 e5 e6 e7 e8)
+      (MONgf: monotone9 gf)
+      (MONgf': monotone9 gf')
+      (LE: gf <10= gf'):
+  @gcpn9 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8.
+Proof.
+  apply LE. eapply MONgf. apply IN.
+  intros. eapply cpn9_mon_bot; eassumption.
+Qed.
+
 End Companion9.
 
 Hint Unfold gcpn9 : paco.

@@ -4,7 +4,9 @@ PACOSRCDIR=../src
 
 maxsize=15
 
-rm $PACOSRCDIR/paco*.v
+rm -f $PACOSRCDIR/paco*.v
+rm -f $PACOSRCDIR/cpn*.v
+rm -f $PACOSRCDIR/wcpn*.v
 python paconotation.py $(expr $maxsize + 1) > $PACOSRCDIR/paconotation.v
 python paconotation_internal.py $maxsize > $PACOSRCDIR/paconotation_internal.v
 python pacotac_internal.py $maxsize > $PACOSRCDIR/pacotac_internal.v

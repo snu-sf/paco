@@ -380,6 +380,17 @@ Proof.
   left. eapply paco3_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
+Lemma gcpn3_mon_bot (gf gf': rel -> rel) e0 e1 e2 r
+      (IN: @gcpn3 gf bot3 e0 e1 e2)
+      (MONgf: monotone3 gf)
+      (MONgf': monotone3 gf')
+      (LE: gf <4= gf'):
+  @gcpn3 gf' r e0 e1 e2.
+Proof.
+  apply LE. eapply MONgf. apply IN.
+  intros. eapply cpn3_mon_bot; eassumption.
+Qed.
+
 End Companion3.
 
 Hint Unfold gcpn3 : paco.

@@ -384,6 +384,17 @@ Proof.
   left. eapply paco7_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
+Lemma gcpn7_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 r
+      (IN: @gcpn7 gf bot7 e0 e1 e2 e3 e4 e5 e6)
+      (MONgf: monotone7 gf)
+      (MONgf': monotone7 gf')
+      (LE: gf <8= gf'):
+  @gcpn7 gf' r e0 e1 e2 e3 e4 e5 e6.
+Proof.
+  apply LE. eapply MONgf. apply IN.
+  intros. eapply cpn7_mon_bot; eassumption.
+Qed.
+
 End Companion7.
 
 Hint Unfold gcpn7 : paco.

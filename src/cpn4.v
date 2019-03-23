@@ -381,6 +381,17 @@ Proof.
   left. eapply paco4_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
+Lemma gcpn4_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 r
+      (IN: @gcpn4 gf bot4 e0 e1 e2 e3)
+      (MONgf: monotone4 gf)
+      (MONgf': monotone4 gf')
+      (LE: gf <5= gf'):
+  @gcpn4 gf' r e0 e1 e2 e3.
+Proof.
+  apply LE. eapply MONgf. apply IN.
+  intros. eapply cpn4_mon_bot; eassumption.
+Qed.
+
 End Companion4.
 
 Hint Unfold gcpn4 : paco.

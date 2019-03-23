@@ -379,6 +379,17 @@ Proof.
   left. eapply paco2_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
+Lemma gcpn2_mon_bot (gf gf': rel -> rel) e0 e1 r
+      (IN: @gcpn2 gf bot2 e0 e1)
+      (MONgf: monotone2 gf)
+      (MONgf': monotone2 gf')
+      (LE: gf <3= gf'):
+  @gcpn2 gf' r e0 e1.
+Proof.
+  apply LE. eapply MONgf. apply IN.
+  intros. eapply cpn2_mon_bot; eassumption.
+Qed.
+
 End Companion2.
 
 Hint Unfold gcpn2 : paco.
