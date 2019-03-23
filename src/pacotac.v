@@ -21,7 +21,7 @@ Ltac paco_class TGT method :=
   clear TMP; unfold typ in *; clear typ; revert lem.
 
 (** ** pfold tactic
-  - [pfold]
+  - [pfold] = [pstep]
 *)
 
 Tactic Notation "pfold_" := let x := fresh "_x_" in
@@ -29,6 +29,7 @@ Tactic Notation "pfold_" := let x := fresh "_x_" in
   match goal with [|- ?G] => paco_class G (@pacofold) end;
   intro x; match goal with [x:=?lem|-_] => clear x; eapply lem end.
 Ltac pfold := under_forall ltac:(pfold_).
+Ltac pstep := pfold.
 
 (** ** punfold tactic
   - [punfold H]
