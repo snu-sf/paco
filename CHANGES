@@ -1,9 +1,15 @@
+changes from v2.1.0 to v3.0.0
+=========================
+- Support "wcpn", which supports more general incremental principles.
+- Add the following tactics:
+  wbase, wstep, wclo, wcpn, wcofix, wunfold, winit, wfinal.
+
 changes from v2.0.3 to v2.1.0
 =========================
 - Simplify the upto technique using "companion" following the following paper:
   * Damien Pous, Coinduction All the Way Up, LICS 2016.
 - Add tactics for upto reasoning:
-  uinit, uunfold, ubase, ustep, uclo, ucofix, ufinal, ucompat, gcpn_fold. 
+  ucompat, ubase, ustep, uclo, ucpn, ucofix, uunfold, uinit, ufinal, gcpn_fold. 
 
 changes from v2.0.2 to v2.0.3
 =========================
