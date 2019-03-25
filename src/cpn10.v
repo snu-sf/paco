@@ -40,7 +40,7 @@ Inductive cpn10 (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 : Prop :=
     (CLO: clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9)
 .
 
-Definition gcpn10 := compose gf cpn10.
+Definition fcpn10 := compose gf cpn10.
 
 Lemma cpn10_mon: monotone10 cpn10.
 Proof.
@@ -73,14 +73,14 @@ Proof.
     intros. eapply (compat10_compat cpn10_compat), PR1. 
 Qed.
 
-Lemma gcpn10_mon: monotone10 gcpn10.
+Lemma fcpn10_mon: monotone10 fcpn10.
 Proof.
   repeat intro. eapply gf_mon; [eapply IN|].
   intros. eapply cpn10_mon; [apply PR|apply LE].
 Qed.
 
-Lemma gcpn10_sound:
-  paco10 gcpn10 bot10 <10= paco10 gf bot10.
+Lemma fcpn10_sound:
+  paco10 fcpn10 bot10 <10= paco10 gf bot10.
 Proof.
   intros.
   set (rclo := fix rclo clo n (r: rel) :=
@@ -88,9 +88,9 @@ Proof.
          | 0 => r
          | S n' => rclo clo n' r \10/ clo (rclo clo n' r)
          end).
-  assert (RC: exists n, rclo cpn10 n (paco10 gcpn10 bot10) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) by (exists 0; apply PR); clear PR.
+  assert (RC: exists n, rclo cpn10 n (paco10 fcpn10 bot10) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) by (exists 0; apply PR); clear PR.
   
-  cut (forall n, rclo cpn10 n (paco10 gcpn10 bot10) <10= gf (rclo cpn10 (S n) (paco10 gcpn10 bot10))).
+  cut (forall n, rclo cpn10 n (paco10 fcpn10 bot10) <10= gf (rclo cpn10 (S n) (paco10 fcpn10 bot10))).
   { intro X. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 RC; pcofix CIH; intros.
     pfold. eapply gf_mon.
     - apply X. apply RC.
@@ -99,7 +99,7 @@ Proof.
 
   induction n; intros.
   - eapply gf_mon.
-    + _punfold PR; [apply PR|apply gcpn10_mon].
+    + _punfold PR; [apply PR|apply fcpn10_mon].
     + intros. right. eapply cpn10_mon; [apply PR0|].
       intros. pclearbot. apply PR1.
   - destruct PR.
@@ -251,13 +251,13 @@ Proof.
 Qed.
 
 Lemma cpn10_from_upaco r:
-  upaco10 gcpn10 r <10= cpn10 r.
+  upaco10 fcpn10 r <10= cpn10 r.
 Proof.
   intros. destruct PR; [| apply cpn10_base, H].
-  exists (rclo10 (paco10 gcpn10)).
+  exists (rclo10 (paco10 fcpn10)).
   - apply wcompat10_compat.
     econstructor; [apply paco10_mon|].
-    intros. _punfold PR; [|apply gcpn10_mon].
+    intros. _punfold PR; [|apply fcpn10_mon].
     eapply gf_mon; [apply PR|].
     intros. apply rclo10_cpn.
     eapply cpn10_mon; [apply PR0|].
@@ -276,23 +276,23 @@ Proof.
 Qed.
 
 Lemma cpn10_from_paco r:
-  paco10 gcpn10 r <10= cpn10 r.
+  paco10 fcpn10 r <10= cpn10 r.
 Proof. intros. apply cpn10_from_upaco. left. apply PR. Qed.
 
-Lemma gcpn10_from_paco r:
-  paco10 gcpn10 r <10= gcpn10 r.
+Lemma fcpn10_from_paco r:
+  paco10 fcpn10 r <10= fcpn10 r.
 Proof.
-  intros. _punfold PR; [|apply gcpn10_mon].
+  intros. _punfold PR; [|apply fcpn10_mon].
   eapply gf_mon; [apply PR|].
   intros. apply cpn10_cpn.
   eapply cpn10_mon; [apply PR0|].
   apply cpn10_from_upaco.
 Qed.
 
-Lemma gcpn10_to_paco r:
-  gcpn10 r <10= paco10 gcpn10 r.
+Lemma fcpn10_to_paco r:
+  fcpn10 r <10= paco10 fcpn10 r.
 Proof.
-  intros. pfold. eapply gcpn10_mon; [apply PR|].
+  intros. pfold. eapply fcpn10_mon; [apply PR|].
   intros. right. apply PR0.
 Qed.  
 
@@ -309,7 +309,7 @@ Qed.
 Lemma cpn10_init:
   cpn10 bot10 <10= paco10 gf bot10.
 Proof.
-  intros. apply gcpn10_sound, gcpn10_to_paco, (compat10_compat cpn10_compat).
+  intros. apply fcpn10_sound, fcpn10_to_paco, (compat10_compat cpn10_compat).
   eapply cpn10_mon; [apply PR|contradiction].
 Qed.
 
@@ -321,7 +321,7 @@ Proof.
 Qed.
 
 Lemma cpn10_unfold:
-  cpn10 bot10 <10= gcpn10 bot10.
+  cpn10 bot10 <10= fcpn10 bot10.
 Proof.
   intros. apply cpn10_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
@@ -329,7 +329,7 @@ Proof.
 Qed.
 
 Lemma cpn10_step r:
-  gcpn10 r <10= cpn10 r.
+  fcpn10 r <10= cpn10 r.
 Proof.
   intros. eapply cpn10_clo, PR.
   intros. eapply wcompat10_sound, PR0.
@@ -340,9 +340,9 @@ Proof.
   intros. apply rclo10_base, PR3.
 Qed.
 
-Lemma gcpn10_clo
+Lemma fcpn10_clo
       r clo (LE: clo <11= cpn10):
-  clo (gcpn10 r) <10= gcpn10 r.
+  clo (fcpn10 r) <10= fcpn10 r.
 Proof.
   intros. apply LE, (compat10_compat cpn10_compat) in PR.
   eapply gf_mon; [apply PR|].
@@ -357,7 +357,7 @@ Proof.
   intros. apply cpn10_base, PR1.
 Qed.
 
-Lemma gcpn10_final: forall r, paco10 gf r <10= gcpn10 r.
+Lemma fcpn10_final: forall r, paco10 gf r <10= fcpn10 r.
 Proof.
   intros. _punfold PR; [|apply gf_mon].
   eapply gf_mon; [apply PR | apply cpn10_final].
@@ -387,12 +387,12 @@ Proof.
   left. eapply paco10_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
-Lemma gcpn10_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 r
-      (IN: @gcpn10 gf bot10 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9)
+Lemma fcpn10_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 r
+      (IN: @fcpn10 gf bot10 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9)
       (MONgf: monotone10 gf)
       (MONgf': monotone10 gf')
       (LE: gf <11= gf'):
-  @gcpn10 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9.
+  @fcpn10 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9.
 Proof.
   apply LE. eapply MONgf. apply IN.
   intros. eapply cpn10_mon_bot; eassumption.
@@ -400,7 +400,7 @@ Qed.
 
 End Companion10.
 
-Hint Unfold gcpn10 : paco.
+Hint Unfold fcpn10 : paco.
 
 Hint Resolve cpn10_base : paco.
 Hint Resolve cpn10_step : paco.

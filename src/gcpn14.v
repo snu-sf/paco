@@ -25,31 +25,31 @@ Section WCompanion14_main.
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone14 gf.
 
-Inductive wcpn14 (r rg : rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 : Prop :=
-| wcpn14_intro (IN: cpn14 gf (r \14/ gcpn14 gf rg) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13)
+Inductive gcpn14 (r rg : rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 : Prop :=
+| gcpn14_intro (IN: cpn14 gf (r \14/ fcpn14 gf rg) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13)
 .              
 
-Lemma wcpn14_mon r r' rg rg' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13
-      (IN: @wcpn14 r rg e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13)
+Lemma gcpn14_mon r r' rg rg' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13
+      (IN: @gcpn14 r rg e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13)
       (LEr: r <14= r')
       (LErg: rg <14= rg'):
-  @wcpn14 r' rg' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+  @gcpn14 r' rg' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
 Proof.
   destruct IN. constructor.
   eapply cpn14_mon. apply IN. intros.
   destruct PR. left. apply LEr, H. right.
-  eapply gcpn14_mon. apply gf_mon. apply H. apply LErg.
+  eapply fcpn14_mon. apply gf_mon. apply H. apply LErg.
 Qed.
 
-Lemma wcpn14_inc_mon r rg:
-  monotone14 (fun x : rel => wcpn14 r (rg \14/ x)).
+Lemma gcpn14_inc_mon r rg:
+  monotone14 (fun x : rel => gcpn14 r (rg \14/ x)).
 Proof.
   red; intros.
-  eapply wcpn14_mon. apply IN. intros. apply PR.
+  eapply gcpn14_mon. apply IN. intros. apply PR.
   intros. destruct PR. left. apply H. right. apply LE, H. 
 Qed.
 
-Lemma wcpn14_init r: wcpn14 r r <14= cpn14 gf r.
+Lemma gcpn14_init r: gcpn14 r r <14= cpn14 gf r.
 Proof.
   intros. destruct PR.
   ucpn.
@@ -59,47 +59,47 @@ Proof.
   - ustep. apply H.
 Qed.
 
-Lemma wcpn14_final r rg: cpn14 gf r <14= wcpn14 r rg.
+Lemma gcpn14_final r rg: cpn14 gf r <14= gcpn14 r rg.
 Proof.
   constructor. eapply cpn14_mon. apply PR.
   intros. left. apply PR0.
 Qed.
 
-Lemma wcpn14_unfold:
-  wcpn14 bot14 bot14 <14= gf (wcpn14 bot14 bot14).
+Lemma gcpn14_unfold:
+  gcpn14 bot14 bot14 <14= gf (gcpn14 bot14 bot14).
 Proof.
-  intros. apply wcpn14_init in PR. uunfold PR.
+  intros. apply gcpn14_init in PR. uunfold PR.
   eapply gf_mon; [apply PR|].
-  intros. apply wcpn14_final. apply PR0.
+  intros. apply gcpn14_final. apply PR0.
 Qed.
 
-Lemma wcpn14_base r rg:
-  r <14= wcpn14 r rg.
+Lemma gcpn14_base r rg:
+  r <14= gcpn14 r rg.
 Proof.
   intros. constructor. ubase. left. apply PR.
 Qed.
 
-Lemma wcpn14_step r rg:
-  gf (wcpn14 rg rg) <14= wcpn14 r rg.
+Lemma gcpn14_step r rg:
+  gf (gcpn14 rg rg) <14= gcpn14 r rg.
 Proof.
   intros. constructor. ubase. right.
   eapply gf_mon. apply PR.
-  intros. apply wcpn14_init. apply PR0.
+  intros. apply gcpn14_init. apply PR0.
 Qed.
 
-Lemma wcpn14_cpn r rg:
-  cpn14 gf (wcpn14 r rg) <14= wcpn14 r rg.
+Lemma gcpn14_cpn r rg:
+  cpn14 gf (gcpn14 r rg) <14= gcpn14 r rg.
 Proof.
   intros. constructor. ucpn.
   eapply cpn14_mon. apply PR.
   intros. destruct PR0. apply IN.
 Qed.
 
-Lemma wcpn14_clo r rg
+Lemma gcpn14_clo r rg
       clo (LE: clo <15= cpn14 gf):
-  clo (wcpn14 r rg) <14= wcpn14 r rg.
+  clo (gcpn14 r rg) <14= gcpn14 r rg.
 Proof.
-  intros. apply wcpn14_cpn, LE, PR.
+  intros. apply gcpn14_cpn, LE, PR.
 Qed.
 
 Definition cut14 (x y z: rel) : rel := fun e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 => y <14= z /\ x e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
@@ -112,13 +112,13 @@ Proof.
 Qed.
 
 Lemma cut14_wcomp r rg (LE: r <14= rg) :
-  wcompatible14 gf (cut14 (cpn14 (fun x => wcpn14 r (rg \14/ x)) bot14) rg).
+  wcompatible14 gf (cut14 (cpn14 (fun x => gcpn14 r (rg \14/ x)) bot14) rg).
 Proof.
-  set (pfix := cpn14 (fun x => wcpn14 r (rg \14/ x)) bot14).
+  set (pfix := cpn14 (fun x => gcpn14 r (rg \14/ x)) bot14).
   
   econstructor; [apply cut14_mon|]. intros.
   destruct PR as [LEz FIX].
-  uunfold FIX; [|apply wcpn14_inc_mon].
+  uunfold FIX; [|apply gcpn14_inc_mon].
   eapply gf_mon, rclo14_cpn.
   apply cpn14_compat; [apply gf_mon|].
   eapply cpn14_mon; [apply FIX|]. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 FIX; intros.
@@ -141,7 +141,7 @@ Proof.
 Qed.
 
 Lemma fix14_le_cpn r rg (LE: r <14= rg) :
-  cpn14 (fun x => wcpn14 r (rg \14/ x)) bot14 <14= cpn14 gf rg.
+  cpn14 (fun x => gcpn14 r (rg \14/ x)) bot14 <14= cpn14 gf rg.
 Proof.
   intros. eexists.
   - apply wcompat14_compat, cut14_wcomp. apply gf_mon. apply LE.
@@ -150,8 +150,8 @@ Proof.
     + apply PR.
 Qed.
 
-Lemma fix14_le_wcpn r rg (LE: r <14= rg):
-  cpn14 (fun x => wcpn14 r (rg \14/ x)) bot14 <14= wcpn14 r rg.
+Lemma fix14_le_gcpn r rg (LE: r <14= rg):
+  cpn14 (fun x => gcpn14 r (rg \14/ x)) bot14 <14= gcpn14 r rg.
 Proof.
   (*
     fix
@@ -163,7 +163,7 @@ Proof.
     c(r + gc(rg))
    *)
   
-  intros. uunfold PR; [| apply wcpn14_inc_mon].
+  intros. uunfold PR; [| apply gcpn14_inc_mon].
   destruct PR. constructor.
   eapply cpn14_mon. apply IN. intros.
   destruct PR. left; apply H. right.
@@ -175,13 +175,13 @@ Proof.
   - eapply fix14_le_cpn. apply LE. apply H0.
 Qed.
 
-Lemma wcpn14_cofix: forall
+Lemma gcpn14_cofix: forall
     r rg (LE: r <14= rg)
-    l (OBG: forall rr (INC: rg <14= rr) (CIH: l <14= rr), l <14= wcpn14 r rr),
-  l <14= wcpn14 r rg.
+    l (OBG: forall rr (INC: rg <14= rr) (CIH: l <14= rr), l <14= gcpn14 r rr),
+  l <14= gcpn14 r rg.
 Proof.
-  intros. apply fix14_le_wcpn. apply LE.
-  eapply cpn14_algebra, PR. apply wcpn14_inc_mon.
+  intros. apply fix14_le_gcpn. apply LE.
+  eapply cpn14_algebra, PR. apply gcpn14_inc_mon.
   intros. eapply OBG; intros.
   - left. apply PR1.
   - right. apply PR1.
@@ -190,17 +190,17 @@ Qed.
 
 End WCompanion14_main.
 
-Lemma wcpn14_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 r rg
-      (IN: @wcpn14 gf bot14 bot14 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13)
+Lemma gcpn14_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 r rg
+      (IN: @gcpn14 gf bot14 bot14 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13)
       (MONgf: monotone14 gf)
       (MONgf': monotone14 gf')
       (LE: gf <15= gf'):
-  @wcpn14 gf' r rg e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
+  @gcpn14 gf' r rg e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13.
 Proof.
   destruct IN. constructor.
   eapply cpn14_mon; [| intros; right; eapply PR].
   ubase.
-  eapply gcpn14_mon_bot, LE; [|apply MONgf|apply MONgf'].
+  eapply fcpn14_mon_bot, LE; [|apply MONgf|apply MONgf'].
   eapply MONgf, cpn14_cpn; [| apply MONgf].
   eapply (compat14_compat (cpn14_compat MONgf)).
   eapply cpn14_mon. apply IN.
@@ -209,6 +209,6 @@ Qed.
 
 End WCompanion14.
 
-Hint Resolve wcpn14_base : paco.
-Hint Resolve wcpn14_step : paco.
+Hint Resolve gcpn14_base : paco.
+Hint Resolve gcpn14_step : paco.
 

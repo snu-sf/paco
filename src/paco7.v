@@ -12,8 +12,22 @@ Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), 
 Variable T5 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3), Type.
 Variable T6 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4), Type.
 
-Local Notation curry7 := (@curry7 T0 T1 T2 T3 T4 T5 T6).
-Local Notation uncurry7 := (@uncurry7 T0 T1 T2 T3 T4 T5 T6).
+(** ** Signatures *)
+
+Record sig7T  :=
+  exist7T {
+      proj7T0: @T0;
+      proj7T1: @T1 proj7T0;
+      proj7T2: @T2 proj7T0 proj7T1;
+      proj7T3: @T3 proj7T0 proj7T1 proj7T2;
+      proj7T4: @T4 proj7T0 proj7T1 proj7T2 proj7T3;
+      proj7T5: @T5 proj7T0 proj7T1 proj7T2 proj7T3 proj7T4;
+      proj7T6: @T6 proj7T0 proj7T1 proj7T2 proj7T3 proj7T4 proj7T5;
+    }.
+Definition uncurry7  (R: rel7 T0 T1 T2 T3 T4 T5 T6): rel1 sig7T :=
+  fun x => R (proj7T0 x) (proj7T1 x) (proj7T2 x) (proj7T3 x) (proj7T4 x) (proj7T5 x) (proj7T6 x).
+Definition curry7  (R: rel1 sig7T): rel7 T0 T1 T2 T3 T4 T5 T6 :=
+  fun x0 x1 x2 x3 x4 x5 x6 => R (exist7T x6).
 
 Lemma uncurry_map7 r0 r1 (LE : r0 <7== r1) : uncurry7 r0 <1== uncurry7 r1.
 Proof. intros [] H. apply LE. apply H. Qed.

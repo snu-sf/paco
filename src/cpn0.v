@@ -30,7 +30,7 @@ Inductive cpn0 (r: rel) : Prop :=
     (CLO: clo r)
 .
 
-Definition gcpn0 := compose gf cpn0.
+Definition fcpn0 := compose gf cpn0.
 
 Lemma cpn0_mon: monotone0 cpn0.
 Proof.
@@ -63,14 +63,14 @@ Proof.
     intros. eapply (compat0_compat cpn0_compat), PR1. 
 Qed.
 
-Lemma gcpn0_mon: monotone0 gcpn0.
+Lemma fcpn0_mon: monotone0 fcpn0.
 Proof.
   repeat intro. eapply gf_mon; [eapply IN|].
   intros. eapply cpn0_mon; [apply PR|apply LE].
 Qed.
 
-Lemma gcpn0_sound:
-  paco0 gcpn0 bot0 <0= paco0 gf bot0.
+Lemma fcpn0_sound:
+  paco0 fcpn0 bot0 <0= paco0 gf bot0.
 Proof.
   intros.
   set (rclo := fix rclo clo n (r: rel) :=
@@ -78,9 +78,9 @@ Proof.
          | 0 => r
          | S n' => rclo clo n' r \0/ clo (rclo clo n' r)
          end).
-  assert (RC: exists n, rclo cpn0 n (paco0 gcpn0 bot0)) by (exists 0; apply PR); clear PR.
+  assert (RC: exists n, rclo cpn0 n (paco0 fcpn0 bot0)) by (exists 0; apply PR); clear PR.
   
-  cut (forall n, rclo cpn0 n (paco0 gcpn0 bot0) <0= gf (rclo cpn0 (S n) (paco0 gcpn0 bot0))).
+  cut (forall n, rclo cpn0 n (paco0 fcpn0 bot0) <0= gf (rclo cpn0 (S n) (paco0 fcpn0 bot0))).
   { intro X. revert RC; pcofix CIH; intros.
     pfold. eapply gf_mon.
     - apply X. apply RC.
@@ -89,7 +89,7 @@ Proof.
 
   induction n; intros.
   - eapply gf_mon.
-    + _punfold PR; [apply PR|apply gcpn0_mon].
+    + _punfold PR; [apply PR|apply fcpn0_mon].
     + intros. right. eapply cpn0_mon; [apply PR0|].
       intros. pclearbot. apply PR1.
   - destruct PR.
@@ -241,13 +241,13 @@ Proof.
 Qed.
 
 Lemma cpn0_from_upaco r:
-  upaco0 gcpn0 r <0= cpn0 r.
+  upaco0 fcpn0 r <0= cpn0 r.
 Proof.
   intros. destruct PR; [| apply cpn0_base, H].
-  exists (rclo0 (paco0 gcpn0)).
+  exists (rclo0 (paco0 fcpn0)).
   - apply wcompat0_compat.
     econstructor; [apply paco0_mon|].
-    intros. _punfold PR; [|apply gcpn0_mon].
+    intros. _punfold PR; [|apply fcpn0_mon].
     eapply gf_mon; [apply PR|].
     intros. apply rclo0_cpn.
     eapply cpn0_mon; [apply PR0|].
@@ -266,23 +266,23 @@ Proof.
 Qed.
 
 Lemma cpn0_from_paco r:
-  paco0 gcpn0 r <0= cpn0 r.
+  paco0 fcpn0 r <0= cpn0 r.
 Proof. intros. apply cpn0_from_upaco. left. apply PR. Qed.
 
-Lemma gcpn0_from_paco r:
-  paco0 gcpn0 r <0= gcpn0 r.
+Lemma fcpn0_from_paco r:
+  paco0 fcpn0 r <0= fcpn0 r.
 Proof.
-  intros. _punfold PR; [|apply gcpn0_mon].
+  intros. _punfold PR; [|apply fcpn0_mon].
   eapply gf_mon; [apply PR|].
   intros. apply cpn0_cpn.
   eapply cpn0_mon; [apply PR0|].
   apply cpn0_from_upaco.
 Qed.
 
-Lemma gcpn0_to_paco r:
-  gcpn0 r <0= paco0 gcpn0 r.
+Lemma fcpn0_to_paco r:
+  fcpn0 r <0= paco0 fcpn0 r.
 Proof.
-  intros. pfold. eapply gcpn0_mon; [apply PR|].
+  intros. pfold. eapply fcpn0_mon; [apply PR|].
   intros. right. apply PR0.
 Qed.  
 
@@ -299,7 +299,7 @@ Qed.
 Lemma cpn0_init:
   cpn0 bot0 <0= paco0 gf bot0.
 Proof.
-  intros. apply gcpn0_sound, gcpn0_to_paco, (compat0_compat cpn0_compat).
+  intros. apply fcpn0_sound, fcpn0_to_paco, (compat0_compat cpn0_compat).
   eapply cpn0_mon; [apply PR|contradiction].
 Qed.
 
@@ -311,7 +311,7 @@ Proof.
 Qed.
 
 Lemma cpn0_unfold:
-  cpn0 bot0 <0= gcpn0 bot0.
+  cpn0 bot0 <0= fcpn0 bot0.
 Proof.
   intros. apply cpn0_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
@@ -319,7 +319,7 @@ Proof.
 Qed.
 
 Lemma cpn0_step r:
-  gcpn0 r <0= cpn0 r.
+  fcpn0 r <0= cpn0 r.
 Proof.
   intros. eapply cpn0_clo, PR.
   intros. eapply wcompat0_sound, PR0.
@@ -330,9 +330,9 @@ Proof.
   intros. apply rclo0_base, PR3.
 Qed.
 
-Lemma gcpn0_clo
+Lemma fcpn0_clo
       r clo (LE: clo <1= cpn0):
-  clo (gcpn0 r) <0= gcpn0 r.
+  clo (fcpn0 r) <0= fcpn0 r.
 Proof.
   intros. apply LE, (compat0_compat cpn0_compat) in PR.
   eapply gf_mon; [apply PR|].
@@ -347,7 +347,7 @@ Proof.
   intros. apply cpn0_base, PR1.
 Qed.
 
-Lemma gcpn0_final: forall r, paco0 gf r <0= gcpn0 r.
+Lemma fcpn0_final: forall r, paco0 gf r <0= fcpn0 r.
 Proof.
   intros. _punfold PR; [|apply gf_mon].
   eapply gf_mon; [apply PR | apply cpn0_final].
@@ -377,12 +377,12 @@ Proof.
   left. eapply paco0_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
-Lemma gcpn0_mon_bot (gf gf': rel -> rel) r
-      (IN: @gcpn0 gf bot0)
+Lemma fcpn0_mon_bot (gf gf': rel -> rel) r
+      (IN: @fcpn0 gf bot0)
       (MONgf: monotone0 gf)
       (MONgf': monotone0 gf')
       (LE: gf <1= gf'):
-  @gcpn0 gf' r.
+  @fcpn0 gf' r.
 Proof.
   apply LE. eapply MONgf. apply IN.
   intros. eapply cpn0_mon_bot; eassumption.
@@ -390,7 +390,7 @@ Qed.
 
 End Companion0.
 
-Hint Unfold gcpn0 : paco.
+Hint Unfold fcpn0 : paco.
 
 Hint Resolve cpn0_base : paco.
 Hint Resolve cpn0_step : paco.

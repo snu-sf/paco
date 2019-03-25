@@ -10,7 +10,7 @@ Paco is a Coq library for parametric coinduction.  For more information, please 
 Paco also supports upto techniques using "companion".  See:
 - Damien Pous.  [Coinduction All the Way Up](https://dl.acm.org/citation.cfm?id=2934564).  LICS 2016.
 
-The current version is v2.1.0, and it's compatible with Coq 8.6.1, 8.7.2, 8.8.1 and 8.9.0.
+The current version is v3.0.0, and it's compatible with Coq 8.6.1, 8.7.2, 8.8.1 and 8.9.0.
 
 
 ## Installation

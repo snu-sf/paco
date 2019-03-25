@@ -43,7 +43,7 @@ Inductive cpn13 (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 : Prop :=
     (CLO: clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12)
 .
 
-Definition gcpn13 := compose gf cpn13.
+Definition fcpn13 := compose gf cpn13.
 
 Lemma cpn13_mon: monotone13 cpn13.
 Proof.
@@ -76,14 +76,14 @@ Proof.
     intros. eapply (compat13_compat cpn13_compat), PR1. 
 Qed.
 
-Lemma gcpn13_mon: monotone13 gcpn13.
+Lemma fcpn13_mon: monotone13 fcpn13.
 Proof.
   repeat intro. eapply gf_mon; [eapply IN|].
   intros. eapply cpn13_mon; [apply PR|apply LE].
 Qed.
 
-Lemma gcpn13_sound:
-  paco13 gcpn13 bot13 <13= paco13 gf bot13.
+Lemma fcpn13_sound:
+  paco13 fcpn13 bot13 <13= paco13 gf bot13.
 Proof.
   intros.
   set (rclo := fix rclo clo n (r: rel) :=
@@ -91,9 +91,9 @@ Proof.
          | 0 => r
          | S n' => rclo clo n' r \13/ clo (rclo clo n' r)
          end).
-  assert (RC: exists n, rclo cpn13 n (paco13 gcpn13 bot13) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12) by (exists 0; apply PR); clear PR.
+  assert (RC: exists n, rclo cpn13 n (paco13 fcpn13 bot13) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12) by (exists 0; apply PR); clear PR.
   
-  cut (forall n, rclo cpn13 n (paco13 gcpn13 bot13) <13= gf (rclo cpn13 (S n) (paco13 gcpn13 bot13))).
+  cut (forall n, rclo cpn13 n (paco13 fcpn13 bot13) <13= gf (rclo cpn13 (S n) (paco13 fcpn13 bot13))).
   { intro X. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 RC; pcofix CIH; intros.
     pfold. eapply gf_mon.
     - apply X. apply RC.
@@ -102,7 +102,7 @@ Proof.
 
   induction n; intros.
   - eapply gf_mon.
-    + _punfold PR; [apply PR|apply gcpn13_mon].
+    + _punfold PR; [apply PR|apply fcpn13_mon].
     + intros. right. eapply cpn13_mon; [apply PR0|].
       intros. pclearbot. apply PR1.
   - destruct PR.
@@ -254,13 +254,13 @@ Proof.
 Qed.
 
 Lemma cpn13_from_upaco r:
-  upaco13 gcpn13 r <13= cpn13 r.
+  upaco13 fcpn13 r <13= cpn13 r.
 Proof.
   intros. destruct PR; [| apply cpn13_base, H].
-  exists (rclo13 (paco13 gcpn13)).
+  exists (rclo13 (paco13 fcpn13)).
   - apply wcompat13_compat.
     econstructor; [apply paco13_mon|].
-    intros. _punfold PR; [|apply gcpn13_mon].
+    intros. _punfold PR; [|apply fcpn13_mon].
     eapply gf_mon; [apply PR|].
     intros. apply rclo13_cpn.
     eapply cpn13_mon; [apply PR0|].
@@ -279,23 +279,23 @@ Proof.
 Qed.
 
 Lemma cpn13_from_paco r:
-  paco13 gcpn13 r <13= cpn13 r.
+  paco13 fcpn13 r <13= cpn13 r.
 Proof. intros. apply cpn13_from_upaco. left. apply PR. Qed.
 
-Lemma gcpn13_from_paco r:
-  paco13 gcpn13 r <13= gcpn13 r.
+Lemma fcpn13_from_paco r:
+  paco13 fcpn13 r <13= fcpn13 r.
 Proof.
-  intros. _punfold PR; [|apply gcpn13_mon].
+  intros. _punfold PR; [|apply fcpn13_mon].
   eapply gf_mon; [apply PR|].
   intros. apply cpn13_cpn.
   eapply cpn13_mon; [apply PR0|].
   apply cpn13_from_upaco.
 Qed.
 
-Lemma gcpn13_to_paco r:
-  gcpn13 r <13= paco13 gcpn13 r.
+Lemma fcpn13_to_paco r:
+  fcpn13 r <13= paco13 fcpn13 r.
 Proof.
-  intros. pfold. eapply gcpn13_mon; [apply PR|].
+  intros. pfold. eapply fcpn13_mon; [apply PR|].
   intros. right. apply PR0.
 Qed.  
 
@@ -312,7 +312,7 @@ Qed.
 Lemma cpn13_init:
   cpn13 bot13 <13= paco13 gf bot13.
 Proof.
-  intros. apply gcpn13_sound, gcpn13_to_paco, (compat13_compat cpn13_compat).
+  intros. apply fcpn13_sound, fcpn13_to_paco, (compat13_compat cpn13_compat).
   eapply cpn13_mon; [apply PR|contradiction].
 Qed.
 
@@ -324,7 +324,7 @@ Proof.
 Qed.
 
 Lemma cpn13_unfold:
-  cpn13 bot13 <13= gcpn13 bot13.
+  cpn13 bot13 <13= fcpn13 bot13.
 Proof.
   intros. apply cpn13_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
@@ -332,7 +332,7 @@ Proof.
 Qed.
 
 Lemma cpn13_step r:
-  gcpn13 r <13= cpn13 r.
+  fcpn13 r <13= cpn13 r.
 Proof.
   intros. eapply cpn13_clo, PR.
   intros. eapply wcompat13_sound, PR0.
@@ -343,9 +343,9 @@ Proof.
   intros. apply rclo13_base, PR3.
 Qed.
 
-Lemma gcpn13_clo
+Lemma fcpn13_clo
       r clo (LE: clo <14= cpn13):
-  clo (gcpn13 r) <13= gcpn13 r.
+  clo (fcpn13 r) <13= fcpn13 r.
 Proof.
   intros. apply LE, (compat13_compat cpn13_compat) in PR.
   eapply gf_mon; [apply PR|].
@@ -360,7 +360,7 @@ Proof.
   intros. apply cpn13_base, PR1.
 Qed.
 
-Lemma gcpn13_final: forall r, paco13 gf r <13= gcpn13 r.
+Lemma fcpn13_final: forall r, paco13 gf r <13= fcpn13 r.
 Proof.
   intros. _punfold PR; [|apply gf_mon].
   eapply gf_mon; [apply PR | apply cpn13_final].
@@ -390,12 +390,12 @@ Proof.
   left. eapply paco13_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
-Lemma gcpn13_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 r
-      (IN: @gcpn13 gf bot13 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12)
+Lemma fcpn13_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 r
+      (IN: @fcpn13 gf bot13 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12)
       (MONgf: monotone13 gf)
       (MONgf': monotone13 gf')
       (LE: gf <14= gf'):
-  @gcpn13 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+  @fcpn13 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
 Proof.
   apply LE. eapply MONgf. apply IN.
   intros. eapply cpn13_mon_bot; eassumption.
@@ -403,7 +403,7 @@ Qed.
 
 End Companion13.
 
-Hint Unfold gcpn13 : paco.
+Hint Unfold fcpn13 : paco.
 
 Hint Resolve cpn13_base : paco.
 Hint Resolve cpn13_step : paco.

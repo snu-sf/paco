@@ -39,7 +39,7 @@ Inductive cpn9 (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 : Prop :=
     (CLO: clo r e0 e1 e2 e3 e4 e5 e6 e7 e8)
 .
 
-Definition gcpn9 := compose gf cpn9.
+Definition fcpn9 := compose gf cpn9.
 
 Lemma cpn9_mon: monotone9 cpn9.
 Proof.
@@ -72,14 +72,14 @@ Proof.
     intros. eapply (compat9_compat cpn9_compat), PR1. 
 Qed.
 
-Lemma gcpn9_mon: monotone9 gcpn9.
+Lemma fcpn9_mon: monotone9 fcpn9.
 Proof.
   repeat intro. eapply gf_mon; [eapply IN|].
   intros. eapply cpn9_mon; [apply PR|apply LE].
 Qed.
 
-Lemma gcpn9_sound:
-  paco9 gcpn9 bot9 <9= paco9 gf bot9.
+Lemma fcpn9_sound:
+  paco9 fcpn9 bot9 <9= paco9 gf bot9.
 Proof.
   intros.
   set (rclo := fix rclo clo n (r: rel) :=
@@ -87,9 +87,9 @@ Proof.
          | 0 => r
          | S n' => rclo clo n' r \9/ clo (rclo clo n' r)
          end).
-  assert (RC: exists n, rclo cpn9 n (paco9 gcpn9 bot9) x0 x1 x2 x3 x4 x5 x6 x7 x8) by (exists 0; apply PR); clear PR.
+  assert (RC: exists n, rclo cpn9 n (paco9 fcpn9 bot9) x0 x1 x2 x3 x4 x5 x6 x7 x8) by (exists 0; apply PR); clear PR.
   
-  cut (forall n, rclo cpn9 n (paco9 gcpn9 bot9) <9= gf (rclo cpn9 (S n) (paco9 gcpn9 bot9))).
+  cut (forall n, rclo cpn9 n (paco9 fcpn9 bot9) <9= gf (rclo cpn9 (S n) (paco9 fcpn9 bot9))).
   { intro X. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 RC; pcofix CIH; intros.
     pfold. eapply gf_mon.
     - apply X. apply RC.
@@ -98,7 +98,7 @@ Proof.
 
   induction n; intros.
   - eapply gf_mon.
-    + _punfold PR; [apply PR|apply gcpn9_mon].
+    + _punfold PR; [apply PR|apply fcpn9_mon].
     + intros. right. eapply cpn9_mon; [apply PR0|].
       intros. pclearbot. apply PR1.
   - destruct PR.
@@ -250,13 +250,13 @@ Proof.
 Qed.
 
 Lemma cpn9_from_upaco r:
-  upaco9 gcpn9 r <9= cpn9 r.
+  upaco9 fcpn9 r <9= cpn9 r.
 Proof.
   intros. destruct PR; [| apply cpn9_base, H].
-  exists (rclo9 (paco9 gcpn9)).
+  exists (rclo9 (paco9 fcpn9)).
   - apply wcompat9_compat.
     econstructor; [apply paco9_mon|].
-    intros. _punfold PR; [|apply gcpn9_mon].
+    intros. _punfold PR; [|apply fcpn9_mon].
     eapply gf_mon; [apply PR|].
     intros. apply rclo9_cpn.
     eapply cpn9_mon; [apply PR0|].
@@ -275,23 +275,23 @@ Proof.
 Qed.
 
 Lemma cpn9_from_paco r:
-  paco9 gcpn9 r <9= cpn9 r.
+  paco9 fcpn9 r <9= cpn9 r.
 Proof. intros. apply cpn9_from_upaco. left. apply PR. Qed.
 
-Lemma gcpn9_from_paco r:
-  paco9 gcpn9 r <9= gcpn9 r.
+Lemma fcpn9_from_paco r:
+  paco9 fcpn9 r <9= fcpn9 r.
 Proof.
-  intros. _punfold PR; [|apply gcpn9_mon].
+  intros. _punfold PR; [|apply fcpn9_mon].
   eapply gf_mon; [apply PR|].
   intros. apply cpn9_cpn.
   eapply cpn9_mon; [apply PR0|].
   apply cpn9_from_upaco.
 Qed.
 
-Lemma gcpn9_to_paco r:
-  gcpn9 r <9= paco9 gcpn9 r.
+Lemma fcpn9_to_paco r:
+  fcpn9 r <9= paco9 fcpn9 r.
 Proof.
-  intros. pfold. eapply gcpn9_mon; [apply PR|].
+  intros. pfold. eapply fcpn9_mon; [apply PR|].
   intros. right. apply PR0.
 Qed.  
 
@@ -308,7 +308,7 @@ Qed.
 Lemma cpn9_init:
   cpn9 bot9 <9= paco9 gf bot9.
 Proof.
-  intros. apply gcpn9_sound, gcpn9_to_paco, (compat9_compat cpn9_compat).
+  intros. apply fcpn9_sound, fcpn9_to_paco, (compat9_compat cpn9_compat).
   eapply cpn9_mon; [apply PR|contradiction].
 Qed.
 
@@ -320,7 +320,7 @@ Proof.
 Qed.
 
 Lemma cpn9_unfold:
-  cpn9 bot9 <9= gcpn9 bot9.
+  cpn9 bot9 <9= fcpn9 bot9.
 Proof.
   intros. apply cpn9_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
@@ -328,7 +328,7 @@ Proof.
 Qed.
 
 Lemma cpn9_step r:
-  gcpn9 r <9= cpn9 r.
+  fcpn9 r <9= cpn9 r.
 Proof.
   intros. eapply cpn9_clo, PR.
   intros. eapply wcompat9_sound, PR0.
@@ -339,9 +339,9 @@ Proof.
   intros. apply rclo9_base, PR3.
 Qed.
 
-Lemma gcpn9_clo
+Lemma fcpn9_clo
       r clo (LE: clo <10= cpn9):
-  clo (gcpn9 r) <9= gcpn9 r.
+  clo (fcpn9 r) <9= fcpn9 r.
 Proof.
   intros. apply LE, (compat9_compat cpn9_compat) in PR.
   eapply gf_mon; [apply PR|].
@@ -356,7 +356,7 @@ Proof.
   intros. apply cpn9_base, PR1.
 Qed.
 
-Lemma gcpn9_final: forall r, paco9 gf r <9= gcpn9 r.
+Lemma fcpn9_final: forall r, paco9 gf r <9= fcpn9 r.
 Proof.
   intros. _punfold PR; [|apply gf_mon].
   eapply gf_mon; [apply PR | apply cpn9_final].
@@ -386,12 +386,12 @@ Proof.
   left. eapply paco9_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
-Lemma gcpn9_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 r
-      (IN: @gcpn9 gf bot9 e0 e1 e2 e3 e4 e5 e6 e7 e8)
+Lemma fcpn9_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 r
+      (IN: @fcpn9 gf bot9 e0 e1 e2 e3 e4 e5 e6 e7 e8)
       (MONgf: monotone9 gf)
       (MONgf': monotone9 gf')
       (LE: gf <10= gf'):
-  @gcpn9 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8.
+  @fcpn9 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8.
 Proof.
   apply LE. eapply MONgf. apply IN.
   intros. eapply cpn9_mon_bot; eassumption.
@@ -399,7 +399,7 @@ Qed.
 
 End Companion9.
 
-Hint Unfold gcpn9 : paco.
+Hint Unfold fcpn9 : paco.
 
 Hint Resolve cpn9_base : paco.
 Hint Resolve cpn9_step : paco.

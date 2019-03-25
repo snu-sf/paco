@@ -35,7 +35,7 @@ Inductive cpn5 (r: rel) e0 e1 e2 e3 e4 : Prop :=
     (CLO: clo r e0 e1 e2 e3 e4)
 .
 
-Definition gcpn5 := compose gf cpn5.
+Definition fcpn5 := compose gf cpn5.
 
 Lemma cpn5_mon: monotone5 cpn5.
 Proof.
@@ -68,14 +68,14 @@ Proof.
     intros. eapply (compat5_compat cpn5_compat), PR1. 
 Qed.
 
-Lemma gcpn5_mon: monotone5 gcpn5.
+Lemma fcpn5_mon: monotone5 fcpn5.
 Proof.
   repeat intro. eapply gf_mon; [eapply IN|].
   intros. eapply cpn5_mon; [apply PR|apply LE].
 Qed.
 
-Lemma gcpn5_sound:
-  paco5 gcpn5 bot5 <5= paco5 gf bot5.
+Lemma fcpn5_sound:
+  paco5 fcpn5 bot5 <5= paco5 gf bot5.
 Proof.
   intros.
   set (rclo := fix rclo clo n (r: rel) :=
@@ -83,9 +83,9 @@ Proof.
          | 0 => r
          | S n' => rclo clo n' r \5/ clo (rclo clo n' r)
          end).
-  assert (RC: exists n, rclo cpn5 n (paco5 gcpn5 bot5) x0 x1 x2 x3 x4) by (exists 0; apply PR); clear PR.
+  assert (RC: exists n, rclo cpn5 n (paco5 fcpn5 bot5) x0 x1 x2 x3 x4) by (exists 0; apply PR); clear PR.
   
-  cut (forall n, rclo cpn5 n (paco5 gcpn5 bot5) <5= gf (rclo cpn5 (S n) (paco5 gcpn5 bot5))).
+  cut (forall n, rclo cpn5 n (paco5 fcpn5 bot5) <5= gf (rclo cpn5 (S n) (paco5 fcpn5 bot5))).
   { intro X. revert x0 x1 x2 x3 x4 RC; pcofix CIH; intros.
     pfold. eapply gf_mon.
     - apply X. apply RC.
@@ -94,7 +94,7 @@ Proof.
 
   induction n; intros.
   - eapply gf_mon.
-    + _punfold PR; [apply PR|apply gcpn5_mon].
+    + _punfold PR; [apply PR|apply fcpn5_mon].
     + intros. right. eapply cpn5_mon; [apply PR0|].
       intros. pclearbot. apply PR1.
   - destruct PR.
@@ -246,13 +246,13 @@ Proof.
 Qed.
 
 Lemma cpn5_from_upaco r:
-  upaco5 gcpn5 r <5= cpn5 r.
+  upaco5 fcpn5 r <5= cpn5 r.
 Proof.
   intros. destruct PR; [| apply cpn5_base, H].
-  exists (rclo5 (paco5 gcpn5)).
+  exists (rclo5 (paco5 fcpn5)).
   - apply wcompat5_compat.
     econstructor; [apply paco5_mon|].
-    intros. _punfold PR; [|apply gcpn5_mon].
+    intros. _punfold PR; [|apply fcpn5_mon].
     eapply gf_mon; [apply PR|].
     intros. apply rclo5_cpn.
     eapply cpn5_mon; [apply PR0|].
@@ -271,23 +271,23 @@ Proof.
 Qed.
 
 Lemma cpn5_from_paco r:
-  paco5 gcpn5 r <5= cpn5 r.
+  paco5 fcpn5 r <5= cpn5 r.
 Proof. intros. apply cpn5_from_upaco. left. apply PR. Qed.
 
-Lemma gcpn5_from_paco r:
-  paco5 gcpn5 r <5= gcpn5 r.
+Lemma fcpn5_from_paco r:
+  paco5 fcpn5 r <5= fcpn5 r.
 Proof.
-  intros. _punfold PR; [|apply gcpn5_mon].
+  intros. _punfold PR; [|apply fcpn5_mon].
   eapply gf_mon; [apply PR|].
   intros. apply cpn5_cpn.
   eapply cpn5_mon; [apply PR0|].
   apply cpn5_from_upaco.
 Qed.
 
-Lemma gcpn5_to_paco r:
-  gcpn5 r <5= paco5 gcpn5 r.
+Lemma fcpn5_to_paco r:
+  fcpn5 r <5= paco5 fcpn5 r.
 Proof.
-  intros. pfold. eapply gcpn5_mon; [apply PR|].
+  intros. pfold. eapply fcpn5_mon; [apply PR|].
   intros. right. apply PR0.
 Qed.  
 
@@ -304,7 +304,7 @@ Qed.
 Lemma cpn5_init:
   cpn5 bot5 <5= paco5 gf bot5.
 Proof.
-  intros. apply gcpn5_sound, gcpn5_to_paco, (compat5_compat cpn5_compat).
+  intros. apply fcpn5_sound, fcpn5_to_paco, (compat5_compat cpn5_compat).
   eapply cpn5_mon; [apply PR|contradiction].
 Qed.
 
@@ -316,7 +316,7 @@ Proof.
 Qed.
 
 Lemma cpn5_unfold:
-  cpn5 bot5 <5= gcpn5 bot5.
+  cpn5 bot5 <5= fcpn5 bot5.
 Proof.
   intros. apply cpn5_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
@@ -324,7 +324,7 @@ Proof.
 Qed.
 
 Lemma cpn5_step r:
-  gcpn5 r <5= cpn5 r.
+  fcpn5 r <5= cpn5 r.
 Proof.
   intros. eapply cpn5_clo, PR.
   intros. eapply wcompat5_sound, PR0.
@@ -335,9 +335,9 @@ Proof.
   intros. apply rclo5_base, PR3.
 Qed.
 
-Lemma gcpn5_clo
+Lemma fcpn5_clo
       r clo (LE: clo <6= cpn5):
-  clo (gcpn5 r) <5= gcpn5 r.
+  clo (fcpn5 r) <5= fcpn5 r.
 Proof.
   intros. apply LE, (compat5_compat cpn5_compat) in PR.
   eapply gf_mon; [apply PR|].
@@ -352,7 +352,7 @@ Proof.
   intros. apply cpn5_base, PR1.
 Qed.
 
-Lemma gcpn5_final: forall r, paco5 gf r <5= gcpn5 r.
+Lemma fcpn5_final: forall r, paco5 gf r <5= fcpn5 r.
 Proof.
   intros. _punfold PR; [|apply gf_mon].
   eapply gf_mon; [apply PR | apply cpn5_final].
@@ -382,12 +382,12 @@ Proof.
   left. eapply paco5_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
-Lemma gcpn5_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 r
-      (IN: @gcpn5 gf bot5 e0 e1 e2 e3 e4)
+Lemma fcpn5_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 r
+      (IN: @fcpn5 gf bot5 e0 e1 e2 e3 e4)
       (MONgf: monotone5 gf)
       (MONgf': monotone5 gf')
       (LE: gf <6= gf'):
-  @gcpn5 gf' r e0 e1 e2 e3 e4.
+  @fcpn5 gf' r e0 e1 e2 e3 e4.
 Proof.
   apply LE. eapply MONgf. apply IN.
   intros. eapply cpn5_mon_bot; eassumption.
@@ -395,7 +395,7 @@ Qed.
 
 End Companion5.
 
-Hint Unfold gcpn5 : paco.
+Hint Unfold fcpn5 : paco.
 
 Hint Resolve cpn5_base : paco.
 Hint Resolve cpn5_step : paco.

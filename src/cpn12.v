@@ -42,7 +42,7 @@ Inductive cpn12 (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 : Prop :=
     (CLO: clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11)
 .
 
-Definition gcpn12 := compose gf cpn12.
+Definition fcpn12 := compose gf cpn12.
 
 Lemma cpn12_mon: monotone12 cpn12.
 Proof.
@@ -75,14 +75,14 @@ Proof.
     intros. eapply (compat12_compat cpn12_compat), PR1. 
 Qed.
 
-Lemma gcpn12_mon: monotone12 gcpn12.
+Lemma fcpn12_mon: monotone12 fcpn12.
 Proof.
   repeat intro. eapply gf_mon; [eapply IN|].
   intros. eapply cpn12_mon; [apply PR|apply LE].
 Qed.
 
-Lemma gcpn12_sound:
-  paco12 gcpn12 bot12 <12= paco12 gf bot12.
+Lemma fcpn12_sound:
+  paco12 fcpn12 bot12 <12= paco12 gf bot12.
 Proof.
   intros.
   set (rclo := fix rclo clo n (r: rel) :=
@@ -90,9 +90,9 @@ Proof.
          | 0 => r
          | S n' => rclo clo n' r \12/ clo (rclo clo n' r)
          end).
-  assert (RC: exists n, rclo cpn12 n (paco12 gcpn12 bot12) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) by (exists 0; apply PR); clear PR.
+  assert (RC: exists n, rclo cpn12 n (paco12 fcpn12 bot12) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) by (exists 0; apply PR); clear PR.
   
-  cut (forall n, rclo cpn12 n (paco12 gcpn12 bot12) <12= gf (rclo cpn12 (S n) (paco12 gcpn12 bot12))).
+  cut (forall n, rclo cpn12 n (paco12 fcpn12 bot12) <12= gf (rclo cpn12 (S n) (paco12 fcpn12 bot12))).
   { intro X. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 RC; pcofix CIH; intros.
     pfold. eapply gf_mon.
     - apply X. apply RC.
@@ -101,7 +101,7 @@ Proof.
 
   induction n; intros.
   - eapply gf_mon.
-    + _punfold PR; [apply PR|apply gcpn12_mon].
+    + _punfold PR; [apply PR|apply fcpn12_mon].
     + intros. right. eapply cpn12_mon; [apply PR0|].
       intros. pclearbot. apply PR1.
   - destruct PR.
@@ -253,13 +253,13 @@ Proof.
 Qed.
 
 Lemma cpn12_from_upaco r:
-  upaco12 gcpn12 r <12= cpn12 r.
+  upaco12 fcpn12 r <12= cpn12 r.
 Proof.
   intros. destruct PR; [| apply cpn12_base, H].
-  exists (rclo12 (paco12 gcpn12)).
+  exists (rclo12 (paco12 fcpn12)).
   - apply wcompat12_compat.
     econstructor; [apply paco12_mon|].
-    intros. _punfold PR; [|apply gcpn12_mon].
+    intros. _punfold PR; [|apply fcpn12_mon].
     eapply gf_mon; [apply PR|].
     intros. apply rclo12_cpn.
     eapply cpn12_mon; [apply PR0|].
@@ -278,23 +278,23 @@ Proof.
 Qed.
 
 Lemma cpn12_from_paco r:
-  paco12 gcpn12 r <12= cpn12 r.
+  paco12 fcpn12 r <12= cpn12 r.
 Proof. intros. apply cpn12_from_upaco. left. apply PR. Qed.
 
-Lemma gcpn12_from_paco r:
-  paco12 gcpn12 r <12= gcpn12 r.
+Lemma fcpn12_from_paco r:
+  paco12 fcpn12 r <12= fcpn12 r.
 Proof.
-  intros. _punfold PR; [|apply gcpn12_mon].
+  intros. _punfold PR; [|apply fcpn12_mon].
   eapply gf_mon; [apply PR|].
   intros. apply cpn12_cpn.
   eapply cpn12_mon; [apply PR0|].
   apply cpn12_from_upaco.
 Qed.
 
-Lemma gcpn12_to_paco r:
-  gcpn12 r <12= paco12 gcpn12 r.
+Lemma fcpn12_to_paco r:
+  fcpn12 r <12= paco12 fcpn12 r.
 Proof.
-  intros. pfold. eapply gcpn12_mon; [apply PR|].
+  intros. pfold. eapply fcpn12_mon; [apply PR|].
   intros. right. apply PR0.
 Qed.  
 
@@ -311,7 +311,7 @@ Qed.
 Lemma cpn12_init:
   cpn12 bot12 <12= paco12 gf bot12.
 Proof.
-  intros. apply gcpn12_sound, gcpn12_to_paco, (compat12_compat cpn12_compat).
+  intros. apply fcpn12_sound, fcpn12_to_paco, (compat12_compat cpn12_compat).
   eapply cpn12_mon; [apply PR|contradiction].
 Qed.
 
@@ -323,7 +323,7 @@ Proof.
 Qed.
 
 Lemma cpn12_unfold:
-  cpn12 bot12 <12= gcpn12 bot12.
+  cpn12 bot12 <12= fcpn12 bot12.
 Proof.
   intros. apply cpn12_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
@@ -331,7 +331,7 @@ Proof.
 Qed.
 
 Lemma cpn12_step r:
-  gcpn12 r <12= cpn12 r.
+  fcpn12 r <12= cpn12 r.
 Proof.
   intros. eapply cpn12_clo, PR.
   intros. eapply wcompat12_sound, PR0.
@@ -342,9 +342,9 @@ Proof.
   intros. apply rclo12_base, PR3.
 Qed.
 
-Lemma gcpn12_clo
+Lemma fcpn12_clo
       r clo (LE: clo <13= cpn12):
-  clo (gcpn12 r) <12= gcpn12 r.
+  clo (fcpn12 r) <12= fcpn12 r.
 Proof.
   intros. apply LE, (compat12_compat cpn12_compat) in PR.
   eapply gf_mon; [apply PR|].
@@ -359,7 +359,7 @@ Proof.
   intros. apply cpn12_base, PR1.
 Qed.
 
-Lemma gcpn12_final: forall r, paco12 gf r <12= gcpn12 r.
+Lemma fcpn12_final: forall r, paco12 gf r <12= fcpn12 r.
 Proof.
   intros. _punfold PR; [|apply gf_mon].
   eapply gf_mon; [apply PR | apply cpn12_final].
@@ -389,12 +389,12 @@ Proof.
   left. eapply paco12_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
-Lemma gcpn12_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 r
-      (IN: @gcpn12 gf bot12 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11)
+Lemma fcpn12_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 r
+      (IN: @fcpn12 gf bot12 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11)
       (MONgf: monotone12 gf)
       (MONgf': monotone12 gf')
       (LE: gf <13= gf'):
-  @gcpn12 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
+  @fcpn12 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11.
 Proof.
   apply LE. eapply MONgf. apply IN.
   intros. eapply cpn12_mon_bot; eassumption.
@@ -402,7 +402,7 @@ Qed.
 
 End Companion12.
 
-Hint Unfold gcpn12 : paco.
+Hint Unfold fcpn12 : paco.
 
 Hint Resolve cpn12_base : paco.
 Hint Resolve cpn12_step : paco.

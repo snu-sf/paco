@@ -20,31 +20,31 @@ Section WCompanion9_main.
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone9 gf.
 
-Inductive wcpn9 (r rg : rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 : Prop :=
-| wcpn9_intro (IN: cpn9 gf (r \9/ gcpn9 gf rg) e0 e1 e2 e3 e4 e5 e6 e7 e8)
+Inductive gcpn9 (r rg : rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 : Prop :=
+| gcpn9_intro (IN: cpn9 gf (r \9/ fcpn9 gf rg) e0 e1 e2 e3 e4 e5 e6 e7 e8)
 .              
 
-Lemma wcpn9_mon r r' rg rg' e0 e1 e2 e3 e4 e5 e6 e7 e8
-      (IN: @wcpn9 r rg e0 e1 e2 e3 e4 e5 e6 e7 e8)
+Lemma gcpn9_mon r r' rg rg' e0 e1 e2 e3 e4 e5 e6 e7 e8
+      (IN: @gcpn9 r rg e0 e1 e2 e3 e4 e5 e6 e7 e8)
       (LEr: r <9= r')
       (LErg: rg <9= rg'):
-  @wcpn9 r' rg' e0 e1 e2 e3 e4 e5 e6 e7 e8.
+  @gcpn9 r' rg' e0 e1 e2 e3 e4 e5 e6 e7 e8.
 Proof.
   destruct IN. constructor.
   eapply cpn9_mon. apply IN. intros.
   destruct PR. left. apply LEr, H. right.
-  eapply gcpn9_mon. apply gf_mon. apply H. apply LErg.
+  eapply fcpn9_mon. apply gf_mon. apply H. apply LErg.
 Qed.
 
-Lemma wcpn9_inc_mon r rg:
-  monotone9 (fun x : rel => wcpn9 r (rg \9/ x)).
+Lemma gcpn9_inc_mon r rg:
+  monotone9 (fun x : rel => gcpn9 r (rg \9/ x)).
 Proof.
   red; intros.
-  eapply wcpn9_mon. apply IN. intros. apply PR.
+  eapply gcpn9_mon. apply IN. intros. apply PR.
   intros. destruct PR. left. apply H. right. apply LE, H. 
 Qed.
 
-Lemma wcpn9_init r: wcpn9 r r <9= cpn9 gf r.
+Lemma gcpn9_init r: gcpn9 r r <9= cpn9 gf r.
 Proof.
   intros. destruct PR.
   ucpn.
@@ -54,47 +54,47 @@ Proof.
   - ustep. apply H.
 Qed.
 
-Lemma wcpn9_final r rg: cpn9 gf r <9= wcpn9 r rg.
+Lemma gcpn9_final r rg: cpn9 gf r <9= gcpn9 r rg.
 Proof.
   constructor. eapply cpn9_mon. apply PR.
   intros. left. apply PR0.
 Qed.
 
-Lemma wcpn9_unfold:
-  wcpn9 bot9 bot9 <9= gf (wcpn9 bot9 bot9).
+Lemma gcpn9_unfold:
+  gcpn9 bot9 bot9 <9= gf (gcpn9 bot9 bot9).
 Proof.
-  intros. apply wcpn9_init in PR. uunfold PR.
+  intros. apply gcpn9_init in PR. uunfold PR.
   eapply gf_mon; [apply PR|].
-  intros. apply wcpn9_final. apply PR0.
+  intros. apply gcpn9_final. apply PR0.
 Qed.
 
-Lemma wcpn9_base r rg:
-  r <9= wcpn9 r rg.
+Lemma gcpn9_base r rg:
+  r <9= gcpn9 r rg.
 Proof.
   intros. constructor. ubase. left. apply PR.
 Qed.
 
-Lemma wcpn9_step r rg:
-  gf (wcpn9 rg rg) <9= wcpn9 r rg.
+Lemma gcpn9_step r rg:
+  gf (gcpn9 rg rg) <9= gcpn9 r rg.
 Proof.
   intros. constructor. ubase. right.
   eapply gf_mon. apply PR.
-  intros. apply wcpn9_init. apply PR0.
+  intros. apply gcpn9_init. apply PR0.
 Qed.
 
-Lemma wcpn9_cpn r rg:
-  cpn9 gf (wcpn9 r rg) <9= wcpn9 r rg.
+Lemma gcpn9_cpn r rg:
+  cpn9 gf (gcpn9 r rg) <9= gcpn9 r rg.
 Proof.
   intros. constructor. ucpn.
   eapply cpn9_mon. apply PR.
   intros. destruct PR0. apply IN.
 Qed.
 
-Lemma wcpn9_clo r rg
+Lemma gcpn9_clo r rg
       clo (LE: clo <10= cpn9 gf):
-  clo (wcpn9 r rg) <9= wcpn9 r rg.
+  clo (gcpn9 r rg) <9= gcpn9 r rg.
 Proof.
-  intros. apply wcpn9_cpn, LE, PR.
+  intros. apply gcpn9_cpn, LE, PR.
 Qed.
 
 Definition cut9 (x y z: rel) : rel := fun e0 e1 e2 e3 e4 e5 e6 e7 e8 => y <9= z /\ x e0 e1 e2 e3 e4 e5 e6 e7 e8.
@@ -107,13 +107,13 @@ Proof.
 Qed.
 
 Lemma cut9_wcomp r rg (LE: r <9= rg) :
-  wcompatible9 gf (cut9 (cpn9 (fun x => wcpn9 r (rg \9/ x)) bot9) rg).
+  wcompatible9 gf (cut9 (cpn9 (fun x => gcpn9 r (rg \9/ x)) bot9) rg).
 Proof.
-  set (pfix := cpn9 (fun x => wcpn9 r (rg \9/ x)) bot9).
+  set (pfix := cpn9 (fun x => gcpn9 r (rg \9/ x)) bot9).
   
   econstructor; [apply cut9_mon|]. intros.
   destruct PR as [LEz FIX].
-  uunfold FIX; [|apply wcpn9_inc_mon].
+  uunfold FIX; [|apply gcpn9_inc_mon].
   eapply gf_mon, rclo9_cpn.
   apply cpn9_compat; [apply gf_mon|].
   eapply cpn9_mon; [apply FIX|]. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 FIX; intros.
@@ -136,7 +136,7 @@ Proof.
 Qed.
 
 Lemma fix9_le_cpn r rg (LE: r <9= rg) :
-  cpn9 (fun x => wcpn9 r (rg \9/ x)) bot9 <9= cpn9 gf rg.
+  cpn9 (fun x => gcpn9 r (rg \9/ x)) bot9 <9= cpn9 gf rg.
 Proof.
   intros. eexists.
   - apply wcompat9_compat, cut9_wcomp. apply gf_mon. apply LE.
@@ -145,8 +145,8 @@ Proof.
     + apply PR.
 Qed.
 
-Lemma fix9_le_wcpn r rg (LE: r <9= rg):
-  cpn9 (fun x => wcpn9 r (rg \9/ x)) bot9 <9= wcpn9 r rg.
+Lemma fix9_le_gcpn r rg (LE: r <9= rg):
+  cpn9 (fun x => gcpn9 r (rg \9/ x)) bot9 <9= gcpn9 r rg.
 Proof.
   (*
     fix
@@ -158,7 +158,7 @@ Proof.
     c(r + gc(rg))
    *)
   
-  intros. uunfold PR; [| apply wcpn9_inc_mon].
+  intros. uunfold PR; [| apply gcpn9_inc_mon].
   destruct PR. constructor.
   eapply cpn9_mon. apply IN. intros.
   destruct PR. left; apply H. right.
@@ -170,13 +170,13 @@ Proof.
   - eapply fix9_le_cpn. apply LE. apply H0.
 Qed.
 
-Lemma wcpn9_cofix: forall
+Lemma gcpn9_cofix: forall
     r rg (LE: r <9= rg)
-    l (OBG: forall rr (INC: rg <9= rr) (CIH: l <9= rr), l <9= wcpn9 r rr),
-  l <9= wcpn9 r rg.
+    l (OBG: forall rr (INC: rg <9= rr) (CIH: l <9= rr), l <9= gcpn9 r rr),
+  l <9= gcpn9 r rg.
 Proof.
-  intros. apply fix9_le_wcpn. apply LE.
-  eapply cpn9_algebra, PR. apply wcpn9_inc_mon.
+  intros. apply fix9_le_gcpn. apply LE.
+  eapply cpn9_algebra, PR. apply gcpn9_inc_mon.
   intros. eapply OBG; intros.
   - left. apply PR1.
   - right. apply PR1.
@@ -185,17 +185,17 @@ Qed.
 
 End WCompanion9_main.
 
-Lemma wcpn9_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 r rg
-      (IN: @wcpn9 gf bot9 bot9 e0 e1 e2 e3 e4 e5 e6 e7 e8)
+Lemma gcpn9_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 r rg
+      (IN: @gcpn9 gf bot9 bot9 e0 e1 e2 e3 e4 e5 e6 e7 e8)
       (MONgf: monotone9 gf)
       (MONgf': monotone9 gf')
       (LE: gf <10= gf'):
-  @wcpn9 gf' r rg e0 e1 e2 e3 e4 e5 e6 e7 e8.
+  @gcpn9 gf' r rg e0 e1 e2 e3 e4 e5 e6 e7 e8.
 Proof.
   destruct IN. constructor.
   eapply cpn9_mon; [| intros; right; eapply PR].
   ubase.
-  eapply gcpn9_mon_bot, LE; [|apply MONgf|apply MONgf'].
+  eapply fcpn9_mon_bot, LE; [|apply MONgf|apply MONgf'].
   eapply MONgf, cpn9_cpn; [| apply MONgf].
   eapply (compat9_compat (cpn9_compat MONgf)).
   eapply cpn9_mon. apply IN.
@@ -204,6 +204,6 @@ Qed.
 
 End WCompanion9.
 
-Hint Resolve wcpn9_base : paco.
-Hint Resolve wcpn9_step : paco.
+Hint Resolve gcpn9_base : paco.
+Hint Resolve gcpn9_step : paco.
 

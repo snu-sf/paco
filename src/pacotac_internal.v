@@ -199,7 +199,7 @@ generalize _paco_mark_cons; repeat intro; paco_cont0.
 Ltac paco_post_match0 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| (pacoid _) -> _ => clear H; tac1 cr
+| bot0 -> _ => clear H; tac1 cr
 | ?pr -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -234,7 +234,7 @@ end.
 Ltac paco_post_match1 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _, (pacoid _) _ -> _ => clear H; tac1 cr
+| forall _, bot1 _ -> _ => clear H; tac1 cr
 | forall _, ?pr _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -272,7 +272,7 @@ end.
 Ltac paco_post_match2 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _, (pacoid _) _ _ -> _ => clear H; tac1 cr
+| forall _ _, bot2 _ _ -> _ => clear H; tac1 cr
 | forall _ _, ?pr _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -313,7 +313,7 @@ end.
 Ltac paco_post_match3 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _, (pacoid _) _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _, bot3 _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _, ?pr _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -357,7 +357,7 @@ end.
 Ltac paco_post_match4 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _, (pacoid _) _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _, bot4 _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _, ?pr _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -404,7 +404,7 @@ end.
 Ltac paco_post_match5 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _, (pacoid _) _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _, bot5 _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _, ?pr _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -454,7 +454,7 @@ end.
 Ltac paco_post_match6 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _, bot6 _ _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _ _, ?pr _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -507,7 +507,7 @@ end.
 Ltac paco_post_match7 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _, bot7 _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -563,7 +563,7 @@ end.
 Ltac paco_post_match8 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _, bot8 _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -622,7 +622,7 @@ end.
 Ltac paco_post_match9 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _, bot9 _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -684,7 +684,7 @@ end.
 Ltac paco_post_match10 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _, bot10 _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -749,7 +749,7 @@ end.
 Ltac paco_post_match11 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _, bot11 _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -817,7 +817,7 @@ end.
 Ltac paco_post_match12 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _, bot12 _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -888,7 +888,7 @@ end.
 Ltac paco_post_match13 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _, bot13 _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -962,7 +962,7 @@ end.
 Ltac paco_post_match14 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _, bot14 _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -970,83 +970,6 @@ end end.
 Tactic Notation "paco_post14" ident(CIH) "with" ident(nr) :=
 let INC := fresh "_paco_inc_" in
 paco_post_match14 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
-let CIH' := fresh CIH in try rename INC into CIH'.
-
-(** *** Arity 15
-*)
-
-Ltac paco_cont15 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 :=
-let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
-let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
-let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
-let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
-let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
-let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
-let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
-let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
-let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
-let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
-let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
-let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
-let x12 := fresh "_paco_v_" in let EQ12 := fresh "_paco_EQ_" in
-let x13 := fresh "_paco_v_" in let EQ13 := fresh "_paco_EQ_" in
-let x14 := fresh "_paco_v_" in let EQ14 := fresh "_paco_EQ_" in
-paco_convert e14 x14 EQ14;
-paco_convert e13 x13 EQ13;
-paco_convert e12 x12 EQ12;
-paco_convert e11 x11 EQ11;
-paco_convert e10 x10 EQ10;
-paco_convert e9 x9 EQ9;
-paco_convert e8 x8 EQ8;
-paco_convert e7 x7 EQ7;
-paco_convert e6 x6 EQ6;
-paco_convert e5 x5 EQ5;
-paco_convert e4 x4 EQ4;
-paco_convert e3 x3 EQ3;
-paco_convert e2 x2 EQ2;
-paco_convert e1 x1 EQ1;
-paco_convert e0 x0 EQ0;
-intros x0 EQ0;
-intros x1 EQ1;
-intros x2 EQ2;
-intros x3 EQ3;
-intros x4 EQ4;
-intros x5 EQ5;
-intros x6 EQ6;
-intros x7 EQ7;
-intros x8 EQ8;
-intros x9 EQ9;
-intros x10 EQ10;
-intros x11 EQ11;
-intros x12 EQ12;
-intros x13 EQ13;
-intros x14 EQ14;
-generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 (conj EQ9 (conj EQ10 (conj EQ11 (conj EQ12 (conj EQ13 EQ14)))))))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9 EQ10 EQ11 EQ12 EQ13 EQ14;
-move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top; move x10 at top; move x11 at top; move x12 at top; move x13 at top; move x14 at top;
-paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14.
-
-Lemma _paco_pre15: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 (gf: rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14
-(X: let gf' := gf in gf' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14), gf x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14.
-Proof. intros; apply X. Defined.
-
-Ltac paco_pre15 := let X := fresh "_paco_X_" in
-generalize _paco_mark_cons; repeat intro;
-apply _paco_pre15; intro X;
-match goal with
-| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 ?e12 ?e13 ?e14 => unfold X; clear X; paco_cont15 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14
-end.
-
-Ltac paco_post_match15 INC tac1 tac2 :=
-let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
-match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
-| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
-| _ => tac1 cr
-end end.
-
-Tactic Notation "paco_post15" ident(CIH) "with" ident(nr) :=
-let INC := fresh "_paco_inc_" in
-paco_post_match15 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
 let CIH' := fresh CIH in try rename INC into CIH'.
 
 (** ** External interface *)
@@ -1106,9 +1029,6 @@ paco_pre13; eapply lem; [..|paco_post13 CIH with r].
 Tactic Notation "pcofix14" ident(CIH) "using" constr(lem) "with" ident(r) :=
 paco_pre14; eapply lem; [..|paco_post14 CIH with r].
 
-Tactic Notation "pcofix15" ident(CIH) "using" constr(lem) "with" ident(r) :=
-paco_pre15; eapply lem; [..|paco_post15 CIH with r].
-
 (** [pcofix] automatically figures out the appropriate index [n] from
     the type of the accumulation lemma [lem] and applies [pcofix{n}].
 *)
@@ -1120,7 +1040,6 @@ Tactic Notation "pcofix" ident(CIH) "using" constr(lem) "with" ident(nr) :=
   assert (TMP: False -> P) by
     (intro TMP; repeat intro; match goal with [H : _ |- _] => revert H end;
      match goal with
-     | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 15)
      | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 14)
      | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 13)
      | [|- _ _ _ _ _ _ _ _ _ _ _ _ _ -> _] => revert N; instantiate (1 := 12)
@@ -1155,7 +1074,6 @@ Tactic Notation "pcofix" ident(CIH) "using" constr(lem) "with" ident(nr) :=
   | [|- let _ := 12 in _] => intros _; pcofix12 CIH using lem with nr
   | [|- let _ := 13 in _] => intros _; pcofix13 CIH using lem with nr
   | [|- let _ := 14 in _] => intros _; pcofix14 CIH using lem with nr
-  | [|- let _ := 15 in _] => intros _; pcofix15 CIH using lem with nr
   end.
 
 Tactic Notation "pcofix" ident(CIH) "using" constr(lem) :=
