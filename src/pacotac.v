@@ -99,7 +99,7 @@ Ltac pinversion H := punfold H; inversion H; pclearbot.
 *)
 
 Ltac pmonauto :=
-  let IN := fresh "IN" in try (repeat intro; destruct IN; eauto; fail).
+  let IN := fresh "IN" in try (repeat intro; destruct IN; eauto with paco; fail).
 
 
 (** ** pfold_reverse 
