@@ -178,52 +178,52 @@ Tactic Notation "wcofix" ident(CIH) "with" ident(r) :=
   match goal with
   | [|- context[wcpn0]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @wcpn0_cofix with r; [eauto with paco|eauto with paco|]
+    pcofix CIH using @wcpn0_cofix with r; [eauto with paco|eauto with paco; try contradiction|]
   | [|- context[wcpn1]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @wcpn1_cofix with r; [eauto with paco|eauto with paco|]
+    pcofix CIH using @wcpn1_cofix with r; [eauto with paco|eauto with paco; try contradiction|]
   | [|- context[wcpn2]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @wcpn2_cofix with r; [eauto with paco|eauto with paco|]
+    pcofix CIH using @wcpn2_cofix with r; [eauto with paco|eauto with paco; try contradiction|]
   | [|- context[wcpn3]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @wcpn3_cofix with r; [eauto with paco|eauto with paco|]
+    pcofix CIH using @wcpn3_cofix with r; [eauto with paco|eauto with paco; try contradiction|]
   | [|- context[wcpn4]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @wcpn4_cofix with r; [eauto with paco|eauto with paco|]
+    pcofix CIH using @wcpn4_cofix with r; [eauto with paco|eauto with paco; try contradiction|]
   | [|- context[wcpn5]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @wcpn5_cofix with r; [eauto with paco|eauto with paco|]
+    pcofix CIH using @wcpn5_cofix with r; [eauto with paco|eauto with paco; try contradiction|]
   | [|- context[wcpn6]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @wcpn6_cofix with r; [eauto with paco|eauto with paco|]
+    pcofix CIH using @wcpn6_cofix with r; [eauto with paco|eauto with paco; try contradiction|]
   | [|- context[wcpn7]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @wcpn7_cofix with r; [eauto with paco|eauto with paco|]
+    pcofix CIH using @wcpn7_cofix with r; [eauto with paco|eauto with paco; try contradiction|]
   | [|- context[wcpn8]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @wcpn8_cofix with r; [eauto with paco|eauto with paco|]
+    pcofix CIH using @wcpn8_cofix with r; [eauto with paco|eauto with paco; try contradiction|]
   | [|- context[wcpn9]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @wcpn9_cofix with r; [eauto with paco|eauto with paco|]
+    pcofix CIH using @wcpn9_cofix with r; [eauto with paco|eauto with paco; try contradiction|]
   | [|- context[wcpn10]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @wcpn10_cofix with r; [eauto with paco|eauto with paco|]
+    pcofix CIH using @wcpn10_cofix with r; [eauto with paco|eauto with paco; try contradiction|]
   | [|- context[wcpn11]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @wcpn11_cofix with r; [eauto with paco|eauto with paco|]
+    pcofix CIH using @wcpn11_cofix with r; [eauto with paco|eauto with paco; try contradiction|]
   | [|- context[wcpn12]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @wcpn12_cofix with r; [eauto with paco|eauto with paco|]
+    pcofix CIH using @wcpn12_cofix with r; [eauto with paco|eauto with paco; try contradiction|]
   | [|- context[wcpn13]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @wcpn13_cofix with r; [eauto with paco|eauto with paco|]
+    pcofix CIH using @wcpn13_cofix with r; [eauto with paco|eauto with paco; try contradiction|]
   | [|- context[wcpn14]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @wcpn14_cofix with r; [eauto with paco|eauto with paco|]
+    pcofix CIH using @wcpn14_cofix with r; [eauto with paco|eauto with paco; try contradiction|]
   | [|- context[wcpn15]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @wcpn15_cofix with r; [eauto with paco|eauto with paco|]
+    pcofix CIH using @wcpn15_cofix with r; [eauto with paco|eauto with paco; try contradiction|]
   end.
 Tactic Notation "wcofix" ident(CIH) := wcofix CIH with r.
 

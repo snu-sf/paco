@@ -99,7 +99,7 @@ print ("  match goal with")
 for n in range(relsize+1):
     print ("  | [|- context[wcpn"+str(n)+"]]  =>")
     print ("    paco_revert_hyp _paco_mark;")
-    print ("    pcofix CIH using @wcpn"+str(n)+"_cofix with r; [eauto with paco|eauto with paco|]")
+    print ("    pcofix CIH using @wcpn"+str(n)+"_cofix with r; [eauto with paco|eauto with paco; try contradiction|]")
 print ("  end.")
 print ('Tactic Notation "wcofix" ident(CIH) := wcofix CIH with r.')
 print ()
