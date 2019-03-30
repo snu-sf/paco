@@ -41,7 +41,7 @@ Inductive cpn11 (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 : Prop :=
     (CLO: clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10)
 .
 
-Definition gcpn11 := compose gf cpn11.
+Definition fcpn11 := compose gf cpn11.
 
 Lemma cpn11_mon: monotone11 cpn11.
 Proof.
@@ -74,14 +74,14 @@ Proof.
     intros. eapply (compat11_compat cpn11_compat), PR1. 
 Qed.
 
-Lemma gcpn11_mon: monotone11 gcpn11.
+Lemma fcpn11_mon: monotone11 fcpn11.
 Proof.
   repeat intro. eapply gf_mon; [eapply IN|].
   intros. eapply cpn11_mon; [apply PR|apply LE].
 Qed.
 
-Lemma gcpn11_sound:
-  paco11 gcpn11 bot11 <11= paco11 gf bot11.
+Lemma fcpn11_sound:
+  paco11 fcpn11 bot11 <11= paco11 gf bot11.
 Proof.
   intros.
   set (rclo := fix rclo clo n (r: rel) :=
@@ -89,9 +89,9 @@ Proof.
          | 0 => r
          | S n' => rclo clo n' r \11/ clo (rclo clo n' r)
          end).
-  assert (RC: exists n, rclo cpn11 n (paco11 gcpn11 bot11) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) by (exists 0; apply PR); clear PR.
+  assert (RC: exists n, rclo cpn11 n (paco11 fcpn11 bot11) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) by (exists 0; apply PR); clear PR.
   
-  cut (forall n, rclo cpn11 n (paco11 gcpn11 bot11) <11= gf (rclo cpn11 (S n) (paco11 gcpn11 bot11))).
+  cut (forall n, rclo cpn11 n (paco11 fcpn11 bot11) <11= gf (rclo cpn11 (S n) (paco11 fcpn11 bot11))).
   { intro X. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 RC; pcofix CIH; intros.
     pfold. eapply gf_mon.
     - apply X. apply RC.
@@ -100,7 +100,7 @@ Proof.
 
   induction n; intros.
   - eapply gf_mon.
-    + _punfold PR; [apply PR|apply gcpn11_mon].
+    + _punfold PR; [apply PR|apply fcpn11_mon].
     + intros. right. eapply cpn11_mon; [apply PR0|].
       intros. pclearbot. apply PR1.
   - destruct PR.
@@ -252,13 +252,13 @@ Proof.
 Qed.
 
 Lemma cpn11_from_upaco r:
-  upaco11 gcpn11 r <11= cpn11 r.
+  upaco11 fcpn11 r <11= cpn11 r.
 Proof.
   intros. destruct PR; [| apply cpn11_base, H].
-  exists (rclo11 (paco11 gcpn11)).
+  exists (rclo11 (paco11 fcpn11)).
   - apply wcompat11_compat.
     econstructor; [apply paco11_mon|].
-    intros. _punfold PR; [|apply gcpn11_mon].
+    intros. _punfold PR; [|apply fcpn11_mon].
     eapply gf_mon; [apply PR|].
     intros. apply rclo11_cpn.
     eapply cpn11_mon; [apply PR0|].
@@ -277,23 +277,23 @@ Proof.
 Qed.
 
 Lemma cpn11_from_paco r:
-  paco11 gcpn11 r <11= cpn11 r.
+  paco11 fcpn11 r <11= cpn11 r.
 Proof. intros. apply cpn11_from_upaco. left. apply PR. Qed.
 
-Lemma gcpn11_from_paco r:
-  paco11 gcpn11 r <11= gcpn11 r.
+Lemma fcpn11_from_paco r:
+  paco11 fcpn11 r <11= fcpn11 r.
 Proof.
-  intros. _punfold PR; [|apply gcpn11_mon].
+  intros. _punfold PR; [|apply fcpn11_mon].
   eapply gf_mon; [apply PR|].
   intros. apply cpn11_cpn.
   eapply cpn11_mon; [apply PR0|].
   apply cpn11_from_upaco.
 Qed.
 
-Lemma gcpn11_to_paco r:
-  gcpn11 r <11= paco11 gcpn11 r.
+Lemma fcpn11_to_paco r:
+  fcpn11 r <11= paco11 fcpn11 r.
 Proof.
-  intros. pfold. eapply gcpn11_mon; [apply PR|].
+  intros. pfold. eapply fcpn11_mon; [apply PR|].
   intros. right. apply PR0.
 Qed.  
 
@@ -310,7 +310,7 @@ Qed.
 Lemma cpn11_init:
   cpn11 bot11 <11= paco11 gf bot11.
 Proof.
-  intros. apply gcpn11_sound, gcpn11_to_paco, (compat11_compat cpn11_compat).
+  intros. apply fcpn11_sound, fcpn11_to_paco, (compat11_compat cpn11_compat).
   eapply cpn11_mon; [apply PR|contradiction].
 Qed.
 
@@ -322,7 +322,7 @@ Proof.
 Qed.
 
 Lemma cpn11_unfold:
-  cpn11 bot11 <11= gcpn11 bot11.
+  cpn11 bot11 <11= fcpn11 bot11.
 Proof.
   intros. apply cpn11_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
@@ -330,7 +330,7 @@ Proof.
 Qed.
 
 Lemma cpn11_step r:
-  gcpn11 r <11= cpn11 r.
+  fcpn11 r <11= cpn11 r.
 Proof.
   intros. eapply cpn11_clo, PR.
   intros. eapply wcompat11_sound, PR0.
@@ -341,9 +341,9 @@ Proof.
   intros. apply rclo11_base, PR3.
 Qed.
 
-Lemma gcpn11_clo
+Lemma fcpn11_clo
       r clo (LE: clo <12= cpn11):
-  clo (gcpn11 r) <11= gcpn11 r.
+  clo (fcpn11 r) <11= fcpn11 r.
 Proof.
   intros. apply LE, (compat11_compat cpn11_compat) in PR.
   eapply gf_mon; [apply PR|].
@@ -358,7 +358,7 @@ Proof.
   intros. apply cpn11_base, PR1.
 Qed.
 
-Lemma gcpn11_final: forall r, paco11 gf r <11= gcpn11 r.
+Lemma fcpn11_final: forall r, paco11 gf r <11= fcpn11 r.
 Proof.
   intros. _punfold PR; [|apply gf_mon].
   eapply gf_mon; [apply PR | apply cpn11_final].
@@ -388,12 +388,12 @@ Proof.
   left. eapply paco11_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
-Lemma gcpn11_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 r
-      (IN: @gcpn11 gf bot11 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10)
+Lemma fcpn11_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 r
+      (IN: @fcpn11 gf bot11 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10)
       (MONgf: monotone11 gf)
       (MONgf': monotone11 gf')
       (LE: gf <12= gf'):
-  @gcpn11 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+  @fcpn11 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
 Proof.
   apply LE. eapply MONgf. apply IN.
   intros. eapply cpn11_mon_bot; eassumption.
@@ -401,7 +401,7 @@ Qed.
 
 End Companion11.
 
-Hint Unfold gcpn11 : paco.
+Hint Unfold fcpn11 : paco.
 
 Hint Resolve cpn11_base : paco.
 Hint Resolve cpn11_step : paco.

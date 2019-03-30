@@ -45,7 +45,7 @@ Inductive cpn15 (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 : Pro
     (CLO: clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14)
 .
 
-Definition gcpn15 := compose gf cpn15.
+Definition fcpn15 := compose gf cpn15.
 
 Lemma cpn15_mon: monotone15 cpn15.
 Proof.
@@ -78,14 +78,14 @@ Proof.
     intros. eapply (compat15_compat cpn15_compat), PR1. 
 Qed.
 
-Lemma gcpn15_mon: monotone15 gcpn15.
+Lemma fcpn15_mon: monotone15 fcpn15.
 Proof.
   repeat intro. eapply gf_mon; [eapply IN|].
   intros. eapply cpn15_mon; [apply PR|apply LE].
 Qed.
 
-Lemma gcpn15_sound:
-  paco15 gcpn15 bot15 <15= paco15 gf bot15.
+Lemma fcpn15_sound:
+  paco15 fcpn15 bot15 <15= paco15 gf bot15.
 Proof.
   intros.
   set (rclo := fix rclo clo n (r: rel) :=
@@ -93,9 +93,9 @@ Proof.
          | 0 => r
          | S n' => rclo clo n' r \15/ clo (rclo clo n' r)
          end).
-  assert (RC: exists n, rclo cpn15 n (paco15 gcpn15 bot15) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14) by (exists 0; apply PR); clear PR.
+  assert (RC: exists n, rclo cpn15 n (paco15 fcpn15 bot15) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14) by (exists 0; apply PR); clear PR.
   
-  cut (forall n, rclo cpn15 n (paco15 gcpn15 bot15) <15= gf (rclo cpn15 (S n) (paco15 gcpn15 bot15))).
+  cut (forall n, rclo cpn15 n (paco15 fcpn15 bot15) <15= gf (rclo cpn15 (S n) (paco15 fcpn15 bot15))).
   { intro X. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 RC; pcofix CIH; intros.
     pfold. eapply gf_mon.
     - apply X. apply RC.
@@ -104,7 +104,7 @@ Proof.
 
   induction n; intros.
   - eapply gf_mon.
-    + _punfold PR; [apply PR|apply gcpn15_mon].
+    + _punfold PR; [apply PR|apply fcpn15_mon].
     + intros. right. eapply cpn15_mon; [apply PR0|].
       intros. pclearbot. apply PR1.
   - destruct PR.
@@ -256,13 +256,13 @@ Proof.
 Qed.
 
 Lemma cpn15_from_upaco r:
-  upaco15 gcpn15 r <15= cpn15 r.
+  upaco15 fcpn15 r <15= cpn15 r.
 Proof.
   intros. destruct PR; [| apply cpn15_base, H].
-  exists (rclo15 (paco15 gcpn15)).
+  exists (rclo15 (paco15 fcpn15)).
   - apply wcompat15_compat.
     econstructor; [apply paco15_mon|].
-    intros. _punfold PR; [|apply gcpn15_mon].
+    intros. _punfold PR; [|apply fcpn15_mon].
     eapply gf_mon; [apply PR|].
     intros. apply rclo15_cpn.
     eapply cpn15_mon; [apply PR0|].
@@ -281,23 +281,23 @@ Proof.
 Qed.
 
 Lemma cpn15_from_paco r:
-  paco15 gcpn15 r <15= cpn15 r.
+  paco15 fcpn15 r <15= cpn15 r.
 Proof. intros. apply cpn15_from_upaco. left. apply PR. Qed.
 
-Lemma gcpn15_from_paco r:
-  paco15 gcpn15 r <15= gcpn15 r.
+Lemma fcpn15_from_paco r:
+  paco15 fcpn15 r <15= fcpn15 r.
 Proof.
-  intros. _punfold PR; [|apply gcpn15_mon].
+  intros. _punfold PR; [|apply fcpn15_mon].
   eapply gf_mon; [apply PR|].
   intros. apply cpn15_cpn.
   eapply cpn15_mon; [apply PR0|].
   apply cpn15_from_upaco.
 Qed.
 
-Lemma gcpn15_to_paco r:
-  gcpn15 r <15= paco15 gcpn15 r.
+Lemma fcpn15_to_paco r:
+  fcpn15 r <15= paco15 fcpn15 r.
 Proof.
-  intros. pfold. eapply gcpn15_mon; [apply PR|].
+  intros. pfold. eapply fcpn15_mon; [apply PR|].
   intros. right. apply PR0.
 Qed.  
 
@@ -314,7 +314,7 @@ Qed.
 Lemma cpn15_init:
   cpn15 bot15 <15= paco15 gf bot15.
 Proof.
-  intros. apply gcpn15_sound, gcpn15_to_paco, (compat15_compat cpn15_compat).
+  intros. apply fcpn15_sound, fcpn15_to_paco, (compat15_compat cpn15_compat).
   eapply cpn15_mon; [apply PR|contradiction].
 Qed.
 
@@ -326,7 +326,7 @@ Proof.
 Qed.
 
 Lemma cpn15_unfold:
-  cpn15 bot15 <15= gcpn15 bot15.
+  cpn15 bot15 <15= fcpn15 bot15.
 Proof.
   intros. apply cpn15_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
@@ -334,7 +334,7 @@ Proof.
 Qed.
 
 Lemma cpn15_step r:
-  gcpn15 r <15= cpn15 r.
+  fcpn15 r <15= cpn15 r.
 Proof.
   intros. eapply cpn15_clo, PR.
   intros. eapply wcompat15_sound, PR0.
@@ -345,9 +345,9 @@ Proof.
   intros. apply rclo15_base, PR3.
 Qed.
 
-Lemma gcpn15_clo
+Lemma fcpn15_clo
       r clo (LE: clo <16= cpn15):
-  clo (gcpn15 r) <15= gcpn15 r.
+  clo (fcpn15 r) <15= fcpn15 r.
 Proof.
   intros. apply LE, (compat15_compat cpn15_compat) in PR.
   eapply gf_mon; [apply PR|].
@@ -362,7 +362,7 @@ Proof.
   intros. apply cpn15_base, PR1.
 Qed.
 
-Lemma gcpn15_final: forall r, paco15 gf r <15= gcpn15 r.
+Lemma fcpn15_final: forall r, paco15 gf r <15= fcpn15 r.
 Proof.
   intros. _punfold PR; [|apply gf_mon].
   eapply gf_mon; [apply PR | apply cpn15_final].
@@ -392,12 +392,12 @@ Proof.
   left. eapply paco15_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
-Lemma gcpn15_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 r
-      (IN: @gcpn15 gf bot15 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14)
+Lemma fcpn15_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 r
+      (IN: @fcpn15 gf bot15 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14)
       (MONgf: monotone15 gf)
       (MONgf': monotone15 gf')
       (LE: gf <16= gf'):
-  @gcpn15 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+  @fcpn15 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
 Proof.
   apply LE. eapply MONgf. apply IN.
   intros. eapply cpn15_mon_bot; eassumption.
@@ -405,7 +405,7 @@ Qed.
 
 End Companion15.
 
-Hint Unfold gcpn15 : paco.
+Hint Unfold fcpn15 : paco.
 
 Hint Resolve cpn15_base : paco.
 Hint Resolve cpn15_step : paco.

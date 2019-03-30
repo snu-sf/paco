@@ -1,8 +1,8 @@
 changes from v2.1.0 to v3.0.0
 =========================
-- Support "wcpn", which supports more general incremental principles.
+- Support "gcpn", which supports more general incremental principles.
 - Add the following tactics:
-  wbase, wstep, wclo, wcpn, wcofix, wunfold, winit, wfinal.
+  gbase, gstep, gclo, gcpn, gcofix, gunfold, ginit, gfinal.
 
 changes from v2.0.3 to v2.1.0
 =========================

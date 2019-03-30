@@ -18,31 +18,31 @@ Section WCompanion7_main.
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone7 gf.
 
-Inductive wcpn7 (r rg : rel) e0 e1 e2 e3 e4 e5 e6 : Prop :=
-| wcpn7_intro (IN: cpn7 gf (r \7/ gcpn7 gf rg) e0 e1 e2 e3 e4 e5 e6)
+Inductive gcpn7 (r rg : rel) e0 e1 e2 e3 e4 e5 e6 : Prop :=
+| gcpn7_intro (IN: cpn7 gf (r \7/ fcpn7 gf rg) e0 e1 e2 e3 e4 e5 e6)
 .              
 
-Lemma wcpn7_mon r r' rg rg' e0 e1 e2 e3 e4 e5 e6
-      (IN: @wcpn7 r rg e0 e1 e2 e3 e4 e5 e6)
+Lemma gcpn7_mon r r' rg rg' e0 e1 e2 e3 e4 e5 e6
+      (IN: @gcpn7 r rg e0 e1 e2 e3 e4 e5 e6)
       (LEr: r <7= r')
       (LErg: rg <7= rg'):
-  @wcpn7 r' rg' e0 e1 e2 e3 e4 e5 e6.
+  @gcpn7 r' rg' e0 e1 e2 e3 e4 e5 e6.
 Proof.
   destruct IN. constructor.
   eapply cpn7_mon. apply IN. intros.
   destruct PR. left. apply LEr, H. right.
-  eapply gcpn7_mon. apply gf_mon. apply H. apply LErg.
+  eapply fcpn7_mon. apply gf_mon. apply H. apply LErg.
 Qed.
 
-Lemma wcpn7_inc_mon r rg:
-  monotone7 (fun x : rel => wcpn7 r (rg \7/ x)).
+Lemma gcpn7_inc_mon r rg:
+  monotone7 (fun x : rel => gcpn7 r (rg \7/ x)).
 Proof.
   red; intros.
-  eapply wcpn7_mon. apply IN. intros. apply PR.
+  eapply gcpn7_mon. apply IN. intros. apply PR.
   intros. destruct PR. left. apply H. right. apply LE, H. 
 Qed.
 
-Lemma wcpn7_init r: wcpn7 r r <7= cpn7 gf r.
+Lemma gcpn7_init r: gcpn7 r r <7= cpn7 gf r.
 Proof.
   intros. destruct PR.
   ucpn.
@@ -52,47 +52,47 @@ Proof.
   - ustep. apply H.
 Qed.
 
-Lemma wcpn7_final r rg: cpn7 gf r <7= wcpn7 r rg.
+Lemma gcpn7_final r rg: cpn7 gf r <7= gcpn7 r rg.
 Proof.
   constructor. eapply cpn7_mon. apply PR.
   intros. left. apply PR0.
 Qed.
 
-Lemma wcpn7_unfold:
-  wcpn7 bot7 bot7 <7= gf (wcpn7 bot7 bot7).
+Lemma gcpn7_unfold:
+  gcpn7 bot7 bot7 <7= gf (gcpn7 bot7 bot7).
 Proof.
-  intros. apply wcpn7_init in PR. uunfold PR.
+  intros. apply gcpn7_init in PR. uunfold PR.
   eapply gf_mon; [apply PR|].
-  intros. apply wcpn7_final. apply PR0.
+  intros. apply gcpn7_final. apply PR0.
 Qed.
 
-Lemma wcpn7_base r rg:
-  r <7= wcpn7 r rg.
+Lemma gcpn7_base r rg:
+  r <7= gcpn7 r rg.
 Proof.
   intros. constructor. ubase. left. apply PR.
 Qed.
 
-Lemma wcpn7_step r rg:
-  gf (wcpn7 rg rg) <7= wcpn7 r rg.
+Lemma gcpn7_step r rg:
+  gf (gcpn7 rg rg) <7= gcpn7 r rg.
 Proof.
   intros. constructor. ubase. right.
   eapply gf_mon. apply PR.
-  intros. apply wcpn7_init. apply PR0.
+  intros. apply gcpn7_init. apply PR0.
 Qed.
 
-Lemma wcpn7_cpn r rg:
-  cpn7 gf (wcpn7 r rg) <7= wcpn7 r rg.
+Lemma gcpn7_cpn r rg:
+  cpn7 gf (gcpn7 r rg) <7= gcpn7 r rg.
 Proof.
   intros. constructor. ucpn.
   eapply cpn7_mon. apply PR.
   intros. destruct PR0. apply IN.
 Qed.
 
-Lemma wcpn7_clo r rg
+Lemma gcpn7_clo r rg
       clo (LE: clo <8= cpn7 gf):
-  clo (wcpn7 r rg) <7= wcpn7 r rg.
+  clo (gcpn7 r rg) <7= gcpn7 r rg.
 Proof.
-  intros. apply wcpn7_cpn, LE, PR.
+  intros. apply gcpn7_cpn, LE, PR.
 Qed.
 
 Definition cut7 (x y z: rel) : rel := fun e0 e1 e2 e3 e4 e5 e6 => y <7= z /\ x e0 e1 e2 e3 e4 e5 e6.
@@ -105,13 +105,13 @@ Proof.
 Qed.
 
 Lemma cut7_wcomp r rg (LE: r <7= rg) :
-  wcompatible7 gf (cut7 (cpn7 (fun x => wcpn7 r (rg \7/ x)) bot7) rg).
+  wcompatible7 gf (cut7 (cpn7 (fun x => gcpn7 r (rg \7/ x)) bot7) rg).
 Proof.
-  set (pfix := cpn7 (fun x => wcpn7 r (rg \7/ x)) bot7).
+  set (pfix := cpn7 (fun x => gcpn7 r (rg \7/ x)) bot7).
   
   econstructor; [apply cut7_mon|]. intros.
   destruct PR as [LEz FIX].
-  uunfold FIX; [|apply wcpn7_inc_mon].
+  uunfold FIX; [|apply gcpn7_inc_mon].
   eapply gf_mon, rclo7_cpn.
   apply cpn7_compat; [apply gf_mon|].
   eapply cpn7_mon; [apply FIX|]. clear x0 x1 x2 x3 x4 x5 x6 FIX; intros.
@@ -134,7 +134,7 @@ Proof.
 Qed.
 
 Lemma fix7_le_cpn r rg (LE: r <7= rg) :
-  cpn7 (fun x => wcpn7 r (rg \7/ x)) bot7 <7= cpn7 gf rg.
+  cpn7 (fun x => gcpn7 r (rg \7/ x)) bot7 <7= cpn7 gf rg.
 Proof.
   intros. eexists.
   - apply wcompat7_compat, cut7_wcomp. apply gf_mon. apply LE.
@@ -143,8 +143,8 @@ Proof.
     + apply PR.
 Qed.
 
-Lemma fix7_le_wcpn r rg (LE: r <7= rg):
-  cpn7 (fun x => wcpn7 r (rg \7/ x)) bot7 <7= wcpn7 r rg.
+Lemma fix7_le_gcpn r rg (LE: r <7= rg):
+  cpn7 (fun x => gcpn7 r (rg \7/ x)) bot7 <7= gcpn7 r rg.
 Proof.
   (*
     fix
@@ -156,7 +156,7 @@ Proof.
     c(r + gc(rg))
    *)
   
-  intros. uunfold PR; [| apply wcpn7_inc_mon].
+  intros. uunfold PR; [| apply gcpn7_inc_mon].
   destruct PR. constructor.
   eapply cpn7_mon. apply IN. intros.
   destruct PR. left; apply H. right.
@@ -168,13 +168,13 @@ Proof.
   - eapply fix7_le_cpn. apply LE. apply H0.
 Qed.
 
-Lemma wcpn7_cofix: forall
+Lemma gcpn7_cofix: forall
     r rg (LE: r <7= rg)
-    l (OBG: forall rr (INC: rg <7= rr) (CIH: l <7= rr), l <7= wcpn7 r rr),
-  l <7= wcpn7 r rg.
+    l (OBG: forall rr (INC: rg <7= rr) (CIH: l <7= rr), l <7= gcpn7 r rr),
+  l <7= gcpn7 r rg.
 Proof.
-  intros. apply fix7_le_wcpn. apply LE.
-  eapply cpn7_algebra, PR. apply wcpn7_inc_mon.
+  intros. apply fix7_le_gcpn. apply LE.
+  eapply cpn7_algebra, PR. apply gcpn7_inc_mon.
   intros. eapply OBG; intros.
   - left. apply PR1.
   - right. apply PR1.
@@ -183,17 +183,17 @@ Qed.
 
 End WCompanion7_main.
 
-Lemma wcpn7_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 r rg
-      (IN: @wcpn7 gf bot7 bot7 e0 e1 e2 e3 e4 e5 e6)
+Lemma gcpn7_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 r rg
+      (IN: @gcpn7 gf bot7 bot7 e0 e1 e2 e3 e4 e5 e6)
       (MONgf: monotone7 gf)
       (MONgf': monotone7 gf')
       (LE: gf <8= gf'):
-  @wcpn7 gf' r rg e0 e1 e2 e3 e4 e5 e6.
+  @gcpn7 gf' r rg e0 e1 e2 e3 e4 e5 e6.
 Proof.
   destruct IN. constructor.
   eapply cpn7_mon; [| intros; right; eapply PR].
   ubase.
-  eapply gcpn7_mon_bot, LE; [|apply MONgf|apply MONgf'].
+  eapply fcpn7_mon_bot, LE; [|apply MONgf|apply MONgf'].
   eapply MONgf, cpn7_cpn; [| apply MONgf].
   eapply (compat7_compat (cpn7_compat MONgf)).
   eapply cpn7_mon. apply IN.
@@ -202,6 +202,6 @@ Qed.
 
 End WCompanion7.
 
-Hint Resolve wcpn7_base : paco.
-Hint Resolve wcpn7_step : paco.
+Hint Resolve gcpn7_base : paco.
+Hint Resolve gcpn7_step : paco.
 

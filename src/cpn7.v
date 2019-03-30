@@ -37,7 +37,7 @@ Inductive cpn7 (r: rel) e0 e1 e2 e3 e4 e5 e6 : Prop :=
     (CLO: clo r e0 e1 e2 e3 e4 e5 e6)
 .
 
-Definition gcpn7 := compose gf cpn7.
+Definition fcpn7 := compose gf cpn7.
 
 Lemma cpn7_mon: monotone7 cpn7.
 Proof.
@@ -70,14 +70,14 @@ Proof.
     intros. eapply (compat7_compat cpn7_compat), PR1. 
 Qed.
 
-Lemma gcpn7_mon: monotone7 gcpn7.
+Lemma fcpn7_mon: monotone7 fcpn7.
 Proof.
   repeat intro. eapply gf_mon; [eapply IN|].
   intros. eapply cpn7_mon; [apply PR|apply LE].
 Qed.
 
-Lemma gcpn7_sound:
-  paco7 gcpn7 bot7 <7= paco7 gf bot7.
+Lemma fcpn7_sound:
+  paco7 fcpn7 bot7 <7= paco7 gf bot7.
 Proof.
   intros.
   set (rclo := fix rclo clo n (r: rel) :=
@@ -85,9 +85,9 @@ Proof.
          | 0 => r
          | S n' => rclo clo n' r \7/ clo (rclo clo n' r)
          end).
-  assert (RC: exists n, rclo cpn7 n (paco7 gcpn7 bot7) x0 x1 x2 x3 x4 x5 x6) by (exists 0; apply PR); clear PR.
+  assert (RC: exists n, rclo cpn7 n (paco7 fcpn7 bot7) x0 x1 x2 x3 x4 x5 x6) by (exists 0; apply PR); clear PR.
   
-  cut (forall n, rclo cpn7 n (paco7 gcpn7 bot7) <7= gf (rclo cpn7 (S n) (paco7 gcpn7 bot7))).
+  cut (forall n, rclo cpn7 n (paco7 fcpn7 bot7) <7= gf (rclo cpn7 (S n) (paco7 fcpn7 bot7))).
   { intro X. revert x0 x1 x2 x3 x4 x5 x6 RC; pcofix CIH; intros.
     pfold. eapply gf_mon.
     - apply X. apply RC.
@@ -96,7 +96,7 @@ Proof.
 
   induction n; intros.
   - eapply gf_mon.
-    + _punfold PR; [apply PR|apply gcpn7_mon].
+    + _punfold PR; [apply PR|apply fcpn7_mon].
     + intros. right. eapply cpn7_mon; [apply PR0|].
       intros. pclearbot. apply PR1.
   - destruct PR.
@@ -248,13 +248,13 @@ Proof.
 Qed.
 
 Lemma cpn7_from_upaco r:
-  upaco7 gcpn7 r <7= cpn7 r.
+  upaco7 fcpn7 r <7= cpn7 r.
 Proof.
   intros. destruct PR; [| apply cpn7_base, H].
-  exists (rclo7 (paco7 gcpn7)).
+  exists (rclo7 (paco7 fcpn7)).
   - apply wcompat7_compat.
     econstructor; [apply paco7_mon|].
-    intros. _punfold PR; [|apply gcpn7_mon].
+    intros. _punfold PR; [|apply fcpn7_mon].
     eapply gf_mon; [apply PR|].
     intros. apply rclo7_cpn.
     eapply cpn7_mon; [apply PR0|].
@@ -273,23 +273,23 @@ Proof.
 Qed.
 
 Lemma cpn7_from_paco r:
-  paco7 gcpn7 r <7= cpn7 r.
+  paco7 fcpn7 r <7= cpn7 r.
 Proof. intros. apply cpn7_from_upaco. left. apply PR. Qed.
 
-Lemma gcpn7_from_paco r:
-  paco7 gcpn7 r <7= gcpn7 r.
+Lemma fcpn7_from_paco r:
+  paco7 fcpn7 r <7= fcpn7 r.
 Proof.
-  intros. _punfold PR; [|apply gcpn7_mon].
+  intros. _punfold PR; [|apply fcpn7_mon].
   eapply gf_mon; [apply PR|].
   intros. apply cpn7_cpn.
   eapply cpn7_mon; [apply PR0|].
   apply cpn7_from_upaco.
 Qed.
 
-Lemma gcpn7_to_paco r:
-  gcpn7 r <7= paco7 gcpn7 r.
+Lemma fcpn7_to_paco r:
+  fcpn7 r <7= paco7 fcpn7 r.
 Proof.
-  intros. pfold. eapply gcpn7_mon; [apply PR|].
+  intros. pfold. eapply fcpn7_mon; [apply PR|].
   intros. right. apply PR0.
 Qed.  
 
@@ -306,7 +306,7 @@ Qed.
 Lemma cpn7_init:
   cpn7 bot7 <7= paco7 gf bot7.
 Proof.
-  intros. apply gcpn7_sound, gcpn7_to_paco, (compat7_compat cpn7_compat).
+  intros. apply fcpn7_sound, fcpn7_to_paco, (compat7_compat cpn7_compat).
   eapply cpn7_mon; [apply PR|contradiction].
 Qed.
 
@@ -318,7 +318,7 @@ Proof.
 Qed.
 
 Lemma cpn7_unfold:
-  cpn7 bot7 <7= gcpn7 bot7.
+  cpn7 bot7 <7= fcpn7 bot7.
 Proof.
   intros. apply cpn7_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
@@ -326,7 +326,7 @@ Proof.
 Qed.
 
 Lemma cpn7_step r:
-  gcpn7 r <7= cpn7 r.
+  fcpn7 r <7= cpn7 r.
 Proof.
   intros. eapply cpn7_clo, PR.
   intros. eapply wcompat7_sound, PR0.
@@ -337,9 +337,9 @@ Proof.
   intros. apply rclo7_base, PR3.
 Qed.
 
-Lemma gcpn7_clo
+Lemma fcpn7_clo
       r clo (LE: clo <8= cpn7):
-  clo (gcpn7 r) <7= gcpn7 r.
+  clo (fcpn7 r) <7= fcpn7 r.
 Proof.
   intros. apply LE, (compat7_compat cpn7_compat) in PR.
   eapply gf_mon; [apply PR|].
@@ -354,7 +354,7 @@ Proof.
   intros. apply cpn7_base, PR1.
 Qed.
 
-Lemma gcpn7_final: forall r, paco7 gf r <7= gcpn7 r.
+Lemma fcpn7_final: forall r, paco7 gf r <7= fcpn7 r.
 Proof.
   intros. _punfold PR; [|apply gf_mon].
   eapply gf_mon; [apply PR | apply cpn7_final].
@@ -384,12 +384,12 @@ Proof.
   left. eapply paco7_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
-Lemma gcpn7_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 r
-      (IN: @gcpn7 gf bot7 e0 e1 e2 e3 e4 e5 e6)
+Lemma fcpn7_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 r
+      (IN: @fcpn7 gf bot7 e0 e1 e2 e3 e4 e5 e6)
       (MONgf: monotone7 gf)
       (MONgf': monotone7 gf')
       (LE: gf <8= gf'):
-  @gcpn7 gf' r e0 e1 e2 e3 e4 e5 e6.
+  @fcpn7 gf' r e0 e1 e2 e3 e4 e5 e6.
 Proof.
   apply LE. eapply MONgf. apply IN.
   intros. eapply cpn7_mon_bot; eassumption.
@@ -397,7 +397,7 @@ Qed.
 
 End Companion7.
 
-Hint Unfold gcpn7 : paco.
+Hint Unfold fcpn7 : paco.
 
 Hint Resolve cpn7_base : paco.
 Hint Resolve cpn7_step : paco.

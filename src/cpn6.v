@@ -36,7 +36,7 @@ Inductive cpn6 (r: rel) e0 e1 e2 e3 e4 e5 : Prop :=
     (CLO: clo r e0 e1 e2 e3 e4 e5)
 .
 
-Definition gcpn6 := compose gf cpn6.
+Definition fcpn6 := compose gf cpn6.
 
 Lemma cpn6_mon: monotone6 cpn6.
 Proof.
@@ -69,14 +69,14 @@ Proof.
     intros. eapply (compat6_compat cpn6_compat), PR1. 
 Qed.
 
-Lemma gcpn6_mon: monotone6 gcpn6.
+Lemma fcpn6_mon: monotone6 fcpn6.
 Proof.
   repeat intro. eapply gf_mon; [eapply IN|].
   intros. eapply cpn6_mon; [apply PR|apply LE].
 Qed.
 
-Lemma gcpn6_sound:
-  paco6 gcpn6 bot6 <6= paco6 gf bot6.
+Lemma fcpn6_sound:
+  paco6 fcpn6 bot6 <6= paco6 gf bot6.
 Proof.
   intros.
   set (rclo := fix rclo clo n (r: rel) :=
@@ -84,9 +84,9 @@ Proof.
          | 0 => r
          | S n' => rclo clo n' r \6/ clo (rclo clo n' r)
          end).
-  assert (RC: exists n, rclo cpn6 n (paco6 gcpn6 bot6) x0 x1 x2 x3 x4 x5) by (exists 0; apply PR); clear PR.
+  assert (RC: exists n, rclo cpn6 n (paco6 fcpn6 bot6) x0 x1 x2 x3 x4 x5) by (exists 0; apply PR); clear PR.
   
-  cut (forall n, rclo cpn6 n (paco6 gcpn6 bot6) <6= gf (rclo cpn6 (S n) (paco6 gcpn6 bot6))).
+  cut (forall n, rclo cpn6 n (paco6 fcpn6 bot6) <6= gf (rclo cpn6 (S n) (paco6 fcpn6 bot6))).
   { intro X. revert x0 x1 x2 x3 x4 x5 RC; pcofix CIH; intros.
     pfold. eapply gf_mon.
     - apply X. apply RC.
@@ -95,7 +95,7 @@ Proof.
 
   induction n; intros.
   - eapply gf_mon.
-    + _punfold PR; [apply PR|apply gcpn6_mon].
+    + _punfold PR; [apply PR|apply fcpn6_mon].
     + intros. right. eapply cpn6_mon; [apply PR0|].
       intros. pclearbot. apply PR1.
   - destruct PR.
@@ -247,13 +247,13 @@ Proof.
 Qed.
 
 Lemma cpn6_from_upaco r:
-  upaco6 gcpn6 r <6= cpn6 r.
+  upaco6 fcpn6 r <6= cpn6 r.
 Proof.
   intros. destruct PR; [| apply cpn6_base, H].
-  exists (rclo6 (paco6 gcpn6)).
+  exists (rclo6 (paco6 fcpn6)).
   - apply wcompat6_compat.
     econstructor; [apply paco6_mon|].
-    intros. _punfold PR; [|apply gcpn6_mon].
+    intros. _punfold PR; [|apply fcpn6_mon].
     eapply gf_mon; [apply PR|].
     intros. apply rclo6_cpn.
     eapply cpn6_mon; [apply PR0|].
@@ -272,23 +272,23 @@ Proof.
 Qed.
 
 Lemma cpn6_from_paco r:
-  paco6 gcpn6 r <6= cpn6 r.
+  paco6 fcpn6 r <6= cpn6 r.
 Proof. intros. apply cpn6_from_upaco. left. apply PR. Qed.
 
-Lemma gcpn6_from_paco r:
-  paco6 gcpn6 r <6= gcpn6 r.
+Lemma fcpn6_from_paco r:
+  paco6 fcpn6 r <6= fcpn6 r.
 Proof.
-  intros. _punfold PR; [|apply gcpn6_mon].
+  intros. _punfold PR; [|apply fcpn6_mon].
   eapply gf_mon; [apply PR|].
   intros. apply cpn6_cpn.
   eapply cpn6_mon; [apply PR0|].
   apply cpn6_from_upaco.
 Qed.
 
-Lemma gcpn6_to_paco r:
-  gcpn6 r <6= paco6 gcpn6 r.
+Lemma fcpn6_to_paco r:
+  fcpn6 r <6= paco6 fcpn6 r.
 Proof.
-  intros. pfold. eapply gcpn6_mon; [apply PR|].
+  intros. pfold. eapply fcpn6_mon; [apply PR|].
   intros. right. apply PR0.
 Qed.  
 
@@ -305,7 +305,7 @@ Qed.
 Lemma cpn6_init:
   cpn6 bot6 <6= paco6 gf bot6.
 Proof.
-  intros. apply gcpn6_sound, gcpn6_to_paco, (compat6_compat cpn6_compat).
+  intros. apply fcpn6_sound, fcpn6_to_paco, (compat6_compat cpn6_compat).
   eapply cpn6_mon; [apply PR|contradiction].
 Qed.
 
@@ -317,7 +317,7 @@ Proof.
 Qed.
 
 Lemma cpn6_unfold:
-  cpn6 bot6 <6= gcpn6 bot6.
+  cpn6 bot6 <6= fcpn6 bot6.
 Proof.
   intros. apply cpn6_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
@@ -325,7 +325,7 @@ Proof.
 Qed.
 
 Lemma cpn6_step r:
-  gcpn6 r <6= cpn6 r.
+  fcpn6 r <6= cpn6 r.
 Proof.
   intros. eapply cpn6_clo, PR.
   intros. eapply wcompat6_sound, PR0.
@@ -336,9 +336,9 @@ Proof.
   intros. apply rclo6_base, PR3.
 Qed.
 
-Lemma gcpn6_clo
+Lemma fcpn6_clo
       r clo (LE: clo <7= cpn6):
-  clo (gcpn6 r) <6= gcpn6 r.
+  clo (fcpn6 r) <6= fcpn6 r.
 Proof.
   intros. apply LE, (compat6_compat cpn6_compat) in PR.
   eapply gf_mon; [apply PR|].
@@ -353,7 +353,7 @@ Proof.
   intros. apply cpn6_base, PR1.
 Qed.
 
-Lemma gcpn6_final: forall r, paco6 gf r <6= gcpn6 r.
+Lemma fcpn6_final: forall r, paco6 gf r <6= fcpn6 r.
 Proof.
   intros. _punfold PR; [|apply gf_mon].
   eapply gf_mon; [apply PR | apply cpn6_final].
@@ -383,12 +383,12 @@ Proof.
   left. eapply paco6_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
-Lemma gcpn6_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 r
-      (IN: @gcpn6 gf bot6 e0 e1 e2 e3 e4 e5)
+Lemma fcpn6_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 r
+      (IN: @fcpn6 gf bot6 e0 e1 e2 e3 e4 e5)
       (MONgf: monotone6 gf)
       (MONgf': monotone6 gf')
       (LE: gf <7= gf'):
-  @gcpn6 gf' r e0 e1 e2 e3 e4 e5.
+  @fcpn6 gf' r e0 e1 e2 e3 e4 e5.
 Proof.
   apply LE. eapply MONgf. apply IN.
   intros. eapply cpn6_mon_bot; eassumption.
@@ -396,7 +396,7 @@ Qed.
 
 End Companion6.
 
-Hint Unfold gcpn6 : paco.
+Hint Unfold fcpn6 : paco.
 
 Hint Resolve cpn6_base : paco.
 Hint Resolve cpn6_step : paco.

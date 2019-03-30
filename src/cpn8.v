@@ -38,7 +38,7 @@ Inductive cpn8 (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 : Prop :=
     (CLO: clo r e0 e1 e2 e3 e4 e5 e6 e7)
 .
 
-Definition gcpn8 := compose gf cpn8.
+Definition fcpn8 := compose gf cpn8.
 
 Lemma cpn8_mon: monotone8 cpn8.
 Proof.
@@ -71,14 +71,14 @@ Proof.
     intros. eapply (compat8_compat cpn8_compat), PR1. 
 Qed.
 
-Lemma gcpn8_mon: monotone8 gcpn8.
+Lemma fcpn8_mon: monotone8 fcpn8.
 Proof.
   repeat intro. eapply gf_mon; [eapply IN|].
   intros. eapply cpn8_mon; [apply PR|apply LE].
 Qed.
 
-Lemma gcpn8_sound:
-  paco8 gcpn8 bot8 <8= paco8 gf bot8.
+Lemma fcpn8_sound:
+  paco8 fcpn8 bot8 <8= paco8 gf bot8.
 Proof.
   intros.
   set (rclo := fix rclo clo n (r: rel) :=
@@ -86,9 +86,9 @@ Proof.
          | 0 => r
          | S n' => rclo clo n' r \8/ clo (rclo clo n' r)
          end).
-  assert (RC: exists n, rclo cpn8 n (paco8 gcpn8 bot8) x0 x1 x2 x3 x4 x5 x6 x7) by (exists 0; apply PR); clear PR.
+  assert (RC: exists n, rclo cpn8 n (paco8 fcpn8 bot8) x0 x1 x2 x3 x4 x5 x6 x7) by (exists 0; apply PR); clear PR.
   
-  cut (forall n, rclo cpn8 n (paco8 gcpn8 bot8) <8= gf (rclo cpn8 (S n) (paco8 gcpn8 bot8))).
+  cut (forall n, rclo cpn8 n (paco8 fcpn8 bot8) <8= gf (rclo cpn8 (S n) (paco8 fcpn8 bot8))).
   { intro X. revert x0 x1 x2 x3 x4 x5 x6 x7 RC; pcofix CIH; intros.
     pfold. eapply gf_mon.
     - apply X. apply RC.
@@ -97,7 +97,7 @@ Proof.
 
   induction n; intros.
   - eapply gf_mon.
-    + _punfold PR; [apply PR|apply gcpn8_mon].
+    + _punfold PR; [apply PR|apply fcpn8_mon].
     + intros. right. eapply cpn8_mon; [apply PR0|].
       intros. pclearbot. apply PR1.
   - destruct PR.
@@ -249,13 +249,13 @@ Proof.
 Qed.
 
 Lemma cpn8_from_upaco r:
-  upaco8 gcpn8 r <8= cpn8 r.
+  upaco8 fcpn8 r <8= cpn8 r.
 Proof.
   intros. destruct PR; [| apply cpn8_base, H].
-  exists (rclo8 (paco8 gcpn8)).
+  exists (rclo8 (paco8 fcpn8)).
   - apply wcompat8_compat.
     econstructor; [apply paco8_mon|].
-    intros. _punfold PR; [|apply gcpn8_mon].
+    intros. _punfold PR; [|apply fcpn8_mon].
     eapply gf_mon; [apply PR|].
     intros. apply rclo8_cpn.
     eapply cpn8_mon; [apply PR0|].
@@ -274,23 +274,23 @@ Proof.
 Qed.
 
 Lemma cpn8_from_paco r:
-  paco8 gcpn8 r <8= cpn8 r.
+  paco8 fcpn8 r <8= cpn8 r.
 Proof. intros. apply cpn8_from_upaco. left. apply PR. Qed.
 
-Lemma gcpn8_from_paco r:
-  paco8 gcpn8 r <8= gcpn8 r.
+Lemma fcpn8_from_paco r:
+  paco8 fcpn8 r <8= fcpn8 r.
 Proof.
-  intros. _punfold PR; [|apply gcpn8_mon].
+  intros. _punfold PR; [|apply fcpn8_mon].
   eapply gf_mon; [apply PR|].
   intros. apply cpn8_cpn.
   eapply cpn8_mon; [apply PR0|].
   apply cpn8_from_upaco.
 Qed.
 
-Lemma gcpn8_to_paco r:
-  gcpn8 r <8= paco8 gcpn8 r.
+Lemma fcpn8_to_paco r:
+  fcpn8 r <8= paco8 fcpn8 r.
 Proof.
-  intros. pfold. eapply gcpn8_mon; [apply PR|].
+  intros. pfold. eapply fcpn8_mon; [apply PR|].
   intros. right. apply PR0.
 Qed.  
 
@@ -307,7 +307,7 @@ Qed.
 Lemma cpn8_init:
   cpn8 bot8 <8= paco8 gf bot8.
 Proof.
-  intros. apply gcpn8_sound, gcpn8_to_paco, (compat8_compat cpn8_compat).
+  intros. apply fcpn8_sound, fcpn8_to_paco, (compat8_compat cpn8_compat).
   eapply cpn8_mon; [apply PR|contradiction].
 Qed.
 
@@ -319,7 +319,7 @@ Proof.
 Qed.
 
 Lemma cpn8_unfold:
-  cpn8 bot8 <8= gcpn8 bot8.
+  cpn8 bot8 <8= fcpn8 bot8.
 Proof.
   intros. apply cpn8_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
@@ -327,7 +327,7 @@ Proof.
 Qed.
 
 Lemma cpn8_step r:
-  gcpn8 r <8= cpn8 r.
+  fcpn8 r <8= cpn8 r.
 Proof.
   intros. eapply cpn8_clo, PR.
   intros. eapply wcompat8_sound, PR0.
@@ -338,9 +338,9 @@ Proof.
   intros. apply rclo8_base, PR3.
 Qed.
 
-Lemma gcpn8_clo
+Lemma fcpn8_clo
       r clo (LE: clo <9= cpn8):
-  clo (gcpn8 r) <8= gcpn8 r.
+  clo (fcpn8 r) <8= fcpn8 r.
 Proof.
   intros. apply LE, (compat8_compat cpn8_compat) in PR.
   eapply gf_mon; [apply PR|].
@@ -355,7 +355,7 @@ Proof.
   intros. apply cpn8_base, PR1.
 Qed.
 
-Lemma gcpn8_final: forall r, paco8 gf r <8= gcpn8 r.
+Lemma fcpn8_final: forall r, paco8 gf r <8= fcpn8 r.
 Proof.
   intros. _punfold PR; [|apply gf_mon].
   eapply gf_mon; [apply PR | apply cpn8_final].
@@ -385,12 +385,12 @@ Proof.
   left. eapply paco8_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
-Lemma gcpn8_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 r
-      (IN: @gcpn8 gf bot8 e0 e1 e2 e3 e4 e5 e6 e7)
+Lemma fcpn8_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 r
+      (IN: @fcpn8 gf bot8 e0 e1 e2 e3 e4 e5 e6 e7)
       (MONgf: monotone8 gf)
       (MONgf': monotone8 gf')
       (LE: gf <9= gf'):
-  @gcpn8 gf' r e0 e1 e2 e3 e4 e5 e6 e7.
+  @fcpn8 gf' r e0 e1 e2 e3 e4 e5 e6 e7.
 Proof.
   apply LE. eapply MONgf. apply IN.
   intros. eapply cpn8_mon_bot; eassumption.
@@ -398,7 +398,7 @@ Qed.
 
 End Companion8.
 
-Hint Unfold gcpn8 : paco.
+Hint Unfold fcpn8 : paco.
 
 Hint Resolve cpn8_base : paco.
 Hint Resolve cpn8_step : paco.
