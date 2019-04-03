@@ -26,14 +26,35 @@ Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone13 gf.
 
 (** 
-  Compatibility, Companion & Guarded Companion
+  Bounded Compatibility, Companion & Guarded Companion
 *)
+
+Inductive pointwise_union (bnd: rel -> rel) (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 : Prop :=
+| pw_union_ d0 d1 d2 d3 d4 d5 d6 d7 d8 d9 d10 d11 d12
+            (IN: r d0 d1 d2 d3 d4 d5 d6 d7 d8 d9 d10 d11 d12)
+            (PTW: forall (s: rel), s d0 d1 d2 d3 d4 d5 d6 d7 d8 d9 d10 d11 d12 -> bnd s e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12)
+.
+
+Structure compatible_bound13 (bnd: rel -> rel) : Prop :=
+  cbound13_intro {
+      cbound13_distr : forall r,
+          bnd r <13= pointwise_union bnd r;
+      cbound13_compat: forall r,
+          bnd (gf r) <13= gf (bnd r);
+      cbound13_bound: forall r,
+          bnd (bnd r) <13= (bnd r \13/ gf (bnd r));
+    }.
+
+Variable bnd: rel -> rel.
+Hypothesis bnd_compat : compatible_bound13 bnd.
 
 Structure compatible13 (clo: rel -> rel) : Prop :=
   compat13_intro {
       compat13_mon: monotone13 clo;
       compat13_compat : forall r,
           clo (gf r) <13= gf (clo r);
+      compat13_bound : forall r,
+          bnd (clo r) <13= (bnd r \13/ gf (clo r))
     }.
 
 Inductive cpn13 (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 : Prop :=
@@ -45,6 +66,22 @@ Inductive cpn13 (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 : Prop :=
 
 Definition fcpn13 := compose gf cpn13.
 
+Lemma cbound13_union r1 r2 : bnd (r1 \13/ r2) <13= (bnd r1 \13/ bnd r2).
+Proof.
+  intros. eapply cbound13_distr in PR; [|apply bnd_compat].
+  destruct PR. destruct IN.
+  - left. apply PTW, H.
+  - right. apply PTW, H.
+Qed.
+
+Lemma cbound13_mon: monotone13 bnd.
+Proof.
+  repeat intro.
+  apply (cbound13_distr bnd_compat) in IN.
+  destruct IN.
+  apply PTW, LE, IN.
+Qed.
+
 Lemma cpn13_mon: monotone13 cpn13.
 Proof.
   red. intros.
@@ -55,14 +92,42 @@ Qed.
 
 Lemma cpn13_compat: compatible13 cpn13.
 Proof.
-  econstructor; [apply cpn13_mon|intros].
-  destruct PR; eapply gf_mon with (r:=clo r).
-  - eapply (compat13_compat COM); apply CLO.
-  - intros. econstructor; [apply COM|apply PR].
+  econstructor; [apply cpn13_mon| |]; intros.
+  - destruct PR; eapply gf_mon with (r:=clo r).
+    + eapply (compat13_compat COM); apply CLO.
+    + intros. econstructor; [apply COM|apply PR].
+  - eapply (cbound13_distr bnd_compat) in PR.
+    destruct PR. destruct IN.
+    specialize (PTW (clo r) CLO).
+    apply (compat13_bound COM) in PTW.
+    destruct PTW.
+    + left. apply H.
+    + right. eapply gf_mon; [apply H|].
+      intros. econstructor;[apply COM|apply PR].
 Qed.
 
 Lemma cpn13_greatest: forall clo (COM: compatible13 clo), clo <14= cpn13.
 Proof. intros. econstructor;[apply COM|apply PR]. Qed.
+
+Lemma cpn13_base: forall r, r <13= cpn13 r.
+Proof.
+  intros. exists id.
+  - econstructor; repeat intro.
+    + apply LE, IN.
+    + apply PR0.
+    + left. apply PR0.
+  - apply PR.
+Qed.
+
+Lemma cpn13_bound : forall r, bnd r <13= cpn13 r.
+Proof.
+  intros. exists bnd.
+  - econstructor; repeat intro.
+    + eapply cbound13_mon. apply IN. apply LE.
+    + apply (cbound13_compat bnd_compat), PR0.
+    + apply (cbound13_bound bnd_compat), PR0.
+  - apply PR.
+Qed.
 
 Lemma cpn13_cpn: forall r,
     cpn13 (cpn13 r) <13= cpn13 r.
@@ -73,7 +138,13 @@ Proof.
     intros. eapply cpn13_mon; [apply PR0|apply LE].
   - intros. eapply (compat13_compat cpn13_compat).
     eapply cpn13_mon; [apply PR0|].
-    intros. eapply (compat13_compat cpn13_compat), PR1. 
+    intros. eapply (compat13_compat cpn13_compat), PR1.
+  - intros. eapply (compat13_bound cpn13_compat) in PR0.
+    destruct PR0; [|right; apply H].
+    eapply (compat13_bound cpn13_compat) in H.
+    destruct H; [left; apply H|].
+    right. eapply gf_mon; [apply H|].
+    intros. apply cpn13_base. apply PR0.
 Qed.
 
 Lemma fcpn13_mon: monotone13 fcpn13.
@@ -144,6 +215,8 @@ Structure wcompatible13 (clo: rel -> rel) : Prop :=
       wcompat13_mon: monotone13 clo;
       wcompat13_wcompat: forall r,
           clo (gf r) <13= gf (rclo13 clo r);
+      wcompat13_bound : forall r,
+          bnd (clo r) <13= (bnd r \13/ gf (rclo13 clo r))
     }.
 
 Lemma rclo13_mon_gen clo clo' r r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12
@@ -192,7 +265,7 @@ Lemma rclo13_mult clo r:
   rclo13 clo (rclo13 clo r) <13= rclo13 clo r.
 Proof.
   intros. induction PR.
-  - eapply R.
+  - apply R.
   - econstructor 2; [eapply H | eapply CLOR'].
   - econstructor 3; [eapply H | eapply CLOR'].
   - econstructor 4; [eapply H | eapply CLOR'].
@@ -215,19 +288,52 @@ Lemma wcompat13_compat
       clo (WCOM: wcompatible13 clo):
   compatible13 (rclo13 clo).
 Proof.
-  econstructor; [eapply rclo13_mon|]. intros.
-  induction PR; intros.
-  - eapply gf_mon; [apply R|]. intros.
-    apply rclo13_base. apply PR.
-  - eapply gf_mon.
-    + eapply (wcompat13_wcompat WCOM).
-      eapply (wcompat13_mon WCOM); [apply CLOR'|apply H].
-    + intros. apply rclo13_mult, PR.
-  - eapply gf_mon; [apply CLOR'|].
-    intros. apply H in PR. apply rclo13_step, PR.
-  - eapply gf_mon; [|intros; apply rclo13_cpn, PR].
-    apply (compat13_compat cpn13_compat).
-    eapply cpn13_mon; [apply CLOR'|apply H].
+  econstructor; [eapply rclo13_mon| |]; intros.
+  - induction PR; intros.
+    + eapply gf_mon; [apply R|]. intros.
+      apply rclo13_base. apply PR.
+    + eapply gf_mon.
+      * eapply (wcompat13_wcompat WCOM).
+        eapply (wcompat13_mon WCOM); [apply CLOR'|apply H].
+      * intros. apply rclo13_mult, PR.
+    + eapply gf_mon; [apply CLOR'|].
+      intros. apply H in PR. apply rclo13_step, PR.
+    + eapply gf_mon; [|intros; apply rclo13_cpn, PR].
+      apply (compat13_compat cpn13_compat).
+      eapply cpn13_mon; [apply CLOR'|apply H].
+  - eapply (cbound13_distr bnd_compat) in PR.
+    destruct PR. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 PTW.
+    induction IN; intros.
+    + left. apply PTW, R.
+    + specialize (PTW _ CLOR').
+      eapply (wcompat13_bound WCOM) in PTW.
+      destruct PTW as [PTW|PTW].
+      * eapply (cbound13_distr bnd_compat) in PTW.
+        destruct PTW.
+        eapply H; [apply IN | apply PTW].
+      * right. eapply gf_mon; [apply PTW|].
+        intros. apply rclo13_mult.
+        eapply rclo13_mon, R'. apply PR.
+    + specialize (PTW _ CLOR').
+      eapply (cbound13_compat bnd_compat) in PTW.
+      right. eapply gf_mon. apply PTW. intros.
+      eapply (cbound13_distr bnd_compat) in PR.
+      destruct PR.
+      eapply H in IN; [|apply PTW0].
+      destruct IN.
+      * apply rclo13_cpn, cpn13_bound.
+        eapply cbound13_mon. apply H0. apply rclo13_base.
+      * apply rclo13_step. apply H0.
+    + specialize (PTW _ CLOR').
+      apply (compat13_bound cpn13_compat) in PTW.
+      destruct PTW as [PTW|PTW].
+      * eapply (cbound13_distr bnd_compat) in PTW.
+        destruct PTW.
+        eapply H; [apply IN | apply PTW].
+      * right. eapply gf_mon; [apply PTW|].
+        intros. apply rclo13_cpn.
+        eapply cpn13_mon; [apply PR|].
+        intros. apply R', PR0.
 Qed.
 
 Lemma wcompat13_sound clo (WCOM: wcompatible13 clo):
@@ -244,35 +350,40 @@ Qed.
   Lemmas for tactics
 *)
 
-Lemma cpn13_base: forall r, r <13= cpn13 r.
-Proof.
-  intros. exists id.
-  - econstructor; repeat intro.
-    + apply LE, IN.
-    + apply PR0.
-  - apply PR.
-Qed.
-
 Lemma cpn13_from_upaco r:
   upaco13 fcpn13 r <13= cpn13 r.
 Proof.
   intros. destruct PR; [| apply cpn13_base, H].
   exists (rclo13 (paco13 fcpn13)).
   - apply wcompat13_compat.
-    econstructor; [apply paco13_mon|].
-    intros. _punfold PR; [|apply fcpn13_mon].
-    eapply gf_mon; [apply PR|].
-    intros. apply rclo13_cpn.
-    eapply cpn13_mon; [apply PR0|].
-    intros. destruct PR1.
-    + apply rclo13_clo.
-      eapply paco13_mon; [apply H0|].
-      intros. apply rclo13_step.
-      eapply gf_mon; [apply PR1|].
-      intros. apply rclo13_base, PR2.
-    + apply rclo13_step.
-      eapply gf_mon; [apply H0|].
-      intros. apply rclo13_base, PR1.
+    econstructor; [apply paco13_mon| |].
+    + intros. _punfold PR; [|apply fcpn13_mon].
+      eapply gf_mon; [apply PR|].
+      intros. apply rclo13_cpn.
+      eapply cpn13_mon; [apply PR0|].
+      intros. destruct PR1.
+      * apply rclo13_clo.
+        eapply paco13_mon; [apply H0|].
+        intros. apply rclo13_step.
+        eapply gf_mon; [apply PR1|].
+        intros. apply rclo13_base, PR2.
+      * apply rclo13_step.
+        eapply gf_mon; [apply H0|].
+        intros. apply rclo13_base, PR1.
+    + intros. right.
+      eapply gf_mon, rclo13_cpn.
+      eapply gf_mon, cpn13_bound.
+      apply (cbound13_compat bnd_compat).
+      eapply cbound13_mon. apply PR.
+      intros. _punfold PR0; [|apply fcpn13_mon].
+      eapply gf_mon. apply PR0.
+      intros. apply rclo13_cpn.
+      eapply cpn13_mon. apply PR1.
+      intros. destruct PR2.
+      * apply rclo13_clo.
+        eapply paco13_mon. apply H0.
+        intros. apply rclo13_base. apply PR2.
+      * apply rclo13_base. apply H0.
   - apply rclo13_clo.
     eapply paco13_mon; [apply H|].
     intros. apply rclo13_base, PR.
@@ -331,16 +442,31 @@ Proof.
   intros. pclearbot. apply cpn13_complete, PR0.
 Qed.
 
+Lemma cpn13_unfold_bound r
+      (BASE: forall r, r <13= bnd r):
+  cpn13 r <13= (bnd r \13/ fcpn13 r).
+Proof.
+  intros. apply BASE in PR.
+  eapply compat13_bound in PR.
+  - apply PR.
+  - apply cpn13_compat.
+Qed.
+
 Lemma cpn13_step r:
   fcpn13 r <13= cpn13 r.
 Proof.
   intros. eapply cpn13_clo, PR.
   intros. eapply wcompat13_sound, PR0.
-  econstructor; [apply gf_mon|].
-  intros. eapply gf_mon; [apply PR1|].
-  intros. apply rclo13_step.
-  eapply gf_mon; [apply PR2|].
-  intros. apply rclo13_base, PR3.
+  econstructor; [apply gf_mon| |].
+  - intros. eapply gf_mon; [apply PR1|].
+    intros. apply rclo13_step.
+    eapply gf_mon; [apply PR2|].
+    intros. apply rclo13_base, PR3.
+  - intros. apply (cbound13_compat bnd_compat) in PR1.
+    right. eapply gf_mon. apply PR1.
+    intros. apply rclo13_cpn, cpn13_bound.
+    eapply cbound13_mon. apply PR2.
+    intros. apply rclo13_base, PR3.
 Qed.
 
 Lemma fcpn13_clo
@@ -378,35 +504,45 @@ Qed.
 
 End Companion13_main.
 
-Lemma cpn13_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 r
-      (IN: @cpn13 gf bot13 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12)
-      (MONgf: monotone13 gf)
-      (MONgf': monotone13 gf')
-      (LE: gf <14= gf'):
-  @cpn13 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+Lemma cbound13_bot gf:
+  compatible_bound13 gf bot14.
 Proof.
-  apply cpn13_init in IN; [|apply MONgf].
-  apply cpn13_final; [apply MONgf'|].
+  econstructor; intros; contradiction.
+Qed.
+
+Lemma cpn13_mon_bot (gf gf': rel -> rel) bnd bnd' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 r
+      (IN: @cpn13 gf bnd bot13 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12)
+      (MON: monotone13 gf)
+      (MON': monotone13 gf')
+      (BASE: compatible_bound13 gf bnd)
+      (BASE': compatible_bound13 gf' bnd')
+      (LE: gf <14= gf'):
+  @cpn13 gf' bnd' r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+Proof.
+  apply cpn13_init in IN; [|apply MON|apply BASE].
+  apply cpn13_final; [apply MON'|apply BASE'|].
   left. eapply paco13_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
-Lemma fcpn13_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 r
-      (IN: @fcpn13 gf bot13 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12)
-      (MONgf: monotone13 gf)
-      (MONgf': monotone13 gf')
+Lemma fcpn13_mon_bot (gf gf': rel -> rel) bnd bnd' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 r
+      (IN: @fcpn13 gf bnd bot13 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12)
+      (MON: monotone13 gf)
+      (MON': monotone13 gf')
+      (BASE: compatible_bound13 gf bnd)
+      (BASE': compatible_bound13 gf' bnd')
       (LE: gf <14= gf'):
-  @fcpn13 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
+  @fcpn13 gf' bnd' r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12.
 Proof.
-  apply LE. eapply MONgf. apply IN.
+  apply LE. eapply MON. apply IN.
   intros. eapply cpn13_mon_bot; eassumption.
 Qed.
 
 End Companion13.
 
 Hint Unfold fcpn13 : paco.
-
 Hint Resolve cpn13_base : paco.
 Hint Resolve cpn13_step : paco.
+Hint Resolve cbound13_bot : paco.
 
 Hint Constructors rclo13 : rclo.
 Hint Resolve rclo13_clo rclo13_step rclo13_cpn : rclo.

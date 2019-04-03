@@ -5,22 +5,22 @@ Require Import pacotac_internal pacotac pacoall cpnall.
 
 Tactic Notation "uinit_" :=
   match goal with
-  | [|- context[paco0]] => eapply cpn0_init; [eauto with paco|]
-  | [|- context[paco1]] => eapply cpn1_init; [eauto with paco|]
-  | [|- context[paco2]] => eapply cpn2_init; [eauto with paco|]
-  | [|- context[paco3]] => eapply cpn3_init; [eauto with paco|]
-  | [|- context[paco4]] => eapply cpn4_init; [eauto with paco|]
-  | [|- context[paco5]] => eapply cpn5_init; [eauto with paco|]
-  | [|- context[paco6]] => eapply cpn6_init; [eauto with paco|]
-  | [|- context[paco7]] => eapply cpn7_init; [eauto with paco|]
-  | [|- context[paco8]] => eapply cpn8_init; [eauto with paco|]
-  | [|- context[paco9]] => eapply cpn9_init; [eauto with paco|]
-  | [|- context[paco10]] => eapply cpn10_init; [eauto with paco|]
-  | [|- context[paco11]] => eapply cpn11_init; [eauto with paco|]
-  | [|- context[paco12]] => eapply cpn12_init; [eauto with paco|]
-  | [|- context[paco13]] => eapply cpn13_init; [eauto with paco|]
-  | [|- context[paco14]] => eapply cpn14_init; [eauto with paco|]
-  | [|- context[paco15]] => eapply cpn15_init; [eauto with paco|]
+  | [|- context[paco0]] => eapply cpn0_init; [eauto with paco|eauto with paco|]
+  | [|- context[paco1]] => eapply cpn1_init; [eauto with paco|eauto with paco|]
+  | [|- context[paco2]] => eapply cpn2_init; [eauto with paco|eauto with paco|]
+  | [|- context[paco3]] => eapply cpn3_init; [eauto with paco|eauto with paco|]
+  | [|- context[paco4]] => eapply cpn4_init; [eauto with paco|eauto with paco|]
+  | [|- context[paco5]] => eapply cpn5_init; [eauto with paco|eauto with paco|]
+  | [|- context[paco6]] => eapply cpn6_init; [eauto with paco|eauto with paco|]
+  | [|- context[paco7]] => eapply cpn7_init; [eauto with paco|eauto with paco|]
+  | [|- context[paco8]] => eapply cpn8_init; [eauto with paco|eauto with paco|]
+  | [|- context[paco9]] => eapply cpn9_init; [eauto with paco|eauto with paco|]
+  | [|- context[paco10]] => eapply cpn10_init; [eauto with paco|eauto with paco|]
+  | [|- context[paco11]] => eapply cpn11_init; [eauto with paco|eauto with paco|]
+  | [|- context[paco12]] => eapply cpn12_init; [eauto with paco|eauto with paco|]
+  | [|- context[paco13]] => eapply cpn13_init; [eauto with paco|eauto with paco|]
+  | [|- context[paco14]] => eapply cpn14_init; [eauto with paco|eauto with paco|]
+  | [|- context[paco15]] => eapply cpn15_init; [eauto with paco|eauto with paco|]
   end.
 Ltac uinit := repeat red; under_forall ltac:(uinit_).
 
@@ -29,38 +29,38 @@ Ltac uinit := repeat red; under_forall ltac:(uinit_).
 
 Tactic Notation "ufinal_" :=
   match goal with
-  | [|- context[fcpn0]] => eapply fcpn0_final; [eauto with paco|]
-  | [|- context[cpn0]]  => eapply cpn0_final; [eauto with paco|]
-  | [|- context[fcpn1]] => eapply fcpn1_final; [eauto with paco|]
-  | [|- context[cpn1]]  => eapply cpn1_final; [eauto with paco|]
-  | [|- context[fcpn2]] => eapply fcpn2_final; [eauto with paco|]
-  | [|- context[cpn2]]  => eapply cpn2_final; [eauto with paco|]
-  | [|- context[fcpn3]] => eapply fcpn3_final; [eauto with paco|]
-  | [|- context[cpn3]]  => eapply cpn3_final; [eauto with paco|]
-  | [|- context[fcpn4]] => eapply fcpn4_final; [eauto with paco|]
-  | [|- context[cpn4]]  => eapply cpn4_final; [eauto with paco|]
-  | [|- context[fcpn5]] => eapply fcpn5_final; [eauto with paco|]
-  | [|- context[cpn5]]  => eapply cpn5_final; [eauto with paco|]
-  | [|- context[fcpn6]] => eapply fcpn6_final; [eauto with paco|]
-  | [|- context[cpn6]]  => eapply cpn6_final; [eauto with paco|]
-  | [|- context[fcpn7]] => eapply fcpn7_final; [eauto with paco|]
-  | [|- context[cpn7]]  => eapply cpn7_final; [eauto with paco|]
-  | [|- context[fcpn8]] => eapply fcpn8_final; [eauto with paco|]
-  | [|- context[cpn8]]  => eapply cpn8_final; [eauto with paco|]
-  | [|- context[fcpn9]] => eapply fcpn9_final; [eauto with paco|]
-  | [|- context[cpn9]]  => eapply cpn9_final; [eauto with paco|]
-  | [|- context[fcpn10]] => eapply fcpn10_final; [eauto with paco|]
-  | [|- context[cpn10]]  => eapply cpn10_final; [eauto with paco|]
-  | [|- context[fcpn11]] => eapply fcpn11_final; [eauto with paco|]
-  | [|- context[cpn11]]  => eapply cpn11_final; [eauto with paco|]
-  | [|- context[fcpn12]] => eapply fcpn12_final; [eauto with paco|]
-  | [|- context[cpn12]]  => eapply cpn12_final; [eauto with paco|]
-  | [|- context[fcpn13]] => eapply fcpn13_final; [eauto with paco|]
-  | [|- context[cpn13]]  => eapply cpn13_final; [eauto with paco|]
-  | [|- context[fcpn14]] => eapply fcpn14_final; [eauto with paco|]
-  | [|- context[cpn14]]  => eapply cpn14_final; [eauto with paco|]
-  | [|- context[fcpn15]] => eapply fcpn15_final; [eauto with paco|]
-  | [|- context[cpn15]]  => eapply cpn15_final; [eauto with paco|]
+  | [|- context[fcpn0]] => eapply fcpn0_final; [eauto with paco|eauto with paco|]
+  | [|- context[cpn0]]  => eapply cpn0_final; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn1]] => eapply fcpn1_final; [eauto with paco|eauto with paco|]
+  | [|- context[cpn1]]  => eapply cpn1_final; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn2]] => eapply fcpn2_final; [eauto with paco|eauto with paco|]
+  | [|- context[cpn2]]  => eapply cpn2_final; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn3]] => eapply fcpn3_final; [eauto with paco|eauto with paco|]
+  | [|- context[cpn3]]  => eapply cpn3_final; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn4]] => eapply fcpn4_final; [eauto with paco|eauto with paco|]
+  | [|- context[cpn4]]  => eapply cpn4_final; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn5]] => eapply fcpn5_final; [eauto with paco|eauto with paco|]
+  | [|- context[cpn5]]  => eapply cpn5_final; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn6]] => eapply fcpn6_final; [eauto with paco|eauto with paco|]
+  | [|- context[cpn6]]  => eapply cpn6_final; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn7]] => eapply fcpn7_final; [eauto with paco|eauto with paco|]
+  | [|- context[cpn7]]  => eapply cpn7_final; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn8]] => eapply fcpn8_final; [eauto with paco|eauto with paco|]
+  | [|- context[cpn8]]  => eapply cpn8_final; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn9]] => eapply fcpn9_final; [eauto with paco|eauto with paco|]
+  | [|- context[cpn9]]  => eapply cpn9_final; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn10]] => eapply fcpn10_final; [eauto with paco|eauto with paco|]
+  | [|- context[cpn10]]  => eapply cpn10_final; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn11]] => eapply fcpn11_final; [eauto with paco|eauto with paco|]
+  | [|- context[cpn11]]  => eapply cpn11_final; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn12]] => eapply fcpn12_final; [eauto with paco|eauto with paco|]
+  | [|- context[cpn12]]  => eapply cpn12_final; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn13]] => eapply fcpn13_final; [eauto with paco|eauto with paco|]
+  | [|- context[cpn13]]  => eapply cpn13_final; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn14]] => eapply fcpn14_final; [eauto with paco|eauto with paco|]
+  | [|- context[cpn14]]  => eapply cpn14_final; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn15]] => eapply fcpn15_final; [eauto with paco|eauto with paco|]
+  | [|- context[cpn15]]  => eapply cpn15_final; [eauto with paco|eauto with paco|]
   end.
 Ltac ufinal := under_forall ltac:(ufinal_).
 
@@ -110,6 +110,56 @@ Ltac ucompat :=
   | [|- context[cpn15]] => eapply wcompat15_sound; eauto with paco
   end.
 
+(** ** uunfold H
+*)
+
+Ltac uunfold H :=
+  repeat red in H;
+  let G := type of H in
+  match G with
+  | context[cpn0] => eapply cpn0_unfold in H; [|eauto with paco|eauto with paco]
+  | context[cpn1] => eapply cpn1_unfold in H; [|eauto with paco|eauto with paco]
+  | context[cpn2] => eapply cpn2_unfold in H; [|eauto with paco|eauto with paco]
+  | context[cpn3] => eapply cpn3_unfold in H; [|eauto with paco|eauto with paco]
+  | context[cpn4] => eapply cpn4_unfold in H; [|eauto with paco|eauto with paco]
+  | context[cpn5] => eapply cpn5_unfold in H; [|eauto with paco|eauto with paco]
+  | context[cpn6] => eapply cpn6_unfold in H; [|eauto with paco|eauto with paco]
+  | context[cpn7] => eapply cpn7_unfold in H; [|eauto with paco|eauto with paco]
+  | context[cpn8] => eapply cpn8_unfold in H; [|eauto with paco|eauto with paco]
+  | context[cpn9] => eapply cpn9_unfold in H; [|eauto with paco|eauto with paco]
+  | context[cpn10] => eapply cpn10_unfold in H; [|eauto with paco|eauto with paco]
+  | context[cpn11] => eapply cpn11_unfold in H; [|eauto with paco|eauto with paco]
+  | context[cpn12] => eapply cpn12_unfold in H; [|eauto with paco|eauto with paco]
+  | context[cpn13] => eapply cpn13_unfold in H; [|eauto with paco|eauto with paco]
+  | context[cpn14] => eapply cpn14_unfold in H; [|eauto with paco|eauto with paco]
+  | context[cpn15] => eapply cpn15_unfold in H; [|eauto with paco|eauto with paco]
+  end.
+
+(** ** uunfoldb H
+*)
+
+Ltac uunfoldb H :=
+  repeat red in H;
+  let G := type of H in
+  match G with
+  | context[cpn0] => eapply cpn0_unfold_bound in H; [|eauto with paco|eauto with paco|eauto with paco]
+  | context[cpn1] => eapply cpn1_unfold_bound in H; [|eauto with paco|eauto with paco|eauto with paco]
+  | context[cpn2] => eapply cpn2_unfold_bound in H; [|eauto with paco|eauto with paco|eauto with paco]
+  | context[cpn3] => eapply cpn3_unfold_bound in H; [|eauto with paco|eauto with paco|eauto with paco]
+  | context[cpn4] => eapply cpn4_unfold_bound in H; [|eauto with paco|eauto with paco|eauto with paco]
+  | context[cpn5] => eapply cpn5_unfold_bound in H; [|eauto with paco|eauto with paco|eauto with paco]
+  | context[cpn6] => eapply cpn6_unfold_bound in H; [|eauto with paco|eauto with paco|eauto with paco]
+  | context[cpn7] => eapply cpn7_unfold_bound in H; [|eauto with paco|eauto with paco|eauto with paco]
+  | context[cpn8] => eapply cpn8_unfold_bound in H; [|eauto with paco|eauto with paco|eauto with paco]
+  | context[cpn9] => eapply cpn9_unfold_bound in H; [|eauto with paco|eauto with paco|eauto with paco]
+  | context[cpn10] => eapply cpn10_unfold_bound in H; [|eauto with paco|eauto with paco|eauto with paco]
+  | context[cpn11] => eapply cpn11_unfold_bound in H; [|eauto with paco|eauto with paco|eauto with paco]
+  | context[cpn12] => eapply cpn12_unfold_bound in H; [|eauto with paco|eauto with paco|eauto with paco]
+  | context[cpn13] => eapply cpn13_unfold_bound in H; [|eauto with paco|eauto with paco|eauto with paco]
+  | context[cpn14] => eapply cpn14_unfold_bound in H; [|eauto with paco|eauto with paco|eauto with paco]
+  | context[cpn15] => eapply cpn15_unfold_bound in H; [|eauto with paco|eauto with paco|eauto with paco]
+  end.
+
 (** ** ubase
 *)
 
@@ -134,52 +184,51 @@ Tactic Notation "ubase_" :=
   end.
 Ltac ubase := under_forall ltac:(ubase_).
 
-(** ** uunfold H
+(** ** ubound
 *)
 
-Ltac uunfold H :=
-  repeat red in H;
-  let G := type of H in
-  match G with
-  | context[cpn0] => eapply cpn0_unfold in H; [|eauto with paco]
-  | context[cpn1] => eapply cpn1_unfold in H; [|eauto with paco]
-  | context[cpn2] => eapply cpn2_unfold in H; [|eauto with paco]
-  | context[cpn3] => eapply cpn3_unfold in H; [|eauto with paco]
-  | context[cpn4] => eapply cpn4_unfold in H; [|eauto with paco]
-  | context[cpn5] => eapply cpn5_unfold in H; [|eauto with paco]
-  | context[cpn6] => eapply cpn6_unfold in H; [|eauto with paco]
-  | context[cpn7] => eapply cpn7_unfold in H; [|eauto with paco]
-  | context[cpn8] => eapply cpn8_unfold in H; [|eauto with paco]
-  | context[cpn9] => eapply cpn9_unfold in H; [|eauto with paco]
-  | context[cpn10] => eapply cpn10_unfold in H; [|eauto with paco]
-  | context[cpn11] => eapply cpn11_unfold in H; [|eauto with paco]
-  | context[cpn12] => eapply cpn12_unfold in H; [|eauto with paco]
-  | context[cpn13] => eapply cpn13_unfold in H; [|eauto with paco]
-  | context[cpn14] => eapply cpn14_unfold in H; [|eauto with paco]
-  | context[cpn15] => eapply cpn15_unfold in H; [|eauto with paco]
+Tactic Notation "ubound_" :=
+  match goal with
+  | [|- context[cpn0]] => eapply cpn0_bound; [eauto with paco|]
+  | [|- context[cpn1]] => eapply cpn1_bound; [eauto with paco|]
+  | [|- context[cpn2]] => eapply cpn2_bound; [eauto with paco|]
+  | [|- context[cpn3]] => eapply cpn3_bound; [eauto with paco|]
+  | [|- context[cpn4]] => eapply cpn4_bound; [eauto with paco|]
+  | [|- context[cpn5]] => eapply cpn5_bound; [eauto with paco|]
+  | [|- context[cpn6]] => eapply cpn6_bound; [eauto with paco|]
+  | [|- context[cpn7]] => eapply cpn7_bound; [eauto with paco|]
+  | [|- context[cpn8]] => eapply cpn8_bound; [eauto with paco|]
+  | [|- context[cpn9]] => eapply cpn9_bound; [eauto with paco|]
+  | [|- context[cpn10]] => eapply cpn10_bound; [eauto with paco|]
+  | [|- context[cpn11]] => eapply cpn11_bound; [eauto with paco|]
+  | [|- context[cpn12]] => eapply cpn12_bound; [eauto with paco|]
+  | [|- context[cpn13]] => eapply cpn13_bound; [eauto with paco|]
+  | [|- context[cpn14]] => eapply cpn14_bound; [eauto with paco|]
+  | [|- context[cpn15]] => eapply cpn15_bound; [eauto with paco|]
   end.
+Ltac ubound := under_forall ltac:(ubound_).
 
 (** ** ucpn
 *)
 
 Tactic Notation "ucpn_" :=
   match goal with
-  | [|- context[cpn0]] => eapply cpn0_cpn; [eauto with paco|]
-  | [|- context[cpn1]] => eapply cpn1_cpn; [eauto with paco|]
-  | [|- context[cpn2]] => eapply cpn2_cpn; [eauto with paco|]
-  | [|- context[cpn3]] => eapply cpn3_cpn; [eauto with paco|]
-  | [|- context[cpn4]] => eapply cpn4_cpn; [eauto with paco|]
-  | [|- context[cpn5]] => eapply cpn5_cpn; [eauto with paco|]
-  | [|- context[cpn6]] => eapply cpn6_cpn; [eauto with paco|]
-  | [|- context[cpn7]] => eapply cpn7_cpn; [eauto with paco|]
-  | [|- context[cpn8]] => eapply cpn8_cpn; [eauto with paco|]
-  | [|- context[cpn9]] => eapply cpn9_cpn; [eauto with paco|]
-  | [|- context[cpn10]] => eapply cpn10_cpn; [eauto with paco|]
-  | [|- context[cpn11]] => eapply cpn11_cpn; [eauto with paco|]
-  | [|- context[cpn12]] => eapply cpn12_cpn; [eauto with paco|]
-  | [|- context[cpn13]] => eapply cpn13_cpn; [eauto with paco|]
-  | [|- context[cpn14]] => eapply cpn14_cpn; [eauto with paco|]
-  | [|- context[cpn15]] => eapply cpn15_cpn; [eauto with paco|]
+  | [|- context[cpn0]] => eapply cpn0_cpn; [eauto with paco|eauto with paco|]
+  | [|- context[cpn1]] => eapply cpn1_cpn; [eauto with paco|eauto with paco|]
+  | [|- context[cpn2]] => eapply cpn2_cpn; [eauto with paco|eauto with paco|]
+  | [|- context[cpn3]] => eapply cpn3_cpn; [eauto with paco|eauto with paco|]
+  | [|- context[cpn4]] => eapply cpn4_cpn; [eauto with paco|eauto with paco|]
+  | [|- context[cpn5]] => eapply cpn5_cpn; [eauto with paco|eauto with paco|]
+  | [|- context[cpn6]] => eapply cpn6_cpn; [eauto with paco|eauto with paco|]
+  | [|- context[cpn7]] => eapply cpn7_cpn; [eauto with paco|eauto with paco|]
+  | [|- context[cpn8]] => eapply cpn8_cpn; [eauto with paco|eauto with paco|]
+  | [|- context[cpn9]] => eapply cpn9_cpn; [eauto with paco|eauto with paco|]
+  | [|- context[cpn10]] => eapply cpn10_cpn; [eauto with paco|eauto with paco|]
+  | [|- context[cpn11]] => eapply cpn11_cpn; [eauto with paco|eauto with paco|]
+  | [|- context[cpn12]] => eapply cpn12_cpn; [eauto with paco|eauto with paco|]
+  | [|- context[cpn13]] => eapply cpn13_cpn; [eauto with paco|eauto with paco|]
+  | [|- context[cpn14]] => eapply cpn14_cpn; [eauto with paco|eauto with paco|]
+  | [|- context[cpn15]] => eapply cpn15_cpn; [eauto with paco|eauto with paco|]
   end.
 Ltac ucpn := repeat red; under_forall ltac:(ucpn_).
 
@@ -188,22 +237,22 @@ Ltac ucpn := repeat red; under_forall ltac:(ucpn_).
 
 Tactic Notation "ustep_" :=
   match goal with
-  | [|- context[cpn0]] => eapply cpn0_step; [eauto with paco|]
-  | [|- context[cpn1]] => eapply cpn1_step; [eauto with paco|]
-  | [|- context[cpn2]] => eapply cpn2_step; [eauto with paco|]
-  | [|- context[cpn3]] => eapply cpn3_step; [eauto with paco|]
-  | [|- context[cpn4]] => eapply cpn4_step; [eauto with paco|]
-  | [|- context[cpn5]] => eapply cpn5_step; [eauto with paco|]
-  | [|- context[cpn6]] => eapply cpn6_step; [eauto with paco|]
-  | [|- context[cpn7]] => eapply cpn7_step; [eauto with paco|]
-  | [|- context[cpn8]] => eapply cpn8_step; [eauto with paco|]
-  | [|- context[cpn9]] => eapply cpn9_step; [eauto with paco|]
-  | [|- context[cpn10]] => eapply cpn10_step; [eauto with paco|]
-  | [|- context[cpn11]] => eapply cpn11_step; [eauto with paco|]
-  | [|- context[cpn12]] => eapply cpn12_step; [eauto with paco|]
-  | [|- context[cpn13]] => eapply cpn13_step; [eauto with paco|]
-  | [|- context[cpn14]] => eapply cpn14_step; [eauto with paco|]
-  | [|- context[cpn15]] => eapply cpn15_step; [eauto with paco|]
+  | [|- context[cpn0]] => eapply cpn0_step; [eauto with paco|eauto with paco|]
+  | [|- context[cpn1]] => eapply cpn1_step; [eauto with paco|eauto with paco|]
+  | [|- context[cpn2]] => eapply cpn2_step; [eauto with paco|eauto with paco|]
+  | [|- context[cpn3]] => eapply cpn3_step; [eauto with paco|eauto with paco|]
+  | [|- context[cpn4]] => eapply cpn4_step; [eauto with paco|eauto with paco|]
+  | [|- context[cpn5]] => eapply cpn5_step; [eauto with paco|eauto with paco|]
+  | [|- context[cpn6]] => eapply cpn6_step; [eauto with paco|eauto with paco|]
+  | [|- context[cpn7]] => eapply cpn7_step; [eauto with paco|eauto with paco|]
+  | [|- context[cpn8]] => eapply cpn8_step; [eauto with paco|eauto with paco|]
+  | [|- context[cpn9]] => eapply cpn9_step; [eauto with paco|eauto with paco|]
+  | [|- context[cpn10]] => eapply cpn10_step; [eauto with paco|eauto with paco|]
+  | [|- context[cpn11]] => eapply cpn11_step; [eauto with paco|eauto with paco|]
+  | [|- context[cpn12]] => eapply cpn12_step; [eauto with paco|eauto with paco|]
+  | [|- context[cpn13]] => eapply cpn13_step; [eauto with paco|eauto with paco|]
+  | [|- context[cpn14]] => eapply cpn14_step; [eauto with paco|eauto with paco|]
+  | [|- context[cpn15]] => eapply cpn15_step; [eauto with paco|eauto with paco|]
   end.
 Ltac ustep := repeat red; under_forall ltac:(ustep_).
 
@@ -212,42 +261,42 @@ Ltac ustep := repeat red; under_forall ltac:(ustep_).
 
 Tactic Notation "guclo__" constr(H) :=
   match goal with
-  | [|- context[fcpn0]] => eapply fcpn0_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[fcpn1]] => eapply fcpn1_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[fcpn2]] => eapply fcpn2_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[fcpn3]] => eapply fcpn3_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[fcpn4]] => eapply fcpn4_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[fcpn5]] => eapply fcpn5_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[fcpn6]] => eapply fcpn6_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[fcpn7]] => eapply fcpn7_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[fcpn8]] => eapply fcpn8_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[fcpn9]] => eapply fcpn9_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[fcpn10]] => eapply fcpn10_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[fcpn11]] => eapply fcpn11_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[fcpn12]] => eapply fcpn12_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[fcpn13]] => eapply fcpn13_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[fcpn14]] => eapply fcpn14_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[fcpn15]] => eapply fcpn15_clo; [|eapply H|]; [eauto with paco|]
+  | [|- context[fcpn0]] => eapply fcpn0_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn1]] => eapply fcpn1_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn2]] => eapply fcpn2_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn3]] => eapply fcpn3_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn4]] => eapply fcpn4_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn5]] => eapply fcpn5_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn6]] => eapply fcpn6_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn7]] => eapply fcpn7_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn8]] => eapply fcpn8_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn9]] => eapply fcpn9_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn10]] => eapply fcpn10_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn11]] => eapply fcpn11_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn12]] => eapply fcpn12_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn13]] => eapply fcpn13_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn14]] => eapply fcpn14_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[fcpn15]] => eapply fcpn15_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
   end.
 Ltac guclo_ H := under_forall ltac:(guclo__ H).
 Tactic Notation "uclo__" constr(H) :=
   match goal with
-  | [|- context[cpn0]]  => eapply cpn0_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[cpn1]]  => eapply cpn1_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[cpn2]]  => eapply cpn2_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[cpn3]]  => eapply cpn3_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[cpn4]]  => eapply cpn4_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[cpn5]]  => eapply cpn5_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[cpn6]]  => eapply cpn6_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[cpn7]]  => eapply cpn7_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[cpn8]]  => eapply cpn8_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[cpn9]]  => eapply cpn9_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[cpn10]]  => eapply cpn10_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[cpn11]]  => eapply cpn11_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[cpn12]]  => eapply cpn12_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[cpn13]]  => eapply cpn13_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[cpn14]]  => eapply cpn14_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[cpn15]]  => eapply cpn15_clo; [|eapply H|]; [eauto with paco|]
+  | [|- context[cpn0]]  => eapply cpn0_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[cpn1]]  => eapply cpn1_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[cpn2]]  => eapply cpn2_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[cpn3]]  => eapply cpn3_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[cpn4]]  => eapply cpn4_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[cpn5]]  => eapply cpn5_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[cpn6]]  => eapply cpn6_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[cpn7]]  => eapply cpn7_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[cpn8]]  => eapply cpn8_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[cpn9]]  => eapply cpn9_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[cpn10]]  => eapply cpn10_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[cpn11]]  => eapply cpn11_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[cpn12]]  => eapply cpn12_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[cpn13]]  => eapply cpn13_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[cpn14]]  => eapply cpn14_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
+  | [|- context[cpn15]]  => eapply cpn15_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
   end.
 Ltac uclo_ H := repeat red; under_forall ltac:(uclo__ H).
 Ltac uclo H := first[ guclo_ H | uclo_ H ].
@@ -259,67 +308,67 @@ Tactic Notation "gucofix_" ident(CIH) "with" ident(r) :=
   generalize _paco_mark_cons; intros;
   match goal with
   | [|- context[fcpn0]] =>
-    (eapply fcpn0_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply fcpn0_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn0_to_paco; [eauto with paco|])
   | [|- context[fcpn1]] =>
-    (eapply fcpn1_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply fcpn1_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn1_to_paco; [eauto with paco|])
   | [|- context[fcpn2]] =>
-    (eapply fcpn2_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply fcpn2_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn2_to_paco; [eauto with paco|])
   | [|- context[fcpn3]] =>
-    (eapply fcpn3_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply fcpn3_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn3_to_paco; [eauto with paco|])
   | [|- context[fcpn4]] =>
-    (eapply fcpn4_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply fcpn4_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn4_to_paco; [eauto with paco|])
   | [|- context[fcpn5]] =>
-    (eapply fcpn5_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply fcpn5_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn5_to_paco; [eauto with paco|])
   | [|- context[fcpn6]] =>
-    (eapply fcpn6_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply fcpn6_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn6_to_paco; [eauto with paco|])
   | [|- context[fcpn7]] =>
-    (eapply fcpn7_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply fcpn7_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn7_to_paco; [eauto with paco|])
   | [|- context[fcpn8]] =>
-    (eapply fcpn8_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply fcpn8_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn8_to_paco; [eauto with paco|])
   | [|- context[fcpn9]] =>
-    (eapply fcpn9_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply fcpn9_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn9_to_paco; [eauto with paco|])
   | [|- context[fcpn10]] =>
-    (eapply fcpn10_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply fcpn10_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn10_to_paco; [eauto with paco|])
   | [|- context[fcpn11]] =>
-    (eapply fcpn11_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply fcpn11_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn11_to_paco; [eauto with paco|])
   | [|- context[fcpn12]] =>
-    (eapply fcpn12_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply fcpn12_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn12_to_paco; [eauto with paco|])
   | [|- context[fcpn13]] =>
-    (eapply fcpn13_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply fcpn13_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn13_to_paco; [eauto with paco|])
   | [|- context[fcpn14]] =>
-    (eapply fcpn14_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply fcpn14_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn14_to_paco; [eauto with paco|])
   | [|- context[fcpn15]] =>
-    (eapply fcpn15_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply fcpn15_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn15_to_paco; [eauto with paco|])
   end.
@@ -328,67 +377,67 @@ Tactic Notation "ucofix_" ident(CIH) "with" ident(r) :=
   generalize _paco_mark_cons; intros;
   match goal with
   | [|- context[cpn0]]  =>
-    (eapply cpn0_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply cpn0_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn0_to_paco; [eauto with paco|])
   | [|- context[cpn1]]  =>
-    (eapply cpn1_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply cpn1_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn1_to_paco; [eauto with paco|])
   | [|- context[cpn2]]  =>
-    (eapply cpn2_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply cpn2_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn2_to_paco; [eauto with paco|])
   | [|- context[cpn3]]  =>
-    (eapply cpn3_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply cpn3_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn3_to_paco; [eauto with paco|])
   | [|- context[cpn4]]  =>
-    (eapply cpn4_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply cpn4_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn4_to_paco; [eauto with paco|])
   | [|- context[cpn5]]  =>
-    (eapply cpn5_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply cpn5_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn5_to_paco; [eauto with paco|])
   | [|- context[cpn6]]  =>
-    (eapply cpn6_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply cpn6_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn6_to_paco; [eauto with paco|])
   | [|- context[cpn7]]  =>
-    (eapply cpn7_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply cpn7_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn7_to_paco; [eauto with paco|])
   | [|- context[cpn8]]  =>
-    (eapply cpn8_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply cpn8_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn8_to_paco; [eauto with paco|])
   | [|- context[cpn9]]  =>
-    (eapply cpn9_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply cpn9_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn9_to_paco; [eauto with paco|])
   | [|- context[cpn10]]  =>
-    (eapply cpn10_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply cpn10_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn10_to_paco; [eauto with paco|])
   | [|- context[cpn11]]  =>
-    (eapply cpn11_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply cpn11_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn11_to_paco; [eauto with paco|])
   | [|- context[cpn12]]  =>
-    (eapply cpn12_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply cpn12_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn12_to_paco; [eauto with paco|])
   | [|- context[cpn13]]  =>
-    (eapply cpn13_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply cpn13_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn13_to_paco; [eauto with paco|])
   | [|- context[cpn14]]  =>
-    (eapply cpn14_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply cpn14_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn14_to_paco; [eauto with paco|])
   | [|- context[cpn15]]  =>
-    (eapply cpn15_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
+    (eapply cpn15_from_paco; [eauto with paco|eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn15_to_paco; [eauto with paco|])
   end.

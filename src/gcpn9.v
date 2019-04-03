@@ -20,8 +20,11 @@ Section WCompanion9_main.
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone9 gf.
 
+Variable bnd: rel -> rel.
+Hypothesis bnd_compat : compatible_bound9 gf bnd.
+
 Inductive gcpn9 (r rg : rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 : Prop :=
-| gcpn9_intro (IN: cpn9 gf (r \9/ fcpn9 gf rg) e0 e1 e2 e3 e4 e5 e6 e7 e8)
+| gcpn9_intro (IN: cpn9 gf bnd (r \9/ fcpn9 gf bnd rg) e0 e1 e2 e3 e4 e5 e6 e7 e8)
 .              
 
 Lemma gcpn9_mon r r' rg rg' e0 e1 e2 e3 e4 e5 e6 e7 e8
@@ -36,15 +39,7 @@ Proof.
   eapply fcpn9_mon. apply gf_mon. apply H. apply LErg.
 Qed.
 
-Lemma gcpn9_inc_mon r rg:
-  monotone9 (fun x : rel => gcpn9 r (rg \9/ x)).
-Proof.
-  red; intros.
-  eapply gcpn9_mon. apply IN. intros. apply PR.
-  intros. destruct PR. left. apply H. right. apply LE, H. 
-Qed.
-
-Lemma gcpn9_init r: gcpn9 r r <9= cpn9 gf r.
+Lemma gcpn9_init r: gcpn9 r r <9= cpn9 gf bnd r.
 Proof.
   intros. destruct PR.
   ucpn.
@@ -54,7 +49,7 @@ Proof.
   - ustep. apply H.
 Qed.
 
-Lemma gcpn9_final r rg: cpn9 gf r <9= gcpn9 r rg.
+Lemma gcpn9_final r rg: cpn9 gf bnd r <9= gcpn9 r rg.
 Proof.
   constructor. eapply cpn9_mon. apply PR.
   intros. left. apply PR0.
@@ -74,6 +69,16 @@ Proof.
   intros. constructor. ubase. left. apply PR.
 Qed.
 
+Lemma gcpn9_bound r rg:
+  bnd r <9= gcpn9 r rg.
+Proof.
+  intros. econstructor. apply cpn9_bound. apply bnd_compat.
+  eapply cbound9_mon.
+  - apply bnd_compat.
+  - apply PR.
+  - intros. left. apply PR0.
+Qed.
+
 Lemma gcpn9_step r rg:
   gf (gcpn9 rg rg) <9= gcpn9 r rg.
 Proof.
@@ -83,7 +88,7 @@ Proof.
 Qed.
 
 Lemma gcpn9_cpn r rg:
-  cpn9 gf (gcpn9 r rg) <9= gcpn9 r rg.
+  cpn9 gf bnd (gcpn9 r rg) <9= gcpn9 r rg.
 Proof.
   intros. constructor. ucpn.
   eapply cpn9_mon. apply PR.
@@ -91,62 +96,113 @@ Proof.
 Qed.
 
 Lemma gcpn9_clo r rg
-      clo (LE: clo <10= cpn9 gf):
+      clo (LE: clo <10= cpn9 gf bnd):
   clo (gcpn9 r rg) <9= gcpn9 r rg.
 Proof.
   intros. apply gcpn9_cpn, LE, PR.
 Qed.
 
-Definition cut9 (x y z: rel) : rel := fun e0 e1 e2 e3 e4 e5 e6 e7 e8 => y <9= z /\ x e0 e1 e2 e3 e4 e5 e6 e7 e8.
+(*
+  Fixpoint theorem of gcpn9
+ *)
 
-Lemma cut9_mon x y : monotone9 (cut9 x y).
+Definition gcut9 (x y z: rel) : rel := fun e0 e1 e2 e3 e4 e5 e6 e7 e8 => y <9= z /\ x e0 e1 e2 e3 e4 e5 e6 e7 e8.
+
+Definition gfixF9 (r rg z: rel) : rel := gcpn9 r (rg \9/ z).
+
+Definition gfix9 (r rg: rel) : rel := cpn9 (gfixF9 r rg) bot10 bot9.
+
+Lemma gfixF9_mon r rg:
+  monotone9 (gfixF9 r rg).
+Proof.
+  red; intros.
+  eapply gcpn9_mon. apply IN. intros. apply PR.
+  intros. destruct PR. left. apply H. right. apply LE, H.
+Qed.
+
+Local Hint Resolve gfixF9_mon.
+
+Lemma gcut9_mon x y : monotone9 (gcut9 x y).
 Proof.
   repeat red. intros. destruct IN. split.
   - intros. apply LE, H, PR.
   - apply H0.
 Qed.
 
-Lemma cut9_wcomp r rg (LE: r <9= rg) :
-  wcompatible9 gf (cut9 (cpn9 (fun x => gcpn9 r (rg \9/ x)) bot9) rg).
+Lemma gcut9_wcomp r rg (LE: r <9= rg) :
+  wcompatible9 gf bnd (gcut9 (gfix9 r rg) rg).
 Proof.
-  set (pfix := cpn9 (fun x => gcpn9 r (rg \9/ x)) bot9).
-  
-  econstructor; [apply cut9_mon|]. intros.
-  destruct PR as [LEz FIX].
-  uunfold FIX; [|apply gcpn9_inc_mon].
-  eapply gf_mon, rclo9_cpn.
-  apply cpn9_compat; [apply gf_mon|].
-  eapply cpn9_mon; [apply FIX|]. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 FIX; intros.
+  econstructor; [apply gcut9_mon| |].
+  { intros.
+    destruct PR as [LEz FIX].
+    uunfold FIX.
+    eapply gf_mon, rclo9_cpn.
+    apply cpn9_compat; [apply gf_mon|apply bnd_compat|].
+    eapply cpn9_mon; [apply FIX|]. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 FIX; intros.
 
-  destruct PR as [PR | PR].
-  - apply LE in PR. apply LEz in PR.
-    eapply gf_mon. apply PR.
-    intros. apply rclo9_base. apply PR0.
-  - eapply gf_mon; [apply PR|]. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 PR; intros.
-    eapply rclo9_cpn.
-    eapply cpn9_mon. apply PR. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 PR; intros.
     destruct PR as [PR | PR].
-    + apply rclo9_step. eapply gf_mon. apply LEz, PR.
-      intros. apply rclo9_base, PR0.
-    + apply rclo9_clo. split.
-      * intros. apply rclo9_step.
-        eapply gf_mon. apply LEz. apply PR0.
-        intros. apply rclo9_base. apply PR1.
-      * apply PR.
+    - apply LE in PR. apply LEz in PR.
+      eapply gf_mon. apply PR.
+      intros. apply rclo9_base. apply PR0.
+    - eapply gf_mon; [apply PR|]. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 PR; intros.
+      eapply rclo9_cpn.
+      eapply cpn9_mon. apply PR. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 PR; intros.
+      destruct PR as [PR | PR].
+      + apply rclo9_step. eapply gf_mon. apply LEz, PR.
+        intros. apply rclo9_base, PR0.
+      + apply rclo9_clo. split.
+        * intros. apply rclo9_step.
+          eapply gf_mon. apply LEz. apply PR0.
+          intros. apply rclo9_base. apply PR1.
+        * apply PR.
+  }
+  { intros. apply (cbound9_distr bnd_compat) in PR.
+    destruct PR, IN.
+    uunfold H0. destruct H0. specialize (PTW _ IN).
+    eapply (compat9_bound (cpn9_compat gf_mon bnd_compat)) in PTW.
+    destruct PTW as [BND|BND].
+    - apply (cbound9_distr bnd_compat) in BND. destruct BND.
+      destruct IN0.
+      + left. apply PTW, H, LE, H0.
+      + specialize (PTW _ H0).
+        apply (cbound9_compat bnd_compat) in PTW.
+        right. eapply gf_mon. apply PTW.
+        intros. apply rclo9_cpn, cpn9_bound; [apply bnd_compat|].
+        eapply cbound9_mon. apply bnd_compat. apply PR.
+        intros. apply rclo9_cpn.
+        eapply cpn9_mon. apply PR0.
+        intros. destruct PR1.
+        * apply rclo9_base. apply H, H1.
+        * apply rclo9_clo. econstructor; [|apply H1].
+          intros. apply rclo9_base. apply H, PR1.
+    - right. eapply gf_mon. apply BND.
+      intros. apply rclo9_cpn.
+      eapply cpn9_mon. apply PR.
+      intros. destruct PR0.
+      + apply rclo9_base. apply H, LE, H0.
+      + apply rclo9_step.
+        eapply gf_mon. apply H0.
+        intros. apply rclo9_cpn.
+        eapply cpn9_mon. apply PR0.
+        intros. destruct PR1.
+        * apply rclo9_base. apply H, H1.
+        * apply rclo9_clo. econstructor; [|apply H1].
+          intros. apply rclo9_base. apply H, PR1.
+  }
 Qed.
 
-Lemma fix9_le_cpn r rg (LE: r <9= rg) :
-  cpn9 (fun x => gcpn9 r (rg \9/ x)) bot9 <9= cpn9 gf rg.
+Lemma gfix9_le_cpn r rg (LE: r <9= rg) :
+  gfix9 r rg <9= cpn9 gf bnd rg.
 Proof.
   intros. eexists.
-  - apply wcompat9_compat, cut9_wcomp. apply gf_mon. apply LE.
+  - apply wcompat9_compat, gcut9_wcomp. apply gf_mon. apply bnd_compat. apply LE.
   - apply rclo9_clo. split.
     + intros. apply rclo9_base. apply PR0.
     + apply PR.
 Qed.
 
-Lemma fix9_le_gcpn r rg (LE: r <9= rg):
-  cpn9 (fun x => gcpn9 r (rg \9/ x)) bot9 <9= gcpn9 r rg.
+Lemma gfix9_le_gcpn r rg (LE: r <9= rg):
+  gfix9 r rg <9= gcpn9 r rg.
 Proof.
   (*
     fix
@@ -158,7 +214,7 @@ Proof.
     c(r + gc(rg))
    *)
   
-  intros. uunfold PR; [| apply gcpn9_inc_mon].
+  intros. uunfold PR.
   destruct PR. constructor.
   eapply cpn9_mon. apply IN. intros.
   destruct PR. left; apply H. right.
@@ -167,7 +223,7 @@ Proof.
   eapply cpn9_mon. apply PR. intros.
   destruct PR0.
   - ubase. apply H0.
-  - eapply fix9_le_cpn. apply LE. apply H0.
+  - eapply gfix9_le_cpn. apply LE. apply H0.
 Qed.
 
 Lemma gcpn9_cofix: forall
@@ -175,8 +231,8 @@ Lemma gcpn9_cofix: forall
     l (OBG: forall rr (INC: rg <9= rr) (CIH: l <9= rr), l <9= gcpn9 r rr),
   l <9= gcpn9 r rg.
 Proof.
-  intros. apply fix9_le_gcpn. apply LE.
-  eapply cpn9_algebra, PR. apply gcpn9_inc_mon.
+  intros. apply gfix9_le_gcpn. apply LE.
+  eapply cpn9_algebra, PR. apply gfixF9_mon. apply cbound9_bot.
   intros. eapply OBG; intros.
   - left. apply PR1.
   - right. apply PR1.
@@ -185,19 +241,21 @@ Qed.
 
 End WCompanion9_main.
 
-Lemma gcpn9_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 r rg
-      (IN: @gcpn9 gf bot9 bot9 e0 e1 e2 e3 e4 e5 e6 e7 e8)
-      (MONgf: monotone9 gf)
-      (MONgf': monotone9 gf')
+Lemma gcpn9_mon_bot bnd bnd' (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 r rg
+      (IN: @gcpn9 gf bnd bot9 bot9 e0 e1 e2 e3 e4 e5 e6 e7 e8)
+      (MON: monotone9 gf)
+      (MON': monotone9 gf')
+      (BASE: compatible_bound9 gf bnd)
+      (BASE': compatible_bound9 gf' bnd')
       (LE: gf <10= gf'):
-  @gcpn9 gf' r rg e0 e1 e2 e3 e4 e5 e6 e7 e8.
+  @gcpn9 gf' bnd' r rg e0 e1 e2 e3 e4 e5 e6 e7 e8.
 Proof.
   destruct IN. constructor.
   eapply cpn9_mon; [| intros; right; eapply PR].
   ubase.
-  eapply fcpn9_mon_bot, LE; [|apply MONgf|apply MONgf'].
-  eapply MONgf, cpn9_cpn; [| apply MONgf].
-  eapply (compat9_compat (cpn9_compat MONgf)).
+  eapply fcpn9_mon_bot, LE; [|apply MON|apply MON'|apply BASE|apply BASE'].
+  eapply MON, cpn9_cpn; [|apply MON|apply BASE].
+  eapply (compat9_compat (cpn9_compat MON BASE)).
   eapply cpn9_mon. apply IN.
   intros. destruct PR. contradiction. apply H.
 Qed.

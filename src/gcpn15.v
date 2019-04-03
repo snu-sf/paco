@@ -26,8 +26,11 @@ Section WCompanion15_main.
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone15 gf.
 
+Variable bnd: rel -> rel.
+Hypothesis bnd_compat : compatible_bound15 gf bnd.
+
 Inductive gcpn15 (r rg : rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 : Prop :=
-| gcpn15_intro (IN: cpn15 gf (r \15/ fcpn15 gf rg) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14)
+| gcpn15_intro (IN: cpn15 gf bnd (r \15/ fcpn15 gf bnd rg) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14)
 .              
 
 Lemma gcpn15_mon r r' rg rg' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14
@@ -42,15 +45,7 @@ Proof.
   eapply fcpn15_mon. apply gf_mon. apply H. apply LErg.
 Qed.
 
-Lemma gcpn15_inc_mon r rg:
-  monotone15 (fun x : rel => gcpn15 r (rg \15/ x)).
-Proof.
-  red; intros.
-  eapply gcpn15_mon. apply IN. intros. apply PR.
-  intros. destruct PR. left. apply H. right. apply LE, H. 
-Qed.
-
-Lemma gcpn15_init r: gcpn15 r r <15= cpn15 gf r.
+Lemma gcpn15_init r: gcpn15 r r <15= cpn15 gf bnd r.
 Proof.
   intros. destruct PR.
   ucpn.
@@ -60,7 +55,7 @@ Proof.
   - ustep. apply H.
 Qed.
 
-Lemma gcpn15_final r rg: cpn15 gf r <15= gcpn15 r rg.
+Lemma gcpn15_final r rg: cpn15 gf bnd r <15= gcpn15 r rg.
 Proof.
   constructor. eapply cpn15_mon. apply PR.
   intros. left. apply PR0.
@@ -80,6 +75,16 @@ Proof.
   intros. constructor. ubase. left. apply PR.
 Qed.
 
+Lemma gcpn15_bound r rg:
+  bnd r <15= gcpn15 r rg.
+Proof.
+  intros. econstructor. apply cpn15_bound. apply bnd_compat.
+  eapply cbound15_mon.
+  - apply bnd_compat.
+  - apply PR.
+  - intros. left. apply PR0.
+Qed.
+
 Lemma gcpn15_step r rg:
   gf (gcpn15 rg rg) <15= gcpn15 r rg.
 Proof.
@@ -89,7 +94,7 @@ Proof.
 Qed.
 
 Lemma gcpn15_cpn r rg:
-  cpn15 gf (gcpn15 r rg) <15= gcpn15 r rg.
+  cpn15 gf bnd (gcpn15 r rg) <15= gcpn15 r rg.
 Proof.
   intros. constructor. ucpn.
   eapply cpn15_mon. apply PR.
@@ -97,62 +102,113 @@ Proof.
 Qed.
 
 Lemma gcpn15_clo r rg
-      clo (LE: clo <16= cpn15 gf):
+      clo (LE: clo <16= cpn15 gf bnd):
   clo (gcpn15 r rg) <15= gcpn15 r rg.
 Proof.
   intros. apply gcpn15_cpn, LE, PR.
 Qed.
 
-Definition cut15 (x y z: rel) : rel := fun e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 => y <15= z /\ x e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+(*
+  Fixpoint theorem of gcpn15
+ *)
 
-Lemma cut15_mon x y : monotone15 (cut15 x y).
+Definition gcut15 (x y z: rel) : rel := fun e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 => y <15= z /\ x e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+
+Definition gfixF15 (r rg z: rel) : rel := gcpn15 r (rg \15/ z).
+
+Definition gfix15 (r rg: rel) : rel := cpn15 (gfixF15 r rg) bot16 bot15.
+
+Lemma gfixF15_mon r rg:
+  monotone15 (gfixF15 r rg).
+Proof.
+  red; intros.
+  eapply gcpn15_mon. apply IN. intros. apply PR.
+  intros. destruct PR. left. apply H. right. apply LE, H.
+Qed.
+
+Local Hint Resolve gfixF15_mon.
+
+Lemma gcut15_mon x y : monotone15 (gcut15 x y).
 Proof.
   repeat red. intros. destruct IN. split.
   - intros. apply LE, H, PR.
   - apply H0.
 Qed.
 
-Lemma cut15_wcomp r rg (LE: r <15= rg) :
-  wcompatible15 gf (cut15 (cpn15 (fun x => gcpn15 r (rg \15/ x)) bot15) rg).
+Lemma gcut15_wcomp r rg (LE: r <15= rg) :
+  wcompatible15 gf bnd (gcut15 (gfix15 r rg) rg).
 Proof.
-  set (pfix := cpn15 (fun x => gcpn15 r (rg \15/ x)) bot15).
-  
-  econstructor; [apply cut15_mon|]. intros.
-  destruct PR as [LEz FIX].
-  uunfold FIX; [|apply gcpn15_inc_mon].
-  eapply gf_mon, rclo15_cpn.
-  apply cpn15_compat; [apply gf_mon|].
-  eapply cpn15_mon; [apply FIX|]. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 FIX; intros.
+  econstructor; [apply gcut15_mon| |].
+  { intros.
+    destruct PR as [LEz FIX].
+    uunfold FIX.
+    eapply gf_mon, rclo15_cpn.
+    apply cpn15_compat; [apply gf_mon|apply bnd_compat|].
+    eapply cpn15_mon; [apply FIX|]. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 FIX; intros.
 
-  destruct PR as [PR | PR].
-  - apply LE in PR. apply LEz in PR.
-    eapply gf_mon. apply PR.
-    intros. apply rclo15_base. apply PR0.
-  - eapply gf_mon; [apply PR|]. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 PR; intros.
-    eapply rclo15_cpn.
-    eapply cpn15_mon. apply PR. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 PR; intros.
     destruct PR as [PR | PR].
-    + apply rclo15_step. eapply gf_mon. apply LEz, PR.
-      intros. apply rclo15_base, PR0.
-    + apply rclo15_clo. split.
-      * intros. apply rclo15_step.
-        eapply gf_mon. apply LEz. apply PR0.
-        intros. apply rclo15_base. apply PR1.
-      * apply PR.
+    - apply LE in PR. apply LEz in PR.
+      eapply gf_mon. apply PR.
+      intros. apply rclo15_base. apply PR0.
+    - eapply gf_mon; [apply PR|]. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 PR; intros.
+      eapply rclo15_cpn.
+      eapply cpn15_mon. apply PR. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 PR; intros.
+      destruct PR as [PR | PR].
+      + apply rclo15_step. eapply gf_mon. apply LEz, PR.
+        intros. apply rclo15_base, PR0.
+      + apply rclo15_clo. split.
+        * intros. apply rclo15_step.
+          eapply gf_mon. apply LEz. apply PR0.
+          intros. apply rclo15_base. apply PR1.
+        * apply PR.
+  }
+  { intros. apply (cbound15_distr bnd_compat) in PR.
+    destruct PR, IN.
+    uunfold H0. destruct H0. specialize (PTW _ IN).
+    eapply (compat15_bound (cpn15_compat gf_mon bnd_compat)) in PTW.
+    destruct PTW as [BND|BND].
+    - apply (cbound15_distr bnd_compat) in BND. destruct BND.
+      destruct IN0.
+      + left. apply PTW, H, LE, H0.
+      + specialize (PTW _ H0).
+        apply (cbound15_compat bnd_compat) in PTW.
+        right. eapply gf_mon. apply PTW.
+        intros. apply rclo15_cpn, cpn15_bound; [apply bnd_compat|].
+        eapply cbound15_mon. apply bnd_compat. apply PR.
+        intros. apply rclo15_cpn.
+        eapply cpn15_mon. apply PR0.
+        intros. destruct PR1.
+        * apply rclo15_base. apply H, H1.
+        * apply rclo15_clo. econstructor; [|apply H1].
+          intros. apply rclo15_base. apply H, PR1.
+    - right. eapply gf_mon. apply BND.
+      intros. apply rclo15_cpn.
+      eapply cpn15_mon. apply PR.
+      intros. destruct PR0.
+      + apply rclo15_base. apply H, LE, H0.
+      + apply rclo15_step.
+        eapply gf_mon. apply H0.
+        intros. apply rclo15_cpn.
+        eapply cpn15_mon. apply PR0.
+        intros. destruct PR1.
+        * apply rclo15_base. apply H, H1.
+        * apply rclo15_clo. econstructor; [|apply H1].
+          intros. apply rclo15_base. apply H, PR1.
+  }
 Qed.
 
-Lemma fix15_le_cpn r rg (LE: r <15= rg) :
-  cpn15 (fun x => gcpn15 r (rg \15/ x)) bot15 <15= cpn15 gf rg.
+Lemma gfix15_le_cpn r rg (LE: r <15= rg) :
+  gfix15 r rg <15= cpn15 gf bnd rg.
 Proof.
   intros. eexists.
-  - apply wcompat15_compat, cut15_wcomp. apply gf_mon. apply LE.
+  - apply wcompat15_compat, gcut15_wcomp. apply gf_mon. apply bnd_compat. apply LE.
   - apply rclo15_clo. split.
     + intros. apply rclo15_base. apply PR0.
     + apply PR.
 Qed.
 
-Lemma fix15_le_gcpn r rg (LE: r <15= rg):
-  cpn15 (fun x => gcpn15 r (rg \15/ x)) bot15 <15= gcpn15 r rg.
+Lemma gfix15_le_gcpn r rg (LE: r <15= rg):
+  gfix15 r rg <15= gcpn15 r rg.
 Proof.
   (*
     fix
@@ -164,7 +220,7 @@ Proof.
     c(r + gc(rg))
    *)
   
-  intros. uunfold PR; [| apply gcpn15_inc_mon].
+  intros. uunfold PR.
   destruct PR. constructor.
   eapply cpn15_mon. apply IN. intros.
   destruct PR. left; apply H. right.
@@ -173,7 +229,7 @@ Proof.
   eapply cpn15_mon. apply PR. intros.
   destruct PR0.
   - ubase. apply H0.
-  - eapply fix15_le_cpn. apply LE. apply H0.
+  - eapply gfix15_le_cpn. apply LE. apply H0.
 Qed.
 
 Lemma gcpn15_cofix: forall
@@ -181,8 +237,8 @@ Lemma gcpn15_cofix: forall
     l (OBG: forall rr (INC: rg <15= rr) (CIH: l <15= rr), l <15= gcpn15 r rr),
   l <15= gcpn15 r rg.
 Proof.
-  intros. apply fix15_le_gcpn. apply LE.
-  eapply cpn15_algebra, PR. apply gcpn15_inc_mon.
+  intros. apply gfix15_le_gcpn. apply LE.
+  eapply cpn15_algebra, PR. apply gfixF15_mon. apply cbound15_bot.
   intros. eapply OBG; intros.
   - left. apply PR1.
   - right. apply PR1.
@@ -191,19 +247,21 @@ Qed.
 
 End WCompanion15_main.
 
-Lemma gcpn15_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 r rg
-      (IN: @gcpn15 gf bot15 bot15 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14)
-      (MONgf: monotone15 gf)
-      (MONgf': monotone15 gf')
+Lemma gcpn15_mon_bot bnd bnd' (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 r rg
+      (IN: @gcpn15 gf bnd bot15 bot15 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14)
+      (MON: monotone15 gf)
+      (MON': monotone15 gf')
+      (BASE: compatible_bound15 gf bnd)
+      (BASE': compatible_bound15 gf' bnd')
       (LE: gf <16= gf'):
-  @gcpn15 gf' r rg e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
+  @gcpn15 gf' bnd' r rg e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14.
 Proof.
   destruct IN. constructor.
   eapply cpn15_mon; [| intros; right; eapply PR].
   ubase.
-  eapply fcpn15_mon_bot, LE; [|apply MONgf|apply MONgf'].
-  eapply MONgf, cpn15_cpn; [| apply MONgf].
-  eapply (compat15_compat (cpn15_compat MONgf)).
+  eapply fcpn15_mon_bot, LE; [|apply MON|apply MON'|apply BASE|apply BASE'].
+  eapply MON, cpn15_cpn; [|apply MON|apply BASE].
+  eapply (compat15_compat (cpn15_compat MON BASE)).
   eapply cpn15_mon. apply IN.
   intros. destruct PR. contradiction. apply H.
 Qed.

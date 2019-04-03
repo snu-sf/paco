@@ -15,8 +15,11 @@ Section WCompanion4_main.
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone4 gf.
 
+Variable bnd: rel -> rel.
+Hypothesis bnd_compat : compatible_bound4 gf bnd.
+
 Inductive gcpn4 (r rg : rel) e0 e1 e2 e3 : Prop :=
-| gcpn4_intro (IN: cpn4 gf (r \4/ fcpn4 gf rg) e0 e1 e2 e3)
+| gcpn4_intro (IN: cpn4 gf bnd (r \4/ fcpn4 gf bnd rg) e0 e1 e2 e3)
 .              
 
 Lemma gcpn4_mon r r' rg rg' e0 e1 e2 e3
@@ -31,15 +34,7 @@ Proof.
   eapply fcpn4_mon. apply gf_mon. apply H. apply LErg.
 Qed.
 
-Lemma gcpn4_inc_mon r rg:
-  monotone4 (fun x : rel => gcpn4 r (rg \4/ x)).
-Proof.
-  red; intros.
-  eapply gcpn4_mon. apply IN. intros. apply PR.
-  intros. destruct PR. left. apply H. right. apply LE, H. 
-Qed.
-
-Lemma gcpn4_init r: gcpn4 r r <4= cpn4 gf r.
+Lemma gcpn4_init r: gcpn4 r r <4= cpn4 gf bnd r.
 Proof.
   intros. destruct PR.
   ucpn.
@@ -49,7 +44,7 @@ Proof.
   - ustep. apply H.
 Qed.
 
-Lemma gcpn4_final r rg: cpn4 gf r <4= gcpn4 r rg.
+Lemma gcpn4_final r rg: cpn4 gf bnd r <4= gcpn4 r rg.
 Proof.
   constructor. eapply cpn4_mon. apply PR.
   intros. left. apply PR0.
@@ -69,6 +64,16 @@ Proof.
   intros. constructor. ubase. left. apply PR.
 Qed.
 
+Lemma gcpn4_bound r rg:
+  bnd r <4= gcpn4 r rg.
+Proof.
+  intros. econstructor. apply cpn4_bound. apply bnd_compat.
+  eapply cbound4_mon.
+  - apply bnd_compat.
+  - apply PR.
+  - intros. left. apply PR0.
+Qed.
+
 Lemma gcpn4_step r rg:
   gf (gcpn4 rg rg) <4= gcpn4 r rg.
 Proof.
@@ -78,7 +83,7 @@ Proof.
 Qed.
 
 Lemma gcpn4_cpn r rg:
-  cpn4 gf (gcpn4 r rg) <4= gcpn4 r rg.
+  cpn4 gf bnd (gcpn4 r rg) <4= gcpn4 r rg.
 Proof.
   intros. constructor. ucpn.
   eapply cpn4_mon. apply PR.
@@ -86,62 +91,113 @@ Proof.
 Qed.
 
 Lemma gcpn4_clo r rg
-      clo (LE: clo <5= cpn4 gf):
+      clo (LE: clo <5= cpn4 gf bnd):
   clo (gcpn4 r rg) <4= gcpn4 r rg.
 Proof.
   intros. apply gcpn4_cpn, LE, PR.
 Qed.
 
-Definition cut4 (x y z: rel) : rel := fun e0 e1 e2 e3 => y <4= z /\ x e0 e1 e2 e3.
+(*
+  Fixpoint theorem of gcpn4
+ *)
 
-Lemma cut4_mon x y : monotone4 (cut4 x y).
+Definition gcut4 (x y z: rel) : rel := fun e0 e1 e2 e3 => y <4= z /\ x e0 e1 e2 e3.
+
+Definition gfixF4 (r rg z: rel) : rel := gcpn4 r (rg \4/ z).
+
+Definition gfix4 (r rg: rel) : rel := cpn4 (gfixF4 r rg) bot5 bot4.
+
+Lemma gfixF4_mon r rg:
+  monotone4 (gfixF4 r rg).
+Proof.
+  red; intros.
+  eapply gcpn4_mon. apply IN. intros. apply PR.
+  intros. destruct PR. left. apply H. right. apply LE, H.
+Qed.
+
+Local Hint Resolve gfixF4_mon.
+
+Lemma gcut4_mon x y : monotone4 (gcut4 x y).
 Proof.
   repeat red. intros. destruct IN. split.
   - intros. apply LE, H, PR.
   - apply H0.
 Qed.
 
-Lemma cut4_wcomp r rg (LE: r <4= rg) :
-  wcompatible4 gf (cut4 (cpn4 (fun x => gcpn4 r (rg \4/ x)) bot4) rg).
+Lemma gcut4_wcomp r rg (LE: r <4= rg) :
+  wcompatible4 gf bnd (gcut4 (gfix4 r rg) rg).
 Proof.
-  set (pfix := cpn4 (fun x => gcpn4 r (rg \4/ x)) bot4).
-  
-  econstructor; [apply cut4_mon|]. intros.
-  destruct PR as [LEz FIX].
-  uunfold FIX; [|apply gcpn4_inc_mon].
-  eapply gf_mon, rclo4_cpn.
-  apply cpn4_compat; [apply gf_mon|].
-  eapply cpn4_mon; [apply FIX|]. clear x0 x1 x2 x3 FIX; intros.
+  econstructor; [apply gcut4_mon| |].
+  { intros.
+    destruct PR as [LEz FIX].
+    uunfold FIX.
+    eapply gf_mon, rclo4_cpn.
+    apply cpn4_compat; [apply gf_mon|apply bnd_compat|].
+    eapply cpn4_mon; [apply FIX|]. clear x0 x1 x2 x3 FIX; intros.
 
-  destruct PR as [PR | PR].
-  - apply LE in PR. apply LEz in PR.
-    eapply gf_mon. apply PR.
-    intros. apply rclo4_base. apply PR0.
-  - eapply gf_mon; [apply PR|]. clear x0 x1 x2 x3 PR; intros.
-    eapply rclo4_cpn.
-    eapply cpn4_mon. apply PR. clear x0 x1 x2 x3 PR; intros.
     destruct PR as [PR | PR].
-    + apply rclo4_step. eapply gf_mon. apply LEz, PR.
-      intros. apply rclo4_base, PR0.
-    + apply rclo4_clo. split.
-      * intros. apply rclo4_step.
-        eapply gf_mon. apply LEz. apply PR0.
-        intros. apply rclo4_base. apply PR1.
-      * apply PR.
+    - apply LE in PR. apply LEz in PR.
+      eapply gf_mon. apply PR.
+      intros. apply rclo4_base. apply PR0.
+    - eapply gf_mon; [apply PR|]. clear x0 x1 x2 x3 PR; intros.
+      eapply rclo4_cpn.
+      eapply cpn4_mon. apply PR. clear x0 x1 x2 x3 PR; intros.
+      destruct PR as [PR | PR].
+      + apply rclo4_step. eapply gf_mon. apply LEz, PR.
+        intros. apply rclo4_base, PR0.
+      + apply rclo4_clo. split.
+        * intros. apply rclo4_step.
+          eapply gf_mon. apply LEz. apply PR0.
+          intros. apply rclo4_base. apply PR1.
+        * apply PR.
+  }
+  { intros. apply (cbound4_distr bnd_compat) in PR.
+    destruct PR, IN.
+    uunfold H0. destruct H0. specialize (PTW _ IN).
+    eapply (compat4_bound (cpn4_compat gf_mon bnd_compat)) in PTW.
+    destruct PTW as [BND|BND].
+    - apply (cbound4_distr bnd_compat) in BND. destruct BND.
+      destruct IN0.
+      + left. apply PTW, H, LE, H0.
+      + specialize (PTW _ H0).
+        apply (cbound4_compat bnd_compat) in PTW.
+        right. eapply gf_mon. apply PTW.
+        intros. apply rclo4_cpn, cpn4_bound; [apply bnd_compat|].
+        eapply cbound4_mon. apply bnd_compat. apply PR.
+        intros. apply rclo4_cpn.
+        eapply cpn4_mon. apply PR0.
+        intros. destruct PR1.
+        * apply rclo4_base. apply H, H1.
+        * apply rclo4_clo. econstructor; [|apply H1].
+          intros. apply rclo4_base. apply H, PR1.
+    - right. eapply gf_mon. apply BND.
+      intros. apply rclo4_cpn.
+      eapply cpn4_mon. apply PR.
+      intros. destruct PR0.
+      + apply rclo4_base. apply H, LE, H0.
+      + apply rclo4_step.
+        eapply gf_mon. apply H0.
+        intros. apply rclo4_cpn.
+        eapply cpn4_mon. apply PR0.
+        intros. destruct PR1.
+        * apply rclo4_base. apply H, H1.
+        * apply rclo4_clo. econstructor; [|apply H1].
+          intros. apply rclo4_base. apply H, PR1.
+  }
 Qed.
 
-Lemma fix4_le_cpn r rg (LE: r <4= rg) :
-  cpn4 (fun x => gcpn4 r (rg \4/ x)) bot4 <4= cpn4 gf rg.
+Lemma gfix4_le_cpn r rg (LE: r <4= rg) :
+  gfix4 r rg <4= cpn4 gf bnd rg.
 Proof.
   intros. eexists.
-  - apply wcompat4_compat, cut4_wcomp. apply gf_mon. apply LE.
+  - apply wcompat4_compat, gcut4_wcomp. apply gf_mon. apply bnd_compat. apply LE.
   - apply rclo4_clo. split.
     + intros. apply rclo4_base. apply PR0.
     + apply PR.
 Qed.
 
-Lemma fix4_le_gcpn r rg (LE: r <4= rg):
-  cpn4 (fun x => gcpn4 r (rg \4/ x)) bot4 <4= gcpn4 r rg.
+Lemma gfix4_le_gcpn r rg (LE: r <4= rg):
+  gfix4 r rg <4= gcpn4 r rg.
 Proof.
   (*
     fix
@@ -153,7 +209,7 @@ Proof.
     c(r + gc(rg))
    *)
   
-  intros. uunfold PR; [| apply gcpn4_inc_mon].
+  intros. uunfold PR.
   destruct PR. constructor.
   eapply cpn4_mon. apply IN. intros.
   destruct PR. left; apply H. right.
@@ -162,7 +218,7 @@ Proof.
   eapply cpn4_mon. apply PR. intros.
   destruct PR0.
   - ubase. apply H0.
-  - eapply fix4_le_cpn. apply LE. apply H0.
+  - eapply gfix4_le_cpn. apply LE. apply H0.
 Qed.
 
 Lemma gcpn4_cofix: forall
@@ -170,8 +226,8 @@ Lemma gcpn4_cofix: forall
     l (OBG: forall rr (INC: rg <4= rr) (CIH: l <4= rr), l <4= gcpn4 r rr),
   l <4= gcpn4 r rg.
 Proof.
-  intros. apply fix4_le_gcpn. apply LE.
-  eapply cpn4_algebra, PR. apply gcpn4_inc_mon.
+  intros. apply gfix4_le_gcpn. apply LE.
+  eapply cpn4_algebra, PR. apply gfixF4_mon. apply cbound4_bot.
   intros. eapply OBG; intros.
   - left. apply PR1.
   - right. apply PR1.
@@ -180,19 +236,21 @@ Qed.
 
 End WCompanion4_main.
 
-Lemma gcpn4_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 r rg
-      (IN: @gcpn4 gf bot4 bot4 e0 e1 e2 e3)
-      (MONgf: monotone4 gf)
-      (MONgf': monotone4 gf')
+Lemma gcpn4_mon_bot bnd bnd' (gf gf': rel -> rel) e0 e1 e2 e3 r rg
+      (IN: @gcpn4 gf bnd bot4 bot4 e0 e1 e2 e3)
+      (MON: monotone4 gf)
+      (MON': monotone4 gf')
+      (BASE: compatible_bound4 gf bnd)
+      (BASE': compatible_bound4 gf' bnd')
       (LE: gf <5= gf'):
-  @gcpn4 gf' r rg e0 e1 e2 e3.
+  @gcpn4 gf' bnd' r rg e0 e1 e2 e3.
 Proof.
   destruct IN. constructor.
   eapply cpn4_mon; [| intros; right; eapply PR].
   ubase.
-  eapply fcpn4_mon_bot, LE; [|apply MONgf|apply MONgf'].
-  eapply MONgf, cpn4_cpn; [| apply MONgf].
-  eapply (compat4_compat (cpn4_compat MONgf)).
+  eapply fcpn4_mon_bot, LE; [|apply MON|apply MON'|apply BASE|apply BASE'].
+  eapply MON, cpn4_cpn; [|apply MON|apply BASE].
+  eapply (compat4_compat (cpn4_compat MON BASE)).
   eapply cpn4_mon. apply IN.
   intros. destruct PR. contradiction. apply H.
 Qed.
