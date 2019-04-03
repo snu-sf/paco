@@ -11,8 +11,21 @@ Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
 Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), Type.
 Variable T5 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3), Type.
 
-Local Notation curry6 := (@curry6 T0 T1 T2 T3 T4 T5).
-Local Notation uncurry6 := (@uncurry6 T0 T1 T2 T3 T4 T5).
+(** ** Signatures *)
+
+Record sig6T  :=
+  exist6T {
+      proj6T0: @T0;
+      proj6T1: @T1 proj6T0;
+      proj6T2: @T2 proj6T0 proj6T1;
+      proj6T3: @T3 proj6T0 proj6T1 proj6T2;
+      proj6T4: @T4 proj6T0 proj6T1 proj6T2 proj6T3;
+      proj6T5: @T5 proj6T0 proj6T1 proj6T2 proj6T3 proj6T4;
+    }.
+Definition uncurry6  (R: rel6 T0 T1 T2 T3 T4 T5): rel1 sig6T :=
+  fun x => R (proj6T0 x) (proj6T1 x) (proj6T2 x) (proj6T3 x) (proj6T4 x) (proj6T5 x).
+Definition curry6  (R: rel1 sig6T): rel6 T0 T1 T2 T3 T4 T5 :=
+  fun x0 x1 x2 x3 x4 x5 => R (exist6T x5).
 
 Lemma uncurry_map6 r0 r1 (LE : r0 <6== r1) : uncurry6 r0 <1== uncurry6 r1.
 Proof. intros [] H. apply LE. apply H. Qed.

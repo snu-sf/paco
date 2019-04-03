@@ -13,8 +13,23 @@ Variable T5 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (
 Variable T6 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4), Type.
 Variable T7 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5), Type.
 
-Local Notation curry8 := (@curry8 T0 T1 T2 T3 T4 T5 T6 T7).
-Local Notation uncurry8 := (@uncurry8 T0 T1 T2 T3 T4 T5 T6 T7).
+(** ** Signatures *)
+
+Record sig8T  :=
+  exist8T {
+      proj8T0: @T0;
+      proj8T1: @T1 proj8T0;
+      proj8T2: @T2 proj8T0 proj8T1;
+      proj8T3: @T3 proj8T0 proj8T1 proj8T2;
+      proj8T4: @T4 proj8T0 proj8T1 proj8T2 proj8T3;
+      proj8T5: @T5 proj8T0 proj8T1 proj8T2 proj8T3 proj8T4;
+      proj8T6: @T6 proj8T0 proj8T1 proj8T2 proj8T3 proj8T4 proj8T5;
+      proj8T7: @T7 proj8T0 proj8T1 proj8T2 proj8T3 proj8T4 proj8T5 proj8T6;
+    }.
+Definition uncurry8  (R: rel8 T0 T1 T2 T3 T4 T5 T6 T7): rel1 sig8T :=
+  fun x => R (proj8T0 x) (proj8T1 x) (proj8T2 x) (proj8T3 x) (proj8T4 x) (proj8T5 x) (proj8T6 x) (proj8T7 x).
+Definition curry8  (R: rel1 sig8T): rel8 T0 T1 T2 T3 T4 T5 T6 T7 :=
+  fun x0 x1 x2 x3 x4 x5 x6 x7 => R (exist8T x7).
 
 Lemma uncurry_map8 r0 r1 (LE : r0 <8== r1) : uncurry8 r0 <1== uncurry8 r1.
 Proof. intros [] H. apply LE. apply H. Qed.

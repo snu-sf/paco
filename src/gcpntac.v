@@ -20,7 +20,6 @@ Tactic Notation "ginit_" :=
   | [|- context[cpn12]] => eapply gcpn12_init; [eauto with paco|eauto with paco|]
   | [|- context[cpn13]] => eapply gcpn13_init; [eauto with paco|eauto with paco|]
   | [|- context[cpn14]] => eapply gcpn14_init; [eauto with paco|eauto with paco|]
-  | [|- context[cpn15]] => eapply gcpn15_init; [eauto with paco|eauto with paco|]
   end.
 Ltac ginit := repeat red; under_forall ltac:(ginit_).
 
@@ -44,7 +43,6 @@ Tactic Notation "gfinal_" :=
   | [|- context[gcpn12]]  => eapply gcpn12_final
   | [|- context[gcpn13]]  => eapply gcpn13_final
   | [|- context[gcpn14]]  => eapply gcpn14_final
-  | [|- context[gcpn15]]  => eapply gcpn15_final
   end.
 Ltac gfinal := repeat red; under_forall ltac:(gfinal_).
 
@@ -70,7 +68,6 @@ Ltac gunfold H :=
   | context[gcpn12] => eapply gcpn12_unfold in H; [|eauto with paco|eauto with paco]
   | context[gcpn13] => eapply gcpn13_unfold in H; [|eauto with paco|eauto with paco]
   | context[gcpn14] => eapply gcpn14_unfold in H; [|eauto with paco|eauto with paco]
-  | context[gcpn15] => eapply gcpn15_unfold in H; [|eauto with paco|eauto with paco]
   end.
 
 (** ** gbase
@@ -93,7 +90,6 @@ Tactic Notation "gbase_" :=
   | [|- context[gcpn12]] => eapply gcpn12_base
   | [|- context[gcpn13]] => eapply gcpn13_base
   | [|- context[gcpn14]] => eapply gcpn14_base
-  | [|- context[gcpn15]] => eapply gcpn15_base
   end.
 Ltac gbase := repeat red; under_forall ltac:(gbase_).
 
@@ -117,7 +113,6 @@ Tactic Notation "gbound_" :=
   | [|- context[gcpn12]] => eapply gcpn12_bound; [eauto with paco|]
   | [|- context[gcpn13]] => eapply gcpn13_bound; [eauto with paco|]
   | [|- context[gcpn14]] => eapply gcpn14_bound; [eauto with paco|]
-  | [|- context[gcpn15]] => eapply gcpn15_bound; [eauto with paco|]
   end.
 Ltac gbound := repeat red; under_forall ltac:(gbound_).
 
@@ -141,7 +136,6 @@ Tactic Notation "gcpn_" :=
   | [|- context[gcpn12]] => eapply gcpn12_cpn; [eauto with paco|eauto with paco|]
   | [|- context[gcpn13]] => eapply gcpn13_cpn; [eauto with paco|eauto with paco|]
   | [|- context[gcpn14]] => eapply gcpn14_cpn; [eauto with paco|eauto with paco|]
-  | [|- context[gcpn15]] => eapply gcpn15_cpn; [eauto with paco|eauto with paco|]
   end.
 Ltac gcpn := repeat red; under_forall ltac:(gcpn_).
 
@@ -165,7 +159,6 @@ Tactic Notation "gstep_" :=
   | [|- context[gcpn12]] => eapply gcpn12_step; [eauto with paco|eauto with paco|]
   | [|- context[gcpn13]] => eapply gcpn13_step; [eauto with paco|eauto with paco|]
   | [|- context[gcpn14]] => eapply gcpn14_step; [eauto with paco|eauto with paco|]
-  | [|- context[gcpn15]] => eapply gcpn15_step; [eauto with paco|eauto with paco|]
   end.
 Ltac gstep := repeat red; under_forall ltac:(gstep_).
 
@@ -189,7 +182,6 @@ Tactic Notation "gclo_" constr(H) :=
   | [|- context[gcpn12]]  => eapply gcpn12_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
   | [|- context[gcpn13]]  => eapply gcpn13_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
   | [|- context[gcpn14]]  => eapply gcpn14_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
-  | [|- context[gcpn15]]  => eapply gcpn15_clo; [| |eapply H|]; [eauto with paco|eauto with paco|]
   end.
 Ltac gclo H := repeat red; under_forall ltac:(gclo_ H).
 
@@ -245,9 +237,6 @@ Tactic Notation "gcofix" ident(CIH) "with" ident(r) :=
   | [|- context[gcpn14]]  =>
     paco_revert_hyp _paco_mark;
     pcofix CIH using @gcpn14_cofix with r; [eauto with paco|eauto with paco|eauto with paco; try contradiction|]
-  | [|- context[gcpn15]]  =>
-    paco_revert_hyp _paco_mark;
-    pcofix CIH using @gcpn15_cofix with r; [eauto with paco|eauto with paco|eauto with paco; try contradiction|]
   end.
 Tactic Notation "gcofix" ident(CIH) := gcofix CIH with r.
 
