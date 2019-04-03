@@ -84,7 +84,7 @@ print ()
 print ('Tactic Notation "gclo_" constr(H) :=')
 print ("  match goal with")
 for n in range(relsize+1):
-    print ("  | [|- context[gcpn"+str(n)+"]]  => eapply gcpn"+str(n)+"_clo; [|eapply H|]; [eauto with paco|]")
+    print ("  | [|- context[gcpn"+str(n)+"]]  => eapply gcpn"+str(n)+"_clo; [|eapply H|]; [eauto with paco|..]")
 print ("  end.")
 print ("Ltac gclo H := repeat red; under_forall ltac:(gclo_ H).")
 print ()

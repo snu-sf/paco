@@ -144,21 +144,21 @@ Ltac gstep := repeat red; under_forall ltac:(gstep_).
 
 Tactic Notation "gclo_" constr(H) :=
   match goal with
-  | [|- context[gcpn0]]  => eapply gcpn0_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[gcpn1]]  => eapply gcpn1_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[gcpn2]]  => eapply gcpn2_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[gcpn3]]  => eapply gcpn3_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[gcpn4]]  => eapply gcpn4_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[gcpn5]]  => eapply gcpn5_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[gcpn6]]  => eapply gcpn6_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[gcpn7]]  => eapply gcpn7_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[gcpn8]]  => eapply gcpn8_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[gcpn9]]  => eapply gcpn9_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[gcpn10]]  => eapply gcpn10_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[gcpn11]]  => eapply gcpn11_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[gcpn12]]  => eapply gcpn12_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[gcpn13]]  => eapply gcpn13_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[gcpn14]]  => eapply gcpn14_clo; [|eapply H|]; [eauto with paco|]
+  | [|- context[gcpn0]]  => eapply gcpn0_clo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[gcpn1]]  => eapply gcpn1_clo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[gcpn2]]  => eapply gcpn2_clo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[gcpn3]]  => eapply gcpn3_clo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[gcpn4]]  => eapply gcpn4_clo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[gcpn5]]  => eapply gcpn5_clo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[gcpn6]]  => eapply gcpn6_clo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[gcpn7]]  => eapply gcpn7_clo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[gcpn8]]  => eapply gcpn8_clo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[gcpn9]]  => eapply gcpn9_clo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[gcpn10]]  => eapply gcpn10_clo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[gcpn11]]  => eapply gcpn11_clo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[gcpn12]]  => eapply gcpn12_clo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[gcpn13]]  => eapply gcpn13_clo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[gcpn14]]  => eapply gcpn14_clo; [|eapply H|]; [eauto with paco|..]
   end.
 Ltac gclo H := repeat red; under_forall ltac:(gclo_ H).
 
