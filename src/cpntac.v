@@ -20,7 +20,6 @@ Tactic Notation "uinit_" :=
   | [|- context[paco12]] => eapply cpn12_init; [eauto with paco|]
   | [|- context[paco13]] => eapply cpn13_init; [eauto with paco|]
   | [|- context[paco14]] => eapply cpn14_init; [eauto with paco|]
-  | [|- context[paco15]] => eapply cpn15_init; [eauto with paco|]
   end.
 Ltac uinit := repeat red; under_forall ltac:(uinit_).
 
@@ -59,8 +58,6 @@ Tactic Notation "ufinal_" :=
   | [|- context[cpn13]]  => eapply cpn13_final; [eauto with paco|]
   | [|- context[fcpn14]] => eapply fcpn14_final; [eauto with paco|]
   | [|- context[cpn14]]  => eapply cpn14_final; [eauto with paco|]
-  | [|- context[fcpn15]] => eapply fcpn15_final; [eauto with paco|]
-  | [|- context[cpn15]]  => eapply cpn15_final; [eauto with paco|]
   end.
 Ltac ufinal := under_forall ltac:(ufinal_).
 
@@ -84,7 +81,6 @@ Ltac fcpn_fold :=
   | [|- ?gf (cpn12 _ ?r) _ _ _ _ _ _ _ _ _ _ _ _] => change (gf (cpn12 gf r)) with (fcpn12 gf r)
   | [|- ?gf (cpn13 _ ?r) _ _ _ _ _ _ _ _ _ _ _ _ _] => change (gf (cpn13 gf r)) with (fcpn13 gf r)
   | [|- ?gf (cpn14 _ ?r) _ _ _ _ _ _ _ _ _ _ _ _ _ _] => change (gf (cpn14 gf r)) with (fcpn14 gf r)
-  | [|- ?gf (cpn15 _ ?r) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _] => change (gf (cpn15 gf r)) with (fcpn15 gf r)
   end.
 
 (** ** ucompat
@@ -107,7 +103,6 @@ Ltac ucompat :=
   | [|- context[cpn12]] => eapply wcompat12_sound; eauto with paco
   | [|- context[cpn13]] => eapply wcompat13_sound; eauto with paco
   | [|- context[cpn14]] => eapply wcompat14_sound; eauto with paco
-  | [|- context[cpn15]] => eapply wcompat15_sound; eauto with paco
   end.
 
 (** ** ubase
@@ -130,7 +125,6 @@ Tactic Notation "ubase_" :=
   | [|- context[cpn12]] => eapply cpn12_base
   | [|- context[cpn13]] => eapply cpn13_base
   | [|- context[cpn14]] => eapply cpn14_base
-  | [|- context[cpn15]] => eapply cpn15_base
   end.
 Ltac ubase := under_forall ltac:(ubase_).
 
@@ -156,7 +150,6 @@ Ltac uunfold H :=
   | context[cpn12] => eapply cpn12_unfold in H; [|eauto with paco]
   | context[cpn13] => eapply cpn13_unfold in H; [|eauto with paco]
   | context[cpn14] => eapply cpn14_unfold in H; [|eauto with paco]
-  | context[cpn15] => eapply cpn15_unfold in H; [|eauto with paco]
   end.
 
 (** ** ucpn
@@ -179,7 +172,6 @@ Tactic Notation "ucpn_" :=
   | [|- context[cpn12]] => eapply cpn12_cpn; [eauto with paco|]
   | [|- context[cpn13]] => eapply cpn13_cpn; [eauto with paco|]
   | [|- context[cpn14]] => eapply cpn14_cpn; [eauto with paco|]
-  | [|- context[cpn15]] => eapply cpn15_cpn; [eauto with paco|]
   end.
 Ltac ucpn := repeat red; under_forall ltac:(ucpn_).
 
@@ -203,7 +195,6 @@ Tactic Notation "ustep_" :=
   | [|- context[cpn12]] => eapply cpn12_step; [eauto with paco|]
   | [|- context[cpn13]] => eapply cpn13_step; [eauto with paco|]
   | [|- context[cpn14]] => eapply cpn14_step; [eauto with paco|]
-  | [|- context[cpn15]] => eapply cpn15_step; [eauto with paco|]
   end.
 Ltac ustep := repeat red; under_forall ltac:(ustep_).
 
@@ -227,7 +218,6 @@ Tactic Notation "guclo__" constr(H) :=
   | [|- context[fcpn12]] => eapply fcpn12_clo; [|eapply H|]; [eauto with paco|]
   | [|- context[fcpn13]] => eapply fcpn13_clo; [|eapply H|]; [eauto with paco|]
   | [|- context[fcpn14]] => eapply fcpn14_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[fcpn15]] => eapply fcpn15_clo; [|eapply H|]; [eauto with paco|]
   end.
 Ltac guclo_ H := under_forall ltac:(guclo__ H).
 Tactic Notation "uclo__" constr(H) :=
@@ -247,7 +237,6 @@ Tactic Notation "uclo__" constr(H) :=
   | [|- context[cpn12]]  => eapply cpn12_clo; [|eapply H|]; [eauto with paco|]
   | [|- context[cpn13]]  => eapply cpn13_clo; [|eapply H|]; [eauto with paco|]
   | [|- context[cpn14]]  => eapply cpn14_clo; [|eapply H|]; [eauto with paco|]
-  | [|- context[cpn15]]  => eapply cpn15_clo; [|eapply H|]; [eauto with paco|]
   end.
 Ltac uclo_ H := repeat red; under_forall ltac:(uclo__ H).
 Ltac uclo H := first[ guclo_ H | uclo_ H ].
@@ -318,10 +307,6 @@ Tactic Notation "gucofix_" ident(CIH) "with" ident(r) :=
     (eapply fcpn14_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn14_to_paco; [eauto with paco|])
-  | [|- context[fcpn15]] =>
-    (eapply fcpn15_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
-    pcofix CIH with r;
-    under_forall ltac:(eapply fcpn15_to_paco; [eauto with paco|])
   end.
 Tactic Notation "ucofix_" ident(CIH) "with" ident(r) :=
   repeat red;
@@ -387,10 +372,6 @@ Tactic Notation "ucofix_" ident(CIH) "with" ident(r) :=
     (eapply cpn14_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
     pcofix CIH with r;
     under_forall ltac:(eapply fcpn14_to_paco; [eauto with paco|])
-  | [|- context[cpn15]]  =>
-    (eapply cpn15_from_paco; [eauto with paco|]); paco_revert_hyp _paco_mark;
-    pcofix CIH with r;
-    under_forall ltac:(eapply fcpn15_to_paco; [eauto with paco|])
   end.
 Tactic Notation "ucofix" ident(CIH) "with" ident(r) :=
   first[ gucofix_ CIH with r | ucofix_ CIH with r ].

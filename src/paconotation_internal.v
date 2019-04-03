@@ -66,10 +66,6 @@ Definition le14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 (p q : rel14 T0 T1
   (forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 (PR: p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 : Prop), q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 : Prop).
 Arguments le14 [ T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13].
 
-Definition le15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 (p q : rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14) :=
-  (forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 (PR: p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 : Prop), q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 : Prop).
-Arguments le15 [ T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14].
-
 Notation "p <0== q" :=
   (le0 p q)
   (at level 50, no associativity, only parsing).
@@ -128,10 +124,6 @@ Notation "p <13== q" :=
 
 Notation "p <14== q" :=
   (le14 p q)
-  (at level 50, no associativity).
-
-Notation "p <15== q" :=
-  (le15 p q)
   (at level 50, no associativity).
 
 (** ** Tranisitivity and Reflexivity *)
@@ -211,11 +203,6 @@ Lemma le14_trans T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13(r0 r1 r2 : rel14 
   r0 <14== r2.
 Proof. repeat_intros 14. intros H. eapply LE1, LE0, H. Qed.
 
-Lemma le15_trans T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14(r0 r1 r2 : rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14)
-      (LE0 : r0 <15== r1) (LE1 : r1 <15== r2) :
-  r0 <15== r2.
-Proof. repeat_intros 15. intros H. eapply LE1, LE0, H. Qed.
-
 Lemma le0_refl(r : rel0) :
   r <0== r.
 Proof. repeat_intros 0. intros H. apply H. Qed.
@@ -275,8 +262,4 @@ Proof. repeat_intros 13. intros H. apply H. Qed.
 Lemma le14_refl T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13(r : rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13) :
   r <14== r.
 Proof. repeat_intros 14. intros H. apply H. Qed.
-
-Lemma le15_refl T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14(r : rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14) :
-  r <15== r.
-Proof. repeat_intros 15. intros H. apply H. Qed.
 
