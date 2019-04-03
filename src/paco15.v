@@ -20,8 +20,30 @@ Variable T12 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) 
 Variable T13 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6) (x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: @T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (x11: @T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) (x12: @T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11), Type.
 Variable T14 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6) (x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: @T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (x11: @T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) (x12: @T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) (x13: @T13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12), Type.
 
-Local Notation curry15 := (@curry15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14).
-Local Notation uncurry15 := (@uncurry15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14).
+(** ** Signatures *)
+
+Record sig15T  :=
+  exist15T {
+      proj15T0: @T0;
+      proj15T1: @T1 proj15T0;
+      proj15T2: @T2 proj15T0 proj15T1;
+      proj15T3: @T3 proj15T0 proj15T1 proj15T2;
+      proj15T4: @T4 proj15T0 proj15T1 proj15T2 proj15T3;
+      proj15T5: @T5 proj15T0 proj15T1 proj15T2 proj15T3 proj15T4;
+      proj15T6: @T6 proj15T0 proj15T1 proj15T2 proj15T3 proj15T4 proj15T5;
+      proj15T7: @T7 proj15T0 proj15T1 proj15T2 proj15T3 proj15T4 proj15T5 proj15T6;
+      proj15T8: @T8 proj15T0 proj15T1 proj15T2 proj15T3 proj15T4 proj15T5 proj15T6 proj15T7;
+      proj15T9: @T9 proj15T0 proj15T1 proj15T2 proj15T3 proj15T4 proj15T5 proj15T6 proj15T7 proj15T8;
+      proj15T10: @T10 proj15T0 proj15T1 proj15T2 proj15T3 proj15T4 proj15T5 proj15T6 proj15T7 proj15T8 proj15T9;
+      proj15T11: @T11 proj15T0 proj15T1 proj15T2 proj15T3 proj15T4 proj15T5 proj15T6 proj15T7 proj15T8 proj15T9 proj15T10;
+      proj15T12: @T12 proj15T0 proj15T1 proj15T2 proj15T3 proj15T4 proj15T5 proj15T6 proj15T7 proj15T8 proj15T9 proj15T10 proj15T11;
+      proj15T13: @T13 proj15T0 proj15T1 proj15T2 proj15T3 proj15T4 proj15T5 proj15T6 proj15T7 proj15T8 proj15T9 proj15T10 proj15T11 proj15T12;
+      proj15T14: @T14 proj15T0 proj15T1 proj15T2 proj15T3 proj15T4 proj15T5 proj15T6 proj15T7 proj15T8 proj15T9 proj15T10 proj15T11 proj15T12 proj15T13;
+    }.
+Definition uncurry15  (R: rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14): rel1 sig15T :=
+  fun x => R (proj15T0 x) (proj15T1 x) (proj15T2 x) (proj15T3 x) (proj15T4 x) (proj15T5 x) (proj15T6 x) (proj15T7 x) (proj15T8 x) (proj15T9 x) (proj15T10 x) (proj15T11 x) (proj15T12 x) (proj15T13 x) (proj15T14 x).
+Definition curry15  (R: rel1 sig15T): rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 :=
+  fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 => R (exist15T x14).
 
 Lemma uncurry_map15 r0 r1 (LE : r0 <15== r1) : uncurry15 r0 <1== uncurry15 r1.
 Proof. intros [] H. apply LE. apply H. Qed.

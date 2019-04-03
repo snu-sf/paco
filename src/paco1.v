@@ -6,8 +6,16 @@ Section PACO1.
 
 Variable T0 : Type.
 
-Local Notation curry1 := (@curry1 T0).
-Local Notation uncurry1 := (@uncurry1 T0).
+(** ** Signatures *)
+
+Record sig1T  :=
+  exist1T {
+      proj1T0: @T0;
+    }.
+Definition uncurry1  (R: rel1 T0): rel1 sig1T :=
+  fun x => R (proj1T0 x).
+Definition curry1  (R: rel1 sig1T): rel1 T0 :=
+  fun x0 => R (exist1T x0).
 
 Lemma uncurry_map1 r0 r1 (LE : r0 <1== r1) : uncurry1 r0 <1== uncurry1 r1.
 Proof. intros [] H. apply LE. apply H. Qed.

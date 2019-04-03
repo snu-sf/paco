@@ -199,7 +199,7 @@ generalize _paco_mark_cons; repeat intro; paco_cont0.
 Ltac paco_post_match0 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| (pacoid _) -> _ => clear H; tac1 cr
+| bot0 -> _ => clear H; tac1 cr
 | ?pr -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -234,7 +234,7 @@ end.
 Ltac paco_post_match1 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _, (pacoid _) _ -> _ => clear H; tac1 cr
+| forall _, bot1 _ -> _ => clear H; tac1 cr
 | forall _, ?pr _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -272,7 +272,7 @@ end.
 Ltac paco_post_match2 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _, (pacoid _) _ _ -> _ => clear H; tac1 cr
+| forall _ _, bot2 _ _ -> _ => clear H; tac1 cr
 | forall _ _, ?pr _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -313,7 +313,7 @@ end.
 Ltac paco_post_match3 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _, (pacoid _) _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _, bot3 _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _, ?pr _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -357,7 +357,7 @@ end.
 Ltac paco_post_match4 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _, (pacoid _) _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _, bot4 _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _, ?pr _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -404,7 +404,7 @@ end.
 Ltac paco_post_match5 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _, (pacoid _) _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _, bot5 _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _, ?pr _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -454,7 +454,7 @@ end.
 Ltac paco_post_match6 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _, bot6 _ _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _ _, ?pr _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -507,7 +507,7 @@ end.
 Ltac paco_post_match7 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _, bot7 _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -563,7 +563,7 @@ end.
 Ltac paco_post_match8 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _, bot8 _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -622,7 +622,7 @@ end.
 Ltac paco_post_match9 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _, bot9 _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -684,7 +684,7 @@ end.
 Ltac paco_post_match10 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _, bot10 _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -749,7 +749,7 @@ end.
 Ltac paco_post_match11 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _, bot11 _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -817,7 +817,7 @@ end.
 Ltac paco_post_match12 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _, bot12 _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -888,7 +888,7 @@ end.
 Ltac paco_post_match13 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _, bot13 _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -962,7 +962,7 @@ end.
 Ltac paco_post_match14 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _, bot14 _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.
@@ -1039,7 +1039,7 @@ end.
 Ltac paco_post_match15 INC tac1 tac2 :=
 let cr := fresh "_paco_cr_" in intros cr INC; repeat (red in INC);
 match goal with [H: ?x |- _] => match x with
-| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, (pacoid _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
+| forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, bot15 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => clear H; tac1 cr
 | forall _ _ _ _ _ _ _ _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ -> _ => paco_post_var INC pr cr; tac2 pr cr
 | _ => tac1 cr
 end end.

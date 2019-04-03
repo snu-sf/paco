@@ -9,8 +9,19 @@ Variable T1 : forall (x0: @T0), Type.
 Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
 Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
 
-Local Notation curry4 := (@curry4 T0 T1 T2 T3).
-Local Notation uncurry4 := (@uncurry4 T0 T1 T2 T3).
+(** ** Signatures *)
+
+Record sig4T  :=
+  exist4T {
+      proj4T0: @T0;
+      proj4T1: @T1 proj4T0;
+      proj4T2: @T2 proj4T0 proj4T1;
+      proj4T3: @T3 proj4T0 proj4T1 proj4T2;
+    }.
+Definition uncurry4  (R: rel4 T0 T1 T2 T3): rel1 sig4T :=
+  fun x => R (proj4T0 x) (proj4T1 x) (proj4T2 x) (proj4T3 x).
+Definition curry4  (R: rel1 sig4T): rel4 T0 T1 T2 T3 :=
+  fun x0 x1 x2 x3 => R (exist4T x3).
 
 Lemma uncurry_map4 r0 r1 (LE : r0 <4== r1) : uncurry4 r0 <1== uncurry4 r1.
 Proof. intros [] H. apply LE. apply H. Qed.
