@@ -122,6 +122,14 @@ Proof.
   eapply paco_unfold; apply monotone_eq; eauto.
 Qed.
 
+Theorem _paco_algebra (MON: _monotone gf) r:
+  r <1== gf r -> r <1== paco gf bot1.
+Proof.
+  intros. red. eapply paco_acc. intros.
+  apply paco_fold. eapply MON; cycle 1. apply H, PR.
+  intros. right. apply CIH. apply PR0.
+Qed.
+
 End Arg1.
 
 Hint Unfold monotone.

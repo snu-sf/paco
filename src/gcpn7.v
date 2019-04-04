@@ -1,4 +1,4 @@
-Require Import paco7 cpn7 cpntac.
+Require Import paco7 pcpn7 pcpntac.
 Set Implicit Arguments.
 
 Section WCompanion7.

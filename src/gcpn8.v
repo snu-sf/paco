@@ -1,4 +1,4 @@
-Require Import paco8 cpn8 cpntac.
+Require Import paco8 pcpn8 pcpntac.
 Set Implicit Arguments.
 
 Section WCompanion8.

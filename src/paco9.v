@@ -202,6 +202,16 @@ Proof.
   eapply _paco_unfold; apply monotone9_map; assumption.
 Qed.
 
+Theorem _paco9_algebra (MON: _monotone9 gf) r :
+  r <9== gf r -> r <9== paco9 gf bot9.
+Proof.
+  intros. apply uncurry_adjoint1_9.
+  apply _paco_algebra.
+  apply monotone9_map; assumption.
+  apply curry_adjoint1_9.
+  apply H.
+Qed.
+
 Theorem paco9_acc: forall
   l r (OBG: forall rr (INC: r <9= rr) (CIH: l <9= rr), l <9= paco9 gf rr),
   l <9= paco9 gf r.
@@ -243,6 +253,13 @@ Theorem paco9_unfold: forall (MON: monotone9 gf) r,
   paco9 gf r <9= gf (upaco9 gf r).
 Proof.
   repeat_intros 1. eapply _paco9_unfold; apply monotone9_eq; assumption.
+Qed.
+
+Theorem paco9_algebra r (MON: monotone9 gf) :
+  r <9= gf r -> r <9= paco9 gf bot9.
+Proof.
+  repeat_intros 1. eapply _paco9_algebra. apply monotone9_eq; assumption.
+  repeat intro. apply x0, PR.
 Qed.
 
 End Arg9.

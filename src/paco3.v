@@ -190,6 +190,16 @@ Proof.
   eapply _paco_unfold; apply monotone3_map; assumption.
 Qed.
 
+Theorem _paco3_algebra (MON: _monotone3 gf) r :
+  r <3== gf r -> r <3== paco3 gf bot3.
+Proof.
+  intros. apply uncurry_adjoint1_3.
+  apply _paco_algebra.
+  apply monotone3_map; assumption.
+  apply curry_adjoint1_3.
+  apply H.
+Qed.
+
 Theorem paco3_acc: forall
   l r (OBG: forall rr (INC: r <3= rr) (CIH: l <3= rr), l <3= paco3 gf rr),
   l <3= paco3 gf r.
@@ -231,6 +241,13 @@ Theorem paco3_unfold: forall (MON: monotone3 gf) r,
   paco3 gf r <3= gf (upaco3 gf r).
 Proof.
   repeat_intros 1. eapply _paco3_unfold; apply monotone3_eq; assumption.
+Qed.
+
+Theorem paco3_algebra r (MON: monotone3 gf) :
+  r <3= gf r -> r <3= paco3 gf bot3.
+Proof.
+  repeat_intros 1. eapply _paco3_algebra. apply monotone3_eq; assumption.
+  repeat intro. apply x0, PR.
 Qed.
 
 End Arg3.

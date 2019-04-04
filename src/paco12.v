@@ -208,6 +208,16 @@ Proof.
   eapply _paco_unfold; apply monotone12_map; assumption.
 Qed.
 
+Theorem _paco12_algebra (MON: _monotone12 gf) r :
+  r <12== gf r -> r <12== paco12 gf bot12.
+Proof.
+  intros. apply uncurry_adjoint1_12.
+  apply _paco_algebra.
+  apply monotone12_map; assumption.
+  apply curry_adjoint1_12.
+  apply H.
+Qed.
+
 Theorem paco12_acc: forall
   l r (OBG: forall rr (INC: r <12= rr) (CIH: l <12= rr), l <12= paco12 gf rr),
   l <12= paco12 gf r.
@@ -249,6 +259,13 @@ Theorem paco12_unfold: forall (MON: monotone12 gf) r,
   paco12 gf r <12= gf (upaco12 gf r).
 Proof.
   repeat_intros 1. eapply _paco12_unfold; apply monotone12_eq; assumption.
+Qed.
+
+Theorem paco12_algebra r (MON: monotone12 gf) :
+  r <12= gf r -> r <12= paco12 gf bot12.
+Proof.
+  repeat_intros 1. eapply _paco12_algebra. apply monotone12_eq; assumption.
+  repeat intro. apply x0, PR.
 Qed.
 
 End Arg12.

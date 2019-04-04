@@ -212,6 +212,16 @@ Proof.
   eapply _paco_unfold; apply monotone14_map; assumption.
 Qed.
 
+Theorem _paco14_algebra (MON: _monotone14 gf) r :
+  r <14== gf r -> r <14== paco14 gf bot14.
+Proof.
+  intros. apply uncurry_adjoint1_14.
+  apply _paco_algebra.
+  apply monotone14_map; assumption.
+  apply curry_adjoint1_14.
+  apply H.
+Qed.
+
 Theorem paco14_acc: forall
   l r (OBG: forall rr (INC: r <14= rr) (CIH: l <14= rr), l <14= paco14 gf rr),
   l <14= paco14 gf r.
@@ -253,6 +263,13 @@ Theorem paco14_unfold: forall (MON: monotone14 gf) r,
   paco14 gf r <14= gf (upaco14 gf r).
 Proof.
   repeat_intros 1. eapply _paco14_unfold; apply monotone14_eq; assumption.
+Qed.
+
+Theorem paco14_algebra r (MON: monotone14 gf) :
+  r <14= gf r -> r <14= paco14 gf bot14.
+Proof.
+  repeat_intros 1. eapply _paco14_algebra. apply monotone14_eq; assumption.
+  repeat intro. apply x0, PR.
 Qed.
 
 End Arg14.

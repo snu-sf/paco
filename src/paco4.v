@@ -192,6 +192,16 @@ Proof.
   eapply _paco_unfold; apply monotone4_map; assumption.
 Qed.
 
+Theorem _paco4_algebra (MON: _monotone4 gf) r :
+  r <4== gf r -> r <4== paco4 gf bot4.
+Proof.
+  intros. apply uncurry_adjoint1_4.
+  apply _paco_algebra.
+  apply monotone4_map; assumption.
+  apply curry_adjoint1_4.
+  apply H.
+Qed.
+
 Theorem paco4_acc: forall
   l r (OBG: forall rr (INC: r <4= rr) (CIH: l <4= rr), l <4= paco4 gf rr),
   l <4= paco4 gf r.
@@ -233,6 +243,13 @@ Theorem paco4_unfold: forall (MON: monotone4 gf) r,
   paco4 gf r <4= gf (upaco4 gf r).
 Proof.
   repeat_intros 1. eapply _paco4_unfold; apply monotone4_eq; assumption.
+Qed.
+
+Theorem paco4_algebra r (MON: monotone4 gf) :
+  r <4= gf r -> r <4= paco4 gf bot4.
+Proof.
+  repeat_intros 1. eapply _paco4_algebra. apply monotone4_eq; assumption.
+  repeat intro. apply x0, PR.
 Qed.
 
 End Arg4.

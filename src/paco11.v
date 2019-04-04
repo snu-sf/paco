@@ -206,6 +206,16 @@ Proof.
   eapply _paco_unfold; apply monotone11_map; assumption.
 Qed.
 
+Theorem _paco11_algebra (MON: _monotone11 gf) r :
+  r <11== gf r -> r <11== paco11 gf bot11.
+Proof.
+  intros. apply uncurry_adjoint1_11.
+  apply _paco_algebra.
+  apply monotone11_map; assumption.
+  apply curry_adjoint1_11.
+  apply H.
+Qed.
+
 Theorem paco11_acc: forall
   l r (OBG: forall rr (INC: r <11= rr) (CIH: l <11= rr), l <11= paco11 gf rr),
   l <11= paco11 gf r.
@@ -247,6 +257,13 @@ Theorem paco11_unfold: forall (MON: monotone11 gf) r,
   paco11 gf r <11= gf (upaco11 gf r).
 Proof.
   repeat_intros 1. eapply _paco11_unfold; apply monotone11_eq; assumption.
+Qed.
+
+Theorem paco11_algebra r (MON: monotone11 gf) :
+  r <11= gf r -> r <11= paco11 gf bot11.
+Proof.
+  repeat_intros 1. eapply _paco11_algebra. apply monotone11_eq; assumption.
+  repeat intro. apply x0, PR.
 Qed.
 
 End Arg11.

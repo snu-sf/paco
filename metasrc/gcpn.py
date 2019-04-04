@@ -9,7 +9,7 @@ if len(sys.argv) < 2:
 relsize = int(sys.argv[1])
 n = relsize
 
-print ("Require Import paco"+str(n)+" cpn"+str(n)+" cpntac.")
+print ("Require Import paco"+str(n)+" pcpn"+str(n)+" pcpntac.")
 print ("Set Implicit Arguments.")
 print ("")
 

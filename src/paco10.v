@@ -204,6 +204,16 @@ Proof.
   eapply _paco_unfold; apply monotone10_map; assumption.
 Qed.
 
+Theorem _paco10_algebra (MON: _monotone10 gf) r :
+  r <10== gf r -> r <10== paco10 gf bot10.
+Proof.
+  intros. apply uncurry_adjoint1_10.
+  apply _paco_algebra.
+  apply monotone10_map; assumption.
+  apply curry_adjoint1_10.
+  apply H.
+Qed.
+
 Theorem paco10_acc: forall
   l r (OBG: forall rr (INC: r <10= rr) (CIH: l <10= rr), l <10= paco10 gf rr),
   l <10= paco10 gf r.
@@ -245,6 +255,13 @@ Theorem paco10_unfold: forall (MON: monotone10 gf) r,
   paco10 gf r <10= gf (upaco10 gf r).
 Proof.
   repeat_intros 1. eapply _paco10_unfold; apply monotone10_eq; assumption.
+Qed.
+
+Theorem paco10_algebra r (MON: monotone10 gf) :
+  r <10= gf r -> r <10= paco10 gf bot10.
+Proof.
+  repeat_intros 1. eapply _paco10_algebra. apply monotone10_eq; assumption.
+  repeat intro. apply x0, PR.
 Qed.
 
 End Arg10.

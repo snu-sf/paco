@@ -188,6 +188,16 @@ Proof.
   eapply _paco_unfold; apply monotone2_map; assumption.
 Qed.
 
+Theorem _paco2_algebra (MON: _monotone2 gf) r :
+  r <2== gf r -> r <2== paco2 gf bot2.
+Proof.
+  intros. apply uncurry_adjoint1_2.
+  apply _paco_algebra.
+  apply monotone2_map; assumption.
+  apply curry_adjoint1_2.
+  apply H.
+Qed.
+
 Theorem paco2_acc: forall
   l r (OBG: forall rr (INC: r <2= rr) (CIH: l <2= rr), l <2= paco2 gf rr),
   l <2= paco2 gf r.
@@ -229,6 +239,13 @@ Theorem paco2_unfold: forall (MON: monotone2 gf) r,
   paco2 gf r <2= gf (upaco2 gf r).
 Proof.
   repeat_intros 1. eapply _paco2_unfold; apply monotone2_eq; assumption.
+Qed.
+
+Theorem paco2_algebra r (MON: monotone2 gf) :
+  r <2= gf r -> r <2= paco2 gf bot2.
+Proof.
+  repeat_intros 1. eapply _paco2_algebra. apply monotone2_eq; assumption.
+  repeat intro. apply x0, PR.
 Qed.
 
 End Arg2.

@@ -210,6 +210,16 @@ Proof.
   eapply _paco_unfold; apply monotone13_map; assumption.
 Qed.
 
+Theorem _paco13_algebra (MON: _monotone13 gf) r :
+  r <13== gf r -> r <13== paco13 gf bot13.
+Proof.
+  intros. apply uncurry_adjoint1_13.
+  apply _paco_algebra.
+  apply monotone13_map; assumption.
+  apply curry_adjoint1_13.
+  apply H.
+Qed.
+
 Theorem paco13_acc: forall
   l r (OBG: forall rr (INC: r <13= rr) (CIH: l <13= rr), l <13= paco13 gf rr),
   l <13= paco13 gf r.
@@ -251,6 +261,13 @@ Theorem paco13_unfold: forall (MON: monotone13 gf) r,
   paco13 gf r <13= gf (upaco13 gf r).
 Proof.
   repeat_intros 1. eapply _paco13_unfold; apply monotone13_eq; assumption.
+Qed.
+
+Theorem paco13_algebra r (MON: monotone13 gf) :
+  r <13= gf r -> r <13= paco13 gf bot13.
+Proof.
+  repeat_intros 1. eapply _paco13_algebra. apply monotone13_eq; assumption.
+  repeat intro. apply x0, PR.
 Qed.
 
 End Arg13.

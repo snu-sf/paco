@@ -184,6 +184,16 @@ Proof.
   eapply _paco_unfold; apply monotone0_map; assumption.
 Qed.
 
+Theorem _paco0_algebra (MON: _monotone0 gf) r :
+  r <0== gf r -> r <0== paco0 gf bot0.
+Proof.
+  intros. apply uncurry_adjoint1_0.
+  apply _paco_algebra.
+  apply monotone0_map; assumption.
+  apply curry_adjoint1_0.
+  apply H.
+Qed.
+
 Theorem paco0_acc: forall
   l r (OBG: forall rr (INC: r <0= rr) (CIH: l <0= rr), l <0= paco0 gf rr),
   l <0= paco0 gf r.
@@ -225,6 +235,13 @@ Theorem paco0_unfold: forall (MON: monotone0 gf) r,
   paco0 gf r <0= gf (upaco0 gf r).
 Proof.
   repeat_intros 1. eapply _paco0_unfold; apply monotone0_eq; assumption.
+Qed.
+
+Theorem paco0_algebra r (MON: monotone0 gf) :
+  r <0= gf r -> r <0= paco0 gf bot0.
+Proof.
+  repeat_intros 1. eapply _paco0_algebra. apply monotone0_eq; assumption.
+  repeat intro. apply x0, PR.
 Qed.
 
 End Arg0.

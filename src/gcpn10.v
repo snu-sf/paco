@@ -1,4 +1,4 @@
-Require Import paco10 cpn10 cpntac.
+Require Import paco10 pcpn10 pcpntac.
 Set Implicit Arguments.
 
 Section WCompanion10.

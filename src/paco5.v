@@ -194,6 +194,16 @@ Proof.
   eapply _paco_unfold; apply monotone5_map; assumption.
 Qed.
 
+Theorem _paco5_algebra (MON: _monotone5 gf) r :
+  r <5== gf r -> r <5== paco5 gf bot5.
+Proof.
+  intros. apply uncurry_adjoint1_5.
+  apply _paco_algebra.
+  apply monotone5_map; assumption.
+  apply curry_adjoint1_5.
+  apply H.
+Qed.
+
 Theorem paco5_acc: forall
   l r (OBG: forall rr (INC: r <5= rr) (CIH: l <5= rr), l <5= paco5 gf rr),
   l <5= paco5 gf r.
@@ -235,6 +245,13 @@ Theorem paco5_unfold: forall (MON: monotone5 gf) r,
   paco5 gf r <5= gf (upaco5 gf r).
 Proof.
   repeat_intros 1. eapply _paco5_unfold; apply monotone5_eq; assumption.
+Qed.
+
+Theorem paco5_algebra r (MON: monotone5 gf) :
+  r <5= gf r -> r <5= paco5 gf bot5.
+Proof.
+  repeat_intros 1. eapply _paco5_algebra. apply monotone5_eq; assumption.
+  repeat intro. apply x0, PR.
 Qed.
 
 End Arg5.

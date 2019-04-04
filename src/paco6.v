@@ -196,6 +196,16 @@ Proof.
   eapply _paco_unfold; apply monotone6_map; assumption.
 Qed.
 
+Theorem _paco6_algebra (MON: _monotone6 gf) r :
+  r <6== gf r -> r <6== paco6 gf bot6.
+Proof.
+  intros. apply uncurry_adjoint1_6.
+  apply _paco_algebra.
+  apply monotone6_map; assumption.
+  apply curry_adjoint1_6.
+  apply H.
+Qed.
+
 Theorem paco6_acc: forall
   l r (OBG: forall rr (INC: r <6= rr) (CIH: l <6= rr), l <6= paco6 gf rr),
   l <6= paco6 gf r.
@@ -237,6 +247,13 @@ Theorem paco6_unfold: forall (MON: monotone6 gf) r,
   paco6 gf r <6= gf (upaco6 gf r).
 Proof.
   repeat_intros 1. eapply _paco6_unfold; apply monotone6_eq; assumption.
+Qed.
+
+Theorem paco6_algebra r (MON: monotone6 gf) :
+  r <6= gf r -> r <6= paco6 gf bot6.
+Proof.
+  repeat_intros 1. eapply _paco6_algebra. apply monotone6_eq; assumption.
+  repeat intro. apply x0, PR.
 Qed.
 
 End Arg6.

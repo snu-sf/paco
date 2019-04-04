@@ -198,6 +198,16 @@ Proof.
   eapply _paco_unfold; apply monotone7_map; assumption.
 Qed.
 
+Theorem _paco7_algebra (MON: _monotone7 gf) r :
+  r <7== gf r -> r <7== paco7 gf bot7.
+Proof.
+  intros. apply uncurry_adjoint1_7.
+  apply _paco_algebra.
+  apply monotone7_map; assumption.
+  apply curry_adjoint1_7.
+  apply H.
+Qed.
+
 Theorem paco7_acc: forall
   l r (OBG: forall rr (INC: r <7= rr) (CIH: l <7= rr), l <7= paco7 gf rr),
   l <7= paco7 gf r.
@@ -239,6 +249,13 @@ Theorem paco7_unfold: forall (MON: monotone7 gf) r,
   paco7 gf r <7= gf (upaco7 gf r).
 Proof.
   repeat_intros 1. eapply _paco7_unfold; apply monotone7_eq; assumption.
+Qed.
+
+Theorem paco7_algebra r (MON: monotone7 gf) :
+  r <7= gf r -> r <7= paco7 gf bot7.
+Proof.
+  repeat_intros 1. eapply _paco7_algebra. apply monotone7_eq; assumption.
+  repeat intro. apply x0, PR.
 Qed.
 
 End Arg7.

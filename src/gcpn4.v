@@ -1,4 +1,4 @@
-Require Import paco4 cpn4 cpntac.
+Require Import paco4 pcpn4 pcpntac.
 Set Implicit Arguments.
 
 Section WCompanion4.

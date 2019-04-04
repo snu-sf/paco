@@ -200,6 +200,16 @@ Proof.
   eapply _paco_unfold; apply monotone8_map; assumption.
 Qed.
 
+Theorem _paco8_algebra (MON: _monotone8 gf) r :
+  r <8== gf r -> r <8== paco8 gf bot8.
+Proof.
+  intros. apply uncurry_adjoint1_8.
+  apply _paco_algebra.
+  apply monotone8_map; assumption.
+  apply curry_adjoint1_8.
+  apply H.
+Qed.
+
 Theorem paco8_acc: forall
   l r (OBG: forall rr (INC: r <8= rr) (CIH: l <8= rr), l <8= paco8 gf rr),
   l <8= paco8 gf r.
@@ -241,6 +251,13 @@ Theorem paco8_unfold: forall (MON: monotone8 gf) r,
   paco8 gf r <8= gf (upaco8 gf r).
 Proof.
   repeat_intros 1. eapply _paco8_unfold; apply monotone8_eq; assumption.
+Qed.
+
+Theorem paco8_algebra r (MON: monotone8 gf) :
+  r <8= gf r -> r <8= paco8 gf bot8.
+Proof.
+  repeat_intros 1. eapply _paco8_algebra. apply monotone8_eq; assumption.
+  repeat intro. apply x0, PR.
 Qed.
 
 End Arg8.
