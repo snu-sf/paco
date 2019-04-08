@@ -215,6 +215,12 @@ Proof.
   intros. _punfold PR. apply PR. apply gf_mon.
 Qed.
 
+Lemma ucpn12_unfold:
+  ucpn12 bot12 <12= gf(ucpn12 bot12).
+Proof.
+  intros. apply pcpn12_unfold, pcpn12_final, ucpn12_init, PR.
+Qed.
+
 Lemma pcpn12_step r:
   gf (ucpn12 r) <12= pcpn12 r.
 Proof.
@@ -274,6 +280,125 @@ Proof.
   apply OBG. apply CIH0. apply CIH. apply PR.
 Qed.
 
+(**
+  Recursive Closure & Weak Compatibility
+*)
+
+Inductive rclo12 (clo: rel->rel) (r: rel): rel :=
+| rclo12_base
+    x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11
+    (R: r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11):
+    @rclo12 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11
+| rclo12_clo'
+    r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11
+    (R': r' <12= rclo12 clo r)
+    (CLOR': clo r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11):
+    @rclo12 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11
+| rclo12_dcpn'
+    r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11
+    (R': r' <12= rclo12 clo r)
+    (CLOR': @dcpn12 r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11):
+    @rclo12 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11
+.
+
+Structure wdcompatible12 (clo: rel -> rel) : Prop :=
+  wdcompat12_intro {
+      wdcompat12_mon: monotone12 clo;
+      wdcompat12_wcompat: forall r,
+          clo (gf r) <12= gf (rclo12 clo r);
+      wdcompat12_distr : forall r1 r2,
+          clo (r1 \12/ r2) <12= (clo r1 \12/ clo r2);
+    }.
+
+Lemma rclo12_mon_gen clo clo' r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11
+      (IN: @rclo12 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
+      (LEclo: clo <13= clo')
+      (LEr: r <12= r') :
+  @rclo12 clo' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11.
+Proof.
+  induction IN; intros.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR|apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR|].
+    eapply dcpn12_mon; [apply CLOR'|].
+    intros. apply PR.
+Qed.
+
+Lemma rclo12_mon clo:
+  monotone12 (rclo12 clo).
+Proof.
+  repeat intro. eapply rclo12_mon_gen; [apply IN|intros; apply PR|apply LE].
+Qed.
+
+Lemma rclo12_clo clo r:
+  clo (rclo12 clo r) <12= rclo12 clo r.
+Proof.
+  intros. econstructor 2; [|apply PR]. 
+  intros. apply PR0.
+Qed.
+
+Lemma rclo12_dcpn clo r:
+  dcpn12 (rclo12 clo r) <12= rclo12 clo r.
+Proof.
+  intros. econstructor 3; [|apply PR]. 
+  intros. apply PR0.
+Qed.
+
+Lemma rclo12_mult clo r:
+  rclo12 clo (rclo12 clo r) <12= rclo12 clo r.
+Proof.
+  intros. induction PR.
+  - apply R.
+  - econstructor 2; [eapply H | eapply CLOR'].
+  - econstructor 3; [eapply H | eapply CLOR'].
+Qed.
+
+Lemma rclo12_compose clo r:
+  rclo12 (rclo12 clo) r <12= rclo12 clo r.
+Proof.
+  intros. induction PR.
+  - apply rclo12_base, R.
+  - apply rclo12_mult.
+    eapply rclo12_mon; [apply CLOR'|apply H].
+  - apply rclo12_dcpn.
+    eapply dcpn12_mon; [apply CLOR'|apply H].
+Qed.
+
+Lemma wdcompat12_dcompat
+      clo (WCOM: wdcompatible12 clo):
+  dcompatible12 (rclo12 clo).
+Proof.
+  econstructor; [eapply rclo12_mon| |]; intros.
+  - induction PR; intros.
+    + eapply gf_mon; [apply R|]. intros.
+      apply rclo12_base. apply PR.
+    + eapply gf_mon.
+      * eapply (wdcompat12_wcompat WCOM).
+        eapply (wdcompat12_mon WCOM); [apply CLOR'|apply H].
+      * intros. apply rclo12_mult, PR.
+    + eapply gf_mon; [|intros; apply rclo12_dcpn, PR].
+      eapply (dcompat12_compat dcpn12_compat).
+      eapply dcpn12_mon; [apply CLOR'|apply H].
+  - induction PR; intros.
+    + destruct R as [R|R]; [left | right]; econstructor; apply R.
+    + assert (CLOR:= wdcompat12_mon WCOM _ _ _ CLOR' H).
+      eapply (wdcompat12_distr WCOM) in CLOR.
+      destruct CLOR as [CLOR|CLOR]; [left|right]; apply rclo12_clo, CLOR.
+    + assert (CLOR:= dcpn12_mon _ CLOR' H).
+      eapply (dcompat12_distr dcpn12_compat) in CLOR.
+      destruct CLOR as [CLOR|CLOR]; [left|right]; apply rclo12_dcpn, CLOR.
+Qed.
+
+Lemma wcompat12_sound clo (WCOM: wdcompatible12 clo):
+  clo <13= dcpn12.
+Proof.
+  intros. exists (rclo12 clo).
+  - apply wdcompat12_dcompat, WCOM.
+  - apply rclo12_clo.
+    eapply (wdcompat12_mon WCOM); [apply PR|].
+    intros. apply rclo12_base, PR0.
+Qed.
+
 End PacoCompanion12_main.
 
 Lemma pcpn12_mon_bot (gf gf': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 r
@@ -302,3 +427,5 @@ Hint Resolve ucpn12_base : paco.
 Hint Resolve pcpn12_step : paco.
 Hint Resolve ucpn12_step : paco.
 
+Hint Constructors rclo12 : rclo.
+Hint Resolve rclo12_clo rclo12_dcpn : rclo.

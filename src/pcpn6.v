@@ -209,6 +209,12 @@ Proof.
   intros. _punfold PR. apply PR. apply gf_mon.
 Qed.
 
+Lemma ucpn6_unfold:
+  ucpn6 bot6 <6= gf(ucpn6 bot6).
+Proof.
+  intros. apply pcpn6_unfold, pcpn6_final, ucpn6_init, PR.
+Qed.
+
 Lemma pcpn6_step r:
   gf (ucpn6 r) <6= pcpn6 r.
 Proof.
@@ -268,6 +274,125 @@ Proof.
   apply OBG. apply CIH0. apply CIH. apply PR.
 Qed.
 
+(**
+  Recursive Closure & Weak Compatibility
+*)
+
+Inductive rclo6 (clo: rel->rel) (r: rel): rel :=
+| rclo6_base
+    x0 x1 x2 x3 x4 x5
+    (R: r x0 x1 x2 x3 x4 x5):
+    @rclo6 clo r x0 x1 x2 x3 x4 x5
+| rclo6_clo'
+    r' x0 x1 x2 x3 x4 x5
+    (R': r' <6= rclo6 clo r)
+    (CLOR': clo r' x0 x1 x2 x3 x4 x5):
+    @rclo6 clo r x0 x1 x2 x3 x4 x5
+| rclo6_dcpn'
+    r' x0 x1 x2 x3 x4 x5
+    (R': r' <6= rclo6 clo r)
+    (CLOR': @dcpn6 r' x0 x1 x2 x3 x4 x5):
+    @rclo6 clo r x0 x1 x2 x3 x4 x5
+.
+
+Structure wdcompatible6 (clo: rel -> rel) : Prop :=
+  wdcompat6_intro {
+      wdcompat6_mon: monotone6 clo;
+      wdcompat6_wcompat: forall r,
+          clo (gf r) <6= gf (rclo6 clo r);
+      wdcompat6_distr : forall r1 r2,
+          clo (r1 \6/ r2) <6= (clo r1 \6/ clo r2);
+    }.
+
+Lemma rclo6_mon_gen clo clo' r r' x0 x1 x2 x3 x4 x5
+      (IN: @rclo6 clo r x0 x1 x2 x3 x4 x5)
+      (LEclo: clo <7= clo')
+      (LEr: r <6= r') :
+  @rclo6 clo' r' x0 x1 x2 x3 x4 x5.
+Proof.
+  induction IN; intros.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR|apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR|].
+    eapply dcpn6_mon; [apply CLOR'|].
+    intros. apply PR.
+Qed.
+
+Lemma rclo6_mon clo:
+  monotone6 (rclo6 clo).
+Proof.
+  repeat intro. eapply rclo6_mon_gen; [apply IN|intros; apply PR|apply LE].
+Qed.
+
+Lemma rclo6_clo clo r:
+  clo (rclo6 clo r) <6= rclo6 clo r.
+Proof.
+  intros. econstructor 2; [|apply PR]. 
+  intros. apply PR0.
+Qed.
+
+Lemma rclo6_dcpn clo r:
+  dcpn6 (rclo6 clo r) <6= rclo6 clo r.
+Proof.
+  intros. econstructor 3; [|apply PR]. 
+  intros. apply PR0.
+Qed.
+
+Lemma rclo6_mult clo r:
+  rclo6 clo (rclo6 clo r) <6= rclo6 clo r.
+Proof.
+  intros. induction PR.
+  - apply R.
+  - econstructor 2; [eapply H | eapply CLOR'].
+  - econstructor 3; [eapply H | eapply CLOR'].
+Qed.
+
+Lemma rclo6_compose clo r:
+  rclo6 (rclo6 clo) r <6= rclo6 clo r.
+Proof.
+  intros. induction PR.
+  - apply rclo6_base, R.
+  - apply rclo6_mult.
+    eapply rclo6_mon; [apply CLOR'|apply H].
+  - apply rclo6_dcpn.
+    eapply dcpn6_mon; [apply CLOR'|apply H].
+Qed.
+
+Lemma wdcompat6_dcompat
+      clo (WCOM: wdcompatible6 clo):
+  dcompatible6 (rclo6 clo).
+Proof.
+  econstructor; [eapply rclo6_mon| |]; intros.
+  - induction PR; intros.
+    + eapply gf_mon; [apply R|]. intros.
+      apply rclo6_base. apply PR.
+    + eapply gf_mon.
+      * eapply (wdcompat6_wcompat WCOM).
+        eapply (wdcompat6_mon WCOM); [apply CLOR'|apply H].
+      * intros. apply rclo6_mult, PR.
+    + eapply gf_mon; [|intros; apply rclo6_dcpn, PR].
+      eapply (dcompat6_compat dcpn6_compat).
+      eapply dcpn6_mon; [apply CLOR'|apply H].
+  - induction PR; intros.
+    + destruct R as [R|R]; [left | right]; econstructor; apply R.
+    + assert (CLOR:= wdcompat6_mon WCOM _ _ _ CLOR' H).
+      eapply (wdcompat6_distr WCOM) in CLOR.
+      destruct CLOR as [CLOR|CLOR]; [left|right]; apply rclo6_clo, CLOR.
+    + assert (CLOR:= dcpn6_mon _ CLOR' H).
+      eapply (dcompat6_distr dcpn6_compat) in CLOR.
+      destruct CLOR as [CLOR|CLOR]; [left|right]; apply rclo6_dcpn, CLOR.
+Qed.
+
+Lemma wcompat6_sound clo (WCOM: wdcompatible6 clo):
+  clo <7= dcpn6.
+Proof.
+  intros. exists (rclo6 clo).
+  - apply wdcompat6_dcompat, WCOM.
+  - apply rclo6_clo.
+    eapply (wdcompat6_mon WCOM); [apply PR|].
+    intros. apply rclo6_base, PR0.
+Qed.
+
 End PacoCompanion6_main.
 
 Lemma pcpn6_mon_bot (gf gf': rel -> rel) x0 x1 x2 x3 x4 x5 r
@@ -296,3 +421,5 @@ Hint Resolve ucpn6_base : paco.
 Hint Resolve pcpn6_step : paco.
 Hint Resolve ucpn6_step : paco.
 
+Hint Constructors rclo6 : rclo.
+Hint Resolve rclo6_clo rclo6_dcpn : rclo.

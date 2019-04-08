@@ -1,7 +1,7 @@
 Require Import paco11 pcpn11 pcpntac.
 Set Implicit Arguments.
 
-Section WCompanion11.
+Section GeneralizedCompanion11.
 
 Variable T0 : Type.
 Variable T1 : forall (x0: @T0), Type.
@@ -17,52 +17,55 @@ Variable T10 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) 
 
 Local Notation rel := (rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10).
 
-Section WCompanion11_main.
+Section GeneralizedCompanion11_main.
 
 Variable gf: rel -> rel.
 Hypothesis gf_mon: monotone11 gf.
 
-Variable bnd: rel -> rel.
-Hypothesis bnd_compat : compatible_bound11 gf bnd.
+Inductive gcpn11 (r rg : rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 : Prop :=
+| gcpn11_intro (IN: ucpn11 gf (r \11/ pcpn11 gf rg) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
+.
 
-Inductive gcpn11 (r rg : rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 : Prop :=
-| gcpn11_intro (IN: cpn11 gf bnd (r \11/ fcpn11 gf bnd rg) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10)
-.              
-
-Lemma gcpn11_mon r r' rg rg' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10
-      (IN: @gcpn11 r rg e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10)
+Lemma gcpn11_mon r r' rg rg' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10
+      (IN: @gcpn11 r rg x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
       (LEr: r <11= r')
       (LErg: rg <11= rg'):
-  @gcpn11 r' rg' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+  @gcpn11 r' rg' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10.
 Proof.
   destruct IN. constructor.
-  eapply cpn11_mon. apply IN. intros.
+  eapply ucpn11_mon. apply IN. intros.
   destruct PR. left. apply LEr, H. right.
-  eapply fcpn11_mon. apply gf_mon. apply H. apply LErg.
+  eapply pcpn11_mon. apply H. apply LErg.
 Qed.
 
-Lemma gcpn11_init r: gcpn11 r r <11= cpn11 gf bnd r.
+Lemma gcpn11_init r: gcpn11 r r <11= ucpn11 gf r.
 Proof.
-  intros. destruct PR.
-  ucpn.
-  eapply cpn11_mon; [apply IN|].
+  intros. ucpn. destruct PR.
+  eapply ucpn11_mon; [apply IN|].
   intros. destruct PR.
   - ubase. apply H.
-  - ustep. apply H.
+  - uunfold H. ustep. apply H.
 Qed.
 
-Lemma gcpn11_final r rg: cpn11 gf bnd r <11= gcpn11 r rg.
+Lemma gcpn11_final r rg: ucpn11 gf r <11= gcpn11 r rg.
 Proof.
-  constructor. eapply cpn11_mon. apply PR.
+  constructor. eapply ucpn11_mon. apply PR.
   intros. left. apply PR0.
 Qed.
 
 Lemma gcpn11_unfold:
   gcpn11 bot11 bot11 <11= gf (gcpn11 bot11 bot11).
 Proof.
-  intros. apply gcpn11_init in PR. uunfold PR.
-  eapply gf_mon; [apply PR|].
-  intros. apply gcpn11_final. apply PR0.
+  intros. destruct PR. destruct IN.
+  - uunfold H. eapply gf_mon. apply H.
+    intros. econstructor. apply PR.
+  - eapply gf_mon; [| intros; econstructor; right; apply PR].
+    eapply (dcompat11_compat (dcpn11_compat gf_mon)).
+    eapply dcpn11_mon. apply H.
+    intros. destruct PR; try contradiction.
+    uunfold H0. eapply gf_mon. apply H0.
+    intros. right.
+    apply pcpn11_final, ucpn11_init. apply gf_mon. apply PR.
 Qed.
 
 Lemma gcpn11_base r rg:
@@ -71,198 +74,66 @@ Proof.
   intros. constructor. ubase. left. apply PR.
 Qed.
 
-Lemma gcpn11_bound r rg:
-  bnd r <11= gcpn11 r rg.
-Proof.
-  intros. econstructor. apply cpn11_bound. apply bnd_compat.
-  eapply cbound11_mon.
-  - apply bnd_compat.
-  - apply PR.
-  - intros. left. apply PR0.
-Qed.
-
 Lemma gcpn11_step r rg:
   gf (gcpn11 rg rg) <11= gcpn11 r rg.
 Proof.
-  intros. constructor. ubase. right.
+  intros. constructor. ubase. right. ustep.
   eapply gf_mon. apply PR.
-  intros. apply gcpn11_init. apply PR0.
+  intros. destruct PR0.
+  apply ucpn11_ucpn. apply gf_mon.
+  eapply ucpn11_mon. apply IN.
+  intros. destruct PR0.
+  - ubase. apply H.
+  - left. apply H.
 Qed.
 
-Lemma gcpn11_cpn r rg:
-  cpn11 gf bnd (gcpn11 r rg) <11= gcpn11 r rg.
+Lemma gcpn11_ucpn r rg:
+  ucpn11 gf (gcpn11 r rg) <11= gcpn11 r rg.
 Proof.
   intros. constructor. ucpn.
-  eapply cpn11_mon. apply PR.
+  eapply ucpn11_mon. apply PR.
   intros. destruct PR0. apply IN.
 Qed.
 
 Lemma gcpn11_clo r rg
-      clo (LE: clo <12= cpn11 gf bnd):
+      clo (LE: clo <12= ucpn11 gf):
   clo (gcpn11 r rg) <11= gcpn11 r rg.
 Proof.
-  intros. apply gcpn11_cpn, LE, PR.
+  intros. apply gcpn11_ucpn, LE, PR.
 Qed.
 
 (*
   Fixpoint theorem of gcpn11
  *)
 
-Definition gcut11 (x y z: rel) : rel := fun e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 => y <11= z /\ x e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
-
-Definition gfixF11 (r rg z: rel) : rel := gcpn11 r (rg \11/ z).
-
-Definition gfix11 (r rg: rel) : rel := cpn11 (gfixF11 r rg) bot12 bot11.
-
-Lemma gfixF11_mon r rg:
-  monotone11 (gfixF11 r rg).
-Proof.
-  red; intros.
-  eapply gcpn11_mon. apply IN. intros. apply PR.
-  intros. destruct PR. left. apply H. right. apply LE, H.
-Qed.
-
-Local Hint Resolve gfixF11_mon.
-
-Lemma gcut11_mon x y : monotone11 (gcut11 x y).
-Proof.
-  repeat red. intros. destruct IN. split.
-  - intros. apply LE, H, PR.
-  - apply H0.
-Qed.
-
-Lemma gcut11_wcomp r rg (LE: r <11= rg) :
-  wcompatible11 gf bnd (gcut11 (gfix11 r rg) rg).
-Proof.
-  econstructor; [apply gcut11_mon| |].
-  { intros.
-    destruct PR as [LEz FIX].
-    uunfold FIX.
-    eapply gf_mon, rclo11_cpn.
-    apply cpn11_compat; [apply gf_mon|apply bnd_compat|].
-    eapply cpn11_mon; [apply FIX|]. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 FIX; intros.
-
-    destruct PR as [PR | PR].
-    - apply LE in PR. apply LEz in PR.
-      eapply gf_mon. apply PR.
-      intros. apply rclo11_base. apply PR0.
-    - eapply gf_mon; [apply PR|]. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 PR; intros.
-      eapply rclo11_cpn.
-      eapply cpn11_mon. apply PR. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 PR; intros.
-      destruct PR as [PR | PR].
-      + apply rclo11_step. eapply gf_mon. apply LEz, PR.
-        intros. apply rclo11_base, PR0.
-      + apply rclo11_clo. split.
-        * intros. apply rclo11_step.
-          eapply gf_mon. apply LEz. apply PR0.
-          intros. apply rclo11_base. apply PR1.
-        * apply PR.
-  }
-  { intros. apply (cbound11_distr bnd_compat) in PR.
-    destruct PR, IN.
-    uunfold H0. destruct H0. specialize (PTW _ IN).
-    eapply (compat11_bound (cpn11_compat gf_mon bnd_compat)) in PTW.
-    destruct PTW as [BND|BND].
-    - apply (cbound11_distr bnd_compat) in BND. destruct BND.
-      destruct IN0.
-      + left. apply PTW, H, LE, H0.
-      + specialize (PTW _ H0).
-        apply (cbound11_compat bnd_compat) in PTW.
-        right. eapply gf_mon. apply PTW.
-        intros. apply rclo11_cpn, cpn11_bound; [apply bnd_compat|].
-        eapply cbound11_mon. apply bnd_compat. apply PR.
-        intros. apply rclo11_cpn.
-        eapply cpn11_mon. apply PR0.
-        intros. destruct PR1.
-        * apply rclo11_base. apply H, H1.
-        * apply rclo11_clo. econstructor; [|apply H1].
-          intros. apply rclo11_base. apply H, PR1.
-    - right. eapply gf_mon. apply BND.
-      intros. apply rclo11_cpn.
-      eapply cpn11_mon. apply PR.
-      intros. destruct PR0.
-      + apply rclo11_base. apply H, LE, H0.
-      + apply rclo11_step.
-        eapply gf_mon. apply H0.
-        intros. apply rclo11_cpn.
-        eapply cpn11_mon. apply PR0.
-        intros. destruct PR1.
-        * apply rclo11_base. apply H, H1.
-        * apply rclo11_clo. econstructor; [|apply H1].
-          intros. apply rclo11_base. apply H, PR1.
-  }
-Qed.
-
-Lemma gfix11_le_cpn r rg (LE: r <11= rg) :
-  gfix11 r rg <11= cpn11 gf bnd rg.
-Proof.
-  intros. eexists.
-  - apply wcompat11_compat, gcut11_wcomp. apply gf_mon. apply bnd_compat. apply LE.
-  - apply rclo11_clo. split.
-    + intros. apply rclo11_base. apply PR0.
-    + apply PR.
-Qed.
-
-Lemma gfix11_le_gcpn r rg (LE: r <11= rg):
-  gfix11 r rg <11= gcpn11 r rg.
-Proof.
-  (*
-    fix
-    =
-    c(r + gc(rg + fix))
-    <=
-    c(r + gc(rg + c(rg)))  (by Lemma fix11_le_cpn)
-    <=
-    c(r + gc(rg))
-   *)
-  
-  intros. uunfold PR.
-  destruct PR. constructor.
-  eapply cpn11_mon. apply IN. intros.
-  destruct PR. left; apply H. right.
-  eapply gf_mon.  apply H. intros.
-  ucpn.
-  eapply cpn11_mon. apply PR. intros.
-  destruct PR0.
-  - ubase. apply H0.
-  - eapply gfix11_le_cpn. apply LE. apply H0.
-Qed.
-
 Lemma gcpn11_cofix: forall
     r rg (LE: r <11= rg)
     l (OBG: forall rr (INC: rg <11= rr) (CIH: l <11= rr), l <11= gcpn11 r rr),
   l <11= gcpn11 r rg.
 Proof.
-  intros. apply gfix11_le_gcpn. apply LE.
-  eapply cpn11_algebra, PR. apply gfixF11_mon. apply cbound11_bot.
-  intros. eapply OBG; intros.
-  - left. apply PR1.
-  - right. apply PR1.
-  - apply PR0.
-Qed.
+Admitted.
 
-End WCompanion11_main.
+End GeneralizedCompanion11_main.
 
-Lemma gcpn11_mon_bot bnd bnd' (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 r rg
-      (IN: @gcpn11 gf bnd bot11 bot11 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10)
+Lemma gcpn11_mon_bot (gf gf': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 r rg
+      (IN: @gcpn11 gf bot11 bot11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
       (MON: monotone11 gf)
       (MON': monotone11 gf')
-      (BASE: compatible_bound11 gf bnd)
-      (BASE': compatible_bound11 gf' bnd')
       (LE: gf <12= gf'):
-  @gcpn11 gf' bnd' r rg e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+  @gcpn11 gf' r rg x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10.
 Proof.
   destruct IN. constructor.
-  eapply cpn11_mon; [| intros; right; eapply PR].
+  eapply ucpn11_mon; [| intros; right; eapply PR].
   ubase.
-  eapply fcpn11_mon_bot, LE; [|apply MON|apply MON'|apply BASE|apply BASE'].
-  eapply MON, cpn11_cpn; [|apply MON|apply BASE].
-  eapply (compat11_compat (cpn11_compat MON BASE)).
-  eapply cpn11_mon. apply IN.
-  intros. destruct PR. contradiction. apply H.
+  eapply pcpn11_mon_bot, LE; [|apply MON].
+  ustep.
+  eapply MON, ucpn11_ucpn, MON.
+  eapply ucpn11_compat; [apply MON|].
+  eapply ucpn11_mon. apply IN.
+  intros. destruct PR. contradiction. uunfold H. apply H.
 Qed.
 
-End WCompanion11.
+End GeneralizedCompanion11.
 
 Hint Resolve gcpn11_base : paco.
 Hint Resolve gcpn11_step : paco.

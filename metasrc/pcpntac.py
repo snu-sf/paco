@@ -52,7 +52,7 @@ print ("  repeat red in H;")
 print ("  let G := type of H in");
 print ("  match G with")
 for n in range(relsize+1):
-    print ("  | context[dcpn"+str(n)+"] => eapply pcpn"+str(n)+"_unfold in H; [|eauto with paco]")
+    print ("  | context[dcpn"+str(n)+"] => first[eapply pcpn"+str(n)+"_unfold in H | eapply ucpn"+str(n)+"_unfold in H]; [|eauto with paco]")
 print ("  end.")
 print ()
 

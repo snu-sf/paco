@@ -213,6 +213,12 @@ Proof.
   intros. _punfold PR. apply PR. apply gf_mon.
 Qed.
 
+Lemma ucpn10_unfold:
+  ucpn10 bot10 <10= gf(ucpn10 bot10).
+Proof.
+  intros. apply pcpn10_unfold, pcpn10_final, ucpn10_init, PR.
+Qed.
+
 Lemma pcpn10_step r:
   gf (ucpn10 r) <10= pcpn10 r.
 Proof.
@@ -272,6 +278,125 @@ Proof.
   apply OBG. apply CIH0. apply CIH. apply PR.
 Qed.
 
+(**
+  Recursive Closure & Weak Compatibility
+*)
+
+Inductive rclo10 (clo: rel->rel) (r: rel): rel :=
+| rclo10_base
+    x0 x1 x2 x3 x4 x5 x6 x7 x8 x9
+    (R: r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9):
+    @rclo10 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9
+| rclo10_clo'
+    r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9
+    (R': r' <10= rclo10 clo r)
+    (CLOR': clo r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9):
+    @rclo10 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9
+| rclo10_dcpn'
+    r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9
+    (R': r' <10= rclo10 clo r)
+    (CLOR': @dcpn10 r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9):
+    @rclo10 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9
+.
+
+Structure wdcompatible10 (clo: rel -> rel) : Prop :=
+  wdcompat10_intro {
+      wdcompat10_mon: monotone10 clo;
+      wdcompat10_wcompat: forall r,
+          clo (gf r) <10= gf (rclo10 clo r);
+      wdcompat10_distr : forall r1 r2,
+          clo (r1 \10/ r2) <10= (clo r1 \10/ clo r2);
+    }.
+
+Lemma rclo10_mon_gen clo clo' r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9
+      (IN: @rclo10 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
+      (LEclo: clo <11= clo')
+      (LEr: r <10= r') :
+  @rclo10 clo' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9.
+Proof.
+  induction IN; intros.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR|apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR|].
+    eapply dcpn10_mon; [apply CLOR'|].
+    intros. apply PR.
+Qed.
+
+Lemma rclo10_mon clo:
+  monotone10 (rclo10 clo).
+Proof.
+  repeat intro. eapply rclo10_mon_gen; [apply IN|intros; apply PR|apply LE].
+Qed.
+
+Lemma rclo10_clo clo r:
+  clo (rclo10 clo r) <10= rclo10 clo r.
+Proof.
+  intros. econstructor 2; [|apply PR]. 
+  intros. apply PR0.
+Qed.
+
+Lemma rclo10_dcpn clo r:
+  dcpn10 (rclo10 clo r) <10= rclo10 clo r.
+Proof.
+  intros. econstructor 3; [|apply PR]. 
+  intros. apply PR0.
+Qed.
+
+Lemma rclo10_mult clo r:
+  rclo10 clo (rclo10 clo r) <10= rclo10 clo r.
+Proof.
+  intros. induction PR.
+  - apply R.
+  - econstructor 2; [eapply H | eapply CLOR'].
+  - econstructor 3; [eapply H | eapply CLOR'].
+Qed.
+
+Lemma rclo10_compose clo r:
+  rclo10 (rclo10 clo) r <10= rclo10 clo r.
+Proof.
+  intros. induction PR.
+  - apply rclo10_base, R.
+  - apply rclo10_mult.
+    eapply rclo10_mon; [apply CLOR'|apply H].
+  - apply rclo10_dcpn.
+    eapply dcpn10_mon; [apply CLOR'|apply H].
+Qed.
+
+Lemma wdcompat10_dcompat
+      clo (WCOM: wdcompatible10 clo):
+  dcompatible10 (rclo10 clo).
+Proof.
+  econstructor; [eapply rclo10_mon| |]; intros.
+  - induction PR; intros.
+    + eapply gf_mon; [apply R|]. intros.
+      apply rclo10_base. apply PR.
+    + eapply gf_mon.
+      * eapply (wdcompat10_wcompat WCOM).
+        eapply (wdcompat10_mon WCOM); [apply CLOR'|apply H].
+      * intros. apply rclo10_mult, PR.
+    + eapply gf_mon; [|intros; apply rclo10_dcpn, PR].
+      eapply (dcompat10_compat dcpn10_compat).
+      eapply dcpn10_mon; [apply CLOR'|apply H].
+  - induction PR; intros.
+    + destruct R as [R|R]; [left | right]; econstructor; apply R.
+    + assert (CLOR:= wdcompat10_mon WCOM _ _ _ CLOR' H).
+      eapply (wdcompat10_distr WCOM) in CLOR.
+      destruct CLOR as [CLOR|CLOR]; [left|right]; apply rclo10_clo, CLOR.
+    + assert (CLOR:= dcpn10_mon _ CLOR' H).
+      eapply (dcompat10_distr dcpn10_compat) in CLOR.
+      destruct CLOR as [CLOR|CLOR]; [left|right]; apply rclo10_dcpn, CLOR.
+Qed.
+
+Lemma wcompat10_sound clo (WCOM: wdcompatible10 clo):
+  clo <11= dcpn10.
+Proof.
+  intros. exists (rclo10 clo).
+  - apply wdcompat10_dcompat, WCOM.
+  - apply rclo10_clo.
+    eapply (wdcompat10_mon WCOM); [apply PR|].
+    intros. apply rclo10_base, PR0.
+Qed.
+
 End PacoCompanion10_main.
 
 Lemma pcpn10_mon_bot (gf gf': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 r
@@ -300,3 +425,5 @@ Hint Resolve ucpn10_base : paco.
 Hint Resolve pcpn10_step : paco.
 Hint Resolve ucpn10_step : paco.
 
+Hint Constructors rclo10 : rclo.
+Hint Resolve rclo10_clo rclo10_dcpn : rclo.

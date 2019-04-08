@@ -212,6 +212,12 @@ Proof.
   intros. _punfold PR. apply PR. apply gf_mon.
 Qed.
 
+Lemma ucpn9_unfold:
+  ucpn9 bot9 <9= gf(ucpn9 bot9).
+Proof.
+  intros. apply pcpn9_unfold, pcpn9_final, ucpn9_init, PR.
+Qed.
+
 Lemma pcpn9_step r:
   gf (ucpn9 r) <9= pcpn9 r.
 Proof.
@@ -271,6 +277,125 @@ Proof.
   apply OBG. apply CIH0. apply CIH. apply PR.
 Qed.
 
+(**
+  Recursive Closure & Weak Compatibility
+*)
+
+Inductive rclo9 (clo: rel->rel) (r: rel): rel :=
+| rclo9_base
+    x0 x1 x2 x3 x4 x5 x6 x7 x8
+    (R: r x0 x1 x2 x3 x4 x5 x6 x7 x8):
+    @rclo9 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8
+| rclo9_clo'
+    r' x0 x1 x2 x3 x4 x5 x6 x7 x8
+    (R': r' <9= rclo9 clo r)
+    (CLOR': clo r' x0 x1 x2 x3 x4 x5 x6 x7 x8):
+    @rclo9 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8
+| rclo9_dcpn'
+    r' x0 x1 x2 x3 x4 x5 x6 x7 x8
+    (R': r' <9= rclo9 clo r)
+    (CLOR': @dcpn9 r' x0 x1 x2 x3 x4 x5 x6 x7 x8):
+    @rclo9 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8
+.
+
+Structure wdcompatible9 (clo: rel -> rel) : Prop :=
+  wdcompat9_intro {
+      wdcompat9_mon: monotone9 clo;
+      wdcompat9_wcompat: forall r,
+          clo (gf r) <9= gf (rclo9 clo r);
+      wdcompat9_distr : forall r1 r2,
+          clo (r1 \9/ r2) <9= (clo r1 \9/ clo r2);
+    }.
+
+Lemma rclo9_mon_gen clo clo' r r' x0 x1 x2 x3 x4 x5 x6 x7 x8
+      (IN: @rclo9 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8)
+      (LEclo: clo <10= clo')
+      (LEr: r <9= r') :
+  @rclo9 clo' r' x0 x1 x2 x3 x4 x5 x6 x7 x8.
+Proof.
+  induction IN; intros.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR|apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR|].
+    eapply dcpn9_mon; [apply CLOR'|].
+    intros. apply PR.
+Qed.
+
+Lemma rclo9_mon clo:
+  monotone9 (rclo9 clo).
+Proof.
+  repeat intro. eapply rclo9_mon_gen; [apply IN|intros; apply PR|apply LE].
+Qed.
+
+Lemma rclo9_clo clo r:
+  clo (rclo9 clo r) <9= rclo9 clo r.
+Proof.
+  intros. econstructor 2; [|apply PR]. 
+  intros. apply PR0.
+Qed.
+
+Lemma rclo9_dcpn clo r:
+  dcpn9 (rclo9 clo r) <9= rclo9 clo r.
+Proof.
+  intros. econstructor 3; [|apply PR]. 
+  intros. apply PR0.
+Qed.
+
+Lemma rclo9_mult clo r:
+  rclo9 clo (rclo9 clo r) <9= rclo9 clo r.
+Proof.
+  intros. induction PR.
+  - apply R.
+  - econstructor 2; [eapply H | eapply CLOR'].
+  - econstructor 3; [eapply H | eapply CLOR'].
+Qed.
+
+Lemma rclo9_compose clo r:
+  rclo9 (rclo9 clo) r <9= rclo9 clo r.
+Proof.
+  intros. induction PR.
+  - apply rclo9_base, R.
+  - apply rclo9_mult.
+    eapply rclo9_mon; [apply CLOR'|apply H].
+  - apply rclo9_dcpn.
+    eapply dcpn9_mon; [apply CLOR'|apply H].
+Qed.
+
+Lemma wdcompat9_dcompat
+      clo (WCOM: wdcompatible9 clo):
+  dcompatible9 (rclo9 clo).
+Proof.
+  econstructor; [eapply rclo9_mon| |]; intros.
+  - induction PR; intros.
+    + eapply gf_mon; [apply R|]. intros.
+      apply rclo9_base. apply PR.
+    + eapply gf_mon.
+      * eapply (wdcompat9_wcompat WCOM).
+        eapply (wdcompat9_mon WCOM); [apply CLOR'|apply H].
+      * intros. apply rclo9_mult, PR.
+    + eapply gf_mon; [|intros; apply rclo9_dcpn, PR].
+      eapply (dcompat9_compat dcpn9_compat).
+      eapply dcpn9_mon; [apply CLOR'|apply H].
+  - induction PR; intros.
+    + destruct R as [R|R]; [left | right]; econstructor; apply R.
+    + assert (CLOR:= wdcompat9_mon WCOM _ _ _ CLOR' H).
+      eapply (wdcompat9_distr WCOM) in CLOR.
+      destruct CLOR as [CLOR|CLOR]; [left|right]; apply rclo9_clo, CLOR.
+    + assert (CLOR:= dcpn9_mon _ CLOR' H).
+      eapply (dcompat9_distr dcpn9_compat) in CLOR.
+      destruct CLOR as [CLOR|CLOR]; [left|right]; apply rclo9_dcpn, CLOR.
+Qed.
+
+Lemma wcompat9_sound clo (WCOM: wdcompatible9 clo):
+  clo <10= dcpn9.
+Proof.
+  intros. exists (rclo9 clo).
+  - apply wdcompat9_dcompat, WCOM.
+  - apply rclo9_clo.
+    eapply (wdcompat9_mon WCOM); [apply PR|].
+    intros. apply rclo9_base, PR0.
+Qed.
+
 End PacoCompanion9_main.
 
 Lemma pcpn9_mon_bot (gf gf': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 r
@@ -299,3 +424,5 @@ Hint Resolve ucpn9_base : paco.
 Hint Resolve pcpn9_step : paco.
 Hint Resolve ucpn9_step : paco.
 
+Hint Constructors rclo9 : rclo.
+Hint Resolve rclo9_clo rclo9_dcpn : rclo.

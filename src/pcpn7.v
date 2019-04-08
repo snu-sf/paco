@@ -210,6 +210,12 @@ Proof.
   intros. _punfold PR. apply PR. apply gf_mon.
 Qed.
 
+Lemma ucpn7_unfold:
+  ucpn7 bot7 <7= gf(ucpn7 bot7).
+Proof.
+  intros. apply pcpn7_unfold, pcpn7_final, ucpn7_init, PR.
+Qed.
+
 Lemma pcpn7_step r:
   gf (ucpn7 r) <7= pcpn7 r.
 Proof.
@@ -269,6 +275,125 @@ Proof.
   apply OBG. apply CIH0. apply CIH. apply PR.
 Qed.
 
+(**
+  Recursive Closure & Weak Compatibility
+*)
+
+Inductive rclo7 (clo: rel->rel) (r: rel): rel :=
+| rclo7_base
+    x0 x1 x2 x3 x4 x5 x6
+    (R: r x0 x1 x2 x3 x4 x5 x6):
+    @rclo7 clo r x0 x1 x2 x3 x4 x5 x6
+| rclo7_clo'
+    r' x0 x1 x2 x3 x4 x5 x6
+    (R': r' <7= rclo7 clo r)
+    (CLOR': clo r' x0 x1 x2 x3 x4 x5 x6):
+    @rclo7 clo r x0 x1 x2 x3 x4 x5 x6
+| rclo7_dcpn'
+    r' x0 x1 x2 x3 x4 x5 x6
+    (R': r' <7= rclo7 clo r)
+    (CLOR': @dcpn7 r' x0 x1 x2 x3 x4 x5 x6):
+    @rclo7 clo r x0 x1 x2 x3 x4 x5 x6
+.
+
+Structure wdcompatible7 (clo: rel -> rel) : Prop :=
+  wdcompat7_intro {
+      wdcompat7_mon: monotone7 clo;
+      wdcompat7_wcompat: forall r,
+          clo (gf r) <7= gf (rclo7 clo r);
+      wdcompat7_distr : forall r1 r2,
+          clo (r1 \7/ r2) <7= (clo r1 \7/ clo r2);
+    }.
+
+Lemma rclo7_mon_gen clo clo' r r' x0 x1 x2 x3 x4 x5 x6
+      (IN: @rclo7 clo r x0 x1 x2 x3 x4 x5 x6)
+      (LEclo: clo <8= clo')
+      (LEr: r <7= r') :
+  @rclo7 clo' r' x0 x1 x2 x3 x4 x5 x6.
+Proof.
+  induction IN; intros.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR|apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR|].
+    eapply dcpn7_mon; [apply CLOR'|].
+    intros. apply PR.
+Qed.
+
+Lemma rclo7_mon clo:
+  monotone7 (rclo7 clo).
+Proof.
+  repeat intro. eapply rclo7_mon_gen; [apply IN|intros; apply PR|apply LE].
+Qed.
+
+Lemma rclo7_clo clo r:
+  clo (rclo7 clo r) <7= rclo7 clo r.
+Proof.
+  intros. econstructor 2; [|apply PR]. 
+  intros. apply PR0.
+Qed.
+
+Lemma rclo7_dcpn clo r:
+  dcpn7 (rclo7 clo r) <7= rclo7 clo r.
+Proof.
+  intros. econstructor 3; [|apply PR]. 
+  intros. apply PR0.
+Qed.
+
+Lemma rclo7_mult clo r:
+  rclo7 clo (rclo7 clo r) <7= rclo7 clo r.
+Proof.
+  intros. induction PR.
+  - apply R.
+  - econstructor 2; [eapply H | eapply CLOR'].
+  - econstructor 3; [eapply H | eapply CLOR'].
+Qed.
+
+Lemma rclo7_compose clo r:
+  rclo7 (rclo7 clo) r <7= rclo7 clo r.
+Proof.
+  intros. induction PR.
+  - apply rclo7_base, R.
+  - apply rclo7_mult.
+    eapply rclo7_mon; [apply CLOR'|apply H].
+  - apply rclo7_dcpn.
+    eapply dcpn7_mon; [apply CLOR'|apply H].
+Qed.
+
+Lemma wdcompat7_dcompat
+      clo (WCOM: wdcompatible7 clo):
+  dcompatible7 (rclo7 clo).
+Proof.
+  econstructor; [eapply rclo7_mon| |]; intros.
+  - induction PR; intros.
+    + eapply gf_mon; [apply R|]. intros.
+      apply rclo7_base. apply PR.
+    + eapply gf_mon.
+      * eapply (wdcompat7_wcompat WCOM).
+        eapply (wdcompat7_mon WCOM); [apply CLOR'|apply H].
+      * intros. apply rclo7_mult, PR.
+    + eapply gf_mon; [|intros; apply rclo7_dcpn, PR].
+      eapply (dcompat7_compat dcpn7_compat).
+      eapply dcpn7_mon; [apply CLOR'|apply H].
+  - induction PR; intros.
+    + destruct R as [R|R]; [left | right]; econstructor; apply R.
+    + assert (CLOR:= wdcompat7_mon WCOM _ _ _ CLOR' H).
+      eapply (wdcompat7_distr WCOM) in CLOR.
+      destruct CLOR as [CLOR|CLOR]; [left|right]; apply rclo7_clo, CLOR.
+    + assert (CLOR:= dcpn7_mon _ CLOR' H).
+      eapply (dcompat7_distr dcpn7_compat) in CLOR.
+      destruct CLOR as [CLOR|CLOR]; [left|right]; apply rclo7_dcpn, CLOR.
+Qed.
+
+Lemma wcompat7_sound clo (WCOM: wdcompatible7 clo):
+  clo <8= dcpn7.
+Proof.
+  intros. exists (rclo7 clo).
+  - apply wdcompat7_dcompat, WCOM.
+  - apply rclo7_clo.
+    eapply (wdcompat7_mon WCOM); [apply PR|].
+    intros. apply rclo7_base, PR0.
+Qed.
+
 End PacoCompanion7_main.
 
 Lemma pcpn7_mon_bot (gf gf': rel -> rel) x0 x1 x2 x3 x4 x5 x6 r
@@ -297,3 +422,5 @@ Hint Resolve ucpn7_base : paco.
 Hint Resolve pcpn7_step : paco.
 Hint Resolve ucpn7_step : paco.
 
+Hint Constructors rclo7 : rclo.
+Hint Resolve rclo7_clo rclo7_dcpn : rclo.

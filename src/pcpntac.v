@@ -76,21 +76,21 @@ Ltac uunfold H :=
   repeat red in H;
   let G := type of H in
   match G with
-  | context[dcpn0] => eapply pcpn0_unfold in H; [|eauto with paco]
-  | context[dcpn1] => eapply pcpn1_unfold in H; [|eauto with paco]
-  | context[dcpn2] => eapply pcpn2_unfold in H; [|eauto with paco]
-  | context[dcpn3] => eapply pcpn3_unfold in H; [|eauto with paco]
-  | context[dcpn4] => eapply pcpn4_unfold in H; [|eauto with paco]
-  | context[dcpn5] => eapply pcpn5_unfold in H; [|eauto with paco]
-  | context[dcpn6] => eapply pcpn6_unfold in H; [|eauto with paco]
-  | context[dcpn7] => eapply pcpn7_unfold in H; [|eauto with paco]
-  | context[dcpn8] => eapply pcpn8_unfold in H; [|eauto with paco]
-  | context[dcpn9] => eapply pcpn9_unfold in H; [|eauto with paco]
-  | context[dcpn10] => eapply pcpn10_unfold in H; [|eauto with paco]
-  | context[dcpn11] => eapply pcpn11_unfold in H; [|eauto with paco]
-  | context[dcpn12] => eapply pcpn12_unfold in H; [|eauto with paco]
-  | context[dcpn13] => eapply pcpn13_unfold in H; [|eauto with paco]
-  | context[dcpn14] => eapply pcpn14_unfold in H; [|eauto with paco]
+  | context[dcpn0] => first[eapply pcpn0_unfold in H | eapply ucpn0_unfold in H]; [|eauto with paco]
+  | context[dcpn1] => first[eapply pcpn1_unfold in H | eapply ucpn1_unfold in H]; [|eauto with paco]
+  | context[dcpn2] => first[eapply pcpn2_unfold in H | eapply ucpn2_unfold in H]; [|eauto with paco]
+  | context[dcpn3] => first[eapply pcpn3_unfold in H | eapply ucpn3_unfold in H]; [|eauto with paco]
+  | context[dcpn4] => first[eapply pcpn4_unfold in H | eapply ucpn4_unfold in H]; [|eauto with paco]
+  | context[dcpn5] => first[eapply pcpn5_unfold in H | eapply ucpn5_unfold in H]; [|eauto with paco]
+  | context[dcpn6] => first[eapply pcpn6_unfold in H | eapply ucpn6_unfold in H]; [|eauto with paco]
+  | context[dcpn7] => first[eapply pcpn7_unfold in H | eapply ucpn7_unfold in H]; [|eauto with paco]
+  | context[dcpn8] => first[eapply pcpn8_unfold in H | eapply ucpn8_unfold in H]; [|eauto with paco]
+  | context[dcpn9] => first[eapply pcpn9_unfold in H | eapply ucpn9_unfold in H]; [|eauto with paco]
+  | context[dcpn10] => first[eapply pcpn10_unfold in H | eapply ucpn10_unfold in H]; [|eauto with paco]
+  | context[dcpn11] => first[eapply pcpn11_unfold in H | eapply ucpn11_unfold in H]; [|eauto with paco]
+  | context[dcpn12] => first[eapply pcpn12_unfold in H | eapply ucpn12_unfold in H]; [|eauto with paco]
+  | context[dcpn13] => first[eapply pcpn13_unfold in H | eapply ucpn13_unfold in H]; [|eauto with paco]
+  | context[dcpn14] => first[eapply pcpn14_unfold in H | eapply ucpn14_unfold in H]; [|eauto with paco]
   end.
 
 (** ** ubase

@@ -205,6 +205,12 @@ Proof.
   intros. _punfold PR. apply PR. apply gf_mon.
 Qed.
 
+Lemma ucpn2_unfold:
+  ucpn2 bot2 <2= gf(ucpn2 bot2).
+Proof.
+  intros. apply pcpn2_unfold, pcpn2_final, ucpn2_init, PR.
+Qed.
+
 Lemma pcpn2_step r:
   gf (ucpn2 r) <2= pcpn2 r.
 Proof.
@@ -264,6 +270,125 @@ Proof.
   apply OBG. apply CIH0. apply CIH. apply PR.
 Qed.
 
+(**
+  Recursive Closure & Weak Compatibility
+*)
+
+Inductive rclo2 (clo: rel->rel) (r: rel): rel :=
+| rclo2_base
+    x0 x1
+    (R: r x0 x1):
+    @rclo2 clo r x0 x1
+| rclo2_clo'
+    r' x0 x1
+    (R': r' <2= rclo2 clo r)
+    (CLOR': clo r' x0 x1):
+    @rclo2 clo r x0 x1
+| rclo2_dcpn'
+    r' x0 x1
+    (R': r' <2= rclo2 clo r)
+    (CLOR': @dcpn2 r' x0 x1):
+    @rclo2 clo r x0 x1
+.
+
+Structure wdcompatible2 (clo: rel -> rel) : Prop :=
+  wdcompat2_intro {
+      wdcompat2_mon: monotone2 clo;
+      wdcompat2_wcompat: forall r,
+          clo (gf r) <2= gf (rclo2 clo r);
+      wdcompat2_distr : forall r1 r2,
+          clo (r1 \2/ r2) <2= (clo r1 \2/ clo r2);
+    }.
+
+Lemma rclo2_mon_gen clo clo' r r' x0 x1
+      (IN: @rclo2 clo r x0 x1)
+      (LEclo: clo <3= clo')
+      (LEr: r <2= r') :
+  @rclo2 clo' r' x0 x1.
+Proof.
+  induction IN; intros.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR|apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR|].
+    eapply dcpn2_mon; [apply CLOR'|].
+    intros. apply PR.
+Qed.
+
+Lemma rclo2_mon clo:
+  monotone2 (rclo2 clo).
+Proof.
+  repeat intro. eapply rclo2_mon_gen; [apply IN|intros; apply PR|apply LE].
+Qed.
+
+Lemma rclo2_clo clo r:
+  clo (rclo2 clo r) <2= rclo2 clo r.
+Proof.
+  intros. econstructor 2; [|apply PR]. 
+  intros. apply PR0.
+Qed.
+
+Lemma rclo2_dcpn clo r:
+  dcpn2 (rclo2 clo r) <2= rclo2 clo r.
+Proof.
+  intros. econstructor 3; [|apply PR]. 
+  intros. apply PR0.
+Qed.
+
+Lemma rclo2_mult clo r:
+  rclo2 clo (rclo2 clo r) <2= rclo2 clo r.
+Proof.
+  intros. induction PR.
+  - apply R.
+  - econstructor 2; [eapply H | eapply CLOR'].
+  - econstructor 3; [eapply H | eapply CLOR'].
+Qed.
+
+Lemma rclo2_compose clo r:
+  rclo2 (rclo2 clo) r <2= rclo2 clo r.
+Proof.
+  intros. induction PR.
+  - apply rclo2_base, R.
+  - apply rclo2_mult.
+    eapply rclo2_mon; [apply CLOR'|apply H].
+  - apply rclo2_dcpn.
+    eapply dcpn2_mon; [apply CLOR'|apply H].
+Qed.
+
+Lemma wdcompat2_dcompat
+      clo (WCOM: wdcompatible2 clo):
+  dcompatible2 (rclo2 clo).
+Proof.
+  econstructor; [eapply rclo2_mon| |]; intros.
+  - induction PR; intros.
+    + eapply gf_mon; [apply R|]. intros.
+      apply rclo2_base. apply PR.
+    + eapply gf_mon.
+      * eapply (wdcompat2_wcompat WCOM).
+        eapply (wdcompat2_mon WCOM); [apply CLOR'|apply H].
+      * intros. apply rclo2_mult, PR.
+    + eapply gf_mon; [|intros; apply rclo2_dcpn, PR].
+      eapply (dcompat2_compat dcpn2_compat).
+      eapply dcpn2_mon; [apply CLOR'|apply H].
+  - induction PR; intros.
+    + destruct R as [R|R]; [left | right]; econstructor; apply R.
+    + assert (CLOR:= wdcompat2_mon WCOM _ _ _ CLOR' H).
+      eapply (wdcompat2_distr WCOM) in CLOR.
+      destruct CLOR as [CLOR|CLOR]; [left|right]; apply rclo2_clo, CLOR.
+    + assert (CLOR:= dcpn2_mon _ CLOR' H).
+      eapply (dcompat2_distr dcpn2_compat) in CLOR.
+      destruct CLOR as [CLOR|CLOR]; [left|right]; apply rclo2_dcpn, CLOR.
+Qed.
+
+Lemma wcompat2_sound clo (WCOM: wdcompatible2 clo):
+  clo <3= dcpn2.
+Proof.
+  intros. exists (rclo2 clo).
+  - apply wdcompat2_dcompat, WCOM.
+  - apply rclo2_clo.
+    eapply (wdcompat2_mon WCOM); [apply PR|].
+    intros. apply rclo2_base, PR0.
+Qed.
+
 End PacoCompanion2_main.
 
 Lemma pcpn2_mon_bot (gf gf': rel -> rel) x0 x1 r
@@ -292,3 +417,5 @@ Hint Resolve ucpn2_base : paco.
 Hint Resolve pcpn2_step : paco.
 Hint Resolve ucpn2_step : paco.
 
+Hint Constructors rclo2 : rclo.
+Hint Resolve rclo2_clo rclo2_dcpn : rclo.

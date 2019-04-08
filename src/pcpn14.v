@@ -217,6 +217,12 @@ Proof.
   intros. _punfold PR. apply PR. apply gf_mon.
 Qed.
 
+Lemma ucpn14_unfold:
+  ucpn14 bot14 <14= gf(ucpn14 bot14).
+Proof.
+  intros. apply pcpn14_unfold, pcpn14_final, ucpn14_init, PR.
+Qed.
+
 Lemma pcpn14_step r:
   gf (ucpn14 r) <14= pcpn14 r.
 Proof.
@@ -276,6 +282,125 @@ Proof.
   apply OBG. apply CIH0. apply CIH. apply PR.
 Qed.
 
+(**
+  Recursive Closure & Weak Compatibility
+*)
+
+Inductive rclo14 (clo: rel->rel) (r: rel): rel :=
+| rclo14_base
+    x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13
+    (R: r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13):
+    @rclo14 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13
+| rclo14_clo'
+    r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13
+    (R': r' <14= rclo14 clo r)
+    (CLOR': clo r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13):
+    @rclo14 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13
+| rclo14_dcpn'
+    r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13
+    (R': r' <14= rclo14 clo r)
+    (CLOR': @dcpn14 r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13):
+    @rclo14 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13
+.
+
+Structure wdcompatible14 (clo: rel -> rel) : Prop :=
+  wdcompat14_intro {
+      wdcompat14_mon: monotone14 clo;
+      wdcompat14_wcompat: forall r,
+          clo (gf r) <14= gf (rclo14 clo r);
+      wdcompat14_distr : forall r1 r2,
+          clo (r1 \14/ r2) <14= (clo r1 \14/ clo r2);
+    }.
+
+Lemma rclo14_mon_gen clo clo' r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13
+      (IN: @rclo14 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13)
+      (LEclo: clo <15= clo')
+      (LEr: r <14= r') :
+  @rclo14 clo' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13.
+Proof.
+  induction IN; intros.
+  - econstructor 1. apply LEr, R.
+  - econstructor 2; [intros; eapply H, PR|apply LEclo, CLOR'].
+  - econstructor 3; [intros; eapply H, PR|].
+    eapply dcpn14_mon; [apply CLOR'|].
+    intros. apply PR.
+Qed.
+
+Lemma rclo14_mon clo:
+  monotone14 (rclo14 clo).
+Proof.
+  repeat intro. eapply rclo14_mon_gen; [apply IN|intros; apply PR|apply LE].
+Qed.
+
+Lemma rclo14_clo clo r:
+  clo (rclo14 clo r) <14= rclo14 clo r.
+Proof.
+  intros. econstructor 2; [|apply PR]. 
+  intros. apply PR0.
+Qed.
+
+Lemma rclo14_dcpn clo r:
+  dcpn14 (rclo14 clo r) <14= rclo14 clo r.
+Proof.
+  intros. econstructor 3; [|apply PR]. 
+  intros. apply PR0.
+Qed.
+
+Lemma rclo14_mult clo r:
+  rclo14 clo (rclo14 clo r) <14= rclo14 clo r.
+Proof.
+  intros. induction PR.
+  - apply R.
+  - econstructor 2; [eapply H | eapply CLOR'].
+  - econstructor 3; [eapply H | eapply CLOR'].
+Qed.
+
+Lemma rclo14_compose clo r:
+  rclo14 (rclo14 clo) r <14= rclo14 clo r.
+Proof.
+  intros. induction PR.
+  - apply rclo14_base, R.
+  - apply rclo14_mult.
+    eapply rclo14_mon; [apply CLOR'|apply H].
+  - apply rclo14_dcpn.
+    eapply dcpn14_mon; [apply CLOR'|apply H].
+Qed.
+
+Lemma wdcompat14_dcompat
+      clo (WCOM: wdcompatible14 clo):
+  dcompatible14 (rclo14 clo).
+Proof.
+  econstructor; [eapply rclo14_mon| |]; intros.
+  - induction PR; intros.
+    + eapply gf_mon; [apply R|]. intros.
+      apply rclo14_base. apply PR.
+    + eapply gf_mon.
+      * eapply (wdcompat14_wcompat WCOM).
+        eapply (wdcompat14_mon WCOM); [apply CLOR'|apply H].
+      * intros. apply rclo14_mult, PR.
+    + eapply gf_mon; [|intros; apply rclo14_dcpn, PR].
+      eapply (dcompat14_compat dcpn14_compat).
+      eapply dcpn14_mon; [apply CLOR'|apply H].
+  - induction PR; intros.
+    + destruct R as [R|R]; [left | right]; econstructor; apply R.
+    + assert (CLOR:= wdcompat14_mon WCOM _ _ _ CLOR' H).
+      eapply (wdcompat14_distr WCOM) in CLOR.
+      destruct CLOR as [CLOR|CLOR]; [left|right]; apply rclo14_clo, CLOR.
+    + assert (CLOR:= dcpn14_mon _ CLOR' H).
+      eapply (dcompat14_distr dcpn14_compat) in CLOR.
+      destruct CLOR as [CLOR|CLOR]; [left|right]; apply rclo14_dcpn, CLOR.
+Qed.
+
+Lemma wcompat14_sound clo (WCOM: wdcompatible14 clo):
+  clo <15= dcpn14.
+Proof.
+  intros. exists (rclo14 clo).
+  - apply wdcompat14_dcompat, WCOM.
+  - apply rclo14_clo.
+    eapply (wdcompat14_mon WCOM); [apply PR|].
+    intros. apply rclo14_base, PR0.
+Qed.
+
 End PacoCompanion14_main.
 
 Lemma pcpn14_mon_bot (gf gf': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 r
@@ -304,3 +429,5 @@ Hint Resolve ucpn14_base : paco.
 Hint Resolve pcpn14_step : paco.
 Hint Resolve ucpn14_step : paco.
 
+Hint Constructors rclo14 : rclo.
+Hint Resolve rclo14_clo rclo14_dcpn : rclo.
