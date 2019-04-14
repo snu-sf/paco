@@ -69,10 +69,18 @@ Proof.
     intros. eapply (compat6_compat cpn6_compat), PR1. 
 Qed.
 
+Lemma monotone6_compose (clo1 clo2: rel -> rel)
+      (MON1: monotone6 clo1)
+      (MON2: monotone6 clo2):
+  monotone6 (compose clo1 clo2).
+Proof.
+  red; intros. eapply MON1. apply IN.
+  intros. eapply MON2. apply PR. apply LE.
+Qed.
+
 Lemma fcpn6_mon: monotone6 fcpn6.
 Proof.
-  repeat intro. eapply gf_mon; [eapply IN|].
-  intros. eapply cpn6_mon; [apply PR|apply LE].
+  apply monotone6_compose. apply gf_mon. apply cpn6_mon.
 Qed.
 
 Lemma fcpn6_sound:
@@ -128,7 +136,6 @@ Structure wcompatible6 (clo: rel -> rel) : Prop :=
       wcompat6_wcompat : forall r,
           clo (gf r) <6= gf (rclo6 (clo \7/ cpn6) r);
     }.
-
 
 Lemma rclo6_mon_gen clo clo' r r' x0 x1 x2 x3 x4 x5
       (IN: @rclo6 clo r x0 x1 x2 x3 x4 x5)

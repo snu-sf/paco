@@ -72,10 +72,18 @@ Proof.
     intros. eapply (compat9_compat cpn9_compat), PR1. 
 Qed.
 
+Lemma monotone9_compose (clo1 clo2: rel -> rel)
+      (MON1: monotone9 clo1)
+      (MON2: monotone9 clo2):
+  monotone9 (compose clo1 clo2).
+Proof.
+  red; intros. eapply MON1. apply IN.
+  intros. eapply MON2. apply PR. apply LE.
+Qed.
+
 Lemma fcpn9_mon: monotone9 fcpn9.
 Proof.
-  repeat intro. eapply gf_mon; [eapply IN|].
-  intros. eapply cpn9_mon; [apply PR|apply LE].
+  apply monotone9_compose. apply gf_mon. apply cpn9_mon.
 Qed.
 
 Lemma fcpn9_sound:
@@ -131,7 +139,6 @@ Structure wcompatible9 (clo: rel -> rel) : Prop :=
       wcompat9_wcompat : forall r,
           clo (gf r) <9= gf (rclo9 (clo \10/ cpn9) r);
     }.
-
 
 Lemma rclo9_mon_gen clo clo' r r' x0 x1 x2 x3 x4 x5 x6 x7 x8
       (IN: @rclo9 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8)

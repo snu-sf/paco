@@ -67,10 +67,18 @@ Proof.
     intros. eapply (compat4_compat cpn4_compat), PR1. 
 Qed.
 
+Lemma monotone4_compose (clo1 clo2: rel -> rel)
+      (MON1: monotone4 clo1)
+      (MON2: monotone4 clo2):
+  monotone4 (compose clo1 clo2).
+Proof.
+  red; intros. eapply MON1. apply IN.
+  intros. eapply MON2. apply PR. apply LE.
+Qed.
+
 Lemma fcpn4_mon: monotone4 fcpn4.
 Proof.
-  repeat intro. eapply gf_mon; [eapply IN|].
-  intros. eapply cpn4_mon; [apply PR|apply LE].
+  apply monotone4_compose. apply gf_mon. apply cpn4_mon.
 Qed.
 
 Lemma fcpn4_sound:
@@ -126,7 +134,6 @@ Structure wcompatible4 (clo: rel -> rel) : Prop :=
       wcompat4_wcompat : forall r,
           clo (gf r) <4= gf (rclo4 (clo \5/ cpn4) r);
     }.
-
 
 Lemma rclo4_mon_gen clo clo' r r' x0 x1 x2 x3
       (IN: @rclo4 clo r x0 x1 x2 x3)

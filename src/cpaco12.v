@@ -35,7 +35,7 @@ Definition cupaco12 r := cpaco12 r r.
 
 Lemma cpaco12_def_mon : monotone12 (compose gf (rclo12 clo)).
 Proof.
-  eapply compose_monotone12. apply gf_mon. apply rclo12_mon.
+  eapply monotone12_compose. apply gf_mon. apply rclo12_mon.
 Qed.
 
 Hint Resolve cpaco12_def_mon : paco.
@@ -89,10 +89,10 @@ Proof.
   intros. destruct PR. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 IN.
   pcofix CIH. intros.
   pstep. eapply gf_mon; [| right; apply CIH, rclo12_rclo, PR]. 
-  apply compat12_compat. apply rclo12_compat. apply gf_mon. apply clo_compat.
+  apply compat12_compat with (gf:=gf). apply rclo12_compat. apply gf_mon. apply clo_compat.
   eapply rclo12_mon. apply IN.
   intros. destruct PR. contradiction.
-  punfold H. eapply cpaco12_def_mon. apply H.
+  _punfold H; [..|apply cpaco12_def_mon]. eapply cpaco12_def_mon. apply H.
   intros. pclearbot. right. apply PR.
 Qed.
 
@@ -108,7 +108,7 @@ Qed.
 Lemma cpaco12_unfold:
   cpaco12 bot12 bot12 <12= gf (cpaco12 bot12 bot12).
 Proof.
-  intros. apply cpaco12_init in PR. punfold PR.
+  intros. apply cpaco12_init in PR. _punfold PR; [..|apply gf_mon].
   eapply gf_mon. apply PR.
   intros. pclearbot. apply cpaco12_final, PR0.
 Qed.
@@ -127,7 +127,7 @@ Proof.
   intros. destruct PR. left. apply H.
   right. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 H.
   pcofix CIH. intros.
-  punfold H0. pstep.
+  _punfold H0; [..|apply cpaco12_def_mon]. pstep.
   eapply gf_mon. apply H0. intros.
   apply rclo12_rclo. eapply rclo12_mon. apply PR.
   intros. destruct PR0.
@@ -142,10 +142,10 @@ Proof.
 Qed.
 
 Lemma cpaco12_cupaco
-      r rg (LE: r <12= rg):
+      r rg (LEr: r <12= rg):
   cupaco12 (cpaco12 r rg) <12= cpaco12 r rg.
 Proof.
-  eapply cpaco12_cofix. apply LE.
+  eapply cpaco12_cofix. apply LEr.
   intros. destruct PR. econstructor.
   apply rclo12_rclo. eapply rclo12_mon. apply IN.
   intros. destruct PR.
@@ -156,6 +156,14 @@ Proof.
     eapply paco12_mon. apply H.
     intros. apply CIH.
     econstructor. apply rclo12_base. left. apply PR.
+Qed.
+
+Lemma cpaco12_uclo (uclo: rel -> rel)
+      r rg (LEr: r <12= rg)
+      (LEclo: uclo <13= cupaco12) :
+  uclo (cpaco12 r rg) <12= cpaco12 r rg.
+Proof.
+  intros. apply cpaco12_cupaco. apply LEr. apply LEclo, PR.
 Qed.
 
 End CompatiblePaco12_main.
@@ -171,12 +179,12 @@ Lemma cpaco12_mon_gen (gf gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x
 Proof.
   eapply cpaco12_mon; [|apply LEr|apply LErg].
   destruct IN. econstructor.
-  eapply rclo12_mon_gen, IN. apply LEclo.
+  eapply rclo12_mon_gen. apply IN. apply LEclo.
   intros. destruct PR. left; apply H.
   right. eapply paco12_mon_gen. apply H.
   - intros. eapply LEgf.
     eapply MON. apply PR.
-    eapply rclo12_mon_gen. apply LEclo. intros; apply PR0.
+    intros. eapply rclo12_mon_gen. apply PR0. apply LEclo. intros; apply PR1.
   - intros. apply PR.
 Qed.
 

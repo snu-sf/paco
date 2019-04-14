@@ -36,7 +36,7 @@ Definition cupaco13 r := cpaco13 r r.
 
 Lemma cpaco13_def_mon : monotone13 (compose gf (rclo13 clo)).
 Proof.
-  eapply compose_monotone13. apply gf_mon. apply rclo13_mon.
+  eapply monotone13_compose. apply gf_mon. apply rclo13_mon.
 Qed.
 
 Hint Resolve cpaco13_def_mon : paco.
@@ -90,10 +90,10 @@ Proof.
   intros. destruct PR. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 IN.
   pcofix CIH. intros.
   pstep. eapply gf_mon; [| right; apply CIH, rclo13_rclo, PR]. 
-  apply compat13_compat. apply rclo13_compat. apply gf_mon. apply clo_compat.
+  apply compat13_compat with (gf:=gf). apply rclo13_compat. apply gf_mon. apply clo_compat.
   eapply rclo13_mon. apply IN.
   intros. destruct PR. contradiction.
-  punfold H. eapply cpaco13_def_mon. apply H.
+  _punfold H; [..|apply cpaco13_def_mon]. eapply cpaco13_def_mon. apply H.
   intros. pclearbot. right. apply PR.
 Qed.
 
@@ -109,7 +109,7 @@ Qed.
 Lemma cpaco13_unfold:
   cpaco13 bot13 bot13 <13= gf (cpaco13 bot13 bot13).
 Proof.
-  intros. apply cpaco13_init in PR. punfold PR.
+  intros. apply cpaco13_init in PR. _punfold PR; [..|apply gf_mon].
   eapply gf_mon. apply PR.
   intros. pclearbot. apply cpaco13_final, PR0.
 Qed.
@@ -128,7 +128,7 @@ Proof.
   intros. destruct PR. left. apply H.
   right. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 H.
   pcofix CIH. intros.
-  punfold H0. pstep.
+  _punfold H0; [..|apply cpaco13_def_mon]. pstep.
   eapply gf_mon. apply H0. intros.
   apply rclo13_rclo. eapply rclo13_mon. apply PR.
   intros. destruct PR0.
@@ -143,10 +143,10 @@ Proof.
 Qed.
 
 Lemma cpaco13_cupaco
-      r rg (LE: r <13= rg):
+      r rg (LEr: r <13= rg):
   cupaco13 (cpaco13 r rg) <13= cpaco13 r rg.
 Proof.
-  eapply cpaco13_cofix. apply LE.
+  eapply cpaco13_cofix. apply LEr.
   intros. destruct PR. econstructor.
   apply rclo13_rclo. eapply rclo13_mon. apply IN.
   intros. destruct PR.
@@ -157,6 +157,14 @@ Proof.
     eapply paco13_mon. apply H.
     intros. apply CIH.
     econstructor. apply rclo13_base. left. apply PR.
+Qed.
+
+Lemma cpaco13_uclo (uclo: rel -> rel)
+      r rg (LEr: r <13= rg)
+      (LEclo: uclo <14= cupaco13) :
+  uclo (cpaco13 r rg) <13= cpaco13 r rg.
+Proof.
+  intros. apply cpaco13_cupaco. apply LEr. apply LEclo, PR.
 Qed.
 
 End CompatiblePaco13_main.
@@ -172,12 +180,12 @@ Lemma cpaco13_mon_gen (gf gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x
 Proof.
   eapply cpaco13_mon; [|apply LEr|apply LErg].
   destruct IN. econstructor.
-  eapply rclo13_mon_gen, IN. apply LEclo.
+  eapply rclo13_mon_gen. apply IN. apply LEclo.
   intros. destruct PR. left; apply H.
   right. eapply paco13_mon_gen. apply H.
   - intros. eapply LEgf.
     eapply MON. apply PR.
-    eapply rclo13_mon_gen. apply LEclo. intros; apply PR0.
+    intros. eapply rclo13_mon_gen. apply PR0. apply LEclo. intros; apply PR1.
   - intros. apply PR.
 Qed.
 

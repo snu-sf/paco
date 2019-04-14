@@ -73,10 +73,18 @@ Proof.
     intros. eapply (compat10_compat cpn10_compat), PR1. 
 Qed.
 
+Lemma monotone10_compose (clo1 clo2: rel -> rel)
+      (MON1: monotone10 clo1)
+      (MON2: monotone10 clo2):
+  monotone10 (compose clo1 clo2).
+Proof.
+  red; intros. eapply MON1. apply IN.
+  intros. eapply MON2. apply PR. apply LE.
+Qed.
+
 Lemma fcpn10_mon: monotone10 fcpn10.
 Proof.
-  repeat intro. eapply gf_mon; [eapply IN|].
-  intros. eapply cpn10_mon; [apply PR|apply LE].
+  apply monotone10_compose. apply gf_mon. apply cpn10_mon.
 Qed.
 
 Lemma fcpn10_sound:
@@ -132,7 +140,6 @@ Structure wcompatible10 (clo: rel -> rel) : Prop :=
       wcompat10_wcompat : forall r,
           clo (gf r) <10= gf (rclo10 (clo \11/ cpn10) r);
     }.
-
 
 Lemma rclo10_mon_gen clo clo' r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9
       (IN: @rclo10 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)

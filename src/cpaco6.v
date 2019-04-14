@@ -29,7 +29,7 @@ Definition cupaco6 r := cpaco6 r r.
 
 Lemma cpaco6_def_mon : monotone6 (compose gf (rclo6 clo)).
 Proof.
-  eapply compose_monotone6. apply gf_mon. apply rclo6_mon.
+  eapply monotone6_compose. apply gf_mon. apply rclo6_mon.
 Qed.
 
 Hint Resolve cpaco6_def_mon : paco.
@@ -83,10 +83,10 @@ Proof.
   intros. destruct PR. revert x0 x1 x2 x3 x4 x5 IN.
   pcofix CIH. intros.
   pstep. eapply gf_mon; [| right; apply CIH, rclo6_rclo, PR]. 
-  apply compat6_compat. apply rclo6_compat. apply gf_mon. apply clo_compat.
+  apply compat6_compat with (gf:=gf). apply rclo6_compat. apply gf_mon. apply clo_compat.
   eapply rclo6_mon. apply IN.
   intros. destruct PR. contradiction.
-  punfold H. eapply cpaco6_def_mon. apply H.
+  _punfold H; [..|apply cpaco6_def_mon]. eapply cpaco6_def_mon. apply H.
   intros. pclearbot. right. apply PR.
 Qed.
 
@@ -102,7 +102,7 @@ Qed.
 Lemma cpaco6_unfold:
   cpaco6 bot6 bot6 <6= gf (cpaco6 bot6 bot6).
 Proof.
-  intros. apply cpaco6_init in PR. punfold PR.
+  intros. apply cpaco6_init in PR. _punfold PR; [..|apply gf_mon].
   eapply gf_mon. apply PR.
   intros. pclearbot. apply cpaco6_final, PR0.
 Qed.
@@ -121,7 +121,7 @@ Proof.
   intros. destruct PR. left. apply H.
   right. revert x0 x1 x2 x3 x4 x5 H.
   pcofix CIH. intros.
-  punfold H0. pstep.
+  _punfold H0; [..|apply cpaco6_def_mon]. pstep.
   eapply gf_mon. apply H0. intros.
   apply rclo6_rclo. eapply rclo6_mon. apply PR.
   intros. destruct PR0.
@@ -136,10 +136,10 @@ Proof.
 Qed.
 
 Lemma cpaco6_cupaco
-      r rg (LE: r <6= rg):
+      r rg (LEr: r <6= rg):
   cupaco6 (cpaco6 r rg) <6= cpaco6 r rg.
 Proof.
-  eapply cpaco6_cofix. apply LE.
+  eapply cpaco6_cofix. apply LEr.
   intros. destruct PR. econstructor.
   apply rclo6_rclo. eapply rclo6_mon. apply IN.
   intros. destruct PR.
@@ -150,6 +150,14 @@ Proof.
     eapply paco6_mon. apply H.
     intros. apply CIH.
     econstructor. apply rclo6_base. left. apply PR.
+Qed.
+
+Lemma cpaco6_uclo (uclo: rel -> rel)
+      r rg (LEr: r <6= rg)
+      (LEclo: uclo <7= cupaco6) :
+  uclo (cpaco6 r rg) <6= cpaco6 r rg.
+Proof.
+  intros. apply cpaco6_cupaco. apply LEr. apply LEclo, PR.
 Qed.
 
 End CompatiblePaco6_main.
@@ -165,12 +173,12 @@ Lemma cpaco6_mon_gen (gf gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 x5 r r' rg rg'
 Proof.
   eapply cpaco6_mon; [|apply LEr|apply LErg].
   destruct IN. econstructor.
-  eapply rclo6_mon_gen, IN. apply LEclo.
+  eapply rclo6_mon_gen. apply IN. apply LEclo.
   intros. destruct PR. left; apply H.
   right. eapply paco6_mon_gen. apply H.
   - intros. eapply LEgf.
     eapply MON. apply PR.
-    eapply rclo6_mon_gen. apply LEclo. intros; apply PR0.
+    intros. eapply rclo6_mon_gen. apply PR0. apply LEclo. intros; apply PR1.
   - intros. apply PR.
 Qed.
 

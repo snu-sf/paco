@@ -31,7 +31,7 @@ Definition cupaco8 r := cpaco8 r r.
 
 Lemma cpaco8_def_mon : monotone8 (compose gf (rclo8 clo)).
 Proof.
-  eapply compose_monotone8. apply gf_mon. apply rclo8_mon.
+  eapply monotone8_compose. apply gf_mon. apply rclo8_mon.
 Qed.
 
 Hint Resolve cpaco8_def_mon : paco.
@@ -85,10 +85,10 @@ Proof.
   intros. destruct PR. revert x0 x1 x2 x3 x4 x5 x6 x7 IN.
   pcofix CIH. intros.
   pstep. eapply gf_mon; [| right; apply CIH, rclo8_rclo, PR]. 
-  apply compat8_compat. apply rclo8_compat. apply gf_mon. apply clo_compat.
+  apply compat8_compat with (gf:=gf). apply rclo8_compat. apply gf_mon. apply clo_compat.
   eapply rclo8_mon. apply IN.
   intros. destruct PR. contradiction.
-  punfold H. eapply cpaco8_def_mon. apply H.
+  _punfold H; [..|apply cpaco8_def_mon]. eapply cpaco8_def_mon. apply H.
   intros. pclearbot. right. apply PR.
 Qed.
 
@@ -104,7 +104,7 @@ Qed.
 Lemma cpaco8_unfold:
   cpaco8 bot8 bot8 <8= gf (cpaco8 bot8 bot8).
 Proof.
-  intros. apply cpaco8_init in PR. punfold PR.
+  intros. apply cpaco8_init in PR. _punfold PR; [..|apply gf_mon].
   eapply gf_mon. apply PR.
   intros. pclearbot. apply cpaco8_final, PR0.
 Qed.
@@ -123,7 +123,7 @@ Proof.
   intros. destruct PR. left. apply H.
   right. revert x0 x1 x2 x3 x4 x5 x6 x7 H.
   pcofix CIH. intros.
-  punfold H0. pstep.
+  _punfold H0; [..|apply cpaco8_def_mon]. pstep.
   eapply gf_mon. apply H0. intros.
   apply rclo8_rclo. eapply rclo8_mon. apply PR.
   intros. destruct PR0.
@@ -138,10 +138,10 @@ Proof.
 Qed.
 
 Lemma cpaco8_cupaco
-      r rg (LE: r <8= rg):
+      r rg (LEr: r <8= rg):
   cupaco8 (cpaco8 r rg) <8= cpaco8 r rg.
 Proof.
-  eapply cpaco8_cofix. apply LE.
+  eapply cpaco8_cofix. apply LEr.
   intros. destruct PR. econstructor.
   apply rclo8_rclo. eapply rclo8_mon. apply IN.
   intros. destruct PR.
@@ -152,6 +152,14 @@ Proof.
     eapply paco8_mon. apply H.
     intros. apply CIH.
     econstructor. apply rclo8_base. left. apply PR.
+Qed.
+
+Lemma cpaco8_uclo (uclo: rel -> rel)
+      r rg (LEr: r <8= rg)
+      (LEclo: uclo <9= cupaco8) :
+  uclo (cpaco8 r rg) <8= cpaco8 r rg.
+Proof.
+  intros. apply cpaco8_cupaco. apply LEr. apply LEclo, PR.
 Qed.
 
 End CompatiblePaco8_main.
@@ -167,12 +175,12 @@ Lemma cpaco8_mon_gen (gf gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 r r' 
 Proof.
   eapply cpaco8_mon; [|apply LEr|apply LErg].
   destruct IN. econstructor.
-  eapply rclo8_mon_gen, IN. apply LEclo.
+  eapply rclo8_mon_gen. apply IN. apply LEclo.
   intros. destruct PR. left; apply H.
   right. eapply paco8_mon_gen. apply H.
   - intros. eapply LEgf.
     eapply MON. apply PR.
-    eapply rclo8_mon_gen. apply LEclo. intros; apply PR0.
+    intros. eapply rclo8_mon_gen. apply PR0. apply LEclo. intros; apply PR1.
   - intros. apply PR.
 Qed.
 

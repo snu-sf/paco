@@ -66,10 +66,18 @@ Proof.
     intros. eapply (compat3_compat cpn3_compat), PR1. 
 Qed.
 
+Lemma monotone3_compose (clo1 clo2: rel -> rel)
+      (MON1: monotone3 clo1)
+      (MON2: monotone3 clo2):
+  monotone3 (compose clo1 clo2).
+Proof.
+  red; intros. eapply MON1. apply IN.
+  intros. eapply MON2. apply PR. apply LE.
+Qed.
+
 Lemma fcpn3_mon: monotone3 fcpn3.
 Proof.
-  repeat intro. eapply gf_mon; [eapply IN|].
-  intros. eapply cpn3_mon; [apply PR|apply LE].
+  apply monotone3_compose. apply gf_mon. apply cpn3_mon.
 Qed.
 
 Lemma fcpn3_sound:
@@ -125,7 +133,6 @@ Structure wcompatible3 (clo: rel -> rel) : Prop :=
       wcompat3_wcompat : forall r,
           clo (gf r) <3= gf (rclo3 (clo \4/ cpn3) r);
     }.
-
 
 Lemma rclo3_mon_gen clo clo' r r' x0 x1 x2
       (IN: @rclo3 clo r x0 x1 x2)

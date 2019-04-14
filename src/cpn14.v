@@ -77,10 +77,18 @@ Proof.
     intros. eapply (compat14_compat cpn14_compat), PR1. 
 Qed.
 
+Lemma monotone14_compose (clo1 clo2: rel -> rel)
+      (MON1: monotone14 clo1)
+      (MON2: monotone14 clo2):
+  monotone14 (compose clo1 clo2).
+Proof.
+  red; intros. eapply MON1. apply IN.
+  intros. eapply MON2. apply PR. apply LE.
+Qed.
+
 Lemma fcpn14_mon: monotone14 fcpn14.
 Proof.
-  repeat intro. eapply gf_mon; [eapply IN|].
-  intros. eapply cpn14_mon; [apply PR|apply LE].
+  apply monotone14_compose. apply gf_mon. apply cpn14_mon.
 Qed.
 
 Lemma fcpn14_sound:
@@ -136,7 +144,6 @@ Structure wcompatible14 (clo: rel -> rel) : Prop :=
       wcompat14_wcompat : forall r,
           clo (gf r) <14= gf (rclo14 (clo \15/ cpn14) r);
     }.
-
 
 Lemma rclo14_mon_gen clo clo' r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13
       (IN: @rclo14 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13)

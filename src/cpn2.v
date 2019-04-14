@@ -65,10 +65,18 @@ Proof.
     intros. eapply (compat2_compat cpn2_compat), PR1. 
 Qed.
 
+Lemma monotone2_compose (clo1 clo2: rel -> rel)
+      (MON1: monotone2 clo1)
+      (MON2: monotone2 clo2):
+  monotone2 (compose clo1 clo2).
+Proof.
+  red; intros. eapply MON1. apply IN.
+  intros. eapply MON2. apply PR. apply LE.
+Qed.
+
 Lemma fcpn2_mon: monotone2 fcpn2.
 Proof.
-  repeat intro. eapply gf_mon; [eapply IN|].
-  intros. eapply cpn2_mon; [apply PR|apply LE].
+  apply monotone2_compose. apply gf_mon. apply cpn2_mon.
 Qed.
 
 Lemma fcpn2_sound:
@@ -124,7 +132,6 @@ Structure wcompatible2 (clo: rel -> rel) : Prop :=
       wcompat2_wcompat : forall r,
           clo (gf r) <2= gf (rclo2 (clo \3/ cpn2) r);
     }.
-
 
 Lemma rclo2_mon_gen clo clo' r r' x0 x1
       (IN: @rclo2 clo r x0 x1)

@@ -75,10 +75,18 @@ Proof.
     intros. eapply (compat12_compat cpn12_compat), PR1. 
 Qed.
 
+Lemma monotone12_compose (clo1 clo2: rel -> rel)
+      (MON1: monotone12 clo1)
+      (MON2: monotone12 clo2):
+  monotone12 (compose clo1 clo2).
+Proof.
+  red; intros. eapply MON1. apply IN.
+  intros. eapply MON2. apply PR. apply LE.
+Qed.
+
 Lemma fcpn12_mon: monotone12 fcpn12.
 Proof.
-  repeat intro. eapply gf_mon; [eapply IN|].
-  intros. eapply cpn12_mon; [apply PR|apply LE].
+  apply monotone12_compose. apply gf_mon. apply cpn12_mon.
 Qed.
 
 Lemma fcpn12_sound:
@@ -134,7 +142,6 @@ Structure wcompatible12 (clo: rel -> rel) : Prop :=
       wcompat12_wcompat : forall r,
           clo (gf r) <12= gf (rclo12 (clo \13/ cpn12) r);
     }.
-
 
 Lemma rclo12_mon_gen clo clo' r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11
       (IN: @rclo12 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)

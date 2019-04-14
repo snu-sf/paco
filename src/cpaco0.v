@@ -23,7 +23,7 @@ Definition cupaco0 r := cpaco0 r r.
 
 Lemma cpaco0_def_mon : monotone0 (compose gf (rclo0 clo)).
 Proof.
-  eapply compose_monotone0. apply gf_mon. apply rclo0_mon.
+  eapply monotone0_compose. apply gf_mon. apply rclo0_mon.
 Qed.
 
 Hint Resolve cpaco0_def_mon : paco.
@@ -77,10 +77,10 @@ Proof.
   intros. destruct PR. revert IN.
   pcofix CIH. intros.
   pstep. eapply gf_mon; [| right; apply CIH, rclo0_rclo, PR]. 
-  apply compat0_compat. apply rclo0_compat. apply gf_mon. apply clo_compat.
+  apply compat0_compat with (gf:=gf). apply rclo0_compat. apply gf_mon. apply clo_compat.
   eapply rclo0_mon. apply IN.
   intros. destruct PR. contradiction.
-  punfold H. eapply cpaco0_def_mon. apply H.
+  _punfold H; [..|apply cpaco0_def_mon]. eapply cpaco0_def_mon. apply H.
   intros. pclearbot. right. apply PR.
 Qed.
 
@@ -96,7 +96,7 @@ Qed.
 Lemma cpaco0_unfold:
   cpaco0 bot0 bot0 <0= gf (cpaco0 bot0 bot0).
 Proof.
-  intros. apply cpaco0_init in PR. punfold PR.
+  intros. apply cpaco0_init in PR. _punfold PR; [..|apply gf_mon].
   eapply gf_mon. apply PR.
   intros. pclearbot. apply cpaco0_final, PR0.
 Qed.
@@ -115,7 +115,7 @@ Proof.
   intros. destruct PR. left. apply H.
   right. revert H.
   pcofix CIH. intros.
-  punfold H0. pstep.
+  _punfold H0; [..|apply cpaco0_def_mon]. pstep.
   eapply gf_mon. apply H0. intros.
   apply rclo0_rclo. eapply rclo0_mon. apply PR.
   intros. destruct PR0.
@@ -130,10 +130,10 @@ Proof.
 Qed.
 
 Lemma cpaco0_cupaco
-      r rg (LE: r <0= rg):
+      r rg (LEr: r <0= rg):
   cupaco0 (cpaco0 r rg) <0= cpaco0 r rg.
 Proof.
-  eapply cpaco0_cofix. apply LE.
+  eapply cpaco0_cofix. apply LEr.
   intros. destruct PR. econstructor.
   apply rclo0_rclo. eapply rclo0_mon. apply IN.
   intros. destruct PR.
@@ -144,6 +144,14 @@ Proof.
     eapply paco0_mon. apply H.
     intros. apply CIH.
     econstructor. apply rclo0_base. left. apply PR.
+Qed.
+
+Lemma cpaco0_uclo (uclo: rel -> rel)
+      r rg (LEr: r <0= rg)
+      (LEclo: uclo <1= cupaco0) :
+  uclo (cpaco0 r rg) <0= cpaco0 r rg.
+Proof.
+  intros. apply cpaco0_cupaco. apply LEr. apply LEclo, PR.
 Qed.
 
 End CompatiblePaco0_main.
@@ -159,12 +167,12 @@ Lemma cpaco0_mon_gen (gf gf' clo clo': rel -> rel) r r' rg rg'
 Proof.
   eapply cpaco0_mon; [|apply LEr|apply LErg].
   destruct IN. econstructor.
-  eapply rclo0_mon_gen, IN. apply LEclo.
+  eapply rclo0_mon_gen. apply IN. apply LEclo.
   intros. destruct PR. left; apply H.
   right. eapply paco0_mon_gen. apply H.
   - intros. eapply LEgf.
     eapply MON. apply PR.
-    eapply rclo0_mon_gen. apply LEclo. intros; apply PR0.
+    intros. eapply rclo0_mon_gen. apply PR0. apply LEclo. intros; apply PR1.
   - intros. apply PR.
 Qed.
 

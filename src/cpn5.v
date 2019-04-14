@@ -68,10 +68,18 @@ Proof.
     intros. eapply (compat5_compat cpn5_compat), PR1. 
 Qed.
 
+Lemma monotone5_compose (clo1 clo2: rel -> rel)
+      (MON1: monotone5 clo1)
+      (MON2: monotone5 clo2):
+  monotone5 (compose clo1 clo2).
+Proof.
+  red; intros. eapply MON1. apply IN.
+  intros. eapply MON2. apply PR. apply LE.
+Qed.
+
 Lemma fcpn5_mon: monotone5 fcpn5.
 Proof.
-  repeat intro. eapply gf_mon; [eapply IN|].
-  intros. eapply cpn5_mon; [apply PR|apply LE].
+  apply monotone5_compose. apply gf_mon. apply cpn5_mon.
 Qed.
 
 Lemma fcpn5_sound:
@@ -127,7 +135,6 @@ Structure wcompatible5 (clo: rel -> rel) : Prop :=
       wcompat5_wcompat : forall r,
           clo (gf r) <5= gf (rclo5 (clo \6/ cpn5) r);
     }.
-
 
 Lemma rclo5_mon_gen clo clo' r r' x0 x1 x2 x3 x4
       (IN: @rclo5 clo r x0 x1 x2 x3 x4)

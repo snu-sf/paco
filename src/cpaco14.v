@@ -37,7 +37,7 @@ Definition cupaco14 r := cpaco14 r r.
 
 Lemma cpaco14_def_mon : monotone14 (compose gf (rclo14 clo)).
 Proof.
-  eapply compose_monotone14. apply gf_mon. apply rclo14_mon.
+  eapply monotone14_compose. apply gf_mon. apply rclo14_mon.
 Qed.
 
 Hint Resolve cpaco14_def_mon : paco.
@@ -91,10 +91,10 @@ Proof.
   intros. destruct PR. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 IN.
   pcofix CIH. intros.
   pstep. eapply gf_mon; [| right; apply CIH, rclo14_rclo, PR]. 
-  apply compat14_compat. apply rclo14_compat. apply gf_mon. apply clo_compat.
+  apply compat14_compat with (gf:=gf). apply rclo14_compat. apply gf_mon. apply clo_compat.
   eapply rclo14_mon. apply IN.
   intros. destruct PR. contradiction.
-  punfold H. eapply cpaco14_def_mon. apply H.
+  _punfold H; [..|apply cpaco14_def_mon]. eapply cpaco14_def_mon. apply H.
   intros. pclearbot. right. apply PR.
 Qed.
 
@@ -110,7 +110,7 @@ Qed.
 Lemma cpaco14_unfold:
   cpaco14 bot14 bot14 <14= gf (cpaco14 bot14 bot14).
 Proof.
-  intros. apply cpaco14_init in PR. punfold PR.
+  intros. apply cpaco14_init in PR. _punfold PR; [..|apply gf_mon].
   eapply gf_mon. apply PR.
   intros. pclearbot. apply cpaco14_final, PR0.
 Qed.
@@ -129,7 +129,7 @@ Proof.
   intros. destruct PR. left. apply H.
   right. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 H.
   pcofix CIH. intros.
-  punfold H0. pstep.
+  _punfold H0; [..|apply cpaco14_def_mon]. pstep.
   eapply gf_mon. apply H0. intros.
   apply rclo14_rclo. eapply rclo14_mon. apply PR.
   intros. destruct PR0.
@@ -144,10 +144,10 @@ Proof.
 Qed.
 
 Lemma cpaco14_cupaco
-      r rg (LE: r <14= rg):
+      r rg (LEr: r <14= rg):
   cupaco14 (cpaco14 r rg) <14= cpaco14 r rg.
 Proof.
-  eapply cpaco14_cofix. apply LE.
+  eapply cpaco14_cofix. apply LEr.
   intros. destruct PR. econstructor.
   apply rclo14_rclo. eapply rclo14_mon. apply IN.
   intros. destruct PR.
@@ -158,6 +158,14 @@ Proof.
     eapply paco14_mon. apply H.
     intros. apply CIH.
     econstructor. apply rclo14_base. left. apply PR.
+Qed.
+
+Lemma cpaco14_uclo (uclo: rel -> rel)
+      r rg (LEr: r <14= rg)
+      (LEclo: uclo <15= cupaco14) :
+  uclo (cpaco14 r rg) <14= cpaco14 r rg.
+Proof.
+  intros. apply cpaco14_cupaco. apply LEr. apply LEclo, PR.
 Qed.
 
 End CompatiblePaco14_main.
@@ -173,12 +181,12 @@ Lemma cpaco14_mon_gen (gf gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x
 Proof.
   eapply cpaco14_mon; [|apply LEr|apply LErg].
   destruct IN. econstructor.
-  eapply rclo14_mon_gen, IN. apply LEclo.
+  eapply rclo14_mon_gen. apply IN. apply LEclo.
   intros. destruct PR. left; apply H.
   right. eapply paco14_mon_gen. apply H.
   - intros. eapply LEgf.
     eapply MON. apply PR.
-    eapply rclo14_mon_gen. apply LEclo. intros; apply PR0.
+    intros. eapply rclo14_mon_gen. apply PR0. apply LEclo. intros; apply PR1.
   - intros. apply PR.
 Qed.
 

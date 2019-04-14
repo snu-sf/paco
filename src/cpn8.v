@@ -71,10 +71,18 @@ Proof.
     intros. eapply (compat8_compat cpn8_compat), PR1. 
 Qed.
 
+Lemma monotone8_compose (clo1 clo2: rel -> rel)
+      (MON1: monotone8 clo1)
+      (MON2: monotone8 clo2):
+  monotone8 (compose clo1 clo2).
+Proof.
+  red; intros. eapply MON1. apply IN.
+  intros. eapply MON2. apply PR. apply LE.
+Qed.
+
 Lemma fcpn8_mon: monotone8 fcpn8.
 Proof.
-  repeat intro. eapply gf_mon; [eapply IN|].
-  intros. eapply cpn8_mon; [apply PR|apply LE].
+  apply monotone8_compose. apply gf_mon. apply cpn8_mon.
 Qed.
 
 Lemma fcpn8_sound:
@@ -130,7 +138,6 @@ Structure wcompatible8 (clo: rel -> rel) : Prop :=
       wcompat8_wcompat : forall r,
           clo (gf r) <8= gf (rclo8 (clo \9/ cpn8) r);
     }.
-
 
 Lemma rclo8_mon_gen clo clo' r r' x0 x1 x2 x3 x4 x5 x6 x7
       (IN: @rclo8 clo r x0 x1 x2 x3 x4 x5 x6 x7)

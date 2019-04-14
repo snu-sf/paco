@@ -32,7 +32,7 @@ Definition cupaco9 r := cpaco9 r r.
 
 Lemma cpaco9_def_mon : monotone9 (compose gf (rclo9 clo)).
 Proof.
-  eapply compose_monotone9. apply gf_mon. apply rclo9_mon.
+  eapply monotone9_compose. apply gf_mon. apply rclo9_mon.
 Qed.
 
 Hint Resolve cpaco9_def_mon : paco.
@@ -86,10 +86,10 @@ Proof.
   intros. destruct PR. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 IN.
   pcofix CIH. intros.
   pstep. eapply gf_mon; [| right; apply CIH, rclo9_rclo, PR]. 
-  apply compat9_compat. apply rclo9_compat. apply gf_mon. apply clo_compat.
+  apply compat9_compat with (gf:=gf). apply rclo9_compat. apply gf_mon. apply clo_compat.
   eapply rclo9_mon. apply IN.
   intros. destruct PR. contradiction.
-  punfold H. eapply cpaco9_def_mon. apply H.
+  _punfold H; [..|apply cpaco9_def_mon]. eapply cpaco9_def_mon. apply H.
   intros. pclearbot. right. apply PR.
 Qed.
 
@@ -105,7 +105,7 @@ Qed.
 Lemma cpaco9_unfold:
   cpaco9 bot9 bot9 <9= gf (cpaco9 bot9 bot9).
 Proof.
-  intros. apply cpaco9_init in PR. punfold PR.
+  intros. apply cpaco9_init in PR. _punfold PR; [..|apply gf_mon].
   eapply gf_mon. apply PR.
   intros. pclearbot. apply cpaco9_final, PR0.
 Qed.
@@ -124,7 +124,7 @@ Proof.
   intros. destruct PR. left. apply H.
   right. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 H.
   pcofix CIH. intros.
-  punfold H0. pstep.
+  _punfold H0; [..|apply cpaco9_def_mon]. pstep.
   eapply gf_mon. apply H0. intros.
   apply rclo9_rclo. eapply rclo9_mon. apply PR.
   intros. destruct PR0.
@@ -139,10 +139,10 @@ Proof.
 Qed.
 
 Lemma cpaco9_cupaco
-      r rg (LE: r <9= rg):
+      r rg (LEr: r <9= rg):
   cupaco9 (cpaco9 r rg) <9= cpaco9 r rg.
 Proof.
-  eapply cpaco9_cofix. apply LE.
+  eapply cpaco9_cofix. apply LEr.
   intros. destruct PR. econstructor.
   apply rclo9_rclo. eapply rclo9_mon. apply IN.
   intros. destruct PR.
@@ -153,6 +153,14 @@ Proof.
     eapply paco9_mon. apply H.
     intros. apply CIH.
     econstructor. apply rclo9_base. left. apply PR.
+Qed.
+
+Lemma cpaco9_uclo (uclo: rel -> rel)
+      r rg (LEr: r <9= rg)
+      (LEclo: uclo <10= cupaco9) :
+  uclo (cpaco9 r rg) <9= cpaco9 r rg.
+Proof.
+  intros. apply cpaco9_cupaco. apply LEr. apply LEclo, PR.
 Qed.
 
 End CompatiblePaco9_main.
@@ -168,12 +176,12 @@ Lemma cpaco9_mon_gen (gf gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 r 
 Proof.
   eapply cpaco9_mon; [|apply LEr|apply LErg].
   destruct IN. econstructor.
-  eapply rclo9_mon_gen, IN. apply LEclo.
+  eapply rclo9_mon_gen. apply IN. apply LEclo.
   intros. destruct PR. left; apply H.
   right. eapply paco9_mon_gen. apply H.
   - intros. eapply LEgf.
     eapply MON. apply PR.
-    eapply rclo9_mon_gen. apply LEclo. intros; apply PR0.
+    intros. eapply rclo9_mon_gen. apply PR0. apply LEclo. intros; apply PR1.
   - intros. apply PR.
 Qed.
 

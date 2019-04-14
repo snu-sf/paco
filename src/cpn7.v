@@ -70,10 +70,18 @@ Proof.
     intros. eapply (compat7_compat cpn7_compat), PR1. 
 Qed.
 
+Lemma monotone7_compose (clo1 clo2: rel -> rel)
+      (MON1: monotone7 clo1)
+      (MON2: monotone7 clo2):
+  monotone7 (compose clo1 clo2).
+Proof.
+  red; intros. eapply MON1. apply IN.
+  intros. eapply MON2. apply PR. apply LE.
+Qed.
+
 Lemma fcpn7_mon: monotone7 fcpn7.
 Proof.
-  repeat intro. eapply gf_mon; [eapply IN|].
-  intros. eapply cpn7_mon; [apply PR|apply LE].
+  apply monotone7_compose. apply gf_mon. apply cpn7_mon.
 Qed.
 
 Lemma fcpn7_sound:
@@ -129,7 +137,6 @@ Structure wcompatible7 (clo: rel -> rel) : Prop :=
       wcompat7_wcompat : forall r,
           clo (gf r) <7= gf (rclo7 (clo \8/ cpn7) r);
     }.
-
 
 Lemma rclo7_mon_gen clo clo' r r' x0 x1 x2 x3 x4 x5 x6
       (IN: @rclo7 clo r x0 x1 x2 x3 x4 x5 x6)
