@@ -5,7 +5,7 @@
 (** printing /\ $\land$ #&and;# *)
 
 Require Import ZArith List String Omega.
-Require Import paco.
+Require Import Paco.paco.
 Import ListNotations.
 
 Set Implicit Arguments.

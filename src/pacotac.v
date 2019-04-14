@@ -92,14 +92,17 @@ Ltac pclearbot :=
              | [H: context [bot14] |- _] => H
              end in
     let NH := fresh H in
-    revert_until H; repeat red in H;
-    match goal with [Hcrr: context f [or] |- _] =>
-      match Hcrr with H =>
-        let P := context f [pclearbot_or] in
-        assert (NH: P) by (repeat intro; edestruct H ; [eassumption|contradiction]);
-        clear H; rename NH into H; unfold pclearbot_or in H
-      end
-    end; revert H);
+    revert_until H;
+    try (
+      repeat red in H;
+      match goal with [Hcrr: context f [or] |- _] =>
+        match Hcrr with H =>
+          let P := context f [pclearbot_or] in
+          assert (NH: P) by (repeat intro; edestruct H ; [eassumption|contradiction]);
+          clear H; rename NH into H; unfold pclearbot_or in H
+        end
+      end);
+    revert H);
   intros; paco_revert_hyp _paco_mark.
 
 (** ** [pdestruct H] and [pinversion H]

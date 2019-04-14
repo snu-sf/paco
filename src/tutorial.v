@@ -5,7 +5,7 @@
 (** printing /\ $\land$ #&and;# *)
 
 Require Import Setoid Program.
-Require Import paco.
+Require Import Paco.paco.
 
 
 
