@@ -92,12 +92,12 @@ for i in range(n+1):
 print ("""             end in
     let NH := fresh H in
     revert_until H;
-    try (
+    repeat (
       repeat red in H;
       match goal with [Hcrr: context f [or] |- _] =>
         match Hcrr with H =>
           let P := context f [pclearbot_or] in
-          assert (NH: P) by (repeat intro; edestruct H ; [eassumption|contradiction]);
+          assert (NH: P) by (repeat intro; edestruct H ; [eassumption|repeat (match goal with [X: _ \/ _ |- _] => destruct X end); contradiction]);
           clear H; rename NH into H; unfold pclearbot_or in H
         end
       end);

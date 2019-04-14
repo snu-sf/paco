@@ -28,7 +28,7 @@ Variable clo : rel -> rel.
 Hypothesis clo_compat: compatible12 gf clo.
 
 Inductive cpaco12 r rg x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 : Prop :=
-| cpaco12_intro (IN: rclo12 clo (r \12/ paco12 (compose gf (rclo12 clo)) rg) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
+| cpaco12_intro (IN: rclo12 clo (paco12 (compose gf (rclo12 clo)) (r \12/ rg) \12/ r) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
 .
 
 Definition cupaco12 r := cpaco12 r r.
@@ -48,25 +48,82 @@ Lemma cpaco12_mon r r' rg rg' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11
 Proof.
   destruct IN. econstructor.
   eapply rclo12_mon. apply IN.
-  intros. destruct PR. left. apply LEr, H.
-  right. eapply paco12_mon. apply H. apply LErg.
+  intros. destruct PR; [|right; apply LEr, H].
+  left. eapply paco12_mon. apply H.
+  intros. destruct PR.
+  - left. apply LEr, H0.
+  - right. apply LErg, H0.
+Qed.
+
+Lemma cpaco12_cofix r rg 
+      l (OBG: forall rr (INC: rg <12= rr) (CIH: l <12= rr), l <12= cpaco12 r rr):
+  l <12= cpaco12 r rg.
+Proof.
+  assert (IN: l <12= cpaco12 r (rg \12/ l)).
+  { intros. apply OBG; [left; apply PR0 | right; apply PR0 | apply PR]. }
+  clear OBG. intros. apply IN in PR.
+  destruct PR. econstructor.
+  eapply rclo12_mon. apply IN0.
+  clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 IN0.
+  intros. destruct PR; [|right; apply H].
+  left. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 H.
+  pcofix CIH. intros.
+  _punfold H0; [..|apply cpaco12_def_mon]. pstep.
+  eapply gf_mon. apply H0. intros.
+  apply rclo12_rclo. eapply rclo12_mon. apply PR.
+  intros. destruct PR0.
+  - apply rclo12_base. right. apply CIH. apply H.
+  - destruct H; [|destruct H].
+    + apply rclo12_base. right. apply CIH0. left. apply H.
+    + apply rclo12_base. right. apply CIH0. right. apply H.
+    + apply IN in H. destruct H.
+      eapply rclo12_mon. apply IN0.
+      intros. destruct PR0.
+      * right. apply CIH. apply H.      
+      * right. apply CIH0. left. apply H.
+Qed.
+
+Lemma cpaco12_cupaco r rg:
+  cupaco12 (cpaco12 r rg) <12= cpaco12 r rg.
+Proof.
+  eapply cpaco12_cofix.
+  intros. destruct PR. econstructor.
+  apply rclo12_rclo. eapply rclo12_mon. apply IN.
+  intros. destruct PR.
+  - apply rclo12_base. left.
+    eapply paco12_mon. apply H.
+    intros. right; apply CIH.
+    econstructor. apply rclo12_base. right.
+    destruct PR as [PR|PR]; apply PR.
+  - destruct H. eapply rclo12_mon. apply IN0.
+    intros. destruct PR; [| right; apply H].
+    left. eapply paco12_mon. apply H.
+    intros. destruct PR. left; apply H0.
+    right. apply INC, H0.
+Qed.
+
+Lemma cpaco12_uclo (uclo: rel -> rel) r rg 
+      (LEclo: uclo <13= cupaco12) :
+  uclo (cpaco12 r rg) <12= cpaco12 r rg.
+Proof.
+  intros. apply cpaco12_cupaco. apply LEclo, PR.
 Qed.
 
 Lemma cpaco12_base r rg: r <12= cpaco12 r rg.
 Proof.
-  econstructor. apply rclo12_base. left. apply PR.
+  econstructor. apply rclo12_base. right. apply PR.
 Qed.
 
-Lemma cpaco12_rclo r rg:
-  rclo12 clo (cpaco12 r rg) <12= cpaco12 r rg.
+Lemma cpaco12_rclo r:
+  rclo12 clo r <12= cupaco12 r.
 Proof.
-  intros. econstructor. apply rclo12_rclo.
+  intros. econstructor.
   eapply rclo12_mon. apply PR.
-  intros. apply PR0.
+  intros. right. apply PR0.
 Qed.
 
-Lemma cpaco12_clo r rg:
-  clo (cpaco12 r rg) <12= cpaco12 r rg.
+Lemma cpaco12_clo r:
+  clo r <12= cupaco12 r.
 Proof.
   intros. apply cpaco12_rclo. apply rclo12_clo.
   eapply clo_compat. apply PR.
@@ -76,11 +133,12 @@ Qed.
 Lemma cpaco12_step r rg:
   gf (cpaco12 rg rg) <12= cpaco12 r rg.
 Proof.
-  intros. econstructor. apply rclo12_base. right.
+  intros. econstructor. apply rclo12_base. left.
   pstep. eapply gf_mon. apply PR.
+  intros. destruct PR0. eapply rclo12_mon. apply IN.
   intros. destruct PR0.
-  eapply rclo12_mon. apply IN.
-  intros. destruct PR0; [right|left]; apply H.
+  - left. eapply paco12_mon. apply H. right. destruct PR0; apply H0.
+  - right. right. apply H.
 Qed.
 
 Lemma cpaco12_init:
@@ -91,18 +149,20 @@ Proof.
   pstep. eapply gf_mon; [| right; apply CIH, rclo12_rclo, PR]. 
   apply compat12_compat with (gf:=gf). apply rclo12_compat. apply gf_mon. apply clo_compat.
   eapply rclo12_mon. apply IN.
-  intros. destruct PR. contradiction.
-  _punfold H; [..|apply cpaco12_def_mon]. eapply cpaco12_def_mon. apply H.
-  intros. pclearbot. right. apply PR.
+  intros. pclearbot. _punfold PR; [..|apply cpaco12_def_mon].
+  eapply cpaco12_def_mon. apply PR.
+  intros. pclearbot. left. apply PR0.
 Qed.
 
-Lemma cpaco12_final:
-  paco12 gf bot12 <12= cpaco12 bot12 bot12.
+Lemma cpaco12_final r rg:
+  (r \12/ paco12 gf rg) <12= cpaco12 r rg.
 Proof.
-  intros. econstructor. apply rclo12_base.
-  right. eapply paco12_mon_bot. apply PR.
-  intros. eapply gf_mon. apply PR0.
-  intros. apply rclo12_base. apply PR1.
+  intros. destruct PR. apply cpaco12_base, H.
+  econstructor. apply rclo12_base.
+  left. eapply paco12_mon_gen. apply H.
+  - intros. eapply gf_mon. apply PR.
+    intros. apply rclo12_base. apply PR0.
+  - intros. right. apply PR.
 Qed.
 
 Lemma cpaco12_unfold:
@@ -110,60 +170,7 @@ Lemma cpaco12_unfold:
 Proof.
   intros. apply cpaco12_init in PR. _punfold PR; [..|apply gf_mon].
   eapply gf_mon. apply PR.
-  intros. pclearbot. apply cpaco12_final, PR0.
-Qed.
-
-Lemma cpaco12_cofix
-      r rg (LE: r <12= rg)
-      l (OBG: forall rr (INC: rg <12= rr) (CIH: l <12= rr), l <12= cpaco12 r rr):
-  l <12= cpaco12 r rg.
-Proof.
-  assert (IN: l <12= cpaco12 r (rg \12/ l)).
-  { intros. apply OBG; [left; apply PR0 | right; apply PR0 | apply PR]. }
-  clear OBG. intros. apply IN in PR.
-  destruct PR. econstructor.
-  eapply rclo12_mon. apply IN0.
-  clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 IN0.
-  intros. destruct PR. left. apply H.
-  right. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 H.
-  pcofix CIH. intros.
-  _punfold H0; [..|apply cpaco12_def_mon]. pstep.
-  eapply gf_mon. apply H0. intros.
-  apply rclo12_rclo. eapply rclo12_mon. apply PR.
-  intros. destruct PR0.
-  - apply rclo12_base. right. apply CIH. apply H.
-  - destruct H.
-    + apply rclo12_base. right. apply CIH0, H.
-    + apply IN in H. destruct H.
-      eapply rclo12_mon. apply IN0.
-      intros. destruct PR0.
-      * right. apply CIH0. apply LE, H.
-      * right. apply CIH. apply H.
-Qed.
-
-Lemma cpaco12_cupaco
-      r rg (LEr: r <12= rg):
-  cupaco12 (cpaco12 r rg) <12= cpaco12 r rg.
-Proof.
-  eapply cpaco12_cofix. apply LEr.
-  intros. destruct PR. econstructor.
-  apply rclo12_rclo. eapply rclo12_mon. apply IN.
-  intros. destruct PR.
-  - destruct H.  eapply rclo12_mon. apply IN0.
-    intros. destruct PR. left. apply H.
-    right. eapply paco12_mon. apply H. apply INC.
-  - apply rclo12_base. right.
-    eapply paco12_mon. apply H.
-    intros. apply CIH.
-    econstructor. apply rclo12_base. left. apply PR.
-Qed.
-
-Lemma cpaco12_uclo (uclo: rel -> rel)
-      r rg (LEr: r <12= rg)
-      (LEclo: uclo <13= cupaco12) :
-  uclo (cpaco12 r rg) <12= cpaco12 r rg.
-Proof.
-  intros. apply cpaco12_cupaco. apply LEr. apply LEclo, PR.
+  intros. pclearbot. apply cpaco12_final. right. apply PR0.
 Qed.
 
 End CompatiblePaco12_main.
@@ -180,17 +187,27 @@ Proof.
   eapply cpaco12_mon; [|apply LEr|apply LErg].
   destruct IN. econstructor.
   eapply rclo12_mon_gen. apply IN. apply LEclo.
-  intros. destruct PR. left; apply H.
-  right. eapply paco12_mon_gen. apply H.
+  intros. destruct PR; [| right; apply H].
+  left. eapply paco12_mon_gen. apply H.
   - intros. eapply LEgf.
     eapply MON. apply PR.
     intros. eapply rclo12_mon_gen. apply PR0. apply LEclo. intros; apply PR1.
   - intros. apply PR.
 Qed.
 
+Lemma cpaco12_mon_bot (gf gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 r' rg'
+      (IN: @cpaco12 gf clo bot12 bot12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
+      (MON: monotone12 gf)
+      (LEgf: gf <13= gf')
+      (LEclo: clo <13= clo'):
+  @cpaco12 gf' clo' r' rg' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11.
+Proof.
+  eapply cpaco12_mon_gen. apply IN. apply MON. apply LEgf. apply LEclo. contradiction. contradiction.
+Qed.
+
 End CompatiblePaco12.
 
 Hint Resolve cpaco12_base : paco.
 Hint Resolve cpaco12_step : paco.
+Hint Resolve cpaco12_final : paco.
 Hint Resolve rclo12_base : paco.
-Hint Resolve rclo12_clo : paco.

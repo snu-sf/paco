@@ -23,6 +23,29 @@ Tactic Notation "cinit_" :=
   end.
 Ltac cinit := repeat red; under_forall ltac:(cinit_).
 
+(** ** cfinal
+*)
+
+Tactic Notation "cfinal_" :=
+  match goal with
+  | [|- context[cpaco0]] => eapply cpaco0_final; [eauto with paco|]
+  | [|- context[cpaco1]] => eapply cpaco1_final; [eauto with paco|]
+  | [|- context[cpaco2]] => eapply cpaco2_final; [eauto with paco|]
+  | [|- context[cpaco3]] => eapply cpaco3_final; [eauto with paco|]
+  | [|- context[cpaco4]] => eapply cpaco4_final; [eauto with paco|]
+  | [|- context[cpaco5]] => eapply cpaco5_final; [eauto with paco|]
+  | [|- context[cpaco6]] => eapply cpaco6_final; [eauto with paco|]
+  | [|- context[cpaco7]] => eapply cpaco7_final; [eauto with paco|]
+  | [|- context[cpaco8]] => eapply cpaco8_final; [eauto with paco|]
+  | [|- context[cpaco9]] => eapply cpaco9_final; [eauto with paco|]
+  | [|- context[cpaco10]] => eapply cpaco10_final; [eauto with paco|]
+  | [|- context[cpaco11]] => eapply cpaco11_final; [eauto with paco|]
+  | [|- context[cpaco12]] => eapply cpaco12_final; [eauto with paco|]
+  | [|- context[cpaco13]] => eapply cpaco13_final; [eauto with paco|]
+  | [|- context[cpaco14]] => eapply cpaco14_final; [eauto with paco|]
+  end.
+Ltac cfinal := repeat red; under_forall ltac:(cfinal_).
+
 (** ** cunfold H
 *)
 
@@ -98,21 +121,21 @@ Ltac cstep := repeat red; under_forall ltac:(cstep_).
 
 Tactic Notation "cupaco_" :=
   match goal with
-  | [|- context[cpaco0]] => eapply cpaco0_cupaco; [eauto with paco|eauto with paco|]
-  | [|- context[cpaco1]] => eapply cpaco1_cupaco; [eauto with paco|eauto with paco|]
-  | [|- context[cpaco2]] => eapply cpaco2_cupaco; [eauto with paco|eauto with paco|]
-  | [|- context[cpaco3]] => eapply cpaco3_cupaco; [eauto with paco|eauto with paco|]
-  | [|- context[cpaco4]] => eapply cpaco4_cupaco; [eauto with paco|eauto with paco|]
-  | [|- context[cpaco5]] => eapply cpaco5_cupaco; [eauto with paco|eauto with paco|]
-  | [|- context[cpaco6]] => eapply cpaco6_cupaco; [eauto with paco|eauto with paco|]
-  | [|- context[cpaco7]] => eapply cpaco7_cupaco; [eauto with paco|eauto with paco|]
-  | [|- context[cpaco8]] => eapply cpaco8_cupaco; [eauto with paco|eauto with paco|]
-  | [|- context[cpaco9]] => eapply cpaco9_cupaco; [eauto with paco|eauto with paco|]
-  | [|- context[cpaco10]] => eapply cpaco10_cupaco; [eauto with paco|eauto with paco|]
-  | [|- context[cpaco11]] => eapply cpaco11_cupaco; [eauto with paco|eauto with paco|]
-  | [|- context[cpaco12]] => eapply cpaco12_cupaco; [eauto with paco|eauto with paco|]
-  | [|- context[cpaco13]] => eapply cpaco13_cupaco; [eauto with paco|eauto with paco|]
-  | [|- context[cpaco14]] => eapply cpaco14_cupaco; [eauto with paco|eauto with paco|]
+  | [|- context[cpaco0]] => eapply cpaco0_cupaco; [eauto with paco|]
+  | [|- context[cpaco1]] => eapply cpaco1_cupaco; [eauto with paco|]
+  | [|- context[cpaco2]] => eapply cpaco2_cupaco; [eauto with paco|]
+  | [|- context[cpaco3]] => eapply cpaco3_cupaco; [eauto with paco|]
+  | [|- context[cpaco4]] => eapply cpaco4_cupaco; [eauto with paco|]
+  | [|- context[cpaco5]] => eapply cpaco5_cupaco; [eauto with paco|]
+  | [|- context[cpaco6]] => eapply cpaco6_cupaco; [eauto with paco|]
+  | [|- context[cpaco7]] => eapply cpaco7_cupaco; [eauto with paco|]
+  | [|- context[cpaco8]] => eapply cpaco8_cupaco; [eauto with paco|]
+  | [|- context[cpaco9]] => eapply cpaco9_cupaco; [eauto with paco|]
+  | [|- context[cpaco10]] => eapply cpaco10_cupaco; [eauto with paco|]
+  | [|- context[cpaco11]] => eapply cpaco11_cupaco; [eauto with paco|]
+  | [|- context[cpaco12]] => eapply cpaco12_cupaco; [eauto with paco|]
+  | [|- context[cpaco13]] => eapply cpaco13_cupaco; [eauto with paco|]
+  | [|- context[cpaco14]] => eapply cpaco14_cupaco; [eauto with paco|]
   end.
 Ltac cupaco := repeat red; under_forall ltac:(cupaco_).
 
@@ -121,21 +144,21 @@ Ltac cupaco := repeat red; under_forall ltac:(cupaco_).
 
 Tactic Notation "cclo_" constr(H) :=
   match goal with
-  | [|- context[cpaco0]]  => eapply cpaco0_uclo; [| |eapply H|]; [eauto with paco|eauto with paco|..]
-  | [|- context[cpaco1]]  => eapply cpaco1_uclo; [| |eapply H|]; [eauto with paco|eauto with paco|..]
-  | [|- context[cpaco2]]  => eapply cpaco2_uclo; [| |eapply H|]; [eauto with paco|eauto with paco|..]
-  | [|- context[cpaco3]]  => eapply cpaco3_uclo; [| |eapply H|]; [eauto with paco|eauto with paco|..]
-  | [|- context[cpaco4]]  => eapply cpaco4_uclo; [| |eapply H|]; [eauto with paco|eauto with paco|..]
-  | [|- context[cpaco5]]  => eapply cpaco5_uclo; [| |eapply H|]; [eauto with paco|eauto with paco|..]
-  | [|- context[cpaco6]]  => eapply cpaco6_uclo; [| |eapply H|]; [eauto with paco|eauto with paco|..]
-  | [|- context[cpaco7]]  => eapply cpaco7_uclo; [| |eapply H|]; [eauto with paco|eauto with paco|..]
-  | [|- context[cpaco8]]  => eapply cpaco8_uclo; [| |eapply H|]; [eauto with paco|eauto with paco|..]
-  | [|- context[cpaco9]]  => eapply cpaco9_uclo; [| |eapply H|]; [eauto with paco|eauto with paco|..]
-  | [|- context[cpaco10]]  => eapply cpaco10_uclo; [| |eapply H|]; [eauto with paco|eauto with paco|..]
-  | [|- context[cpaco11]]  => eapply cpaco11_uclo; [| |eapply H|]; [eauto with paco|eauto with paco|..]
-  | [|- context[cpaco12]]  => eapply cpaco12_uclo; [| |eapply H|]; [eauto with paco|eauto with paco|..]
-  | [|- context[cpaco13]]  => eapply cpaco13_uclo; [| |eapply H|]; [eauto with paco|eauto with paco|..]
-  | [|- context[cpaco14]]  => eapply cpaco14_uclo; [| |eapply H|]; [eauto with paco|eauto with paco|..]
+  | [|- context[cpaco0]]  => eapply cpaco0_uclo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[cpaco1]]  => eapply cpaco1_uclo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[cpaco2]]  => eapply cpaco2_uclo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[cpaco3]]  => eapply cpaco3_uclo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[cpaco4]]  => eapply cpaco4_uclo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[cpaco5]]  => eapply cpaco5_uclo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[cpaco6]]  => eapply cpaco6_uclo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[cpaco7]]  => eapply cpaco7_uclo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[cpaco8]]  => eapply cpaco8_uclo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[cpaco9]]  => eapply cpaco9_uclo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[cpaco10]]  => eapply cpaco10_uclo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[cpaco11]]  => eapply cpaco11_uclo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[cpaco12]]  => eapply cpaco12_uclo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[cpaco13]]  => eapply cpaco13_uclo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[cpaco14]]  => eapply cpaco14_uclo; [|eapply H|]; [eauto with paco|..]
   end.
 Ltac cclo H := repeat red; under_forall ltac:(cclo_ H).
 
@@ -148,49 +171,49 @@ Tactic Notation "ccofix" ident(CIH) "with" ident(r) :=
   match goal with
   | [|- context[cpaco0]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @cpaco0_cofix with r; [eauto with paco|eauto with paco|eauto with paco; try contradiction|]
+    pcofix CIH using @cpaco0_cofix with r; [eauto with paco|]
   | [|- context[cpaco1]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @cpaco1_cofix with r; [eauto with paco|eauto with paco|eauto with paco; try contradiction|]
+    pcofix CIH using @cpaco1_cofix with r; [eauto with paco|]
   | [|- context[cpaco2]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @cpaco2_cofix with r; [eauto with paco|eauto with paco|eauto with paco; try contradiction|]
+    pcofix CIH using @cpaco2_cofix with r; [eauto with paco|]
   | [|- context[cpaco3]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @cpaco3_cofix with r; [eauto with paco|eauto with paco|eauto with paco; try contradiction|]
+    pcofix CIH using @cpaco3_cofix with r; [eauto with paco|]
   | [|- context[cpaco4]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @cpaco4_cofix with r; [eauto with paco|eauto with paco|eauto with paco; try contradiction|]
+    pcofix CIH using @cpaco4_cofix with r; [eauto with paco|]
   | [|- context[cpaco5]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @cpaco5_cofix with r; [eauto with paco|eauto with paco|eauto with paco; try contradiction|]
+    pcofix CIH using @cpaco5_cofix with r; [eauto with paco|]
   | [|- context[cpaco6]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @cpaco6_cofix with r; [eauto with paco|eauto with paco|eauto with paco; try contradiction|]
+    pcofix CIH using @cpaco6_cofix with r; [eauto with paco|]
   | [|- context[cpaco7]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @cpaco7_cofix with r; [eauto with paco|eauto with paco|eauto with paco; try contradiction|]
+    pcofix CIH using @cpaco7_cofix with r; [eauto with paco|]
   | [|- context[cpaco8]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @cpaco8_cofix with r; [eauto with paco|eauto with paco|eauto with paco; try contradiction|]
+    pcofix CIH using @cpaco8_cofix with r; [eauto with paco|]
   | [|- context[cpaco9]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @cpaco9_cofix with r; [eauto with paco|eauto with paco|eauto with paco; try contradiction|]
+    pcofix CIH using @cpaco9_cofix with r; [eauto with paco|]
   | [|- context[cpaco10]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @cpaco10_cofix with r; [eauto with paco|eauto with paco|eauto with paco; try contradiction|]
+    pcofix CIH using @cpaco10_cofix with r; [eauto with paco|]
   | [|- context[cpaco11]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @cpaco11_cofix with r; [eauto with paco|eauto with paco|eauto with paco; try contradiction|]
+    pcofix CIH using @cpaco11_cofix with r; [eauto with paco|]
   | [|- context[cpaco12]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @cpaco12_cofix with r; [eauto with paco|eauto with paco|eauto with paco; try contradiction|]
+    pcofix CIH using @cpaco12_cofix with r; [eauto with paco|]
   | [|- context[cpaco13]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @cpaco13_cofix with r; [eauto with paco|eauto with paco|eauto with paco; try contradiction|]
+    pcofix CIH using @cpaco13_cofix with r; [eauto with paco|]
   | [|- context[cpaco14]]  =>
     paco_revert_hyp _paco_mark;
-    pcofix CIH using @cpaco14_cofix with r; [eauto with paco|eauto with paco|eauto with paco; try contradiction|]
+    pcofix CIH using @cpaco14_cofix with r; [eauto with paco|]
   end.
 Tactic Notation "ccofix" ident(CIH) := ccofix CIH with r.
 
