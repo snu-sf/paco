@@ -31,11 +31,11 @@ Structure compatible8 (clo: rel -> rel) : Prop :=
           clo (gf r) <8= gf (clo r);
     }.
 
-Inductive cpn8 (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 : Prop :=
+Inductive cpn8 (r: rel) x0 x1 x2 x3 x4 x5 x6 x7 : Prop :=
 | cpn8_intro
     clo
     (COM: compatible8 clo)
-    (CLO: clo r e0 e1 e2 e3 e4 e5 e6 e7)
+    (CLO: clo r x0 x1 x2 x3 x4 x5 x6 x7)
 .
 
 Definition fcpn8 := compose gf cpn8.
@@ -114,46 +114,33 @@ Qed.
 
 Inductive rclo8 (clo: rel->rel) (r: rel): rel :=
 | rclo8_base
-    e0 e1 e2 e3 e4 e5 e6 e7
-    (R: r e0 e1 e2 e3 e4 e5 e6 e7):
-    @rclo8 clo r e0 e1 e2 e3 e4 e5 e6 e7
+    x0 x1 x2 x3 x4 x5 x6 x7
+    (IN: r x0 x1 x2 x3 x4 x5 x6 x7):
+    @rclo8 clo r x0 x1 x2 x3 x4 x5 x6 x7
 | rclo8_clo'
-    r' e0 e1 e2 e3 e4 e5 e6 e7
-    (R': r' <8= rclo8 clo r)
-    (CLOR': clo r' e0 e1 e2 e3 e4 e5 e6 e7):
-    @rclo8 clo r e0 e1 e2 e3 e4 e5 e6 e7
-| rclo8_step'
-    r' e0 e1 e2 e3 e4 e5 e6 e7
-    (R': r' <8= rclo8 clo r)
-    (CLOR': @gf r' e0 e1 e2 e3 e4 e5 e6 e7):
-    @rclo8 clo r e0 e1 e2 e3 e4 e5 e6 e7
-| rclo8_cpn'
-    r' e0 e1 e2 e3 e4 e5 e6 e7
-    (R': r' <8= rclo8 clo r)
-    (CLOR': @cpn8 r' e0 e1 e2 e3 e4 e5 e6 e7):
-    @rclo8 clo r e0 e1 e2 e3 e4 e5 e6 e7
-.
+    r' x0 x1 x2 x3 x4 x5 x6 x7
+    (LE: r' <8= rclo8 clo r)
+    (IN: clo r' x0 x1 x2 x3 x4 x5 x6 x7):
+    @rclo8 clo r x0 x1 x2 x3 x4 x5 x6 x7
+.           
 
 Structure wcompatible8 (clo: rel -> rel) : Prop :=
   wcompat8_intro {
       wcompat8_mon: monotone8 clo;
-      wcompat8_wcompat: forall r,
-          clo (gf r) <8= gf (rclo8 clo r);
+      wcompat8_wcompat : forall r,
+          clo (gf r) <8= gf (rclo8 (clo \9/ cpn8) r);
     }.
 
-Lemma rclo8_mon_gen clo clo' r r' e0 e1 e2 e3 e4 e5 e6 e7
-      (IN: @rclo8 clo r e0 e1 e2 e3 e4 e5 e6 e7)
+
+Lemma rclo8_mon_gen clo clo' r r' x0 x1 x2 x3 x4 x5 x6 x7
+      (IN: @rclo8 clo r x0 x1 x2 x3 x4 x5 x6 x7)
       (LEclo: clo <9= clo')
       (LEr: r <8= r') :
-  @rclo8 clo' r' e0 e1 e2 e3 e4 e5 e6 e7.
+  @rclo8 clo' r' x0 x1 x2 x3 x4 x5 x6 x7.
 Proof.
   induction IN; intros.
-  - econstructor 1. apply LEr, R.
-  - econstructor 2; [intros; eapply H, PR|apply LEclo, CLOR'].
-  - econstructor 3; [intros; eapply H, PR|apply CLOR'].
-  - econstructor 4; [intros; eapply H, PR|].
-    eapply cpn8_mon; [apply CLOR'|].
-    intros. apply PR.
+  - econstructor 1. apply LEr, IN.
+  - econstructor 2; [intros; eapply H, PR|apply LEclo, IN].
 Qed.
 
 Lemma rclo8_mon clo:
@@ -169,69 +156,62 @@ Proof.
   intros. apply PR0.
 Qed.
 
-Lemma rclo8_step clo r:
-  gf (rclo8 clo r) <8= rclo8 clo r.
-Proof.
-  intros. econstructor 3; [|apply PR].
-  intros. apply PR0.
-Qed.
-
-Lemma rclo8_cpn clo r:
-  cpn8 (rclo8 clo r) <8= rclo8 clo r.
-Proof.
-  intros. econstructor 4; [|apply PR]. 
-  intros. apply PR0.
-Qed.
-
-Lemma rclo8_mult clo r:
+Lemma rclo8_rclo clo r:
   rclo8 clo (rclo8 clo r) <8= rclo8 clo r.
 Proof.
   intros. induction PR.
-  - eapply R.
-  - econstructor 2; [eapply H | eapply CLOR'].
-  - econstructor 3; [eapply H | eapply CLOR'].
-  - econstructor 4; [eapply H | eapply CLOR'].
+  - eapply IN.
+  - econstructor 2; [eapply H | eapply IN].
 Qed.
 
 Lemma rclo8_compose clo r:
   rclo8 (rclo8 clo) r <8= rclo8 clo r.
 Proof.
   intros. induction PR.
-  - apply rclo8_base, R.
-  - apply rclo8_mult.
-    eapply rclo8_mon; [apply CLOR'|apply H].
-  - apply rclo8_step.
-    eapply gf_mon; [apply CLOR'|apply H].
-  - apply rclo8_cpn.
-    eapply cpn8_mon; [apply CLOR'|apply H].
+  - apply rclo8_base, IN.
+  - apply rclo8_rclo.
+    eapply rclo8_mon; [apply IN|apply H].
 Qed.
 
-Lemma wcompat8_compat
-      clo (WCOM: wcompatible8 clo):
+Lemma rclo8_compat clo
+      (COM: compatible8 clo):
   compatible8 (rclo8 clo).
+Proof.
+  econstructor.
+  - apply rclo8_mon.
+  - intros. induction PR.
+    + eapply gf_mon. apply IN.
+      intros. eapply rclo8_base. apply PR.
+    + eapply gf_mon.
+      * eapply COM. eapply COM. apply IN. apply H.
+      * intros. eapply rclo8_clo. apply PR.
+Qed.
+
+Lemma wcompat8_compat  clo
+      (WCOM: wcompatible8 clo):
+  compatible8 (rclo8 (clo \9/ cpn8)).
 Proof.
   econstructor; [eapply rclo8_mon|]. intros.
   induction PR; intros.
-  - eapply gf_mon; [apply R|]. intros.
+  - eapply gf_mon; [apply IN|]. intros.
     apply rclo8_base. apply PR.
-  - eapply gf_mon.
-    + eapply (wcompat8_wcompat WCOM).
-      eapply (wcompat8_mon WCOM); [apply CLOR'|apply H].
-    + intros. apply rclo8_mult, PR.
-  - eapply gf_mon; [apply CLOR'|].
-    intros. apply H in PR. apply rclo8_step, PR.
-  - eapply gf_mon; [|intros; apply rclo8_cpn, PR].
-    apply (compat8_compat cpn8_compat).
-    eapply cpn8_mon; [apply CLOR'|apply H].
+  - destruct IN as [IN|IN].
+    + eapply gf_mon.
+      * eapply WCOM. eapply WCOM; [apply IN|apply H].
+      * intros. apply rclo8_rclo, PR.
+    + eapply gf_mon; [|intros; apply rclo8_clo; right; apply PR].
+      apply (compat8_compat cpn8_compat).
+      eapply cpn8_mon; [apply IN|apply H].
 Qed.
 
-Lemma wcompat8_sound clo (WCOM: wcompatible8 clo):
+Lemma wcompat8_sound clo
+      (WCOM: wcompatible8 clo):
   clo <9= cpn8.
 Proof.
-  intros. exists (rclo8 clo).
+  intros. exists (rclo8 (clo \9/ cpn8)).
   - apply wcompat8_compat, WCOM.
   - apply rclo8_clo.
-    eapply (wcompat8_mon WCOM); [apply PR|].
+    left. eapply WCOM. apply PR.
     intros. apply rclo8_base, PR0.
 Qed.
 
@@ -248,29 +228,35 @@ Proof.
   - apply PR.
 Qed.
 
+Lemma cpn8_step r:
+  fcpn8 r <8= cpn8 r.
+Proof.
+  intros. eapply cpn8_cpn. exists gf.
+  - econstructor. apply gf_mon. intros; apply PR0.
+  - apply PR.
+Qed.
+
 Lemma cpn8_from_upaco r:
   upaco8 fcpn8 r <8= cpn8 r.
 Proof.
-  intros. destruct PR; [| apply cpn8_base, H].
-  exists (rclo8 (paco8 fcpn8)).
-  - apply wcompat8_compat.
-    econstructor; [apply paco8_mon|].
-    intros. _punfold PR; [|apply fcpn8_mon].
+  eapply wcompat8_sound.
+  econstructor; [apply upaco8_mon|].
+  intros. destruct PR as [PR|PR].
+  - _punfold PR; [|apply fcpn8_mon]. 
     eapply gf_mon; [apply PR|].
-    intros. apply rclo8_cpn.
+    intros. apply rclo8_clo; right.
     eapply cpn8_mon; [apply PR0|].
     intros. destruct PR1.
-    + apply rclo8_clo.
-      eapply paco8_mon; [apply H0|].
-      intros. apply rclo8_step.
+    + apply rclo8_clo; left.
+      left. eapply paco8_mon; [apply H|].
+      intros. apply rclo8_clo; right. apply cpn8_step.
       eapply gf_mon; [apply PR1|].
-      intros. apply rclo8_base, PR2.
-    + apply rclo8_step.
-      eapply gf_mon; [apply H0|].
-      intros. apply rclo8_base, PR1.
-  - apply rclo8_clo.
-    eapply paco8_mon; [apply H|].
-    intros. apply rclo8_base, PR.
+      intros. apply cpn8_base, rclo8_base, PR2.
+    + apply rclo8_clo; right. apply cpn8_step.
+      eapply gf_mon; [apply H|].
+      intros. apply cpn8_base, rclo8_base, PR1.
+  - eapply gf_mon. apply PR.
+    intros. apply rclo8_base, PR0. 
 Qed.
 
 Lemma cpn8_from_paco r:
@@ -326,18 +312,6 @@ Proof.
   intros. pclearbot. apply cpn8_complete, PR0.
 Qed.
 
-Lemma cpn8_step r:
-  fcpn8 r <8= cpn8 r.
-Proof.
-  intros. eapply cpn8_clo, PR.
-  intros. eapply wcompat8_sound, PR0.
-  econstructor; [apply gf_mon|].
-  intros. eapply gf_mon; [apply PR1|].
-  intros. apply rclo8_step.
-  eapply gf_mon; [apply PR2|].
-  intros. apply rclo8_base, PR3.
-Qed.
-
 Lemma fcpn8_clo
       r clo (LE: clo <9= cpn8):
   clo (fcpn8 r) <8= fcpn8 r.
@@ -373,24 +347,24 @@ Qed.
 
 End Companion8_main.
 
-Lemma cpn8_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 r
-      (IN: @cpn8 gf bot8 e0 e1 e2 e3 e4 e5 e6 e7)
+Lemma cpn8_mon_bot (gf gf': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 r
+      (IN: @cpn8 gf bot8 x0 x1 x2 x3 x4 x5 x6 x7)
       (MONgf: monotone8 gf)
       (MONgf': monotone8 gf')
       (LE: gf <9= gf'):
-  @cpn8 gf' r e0 e1 e2 e3 e4 e5 e6 e7.
+  @cpn8 gf' r x0 x1 x2 x3 x4 x5 x6 x7.
 Proof.
   apply cpn8_init in IN; [|apply MONgf].
   apply cpn8_final; [apply MONgf'|].
   left. eapply paco8_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
-Lemma fcpn8_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 r
-      (IN: @fcpn8 gf bot8 e0 e1 e2 e3 e4 e5 e6 e7)
+Lemma fcpn8_mon_bot (gf gf': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 r
+      (IN: @fcpn8 gf bot8 x0 x1 x2 x3 x4 x5 x6 x7)
       (MONgf: monotone8 gf)
       (MONgf': monotone8 gf')
       (LE: gf <9= gf'):
-  @fcpn8 gf' r e0 e1 e2 e3 e4 e5 e6 e7.
+  @fcpn8 gf' r x0 x1 x2 x3 x4 x5 x6 x7.
 Proof.
   apply LE. eapply MONgf. apply IN.
   intros. eapply cpn8_mon_bot; eassumption.
@@ -402,7 +376,5 @@ Hint Unfold fcpn8 : paco.
 
 Hint Resolve cpn8_base : paco.
 Hint Resolve cpn8_step : paco.
-
-Hint Constructors rclo8 : rclo.
-Hint Resolve rclo8_clo rclo8_step rclo8_cpn : rclo.
-
+Hint Constructors rclo8 : paco.
+Hint Resolve rclo8_clo : paco.

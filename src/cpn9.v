@@ -32,11 +32,11 @@ Structure compatible9 (clo: rel -> rel) : Prop :=
           clo (gf r) <9= gf (clo r);
     }.
 
-Inductive cpn9 (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 : Prop :=
+Inductive cpn9 (r: rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 : Prop :=
 | cpn9_intro
     clo
     (COM: compatible9 clo)
-    (CLO: clo r e0 e1 e2 e3 e4 e5 e6 e7 e8)
+    (CLO: clo r x0 x1 x2 x3 x4 x5 x6 x7 x8)
 .
 
 Definition fcpn9 := compose gf cpn9.
@@ -115,46 +115,33 @@ Qed.
 
 Inductive rclo9 (clo: rel->rel) (r: rel): rel :=
 | rclo9_base
-    e0 e1 e2 e3 e4 e5 e6 e7 e8
-    (R: r e0 e1 e2 e3 e4 e5 e6 e7 e8):
-    @rclo9 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8
+    x0 x1 x2 x3 x4 x5 x6 x7 x8
+    (IN: r x0 x1 x2 x3 x4 x5 x6 x7 x8):
+    @rclo9 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8
 | rclo9_clo'
-    r' e0 e1 e2 e3 e4 e5 e6 e7 e8
-    (R': r' <9= rclo9 clo r)
-    (CLOR': clo r' e0 e1 e2 e3 e4 e5 e6 e7 e8):
-    @rclo9 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8
-| rclo9_step'
-    r' e0 e1 e2 e3 e4 e5 e6 e7 e8
-    (R': r' <9= rclo9 clo r)
-    (CLOR': @gf r' e0 e1 e2 e3 e4 e5 e6 e7 e8):
-    @rclo9 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8
-| rclo9_cpn'
-    r' e0 e1 e2 e3 e4 e5 e6 e7 e8
-    (R': r' <9= rclo9 clo r)
-    (CLOR': @cpn9 r' e0 e1 e2 e3 e4 e5 e6 e7 e8):
-    @rclo9 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8
-.
+    r' x0 x1 x2 x3 x4 x5 x6 x7 x8
+    (LE: r' <9= rclo9 clo r)
+    (IN: clo r' x0 x1 x2 x3 x4 x5 x6 x7 x8):
+    @rclo9 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8
+.           
 
 Structure wcompatible9 (clo: rel -> rel) : Prop :=
   wcompat9_intro {
       wcompat9_mon: monotone9 clo;
-      wcompat9_wcompat: forall r,
-          clo (gf r) <9= gf (rclo9 clo r);
+      wcompat9_wcompat : forall r,
+          clo (gf r) <9= gf (rclo9 (clo \10/ cpn9) r);
     }.
 
-Lemma rclo9_mon_gen clo clo' r r' e0 e1 e2 e3 e4 e5 e6 e7 e8
-      (IN: @rclo9 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8)
+
+Lemma rclo9_mon_gen clo clo' r r' x0 x1 x2 x3 x4 x5 x6 x7 x8
+      (IN: @rclo9 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8)
       (LEclo: clo <10= clo')
       (LEr: r <9= r') :
-  @rclo9 clo' r' e0 e1 e2 e3 e4 e5 e6 e7 e8.
+  @rclo9 clo' r' x0 x1 x2 x3 x4 x5 x6 x7 x8.
 Proof.
   induction IN; intros.
-  - econstructor 1. apply LEr, R.
-  - econstructor 2; [intros; eapply H, PR|apply LEclo, CLOR'].
-  - econstructor 3; [intros; eapply H, PR|apply CLOR'].
-  - econstructor 4; [intros; eapply H, PR|].
-    eapply cpn9_mon; [apply CLOR'|].
-    intros. apply PR.
+  - econstructor 1. apply LEr, IN.
+  - econstructor 2; [intros; eapply H, PR|apply LEclo, IN].
 Qed.
 
 Lemma rclo9_mon clo:
@@ -170,69 +157,62 @@ Proof.
   intros. apply PR0.
 Qed.
 
-Lemma rclo9_step clo r:
-  gf (rclo9 clo r) <9= rclo9 clo r.
-Proof.
-  intros. econstructor 3; [|apply PR].
-  intros. apply PR0.
-Qed.
-
-Lemma rclo9_cpn clo r:
-  cpn9 (rclo9 clo r) <9= rclo9 clo r.
-Proof.
-  intros. econstructor 4; [|apply PR]. 
-  intros. apply PR0.
-Qed.
-
-Lemma rclo9_mult clo r:
+Lemma rclo9_rclo clo r:
   rclo9 clo (rclo9 clo r) <9= rclo9 clo r.
 Proof.
   intros. induction PR.
-  - eapply R.
-  - econstructor 2; [eapply H | eapply CLOR'].
-  - econstructor 3; [eapply H | eapply CLOR'].
-  - econstructor 4; [eapply H | eapply CLOR'].
+  - eapply IN.
+  - econstructor 2; [eapply H | eapply IN].
 Qed.
 
 Lemma rclo9_compose clo r:
   rclo9 (rclo9 clo) r <9= rclo9 clo r.
 Proof.
   intros. induction PR.
-  - apply rclo9_base, R.
-  - apply rclo9_mult.
-    eapply rclo9_mon; [apply CLOR'|apply H].
-  - apply rclo9_step.
-    eapply gf_mon; [apply CLOR'|apply H].
-  - apply rclo9_cpn.
-    eapply cpn9_mon; [apply CLOR'|apply H].
+  - apply rclo9_base, IN.
+  - apply rclo9_rclo.
+    eapply rclo9_mon; [apply IN|apply H].
 Qed.
 
-Lemma wcompat9_compat
-      clo (WCOM: wcompatible9 clo):
+Lemma rclo9_compat clo
+      (COM: compatible9 clo):
   compatible9 (rclo9 clo).
+Proof.
+  econstructor.
+  - apply rclo9_mon.
+  - intros. induction PR.
+    + eapply gf_mon. apply IN.
+      intros. eapply rclo9_base. apply PR.
+    + eapply gf_mon.
+      * eapply COM. eapply COM. apply IN. apply H.
+      * intros. eapply rclo9_clo. apply PR.
+Qed.
+
+Lemma wcompat9_compat  clo
+      (WCOM: wcompatible9 clo):
+  compatible9 (rclo9 (clo \10/ cpn9)).
 Proof.
   econstructor; [eapply rclo9_mon|]. intros.
   induction PR; intros.
-  - eapply gf_mon; [apply R|]. intros.
+  - eapply gf_mon; [apply IN|]. intros.
     apply rclo9_base. apply PR.
-  - eapply gf_mon.
-    + eapply (wcompat9_wcompat WCOM).
-      eapply (wcompat9_mon WCOM); [apply CLOR'|apply H].
-    + intros. apply rclo9_mult, PR.
-  - eapply gf_mon; [apply CLOR'|].
-    intros. apply H in PR. apply rclo9_step, PR.
-  - eapply gf_mon; [|intros; apply rclo9_cpn, PR].
-    apply (compat9_compat cpn9_compat).
-    eapply cpn9_mon; [apply CLOR'|apply H].
+  - destruct IN as [IN|IN].
+    + eapply gf_mon.
+      * eapply WCOM. eapply WCOM; [apply IN|apply H].
+      * intros. apply rclo9_rclo, PR.
+    + eapply gf_mon; [|intros; apply rclo9_clo; right; apply PR].
+      apply (compat9_compat cpn9_compat).
+      eapply cpn9_mon; [apply IN|apply H].
 Qed.
 
-Lemma wcompat9_sound clo (WCOM: wcompatible9 clo):
+Lemma wcompat9_sound clo
+      (WCOM: wcompatible9 clo):
   clo <10= cpn9.
 Proof.
-  intros. exists (rclo9 clo).
+  intros. exists (rclo9 (clo \10/ cpn9)).
   - apply wcompat9_compat, WCOM.
   - apply rclo9_clo.
-    eapply (wcompat9_mon WCOM); [apply PR|].
+    left. eapply WCOM. apply PR.
     intros. apply rclo9_base, PR0.
 Qed.
 
@@ -249,29 +229,35 @@ Proof.
   - apply PR.
 Qed.
 
+Lemma cpn9_step r:
+  fcpn9 r <9= cpn9 r.
+Proof.
+  intros. eapply cpn9_cpn. exists gf.
+  - econstructor. apply gf_mon. intros; apply PR0.
+  - apply PR.
+Qed.
+
 Lemma cpn9_from_upaco r:
   upaco9 fcpn9 r <9= cpn9 r.
 Proof.
-  intros. destruct PR; [| apply cpn9_base, H].
-  exists (rclo9 (paco9 fcpn9)).
-  - apply wcompat9_compat.
-    econstructor; [apply paco9_mon|].
-    intros. _punfold PR; [|apply fcpn9_mon].
+  eapply wcompat9_sound.
+  econstructor; [apply upaco9_mon|].
+  intros. destruct PR as [PR|PR].
+  - _punfold PR; [|apply fcpn9_mon]. 
     eapply gf_mon; [apply PR|].
-    intros. apply rclo9_cpn.
+    intros. apply rclo9_clo; right.
     eapply cpn9_mon; [apply PR0|].
     intros. destruct PR1.
-    + apply rclo9_clo.
-      eapply paco9_mon; [apply H0|].
-      intros. apply rclo9_step.
+    + apply rclo9_clo; left.
+      left. eapply paco9_mon; [apply H|].
+      intros. apply rclo9_clo; right. apply cpn9_step.
       eapply gf_mon; [apply PR1|].
-      intros. apply rclo9_base, PR2.
-    + apply rclo9_step.
-      eapply gf_mon; [apply H0|].
-      intros. apply rclo9_base, PR1.
-  - apply rclo9_clo.
-    eapply paco9_mon; [apply H|].
-    intros. apply rclo9_base, PR.
+      intros. apply cpn9_base, rclo9_base, PR2.
+    + apply rclo9_clo; right. apply cpn9_step.
+      eapply gf_mon; [apply H|].
+      intros. apply cpn9_base, rclo9_base, PR1.
+  - eapply gf_mon. apply PR.
+    intros. apply rclo9_base, PR0. 
 Qed.
 
 Lemma cpn9_from_paco r:
@@ -327,18 +313,6 @@ Proof.
   intros. pclearbot. apply cpn9_complete, PR0.
 Qed.
 
-Lemma cpn9_step r:
-  fcpn9 r <9= cpn9 r.
-Proof.
-  intros. eapply cpn9_clo, PR.
-  intros. eapply wcompat9_sound, PR0.
-  econstructor; [apply gf_mon|].
-  intros. eapply gf_mon; [apply PR1|].
-  intros. apply rclo9_step.
-  eapply gf_mon; [apply PR2|].
-  intros. apply rclo9_base, PR3.
-Qed.
-
 Lemma fcpn9_clo
       r clo (LE: clo <10= cpn9):
   clo (fcpn9 r) <9= fcpn9 r.
@@ -374,24 +348,24 @@ Qed.
 
 End Companion9_main.
 
-Lemma cpn9_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 r
-      (IN: @cpn9 gf bot9 e0 e1 e2 e3 e4 e5 e6 e7 e8)
+Lemma cpn9_mon_bot (gf gf': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 r
+      (IN: @cpn9 gf bot9 x0 x1 x2 x3 x4 x5 x6 x7 x8)
       (MONgf: monotone9 gf)
       (MONgf': monotone9 gf')
       (LE: gf <10= gf'):
-  @cpn9 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8.
+  @cpn9 gf' r x0 x1 x2 x3 x4 x5 x6 x7 x8.
 Proof.
   apply cpn9_init in IN; [|apply MONgf].
   apply cpn9_final; [apply MONgf'|].
   left. eapply paco9_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
-Lemma fcpn9_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 r
-      (IN: @fcpn9 gf bot9 e0 e1 e2 e3 e4 e5 e6 e7 e8)
+Lemma fcpn9_mon_bot (gf gf': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 r
+      (IN: @fcpn9 gf bot9 x0 x1 x2 x3 x4 x5 x6 x7 x8)
       (MONgf: monotone9 gf)
       (MONgf': monotone9 gf')
       (LE: gf <10= gf'):
-  @fcpn9 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8.
+  @fcpn9 gf' r x0 x1 x2 x3 x4 x5 x6 x7 x8.
 Proof.
   apply LE. eapply MONgf. apply IN.
   intros. eapply cpn9_mon_bot; eassumption.
@@ -403,7 +377,5 @@ Hint Unfold fcpn9 : paco.
 
 Hint Resolve cpn9_base : paco.
 Hint Resolve cpn9_step : paco.
-
-Hint Constructors rclo9 : rclo.
-Hint Resolve rclo9_clo rclo9_step rclo9_cpn : rclo.
-
+Hint Constructors rclo9 : paco.
+Hint Resolve rclo9_clo : paco.

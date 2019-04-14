@@ -29,11 +29,11 @@ Structure compatible6 (clo: rel -> rel) : Prop :=
           clo (gf r) <6= gf (clo r);
     }.
 
-Inductive cpn6 (r: rel) e0 e1 e2 e3 e4 e5 : Prop :=
+Inductive cpn6 (r: rel) x0 x1 x2 x3 x4 x5 : Prop :=
 | cpn6_intro
     clo
     (COM: compatible6 clo)
-    (CLO: clo r e0 e1 e2 e3 e4 e5)
+    (CLO: clo r x0 x1 x2 x3 x4 x5)
 .
 
 Definition fcpn6 := compose gf cpn6.
@@ -112,46 +112,33 @@ Qed.
 
 Inductive rclo6 (clo: rel->rel) (r: rel): rel :=
 | rclo6_base
-    e0 e1 e2 e3 e4 e5
-    (R: r e0 e1 e2 e3 e4 e5):
-    @rclo6 clo r e0 e1 e2 e3 e4 e5
+    x0 x1 x2 x3 x4 x5
+    (IN: r x0 x1 x2 x3 x4 x5):
+    @rclo6 clo r x0 x1 x2 x3 x4 x5
 | rclo6_clo'
-    r' e0 e1 e2 e3 e4 e5
-    (R': r' <6= rclo6 clo r)
-    (CLOR': clo r' e0 e1 e2 e3 e4 e5):
-    @rclo6 clo r e0 e1 e2 e3 e4 e5
-| rclo6_step'
-    r' e0 e1 e2 e3 e4 e5
-    (R': r' <6= rclo6 clo r)
-    (CLOR': @gf r' e0 e1 e2 e3 e4 e5):
-    @rclo6 clo r e0 e1 e2 e3 e4 e5
-| rclo6_cpn'
-    r' e0 e1 e2 e3 e4 e5
-    (R': r' <6= rclo6 clo r)
-    (CLOR': @cpn6 r' e0 e1 e2 e3 e4 e5):
-    @rclo6 clo r e0 e1 e2 e3 e4 e5
-.
+    r' x0 x1 x2 x3 x4 x5
+    (LE: r' <6= rclo6 clo r)
+    (IN: clo r' x0 x1 x2 x3 x4 x5):
+    @rclo6 clo r x0 x1 x2 x3 x4 x5
+.           
 
 Structure wcompatible6 (clo: rel -> rel) : Prop :=
   wcompat6_intro {
       wcompat6_mon: monotone6 clo;
-      wcompat6_wcompat: forall r,
-          clo (gf r) <6= gf (rclo6 clo r);
+      wcompat6_wcompat : forall r,
+          clo (gf r) <6= gf (rclo6 (clo \7/ cpn6) r);
     }.
 
-Lemma rclo6_mon_gen clo clo' r r' e0 e1 e2 e3 e4 e5
-      (IN: @rclo6 clo r e0 e1 e2 e3 e4 e5)
+
+Lemma rclo6_mon_gen clo clo' r r' x0 x1 x2 x3 x4 x5
+      (IN: @rclo6 clo r x0 x1 x2 x3 x4 x5)
       (LEclo: clo <7= clo')
       (LEr: r <6= r') :
-  @rclo6 clo' r' e0 e1 e2 e3 e4 e5.
+  @rclo6 clo' r' x0 x1 x2 x3 x4 x5.
 Proof.
   induction IN; intros.
-  - econstructor 1. apply LEr, R.
-  - econstructor 2; [intros; eapply H, PR|apply LEclo, CLOR'].
-  - econstructor 3; [intros; eapply H, PR|apply CLOR'].
-  - econstructor 4; [intros; eapply H, PR|].
-    eapply cpn6_mon; [apply CLOR'|].
-    intros. apply PR.
+  - econstructor 1. apply LEr, IN.
+  - econstructor 2; [intros; eapply H, PR|apply LEclo, IN].
 Qed.
 
 Lemma rclo6_mon clo:
@@ -167,69 +154,62 @@ Proof.
   intros. apply PR0.
 Qed.
 
-Lemma rclo6_step clo r:
-  gf (rclo6 clo r) <6= rclo6 clo r.
-Proof.
-  intros. econstructor 3; [|apply PR].
-  intros. apply PR0.
-Qed.
-
-Lemma rclo6_cpn clo r:
-  cpn6 (rclo6 clo r) <6= rclo6 clo r.
-Proof.
-  intros. econstructor 4; [|apply PR]. 
-  intros. apply PR0.
-Qed.
-
-Lemma rclo6_mult clo r:
+Lemma rclo6_rclo clo r:
   rclo6 clo (rclo6 clo r) <6= rclo6 clo r.
 Proof.
   intros. induction PR.
-  - eapply R.
-  - econstructor 2; [eapply H | eapply CLOR'].
-  - econstructor 3; [eapply H | eapply CLOR'].
-  - econstructor 4; [eapply H | eapply CLOR'].
+  - eapply IN.
+  - econstructor 2; [eapply H | eapply IN].
 Qed.
 
 Lemma rclo6_compose clo r:
   rclo6 (rclo6 clo) r <6= rclo6 clo r.
 Proof.
   intros. induction PR.
-  - apply rclo6_base, R.
-  - apply rclo6_mult.
-    eapply rclo6_mon; [apply CLOR'|apply H].
-  - apply rclo6_step.
-    eapply gf_mon; [apply CLOR'|apply H].
-  - apply rclo6_cpn.
-    eapply cpn6_mon; [apply CLOR'|apply H].
+  - apply rclo6_base, IN.
+  - apply rclo6_rclo.
+    eapply rclo6_mon; [apply IN|apply H].
 Qed.
 
-Lemma wcompat6_compat
-      clo (WCOM: wcompatible6 clo):
+Lemma rclo6_compat clo
+      (COM: compatible6 clo):
   compatible6 (rclo6 clo).
+Proof.
+  econstructor.
+  - apply rclo6_mon.
+  - intros. induction PR.
+    + eapply gf_mon. apply IN.
+      intros. eapply rclo6_base. apply PR.
+    + eapply gf_mon.
+      * eapply COM. eapply COM. apply IN. apply H.
+      * intros. eapply rclo6_clo. apply PR.
+Qed.
+
+Lemma wcompat6_compat  clo
+      (WCOM: wcompatible6 clo):
+  compatible6 (rclo6 (clo \7/ cpn6)).
 Proof.
   econstructor; [eapply rclo6_mon|]. intros.
   induction PR; intros.
-  - eapply gf_mon; [apply R|]. intros.
+  - eapply gf_mon; [apply IN|]. intros.
     apply rclo6_base. apply PR.
-  - eapply gf_mon.
-    + eapply (wcompat6_wcompat WCOM).
-      eapply (wcompat6_mon WCOM); [apply CLOR'|apply H].
-    + intros. apply rclo6_mult, PR.
-  - eapply gf_mon; [apply CLOR'|].
-    intros. apply H in PR. apply rclo6_step, PR.
-  - eapply gf_mon; [|intros; apply rclo6_cpn, PR].
-    apply (compat6_compat cpn6_compat).
-    eapply cpn6_mon; [apply CLOR'|apply H].
+  - destruct IN as [IN|IN].
+    + eapply gf_mon.
+      * eapply WCOM. eapply WCOM; [apply IN|apply H].
+      * intros. apply rclo6_rclo, PR.
+    + eapply gf_mon; [|intros; apply rclo6_clo; right; apply PR].
+      apply (compat6_compat cpn6_compat).
+      eapply cpn6_mon; [apply IN|apply H].
 Qed.
 
-Lemma wcompat6_sound clo (WCOM: wcompatible6 clo):
+Lemma wcompat6_sound clo
+      (WCOM: wcompatible6 clo):
   clo <7= cpn6.
 Proof.
-  intros. exists (rclo6 clo).
+  intros. exists (rclo6 (clo \7/ cpn6)).
   - apply wcompat6_compat, WCOM.
   - apply rclo6_clo.
-    eapply (wcompat6_mon WCOM); [apply PR|].
+    left. eapply WCOM. apply PR.
     intros. apply rclo6_base, PR0.
 Qed.
 
@@ -246,29 +226,35 @@ Proof.
   - apply PR.
 Qed.
 
+Lemma cpn6_step r:
+  fcpn6 r <6= cpn6 r.
+Proof.
+  intros. eapply cpn6_cpn. exists gf.
+  - econstructor. apply gf_mon. intros; apply PR0.
+  - apply PR.
+Qed.
+
 Lemma cpn6_from_upaco r:
   upaco6 fcpn6 r <6= cpn6 r.
 Proof.
-  intros. destruct PR; [| apply cpn6_base, H].
-  exists (rclo6 (paco6 fcpn6)).
-  - apply wcompat6_compat.
-    econstructor; [apply paco6_mon|].
-    intros. _punfold PR; [|apply fcpn6_mon].
+  eapply wcompat6_sound.
+  econstructor; [apply upaco6_mon|].
+  intros. destruct PR as [PR|PR].
+  - _punfold PR; [|apply fcpn6_mon]. 
     eapply gf_mon; [apply PR|].
-    intros. apply rclo6_cpn.
+    intros. apply rclo6_clo; right.
     eapply cpn6_mon; [apply PR0|].
     intros. destruct PR1.
-    + apply rclo6_clo.
-      eapply paco6_mon; [apply H0|].
-      intros. apply rclo6_step.
+    + apply rclo6_clo; left.
+      left. eapply paco6_mon; [apply H|].
+      intros. apply rclo6_clo; right. apply cpn6_step.
       eapply gf_mon; [apply PR1|].
-      intros. apply rclo6_base, PR2.
-    + apply rclo6_step.
-      eapply gf_mon; [apply H0|].
-      intros. apply rclo6_base, PR1.
-  - apply rclo6_clo.
-    eapply paco6_mon; [apply H|].
-    intros. apply rclo6_base, PR.
+      intros. apply cpn6_base, rclo6_base, PR2.
+    + apply rclo6_clo; right. apply cpn6_step.
+      eapply gf_mon; [apply H|].
+      intros. apply cpn6_base, rclo6_base, PR1.
+  - eapply gf_mon. apply PR.
+    intros. apply rclo6_base, PR0. 
 Qed.
 
 Lemma cpn6_from_paco r:
@@ -324,18 +310,6 @@ Proof.
   intros. pclearbot. apply cpn6_complete, PR0.
 Qed.
 
-Lemma cpn6_step r:
-  fcpn6 r <6= cpn6 r.
-Proof.
-  intros. eapply cpn6_clo, PR.
-  intros. eapply wcompat6_sound, PR0.
-  econstructor; [apply gf_mon|].
-  intros. eapply gf_mon; [apply PR1|].
-  intros. apply rclo6_step.
-  eapply gf_mon; [apply PR2|].
-  intros. apply rclo6_base, PR3.
-Qed.
-
 Lemma fcpn6_clo
       r clo (LE: clo <7= cpn6):
   clo (fcpn6 r) <6= fcpn6 r.
@@ -371,24 +345,24 @@ Qed.
 
 End Companion6_main.
 
-Lemma cpn6_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 r
-      (IN: @cpn6 gf bot6 e0 e1 e2 e3 e4 e5)
+Lemma cpn6_mon_bot (gf gf': rel -> rel) x0 x1 x2 x3 x4 x5 r
+      (IN: @cpn6 gf bot6 x0 x1 x2 x3 x4 x5)
       (MONgf: monotone6 gf)
       (MONgf': monotone6 gf')
       (LE: gf <7= gf'):
-  @cpn6 gf' r e0 e1 e2 e3 e4 e5.
+  @cpn6 gf' r x0 x1 x2 x3 x4 x5.
 Proof.
   apply cpn6_init in IN; [|apply MONgf].
   apply cpn6_final; [apply MONgf'|].
   left. eapply paco6_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
-Lemma fcpn6_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 r
-      (IN: @fcpn6 gf bot6 e0 e1 e2 e3 e4 e5)
+Lemma fcpn6_mon_bot (gf gf': rel -> rel) x0 x1 x2 x3 x4 x5 r
+      (IN: @fcpn6 gf bot6 x0 x1 x2 x3 x4 x5)
       (MONgf: monotone6 gf)
       (MONgf': monotone6 gf')
       (LE: gf <7= gf'):
-  @fcpn6 gf' r e0 e1 e2 e3 e4 e5.
+  @fcpn6 gf' r x0 x1 x2 x3 x4 x5.
 Proof.
   apply LE. eapply MONgf. apply IN.
   intros. eapply cpn6_mon_bot; eassumption.
@@ -400,7 +374,5 @@ Hint Unfold fcpn6 : paco.
 
 Hint Resolve cpn6_base : paco.
 Hint Resolve cpn6_step : paco.
-
-Hint Constructors rclo6 : rclo.
-Hint Resolve rclo6_clo rclo6_step rclo6_cpn : rclo.
-
+Hint Constructors rclo6 : paco.
+Hint Resolve rclo6_clo : paco.

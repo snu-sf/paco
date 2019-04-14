@@ -34,11 +34,11 @@ Structure compatible11 (clo: rel -> rel) : Prop :=
           clo (gf r) <11= gf (clo r);
     }.
 
-Inductive cpn11 (r: rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 : Prop :=
+Inductive cpn11 (r: rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 : Prop :=
 | cpn11_intro
     clo
     (COM: compatible11 clo)
-    (CLO: clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10)
+    (CLO: clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
 .
 
 Definition fcpn11 := compose gf cpn11.
@@ -117,46 +117,33 @@ Qed.
 
 Inductive rclo11 (clo: rel->rel) (r: rel): rel :=
 | rclo11_base
-    e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10
-    (R: r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10):
-    @rclo11 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10
+    x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10
+    (IN: r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10):
+    @rclo11 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10
 | rclo11_clo'
-    r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10
-    (R': r' <11= rclo11 clo r)
-    (CLOR': clo r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10):
-    @rclo11 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10
-| rclo11_step'
-    r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10
-    (R': r' <11= rclo11 clo r)
-    (CLOR': @gf r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10):
-    @rclo11 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10
-| rclo11_cpn'
-    r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10
-    (R': r' <11= rclo11 clo r)
-    (CLOR': @cpn11 r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10):
-    @rclo11 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10
-.
+    r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10
+    (LE: r' <11= rclo11 clo r)
+    (IN: clo r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10):
+    @rclo11 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10
+.           
 
 Structure wcompatible11 (clo: rel -> rel) : Prop :=
   wcompat11_intro {
       wcompat11_mon: monotone11 clo;
-      wcompat11_wcompat: forall r,
-          clo (gf r) <11= gf (rclo11 clo r);
+      wcompat11_wcompat : forall r,
+          clo (gf r) <11= gf (rclo11 (clo \12/ cpn11) r);
     }.
 
-Lemma rclo11_mon_gen clo clo' r r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10
-      (IN: @rclo11 clo r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10)
+
+Lemma rclo11_mon_gen clo clo' r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10
+      (IN: @rclo11 clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
       (LEclo: clo <12= clo')
       (LEr: r <11= r') :
-  @rclo11 clo' r' e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+  @rclo11 clo' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10.
 Proof.
   induction IN; intros.
-  - econstructor 1. apply LEr, R.
-  - econstructor 2; [intros; eapply H, PR|apply LEclo, CLOR'].
-  - econstructor 3; [intros; eapply H, PR|apply CLOR'].
-  - econstructor 4; [intros; eapply H, PR|].
-    eapply cpn11_mon; [apply CLOR'|].
-    intros. apply PR.
+  - econstructor 1. apply LEr, IN.
+  - econstructor 2; [intros; eapply H, PR|apply LEclo, IN].
 Qed.
 
 Lemma rclo11_mon clo:
@@ -172,69 +159,62 @@ Proof.
   intros. apply PR0.
 Qed.
 
-Lemma rclo11_step clo r:
-  gf (rclo11 clo r) <11= rclo11 clo r.
-Proof.
-  intros. econstructor 3; [|apply PR].
-  intros. apply PR0.
-Qed.
-
-Lemma rclo11_cpn clo r:
-  cpn11 (rclo11 clo r) <11= rclo11 clo r.
-Proof.
-  intros. econstructor 4; [|apply PR]. 
-  intros. apply PR0.
-Qed.
-
-Lemma rclo11_mult clo r:
+Lemma rclo11_rclo clo r:
   rclo11 clo (rclo11 clo r) <11= rclo11 clo r.
 Proof.
   intros. induction PR.
-  - eapply R.
-  - econstructor 2; [eapply H | eapply CLOR'].
-  - econstructor 3; [eapply H | eapply CLOR'].
-  - econstructor 4; [eapply H | eapply CLOR'].
+  - eapply IN.
+  - econstructor 2; [eapply H | eapply IN].
 Qed.
 
 Lemma rclo11_compose clo r:
   rclo11 (rclo11 clo) r <11= rclo11 clo r.
 Proof.
   intros. induction PR.
-  - apply rclo11_base, R.
-  - apply rclo11_mult.
-    eapply rclo11_mon; [apply CLOR'|apply H].
-  - apply rclo11_step.
-    eapply gf_mon; [apply CLOR'|apply H].
-  - apply rclo11_cpn.
-    eapply cpn11_mon; [apply CLOR'|apply H].
+  - apply rclo11_base, IN.
+  - apply rclo11_rclo.
+    eapply rclo11_mon; [apply IN|apply H].
 Qed.
 
-Lemma wcompat11_compat
-      clo (WCOM: wcompatible11 clo):
+Lemma rclo11_compat clo
+      (COM: compatible11 clo):
   compatible11 (rclo11 clo).
+Proof.
+  econstructor.
+  - apply rclo11_mon.
+  - intros. induction PR.
+    + eapply gf_mon. apply IN.
+      intros. eapply rclo11_base. apply PR.
+    + eapply gf_mon.
+      * eapply COM. eapply COM. apply IN. apply H.
+      * intros. eapply rclo11_clo. apply PR.
+Qed.
+
+Lemma wcompat11_compat  clo
+      (WCOM: wcompatible11 clo):
+  compatible11 (rclo11 (clo \12/ cpn11)).
 Proof.
   econstructor; [eapply rclo11_mon|]. intros.
   induction PR; intros.
-  - eapply gf_mon; [apply R|]. intros.
+  - eapply gf_mon; [apply IN|]. intros.
     apply rclo11_base. apply PR.
-  - eapply gf_mon.
-    + eapply (wcompat11_wcompat WCOM).
-      eapply (wcompat11_mon WCOM); [apply CLOR'|apply H].
-    + intros. apply rclo11_mult, PR.
-  - eapply gf_mon; [apply CLOR'|].
-    intros. apply H in PR. apply rclo11_step, PR.
-  - eapply gf_mon; [|intros; apply rclo11_cpn, PR].
-    apply (compat11_compat cpn11_compat).
-    eapply cpn11_mon; [apply CLOR'|apply H].
+  - destruct IN as [IN|IN].
+    + eapply gf_mon.
+      * eapply WCOM. eapply WCOM; [apply IN|apply H].
+      * intros. apply rclo11_rclo, PR.
+    + eapply gf_mon; [|intros; apply rclo11_clo; right; apply PR].
+      apply (compat11_compat cpn11_compat).
+      eapply cpn11_mon; [apply IN|apply H].
 Qed.
 
-Lemma wcompat11_sound clo (WCOM: wcompatible11 clo):
+Lemma wcompat11_sound clo
+      (WCOM: wcompatible11 clo):
   clo <12= cpn11.
 Proof.
-  intros. exists (rclo11 clo).
+  intros. exists (rclo11 (clo \12/ cpn11)).
   - apply wcompat11_compat, WCOM.
   - apply rclo11_clo.
-    eapply (wcompat11_mon WCOM); [apply PR|].
+    left. eapply WCOM. apply PR.
     intros. apply rclo11_base, PR0.
 Qed.
 
@@ -251,29 +231,35 @@ Proof.
   - apply PR.
 Qed.
 
+Lemma cpn11_step r:
+  fcpn11 r <11= cpn11 r.
+Proof.
+  intros. eapply cpn11_cpn. exists gf.
+  - econstructor. apply gf_mon. intros; apply PR0.
+  - apply PR.
+Qed.
+
 Lemma cpn11_from_upaco r:
   upaco11 fcpn11 r <11= cpn11 r.
 Proof.
-  intros. destruct PR; [| apply cpn11_base, H].
-  exists (rclo11 (paco11 fcpn11)).
-  - apply wcompat11_compat.
-    econstructor; [apply paco11_mon|].
-    intros. _punfold PR; [|apply fcpn11_mon].
+  eapply wcompat11_sound.
+  econstructor; [apply upaco11_mon|].
+  intros. destruct PR as [PR|PR].
+  - _punfold PR; [|apply fcpn11_mon]. 
     eapply gf_mon; [apply PR|].
-    intros. apply rclo11_cpn.
+    intros. apply rclo11_clo; right.
     eapply cpn11_mon; [apply PR0|].
     intros. destruct PR1.
-    + apply rclo11_clo.
-      eapply paco11_mon; [apply H0|].
-      intros. apply rclo11_step.
+    + apply rclo11_clo; left.
+      left. eapply paco11_mon; [apply H|].
+      intros. apply rclo11_clo; right. apply cpn11_step.
       eapply gf_mon; [apply PR1|].
-      intros. apply rclo11_base, PR2.
-    + apply rclo11_step.
-      eapply gf_mon; [apply H0|].
-      intros. apply rclo11_base, PR1.
-  - apply rclo11_clo.
-    eapply paco11_mon; [apply H|].
-    intros. apply rclo11_base, PR.
+      intros. apply cpn11_base, rclo11_base, PR2.
+    + apply rclo11_clo; right. apply cpn11_step.
+      eapply gf_mon; [apply H|].
+      intros. apply cpn11_base, rclo11_base, PR1.
+  - eapply gf_mon. apply PR.
+    intros. apply rclo11_base, PR0. 
 Qed.
 
 Lemma cpn11_from_paco r:
@@ -329,18 +315,6 @@ Proof.
   intros. pclearbot. apply cpn11_complete, PR0.
 Qed.
 
-Lemma cpn11_step r:
-  fcpn11 r <11= cpn11 r.
-Proof.
-  intros. eapply cpn11_clo, PR.
-  intros. eapply wcompat11_sound, PR0.
-  econstructor; [apply gf_mon|].
-  intros. eapply gf_mon; [apply PR1|].
-  intros. apply rclo11_step.
-  eapply gf_mon; [apply PR2|].
-  intros. apply rclo11_base, PR3.
-Qed.
-
 Lemma fcpn11_clo
       r clo (LE: clo <12= cpn11):
   clo (fcpn11 r) <11= fcpn11 r.
@@ -376,24 +350,24 @@ Qed.
 
 End Companion11_main.
 
-Lemma cpn11_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 r
-      (IN: @cpn11 gf bot11 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10)
+Lemma cpn11_mon_bot (gf gf': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 r
+      (IN: @cpn11 gf bot11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
       (MONgf: monotone11 gf)
       (MONgf': monotone11 gf')
       (LE: gf <12= gf'):
-  @cpn11 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+  @cpn11 gf' r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10.
 Proof.
   apply cpn11_init in IN; [|apply MONgf].
   apply cpn11_final; [apply MONgf'|].
   left. eapply paco11_mon_gen; [apply IN| apply LE| contradiction].
 Qed.
 
-Lemma fcpn11_mon_bot (gf gf': rel -> rel) e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 r
-      (IN: @fcpn11 gf bot11 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10)
+Lemma fcpn11_mon_bot (gf gf': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 r
+      (IN: @fcpn11 gf bot11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
       (MONgf: monotone11 gf)
       (MONgf': monotone11 gf')
       (LE: gf <12= gf'):
-  @fcpn11 gf' r e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10.
+  @fcpn11 gf' r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10.
 Proof.
   apply LE. eapply MONgf. apply IN.
   intros. eapply cpn11_mon_bot; eassumption.
@@ -405,7 +379,5 @@ Hint Unfold fcpn11 : paco.
 
 Hint Resolve cpn11_base : paco.
 Hint Resolve cpn11_step : paco.
-
-Hint Constructors rclo11 : rclo.
-Hint Resolve rclo11_clo rclo11_step rclo11_cpn : rclo.
-
+Hint Constructors rclo11 : paco.
+Hint Resolve rclo11_clo : paco.

@@ -107,31 +107,22 @@ Qed.
 Inductive rclo0 (clo: rel->rel) (r: rel): rel :=
 | rclo0_base
    
-    (R: r):
+    (IN: r):
     @rclo0 clo r
 | rclo0_clo'
     r'
-    (R': r' <0= rclo0 clo r)
-    (CLOR': clo r'):
+    (LE: r' <0= rclo0 clo r)
+    (IN: clo r'):
     @rclo0 clo r
-| rclo0_step'
-    r'
-    (R': r' <0= rclo0 clo r)
-    (CLOR': @gf r'):
-    @rclo0 clo r
-| rclo0_cpn'
-    r'
-    (R': r' <0= rclo0 clo r)
-    (CLOR': @cpn0 r'):
-    @rclo0 clo r
-.
+.           
 
 Structure wcompatible0 (clo: rel -> rel) : Prop :=
   wcompat0_intro {
       wcompat0_mon: monotone0 clo;
-      wcompat0_wcompat: forall r,
-          clo (gf r) <0= gf (rclo0 clo r);
+      wcompat0_wcompat : forall r,
+          clo (gf r) <0= gf (rclo0 (clo \1/ cpn0) r);
     }.
+
 
 Lemma rclo0_mon_gen clo clo' r r'
       (IN: @rclo0 clo r)
@@ -140,12 +131,8 @@ Lemma rclo0_mon_gen clo clo' r r'
   @rclo0 clo' r'.
 Proof.
   induction IN; intros.
-  - econstructor 1. apply LEr, R.
-  - econstructor 2; [intros; eapply H, PR|apply LEclo, CLOR'].
-  - econstructor 3; [intros; eapply H, PR|apply CLOR'].
-  - econstructor 4; [intros; eapply H, PR|].
-    eapply cpn0_mon; [apply CLOR'|].
-    intros. apply PR.
+  - econstructor 1. apply LEr, IN.
+  - econstructor 2; [intros; eapply H, PR|apply LEclo, IN].
 Qed.
 
 Lemma rclo0_mon clo:
@@ -161,69 +148,62 @@ Proof.
   intros. apply PR0.
 Qed.
 
-Lemma rclo0_step clo r:
-  gf (rclo0 clo r) <0= rclo0 clo r.
-Proof.
-  intros. econstructor 3; [|apply PR].
-  intros. apply PR0.
-Qed.
-
-Lemma rclo0_cpn clo r:
-  cpn0 (rclo0 clo r) <0= rclo0 clo r.
-Proof.
-  intros. econstructor 4; [|apply PR]. 
-  intros. apply PR0.
-Qed.
-
-Lemma rclo0_mult clo r:
+Lemma rclo0_rclo clo r:
   rclo0 clo (rclo0 clo r) <0= rclo0 clo r.
 Proof.
   intros. induction PR.
-  - eapply R.
-  - econstructor 2; [eapply H | eapply CLOR'].
-  - econstructor 3; [eapply H | eapply CLOR'].
-  - econstructor 4; [eapply H | eapply CLOR'].
+  - eapply IN.
+  - econstructor 2; [eapply H | eapply IN].
 Qed.
 
 Lemma rclo0_compose clo r:
   rclo0 (rclo0 clo) r <0= rclo0 clo r.
 Proof.
   intros. induction PR.
-  - apply rclo0_base, R.
-  - apply rclo0_mult.
-    eapply rclo0_mon; [apply CLOR'|apply H].
-  - apply rclo0_step.
-    eapply gf_mon; [apply CLOR'|apply H].
-  - apply rclo0_cpn.
-    eapply cpn0_mon; [apply CLOR'|apply H].
+  - apply rclo0_base, IN.
+  - apply rclo0_rclo.
+    eapply rclo0_mon; [apply IN|apply H].
 Qed.
 
-Lemma wcompat0_compat
-      clo (WCOM: wcompatible0 clo):
+Lemma rclo0_compat clo
+      (COM: compatible0 clo):
   compatible0 (rclo0 clo).
+Proof.
+  econstructor.
+  - apply rclo0_mon.
+  - intros. induction PR.
+    + eapply gf_mon. apply IN.
+      intros. eapply rclo0_base. apply PR.
+    + eapply gf_mon.
+      * eapply COM. eapply COM. apply IN. apply H.
+      * intros. eapply rclo0_clo. apply PR.
+Qed.
+
+Lemma wcompat0_compat  clo
+      (WCOM: wcompatible0 clo):
+  compatible0 (rclo0 (clo \1/ cpn0)).
 Proof.
   econstructor; [eapply rclo0_mon|]. intros.
   induction PR; intros.
-  - eapply gf_mon; [apply R|]. intros.
+  - eapply gf_mon; [apply IN|]. intros.
     apply rclo0_base. apply PR.
-  - eapply gf_mon.
-    + eapply (wcompat0_wcompat WCOM).
-      eapply (wcompat0_mon WCOM); [apply CLOR'|apply H].
-    + intros. apply rclo0_mult, PR.
-  - eapply gf_mon; [apply CLOR'|].
-    intros. apply H in PR. apply rclo0_step, PR.
-  - eapply gf_mon; [|intros; apply rclo0_cpn, PR].
-    apply (compat0_compat cpn0_compat).
-    eapply cpn0_mon; [apply CLOR'|apply H].
+  - destruct IN as [IN|IN].
+    + eapply gf_mon.
+      * eapply WCOM. eapply WCOM; [apply IN|apply H].
+      * intros. apply rclo0_rclo, PR.
+    + eapply gf_mon; [|intros; apply rclo0_clo; right; apply PR].
+      apply (compat0_compat cpn0_compat).
+      eapply cpn0_mon; [apply IN|apply H].
 Qed.
 
-Lemma wcompat0_sound clo (WCOM: wcompatible0 clo):
+Lemma wcompat0_sound clo
+      (WCOM: wcompatible0 clo):
   clo <1= cpn0.
 Proof.
-  intros. exists (rclo0 clo).
+  intros. exists (rclo0 (clo \1/ cpn0)).
   - apply wcompat0_compat, WCOM.
   - apply rclo0_clo.
-    eapply (wcompat0_mon WCOM); [apply PR|].
+    left. eapply WCOM. apply PR.
     intros. apply rclo0_base, PR0.
 Qed.
 
@@ -240,29 +220,35 @@ Proof.
   - apply PR.
 Qed.
 
+Lemma cpn0_step r:
+  fcpn0 r <0= cpn0 r.
+Proof.
+  intros. eapply cpn0_cpn. exists gf.
+  - econstructor. apply gf_mon. intros; apply PR0.
+  - apply PR.
+Qed.
+
 Lemma cpn0_from_upaco r:
   upaco0 fcpn0 r <0= cpn0 r.
 Proof.
-  intros. destruct PR; [| apply cpn0_base, H].
-  exists (rclo0 (paco0 fcpn0)).
-  - apply wcompat0_compat.
-    econstructor; [apply paco0_mon|].
-    intros. _punfold PR; [|apply fcpn0_mon].
+  eapply wcompat0_sound.
+  econstructor; [apply upaco0_mon|].
+  intros. destruct PR as [PR|PR].
+  - _punfold PR; [|apply fcpn0_mon]. 
     eapply gf_mon; [apply PR|].
-    intros. apply rclo0_cpn.
+    intros. apply rclo0_clo; right.
     eapply cpn0_mon; [apply PR0|].
     intros. destruct PR1.
-    + apply rclo0_clo.
-      eapply paco0_mon; [apply H0|].
-      intros. apply rclo0_step.
+    + apply rclo0_clo; left.
+      left. eapply paco0_mon; [apply H|].
+      intros. apply rclo0_clo; right. apply cpn0_step.
       eapply gf_mon; [apply PR1|].
-      intros. apply rclo0_base, PR2.
-    + apply rclo0_step.
-      eapply gf_mon; [apply H0|].
-      intros. apply rclo0_base, PR1.
-  - apply rclo0_clo.
-    eapply paco0_mon; [apply H|].
-    intros. apply rclo0_base, PR.
+      intros. apply cpn0_base, rclo0_base, PR2.
+    + apply rclo0_clo; right. apply cpn0_step.
+      eapply gf_mon; [apply H|].
+      intros. apply cpn0_base, rclo0_base, PR1.
+  - eapply gf_mon. apply PR.
+    intros. apply rclo0_base, PR0. 
 Qed.
 
 Lemma cpn0_from_paco r:
@@ -316,18 +302,6 @@ Proof.
   intros. apply cpn0_init in PR. punfold PR.
   eapply gf_mon; [apply PR|].
   intros. pclearbot. apply cpn0_complete, PR0.
-Qed.
-
-Lemma cpn0_step r:
-  fcpn0 r <0= cpn0 r.
-Proof.
-  intros. eapply cpn0_clo, PR.
-  intros. eapply wcompat0_sound, PR0.
-  econstructor; [apply gf_mon|].
-  intros. eapply gf_mon; [apply PR1|].
-  intros. apply rclo0_step.
-  eapply gf_mon; [apply PR2|].
-  intros. apply rclo0_base, PR3.
 Qed.
 
 Lemma fcpn0_clo
@@ -394,7 +368,5 @@ Hint Unfold fcpn0 : paco.
 
 Hint Resolve cpn0_base : paco.
 Hint Resolve cpn0_step : paco.
-
-Hint Constructors rclo0 : rclo.
-Hint Resolve rclo0_clo rclo0_step rclo0_cpn : rclo.
-
+Hint Constructors rclo0 : paco.
+Hint Resolve rclo0_clo : paco.
