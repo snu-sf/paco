@@ -432,6 +432,12 @@ Qed.
 Lemma cpn6_wcompat: wcompatible6 cpn6.
 Proof. apply compat6_wcompat, cpn6_compat. Qed.
 
+Lemma cpn6_gupaco:
+  gupaco6 gf cpn6 <7= cpn6.
+Proof.
+  intros. eapply cpn6_greatest, PR. apply wcompat6_compat. apply cpn6_wcompat.
+Qed.
+
 Lemma cpn6_uclo uclo
       (MON: monotone6 uclo)
       (WCOM: forall r, uclo (gf r) <6= gf (gupaco6 gf (uclo \7/ cpn6) r)):
@@ -496,6 +502,7 @@ End Soundness.
 End GeneralizedPaco6.
 
 Hint Resolve gpaco6_def_mon : paco.
+Hint Unfold gupaco6 : paco.
 Hint Resolve gpaco6_base : paco.
 Hint Resolve gpaco6_step : paco.
 Hint Resolve gpaco6_final : paco.

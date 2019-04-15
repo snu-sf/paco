@@ -435,6 +435,12 @@ Qed.
 Lemma cpn9_wcompat: wcompatible9 cpn9.
 Proof. apply compat9_wcompat, cpn9_compat. Qed.
 
+Lemma cpn9_gupaco:
+  gupaco9 gf cpn9 <10= cpn9.
+Proof.
+  intros. eapply cpn9_greatest, PR. apply wcompat9_compat. apply cpn9_wcompat.
+Qed.
+
 Lemma cpn9_uclo uclo
       (MON: monotone9 uclo)
       (WCOM: forall r, uclo (gf r) <9= gf (gupaco9 gf (uclo \10/ cpn9) r)):
@@ -499,6 +505,7 @@ End Soundness.
 End GeneralizedPaco9.
 
 Hint Resolve gpaco9_def_mon : paco.
+Hint Unfold gupaco9 : paco.
 Hint Resolve gpaco9_base : paco.
 Hint Resolve gpaco9_step : paco.
 Hint Resolve gpaco9_final : paco.

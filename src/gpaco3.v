@@ -429,6 +429,12 @@ Qed.
 Lemma cpn3_wcompat: wcompatible3 cpn3.
 Proof. apply compat3_wcompat, cpn3_compat. Qed.
 
+Lemma cpn3_gupaco:
+  gupaco3 gf cpn3 <4= cpn3.
+Proof.
+  intros. eapply cpn3_greatest, PR. apply wcompat3_compat. apply cpn3_wcompat.
+Qed.
+
 Lemma cpn3_uclo uclo
       (MON: monotone3 uclo)
       (WCOM: forall r, uclo (gf r) <3= gf (gupaco3 gf (uclo \4/ cpn3) r)):
@@ -493,6 +499,7 @@ End Soundness.
 End GeneralizedPaco3.
 
 Hint Resolve gpaco3_def_mon : paco.
+Hint Unfold gupaco3 : paco.
 Hint Resolve gpaco3_base : paco.
 Hint Resolve gpaco3_step : paco.
 Hint Resolve gpaco3_final : paco.

@@ -431,6 +431,12 @@ Qed.
 Lemma cpn5_wcompat: wcompatible5 cpn5.
 Proof. apply compat5_wcompat, cpn5_compat. Qed.
 
+Lemma cpn5_gupaco:
+  gupaco5 gf cpn5 <6= cpn5.
+Proof.
+  intros. eapply cpn5_greatest, PR. apply wcompat5_compat. apply cpn5_wcompat.
+Qed.
+
 Lemma cpn5_uclo uclo
       (MON: monotone5 uclo)
       (WCOM: forall r, uclo (gf r) <5= gf (gupaco5 gf (uclo \6/ cpn5) r)):
@@ -495,6 +501,7 @@ End Soundness.
 End GeneralizedPaco5.
 
 Hint Resolve gpaco5_def_mon : paco.
+Hint Unfold gupaco5 : paco.
 Hint Resolve gpaco5_base : paco.
 Hint Resolve gpaco5_step : paco.
 Hint Resolve gpaco5_final : paco.

@@ -434,6 +434,12 @@ Qed.
 Lemma cpn8_wcompat: wcompatible8 cpn8.
 Proof. apply compat8_wcompat, cpn8_compat. Qed.
 
+Lemma cpn8_gupaco:
+  gupaco8 gf cpn8 <9= cpn8.
+Proof.
+  intros. eapply cpn8_greatest, PR. apply wcompat8_compat. apply cpn8_wcompat.
+Qed.
+
 Lemma cpn8_uclo uclo
       (MON: monotone8 uclo)
       (WCOM: forall r, uclo (gf r) <8= gf (gupaco8 gf (uclo \9/ cpn8) r)):
@@ -498,6 +504,7 @@ End Soundness.
 End GeneralizedPaco8.
 
 Hint Resolve gpaco8_def_mon : paco.
+Hint Unfold gupaco8 : paco.
 Hint Resolve gpaco8_base : paco.
 Hint Resolve gpaco8_step : paco.
 Hint Resolve gpaco8_final : paco.

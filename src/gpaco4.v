@@ -430,6 +430,12 @@ Qed.
 Lemma cpn4_wcompat: wcompatible4 cpn4.
 Proof. apply compat4_wcompat, cpn4_compat. Qed.
 
+Lemma cpn4_gupaco:
+  gupaco4 gf cpn4 <5= cpn4.
+Proof.
+  intros. eapply cpn4_greatest, PR. apply wcompat4_compat. apply cpn4_wcompat.
+Qed.
+
 Lemma cpn4_uclo uclo
       (MON: monotone4 uclo)
       (WCOM: forall r, uclo (gf r) <4= gf (gupaco4 gf (uclo \5/ cpn4) r)):
@@ -494,6 +500,7 @@ End Soundness.
 End GeneralizedPaco4.
 
 Hint Resolve gpaco4_def_mon : paco.
+Hint Unfold gupaco4 : paco.
 Hint Resolve gpaco4_base : paco.
 Hint Resolve gpaco4_step : paco.
 Hint Resolve gpaco4_final : paco.

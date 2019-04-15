@@ -433,6 +433,12 @@ Qed.
 Lemma cpn7_wcompat: wcompatible7 cpn7.
 Proof. apply compat7_wcompat, cpn7_compat. Qed.
 
+Lemma cpn7_gupaco:
+  gupaco7 gf cpn7 <8= cpn7.
+Proof.
+  intros. eapply cpn7_greatest, PR. apply wcompat7_compat. apply cpn7_wcompat.
+Qed.
+
 Lemma cpn7_uclo uclo
       (MON: monotone7 uclo)
       (WCOM: forall r, uclo (gf r) <7= gf (gupaco7 gf (uclo \8/ cpn7) r)):
@@ -497,6 +503,7 @@ End Soundness.
 End GeneralizedPaco7.
 
 Hint Resolve gpaco7_def_mon : paco.
+Hint Unfold gupaco7 : paco.
 Hint Resolve gpaco7_base : paco.
 Hint Resolve gpaco7_step : paco.
 Hint Resolve gpaco7_final : paco.

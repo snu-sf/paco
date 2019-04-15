@@ -437,6 +437,12 @@ Qed.
 Lemma cpn11_wcompat: wcompatible11 cpn11.
 Proof. apply compat11_wcompat, cpn11_compat. Qed.
 
+Lemma cpn11_gupaco:
+  gupaco11 gf cpn11 <12= cpn11.
+Proof.
+  intros. eapply cpn11_greatest, PR. apply wcompat11_compat. apply cpn11_wcompat.
+Qed.
+
 Lemma cpn11_uclo uclo
       (MON: monotone11 uclo)
       (WCOM: forall r, uclo (gf r) <11= gf (gupaco11 gf (uclo \12/ cpn11) r)):
@@ -501,6 +507,7 @@ End Soundness.
 End GeneralizedPaco11.
 
 Hint Resolve gpaco11_def_mon : paco.
+Hint Unfold gupaco11 : paco.
 Hint Resolve gpaco11_base : paco.
 Hint Resolve gpaco11_step : paco.
 Hint Resolve gpaco11_final : paco.

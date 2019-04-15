@@ -427,6 +427,12 @@ Qed.
 Lemma cpn1_wcompat: wcompatible1 cpn1.
 Proof. apply compat1_wcompat, cpn1_compat. Qed.
 
+Lemma cpn1_gupaco:
+  gupaco1 gf cpn1 <2= cpn1.
+Proof.
+  intros. eapply cpn1_greatest, PR. apply wcompat1_compat. apply cpn1_wcompat.
+Qed.
+
 Lemma cpn1_uclo uclo
       (MON: monotone1 uclo)
       (WCOM: forall r, uclo (gf r) <1= gf (gupaco1 gf (uclo \2/ cpn1) r)):
@@ -491,6 +497,7 @@ End Soundness.
 End GeneralizedPaco1.
 
 Hint Resolve gpaco1_def_mon : paco.
+Hint Unfold gupaco1 : paco.
 Hint Resolve gpaco1_base : paco.
 Hint Resolve gpaco1_step : paco.
 Hint Resolve gpaco1_final : paco.

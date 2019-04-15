@@ -436,6 +436,12 @@ Qed.
 Lemma cpn10_wcompat: wcompatible10 cpn10.
 Proof. apply compat10_wcompat, cpn10_compat. Qed.
 
+Lemma cpn10_gupaco:
+  gupaco10 gf cpn10 <11= cpn10.
+Proof.
+  intros. eapply cpn10_greatest, PR. apply wcompat10_compat. apply cpn10_wcompat.
+Qed.
+
 Lemma cpn10_uclo uclo
       (MON: monotone10 uclo)
       (WCOM: forall r, uclo (gf r) <10= gf (gupaco10 gf (uclo \11/ cpn10) r)):
@@ -500,6 +506,7 @@ End Soundness.
 End GeneralizedPaco10.
 
 Hint Resolve gpaco10_def_mon : paco.
+Hint Unfold gupaco10 : paco.
 Hint Resolve gpaco10_base : paco.
 Hint Resolve gpaco10_step : paco.
 Hint Resolve gpaco10_final : paco.

@@ -439,6 +439,12 @@ Qed.
 Lemma cpn13_wcompat: wcompatible13 cpn13.
 Proof. apply compat13_wcompat, cpn13_compat. Qed.
 
+Lemma cpn13_gupaco:
+  gupaco13 gf cpn13 <14= cpn13.
+Proof.
+  intros. eapply cpn13_greatest, PR. apply wcompat13_compat. apply cpn13_wcompat.
+Qed.
+
 Lemma cpn13_uclo uclo
       (MON: monotone13 uclo)
       (WCOM: forall r, uclo (gf r) <13= gf (gupaco13 gf (uclo \14/ cpn13) r)):
@@ -503,6 +509,7 @@ End Soundness.
 End GeneralizedPaco13.
 
 Hint Resolve gpaco13_def_mon : paco.
+Hint Unfold gupaco13 : paco.
 Hint Resolve gpaco13_base : paco.
 Hint Resolve gpaco13_step : paco.
 Hint Resolve gpaco13_final : paco.
