@@ -69,7 +69,8 @@ Tactic Notation "pcofix" ident(CIH) := pcofix CIH with r.
 (** ** [pclearbot] simplifies all hypotheses of the form [upaco{n} gf bot{n}] to [paco{n} gf bot{n}].
 *)
 
-Definition pclearbot_or (P Q: Prop) := P.
+Definition pclearbot_orL (P Q: Prop) := P.
+Definition pclearbot_orR (P Q: Prop) := Q.
 
 Ltac pclearbot :=
   generalize _paco_mark_cons;
@@ -97,9 +98,15 @@ Ltac pclearbot :=
       repeat red in H;
       match goal with [Hcrr: context f [or] |- _] =>
         match Hcrr with H =>
-          let P := context f [pclearbot_or] in
+        first[(
+          let P := context f [pclearbot_orL] in
           assert (NH: P) by (repeat intro; edestruct H ; [eassumption|repeat (match goal with [X: _ \/ _ |- _] => destruct X end); contradiction]);
-          clear H; rename NH into H; unfold pclearbot_or in H
+          clear H; rename NH into H; unfold pclearbot_orL in H
+        ) | (
+          let P := context f [pclearbot_orR] in
+          assert (NH: P) by (repeat intro; edestruct H ; [repeat (match goal with [X: _ \/ _ |- _] => destruct X end); contradiction|eassumption]);
+          clear H; rename NH into H; unfold pclearbot_orR in H
+        )]
         end
       end);
     revert H);

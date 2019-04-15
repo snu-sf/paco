@@ -11,8 +11,6 @@ PACOSRCDIR=../src
 relsize=$1
 
 python paco.py ${relsize} > $PACOSRCDIR/paco${relsize}.v;
-python cpn.py ${relsize} > $PACOSRCDIR/cpn${relsize}.v;
-python cpaco.py ${relsize} > $PACOSRCDIR/cpaco${relsize}.v;
+python gpaco.py ${relsize} > $PACOSRCDIR/gpaco${relsize}.v;
 echo "Require Export paco${relsize}." >> $PACOSRCDIR/pacoall.v;
-echo "Require Export cpn${relsize}." >> $PACOSRCDIR/cpnall.v;
-echo "Require Export cpaco${relsize}." >> $PACOSRCDIR/cpacoall.v;
+echo "Require Export gpaco${relsize}." >> $PACOSRCDIR/gpacoall.v;

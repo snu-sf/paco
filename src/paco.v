@@ -1,6 +1,4 @@
 Require Export pacoall.
 Require Export pacotac.
-Require Export cpnall.
-Require Export cpntac.
-Require Export cpacoall.
-Require Export cpacotac.
+Require Export gpacoall.
+Require Export gpacotac.
