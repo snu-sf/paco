@@ -27,19 +27,19 @@ Record sig7T  :=
 Definition uncurry7  (R: rel7 T0 T1 T2 T3 T4 T5 T6): rel1 sig7T :=
   fun x => R (proj7T0 x) (proj7T1 x) (proj7T2 x) (proj7T3 x) (proj7T4 x) (proj7T5 x) (proj7T6 x).
 Definition curry7  (R: rel1 sig7T): rel7 T0 T1 T2 T3 T4 T5 T6 :=
-  fun x0 x1 x2 x3 x4 x5 x6 => R (exist7T x6).
+  fun x0 x1 x2 x3 x4 x5 x6 => R (@exist7T x0 x1 x2 x3 x4 x5 x6).
 
 Lemma uncurry_map7 r0 r1 (LE : r0 <7== r1) : uncurry7 r0 <1== uncurry7 r1.
 Proof. intros [] H. apply LE. apply H. Qed.
 
 Lemma uncurry_map_rev7 r0 r1 (LE: uncurry7 r0 <1== uncurry7 r1) : r0 <7== r1.
 Proof.
-  repeat_intros 7. intros H. apply (LE (exist7T x6) H).
+  red; intros. apply (LE (@exist7T x0 x1 x2 x3 x4 x5 x6) PR).
 Qed.
 
 Lemma curry_map7 r0 r1 (LE: r0 <1== r1) : curry7 r0 <7== curry7 r1.
 Proof. 
-  repeat_intros 7. intros H. apply (LE (exist7T x6) H).
+  red; intros. apply (LE (@exist7T x0 x1 x2 x3 x4 x5 x6) PR).
 Qed.
 
 Lemma curry_map_rev7 r0 r1 (LE: curry7 r0 <7== curry7 r1) : r0 <1== r1.
@@ -48,10 +48,10 @@ Proof.
 Qed.
 
 Lemma uncurry_bij1_7 r : curry7 (uncurry7 r) <7== r.
-Proof. unfold le7. repeat_intros 7. intros H. apply H. Qed.
+Proof. unfold le7. intros. apply PR. Qed.
 
 Lemma uncurry_bij2_7 r : r <7== curry7 (uncurry7 r).
-Proof. unfold le7. repeat_intros 7. intros H. apply H. Qed.
+Proof. unfold le7. intros. apply PR. Qed.
 
 Lemma curry_bij1_7 r : uncurry7 (curry7 r) <1== r.
 Proof. intros []. intro H. apply H. Qed.
@@ -104,7 +104,7 @@ Lemma monotone7_map (gf: rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6)
       (MON: _monotone7 gf) :
   _monotone (fun R0 => uncurry7 (gf (curry7 R0))).
 Proof.
-  repeat_intros 3. apply uncurry_map7. apply MON; apply curry_map7; assumption.
+  red; intros. apply uncurry_map7. apply MON; apply curry_map7; assumption.
 Qed.
 
 Lemma _paco7_mon_gen (gf gf': rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6) r r'
@@ -160,7 +160,7 @@ Arguments gf : clear implicits.
 
 Theorem _paco7_mon: _monotone7 (paco7 gf).
 Proof.
-  repeat_intros 3. eapply curry_map7, _paco_mon; apply uncurry_map7; assumption.
+  red; intros. eapply curry_map7, _paco_mon; apply uncurry_map7; assumption.
 Qed.
 
 Theorem _paco7_acc: forall
@@ -213,10 +213,10 @@ Qed.
 
 Theorem upaco7_mon: monotone7 (upaco7 gf).
 Proof.
-  repeat_intros 9. intros R  LE0.
-  destruct R.
-  - left. eapply paco7_mon. apply H. apply LE0.
-  - right. apply LE0, H.
+  red; intros.
+  destruct IN.
+  - left. eapply paco7_mon. apply H. apply LE.
+  - right. apply LE, H.
 Qed.
 
 Theorem paco7_mult_strong: forall r,
@@ -238,7 +238,7 @@ Qed.
 Theorem paco7_unfold: forall (MON: monotone7 gf) r,
   paco7 gf r <7= gf (upaco7 gf r).
 Proof.
-  repeat_intros 1. eapply _paco7_unfold; apply monotone7_eq; assumption.
+  intro. eapply _paco7_unfold; apply monotone7_eq; assumption.
 Qed.
 
 End Arg7.

@@ -13,19 +13,19 @@ Record sig0T  :=
 Definition uncurry0  (R: rel0): rel1 sig0T :=
   fun x => R.
 Definition curry0  (R: rel1 sig0T): rel0 :=
-  R (exist0T).
+   R (@exist0T).
 
 Lemma uncurry_map0 r0 r1 (LE : r0 <0== r1) : uncurry0 r0 <1== uncurry0 r1.
 Proof. intros [] H. apply LE. apply H. Qed.
 
 Lemma uncurry_map_rev0 r0 r1 (LE: uncurry0 r0 <1== uncurry0 r1) : r0 <0== r1.
 Proof.
-  repeat_intros 0. intros H. apply (LE (exist0T) H).
+  red; intros. apply (LE (@exist0T) PR).
 Qed.
 
 Lemma curry_map0 r0 r1 (LE: r0 <1== r1) : curry0 r0 <0== curry0 r1.
 Proof. 
-  repeat_intros 0. intros H. apply (LE (exist0T) H).
+  red; intros. apply (LE (@exist0T) PR).
 Qed.
 
 Lemma curry_map_rev0 r0 r1 (LE: curry0 r0 <0== curry0 r1) : r0 <1== r1.
@@ -34,10 +34,10 @@ Proof.
 Qed.
 
 Lemma uncurry_bij1_0 r : curry0 (uncurry0 r) <0== r.
-Proof. unfold le0. repeat_intros 0. intros H. apply H. Qed.
+Proof. unfold le0. intros. apply PR. Qed.
 
 Lemma uncurry_bij2_0 r : r <0== curry0 (uncurry0 r).
-Proof. unfold le0. repeat_intros 0. intros H. apply H. Qed.
+Proof. unfold le0. intros. apply PR. Qed.
 
 Lemma curry_bij1_0 r : uncurry0 (curry0 r) <1== r.
 Proof. intros []. intro H. apply H. Qed.
@@ -90,7 +90,7 @@ Lemma monotone0_map (gf: rel0 -> rel0)
       (MON: _monotone0 gf) :
   _monotone (fun R0 => uncurry0 (gf (curry0 R0))).
 Proof.
-  repeat_intros 3. apply uncurry_map0. apply MON; apply curry_map0; assumption.
+  red; intros. apply uncurry_map0. apply MON; apply curry_map0; assumption.
 Qed.
 
 Lemma _paco0_mon_gen (gf gf': rel0 -> rel0) r r'
@@ -146,7 +146,7 @@ Arguments gf : clear implicits.
 
 Theorem _paco0_mon: _monotone0 (paco0 gf).
 Proof.
-  repeat_intros 3. eapply curry_map0, _paco_mon; apply uncurry_map0; assumption.
+  red; intros. eapply curry_map0, _paco_mon; apply uncurry_map0; assumption.
 Qed.
 
 Theorem _paco0_acc: forall
@@ -199,10 +199,10 @@ Qed.
 
 Theorem upaco0_mon: monotone0 (upaco0 gf).
 Proof.
-  repeat_intros 2. intros R  LE0.
-  destruct R.
-  - left. eapply paco0_mon. apply H. apply LE0.
-  - right. apply LE0, H.
+  red; intros.
+  destruct IN.
+  - left. eapply paco0_mon. apply H. apply LE.
+  - right. apply LE, H.
 Qed.
 
 Theorem paco0_mult_strong: forall r,
@@ -224,7 +224,7 @@ Qed.
 Theorem paco0_unfold: forall (MON: monotone0 gf) r,
   paco0 gf r <0= gf (upaco0 gf r).
 Proof.
-  repeat_intros 1. eapply _paco0_unfold; apply monotone0_eq; assumption.
+  intro. eapply _paco0_unfold; apply monotone0_eq; assumption.
 Qed.
 
 End Arg0.

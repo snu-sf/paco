@@ -33,19 +33,19 @@ Record sig10T  :=
 Definition uncurry10  (R: rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9): rel1 sig10T :=
   fun x => R (proj10T0 x) (proj10T1 x) (proj10T2 x) (proj10T3 x) (proj10T4 x) (proj10T5 x) (proj10T6 x) (proj10T7 x) (proj10T8 x) (proj10T9 x).
 Definition curry10  (R: rel1 sig10T): rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 :=
-  fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 => R (exist10T x9).
+  fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 => R (@exist10T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9).
 
 Lemma uncurry_map10 r0 r1 (LE : r0 <10== r1) : uncurry10 r0 <1== uncurry10 r1.
 Proof. intros [] H. apply LE. apply H. Qed.
 
 Lemma uncurry_map_rev10 r0 r1 (LE: uncurry10 r0 <1== uncurry10 r1) : r0 <10== r1.
 Proof.
-  repeat_intros 10. intros H. apply (LE (exist10T x9) H).
+  red; intros. apply (LE (@exist10T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) PR).
 Qed.
 
 Lemma curry_map10 r0 r1 (LE: r0 <1== r1) : curry10 r0 <10== curry10 r1.
 Proof. 
-  repeat_intros 10. intros H. apply (LE (exist10T x9) H).
+  red; intros. apply (LE (@exist10T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) PR).
 Qed.
 
 Lemma curry_map_rev10 r0 r1 (LE: curry10 r0 <10== curry10 r1) : r0 <1== r1.
@@ -54,10 +54,10 @@ Proof.
 Qed.
 
 Lemma uncurry_bij1_10 r : curry10 (uncurry10 r) <10== r.
-Proof. unfold le10. repeat_intros 10. intros H. apply H. Qed.
+Proof. unfold le10. intros. apply PR. Qed.
 
 Lemma uncurry_bij2_10 r : r <10== curry10 (uncurry10 r).
-Proof. unfold le10. repeat_intros 10. intros H. apply H. Qed.
+Proof. unfold le10. intros. apply PR. Qed.
 
 Lemma curry_bij1_10 r : uncurry10 (curry10 r) <1== r.
 Proof. intros []. intro H. apply H. Qed.
@@ -110,7 +110,7 @@ Lemma monotone10_map (gf: rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 
       (MON: _monotone10 gf) :
   _monotone (fun R0 => uncurry10 (gf (curry10 R0))).
 Proof.
-  repeat_intros 3. apply uncurry_map10. apply MON; apply curry_map10; assumption.
+  red; intros. apply uncurry_map10. apply MON; apply curry_map10; assumption.
 Qed.
 
 Lemma _paco10_mon_gen (gf gf': rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9) r r'
@@ -166,7 +166,7 @@ Arguments gf : clear implicits.
 
 Theorem _paco10_mon: _monotone10 (paco10 gf).
 Proof.
-  repeat_intros 3. eapply curry_map10, _paco_mon; apply uncurry_map10; assumption.
+  red; intros. eapply curry_map10, _paco_mon; apply uncurry_map10; assumption.
 Qed.
 
 Theorem _paco10_acc: forall
@@ -219,10 +219,10 @@ Qed.
 
 Theorem upaco10_mon: monotone10 (upaco10 gf).
 Proof.
-  repeat_intros 12. intros R  LE0.
-  destruct R.
-  - left. eapply paco10_mon. apply H. apply LE0.
-  - right. apply LE0, H.
+  red; intros.
+  destruct IN.
+  - left. eapply paco10_mon. apply H. apply LE.
+  - right. apply LE, H.
 Qed.
 
 Theorem paco10_mult_strong: forall r,
@@ -244,7 +244,7 @@ Qed.
 Theorem paco10_unfold: forall (MON: monotone10 gf) r,
   paco10 gf r <10= gf (upaco10 gf r).
 Proof.
-  repeat_intros 1. eapply _paco10_unfold; apply monotone10_eq; assumption.
+  intro. eapply _paco10_unfold; apply monotone10_eq; assumption.
 Qed.
 
 End Arg10.

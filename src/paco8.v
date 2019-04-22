@@ -29,19 +29,19 @@ Record sig8T  :=
 Definition uncurry8  (R: rel8 T0 T1 T2 T3 T4 T5 T6 T7): rel1 sig8T :=
   fun x => R (proj8T0 x) (proj8T1 x) (proj8T2 x) (proj8T3 x) (proj8T4 x) (proj8T5 x) (proj8T6 x) (proj8T7 x).
 Definition curry8  (R: rel1 sig8T): rel8 T0 T1 T2 T3 T4 T5 T6 T7 :=
-  fun x0 x1 x2 x3 x4 x5 x6 x7 => R (exist8T x7).
+  fun x0 x1 x2 x3 x4 x5 x6 x7 => R (@exist8T x0 x1 x2 x3 x4 x5 x6 x7).
 
 Lemma uncurry_map8 r0 r1 (LE : r0 <8== r1) : uncurry8 r0 <1== uncurry8 r1.
 Proof. intros [] H. apply LE. apply H. Qed.
 
 Lemma uncurry_map_rev8 r0 r1 (LE: uncurry8 r0 <1== uncurry8 r1) : r0 <8== r1.
 Proof.
-  repeat_intros 8. intros H. apply (LE (exist8T x7) H).
+  red; intros. apply (LE (@exist8T x0 x1 x2 x3 x4 x5 x6 x7) PR).
 Qed.
 
 Lemma curry_map8 r0 r1 (LE: r0 <1== r1) : curry8 r0 <8== curry8 r1.
 Proof. 
-  repeat_intros 8. intros H. apply (LE (exist8T x7) H).
+  red; intros. apply (LE (@exist8T x0 x1 x2 x3 x4 x5 x6 x7) PR).
 Qed.
 
 Lemma curry_map_rev8 r0 r1 (LE: curry8 r0 <8== curry8 r1) : r0 <1== r1.
@@ -50,10 +50,10 @@ Proof.
 Qed.
 
 Lemma uncurry_bij1_8 r : curry8 (uncurry8 r) <8== r.
-Proof. unfold le8. repeat_intros 8. intros H. apply H. Qed.
+Proof. unfold le8. intros. apply PR. Qed.
 
 Lemma uncurry_bij2_8 r : r <8== curry8 (uncurry8 r).
-Proof. unfold le8. repeat_intros 8. intros H. apply H. Qed.
+Proof. unfold le8. intros. apply PR. Qed.
 
 Lemma curry_bij1_8 r : uncurry8 (curry8 r) <1== r.
 Proof. intros []. intro H. apply H. Qed.
@@ -106,7 +106,7 @@ Lemma monotone8_map (gf: rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 
       (MON: _monotone8 gf) :
   _monotone (fun R0 => uncurry8 (gf (curry8 R0))).
 Proof.
-  repeat_intros 3. apply uncurry_map8. apply MON; apply curry_map8; assumption.
+  red; intros. apply uncurry_map8. apply MON; apply curry_map8; assumption.
 Qed.
 
 Lemma _paco8_mon_gen (gf gf': rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7) r r'
@@ -162,7 +162,7 @@ Arguments gf : clear implicits.
 
 Theorem _paco8_mon: _monotone8 (paco8 gf).
 Proof.
-  repeat_intros 3. eapply curry_map8, _paco_mon; apply uncurry_map8; assumption.
+  red; intros. eapply curry_map8, _paco_mon; apply uncurry_map8; assumption.
 Qed.
 
 Theorem _paco8_acc: forall
@@ -215,10 +215,10 @@ Qed.
 
 Theorem upaco8_mon: monotone8 (upaco8 gf).
 Proof.
-  repeat_intros 10. intros R  LE0.
-  destruct R.
-  - left. eapply paco8_mon. apply H. apply LE0.
-  - right. apply LE0, H.
+  red; intros.
+  destruct IN.
+  - left. eapply paco8_mon. apply H. apply LE.
+  - right. apply LE, H.
 Qed.
 
 Theorem paco8_mult_strong: forall r,
@@ -240,7 +240,7 @@ Qed.
 Theorem paco8_unfold: forall (MON: monotone8 gf) r,
   paco8 gf r <8= gf (upaco8 gf r).
 Proof.
-  repeat_intros 1. eapply _paco8_unfold; apply monotone8_eq; assumption.
+  intro. eapply _paco8_unfold; apply monotone8_eq; assumption.
 Qed.
 
 End Arg8.

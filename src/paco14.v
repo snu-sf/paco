@@ -41,19 +41,19 @@ Record sig14T  :=
 Definition uncurry14  (R: rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13): rel1 sig14T :=
   fun x => R (proj14T0 x) (proj14T1 x) (proj14T2 x) (proj14T3 x) (proj14T4 x) (proj14T5 x) (proj14T6 x) (proj14T7 x) (proj14T8 x) (proj14T9 x) (proj14T10 x) (proj14T11 x) (proj14T12 x) (proj14T13 x).
 Definition curry14  (R: rel1 sig14T): rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 :=
-  fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 => R (exist14T x13).
+  fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 => R (@exist14T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13).
 
 Lemma uncurry_map14 r0 r1 (LE : r0 <14== r1) : uncurry14 r0 <1== uncurry14 r1.
 Proof. intros [] H. apply LE. apply H. Qed.
 
 Lemma uncurry_map_rev14 r0 r1 (LE: uncurry14 r0 <1== uncurry14 r1) : r0 <14== r1.
 Proof.
-  repeat_intros 14. intros H. apply (LE (exist14T x13) H).
+  red; intros. apply (LE (@exist14T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13) PR).
 Qed.
 
 Lemma curry_map14 r0 r1 (LE: r0 <1== r1) : curry14 r0 <14== curry14 r1.
 Proof. 
-  repeat_intros 14. intros H. apply (LE (exist14T x13) H).
+  red; intros. apply (LE (@exist14T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13) PR).
 Qed.
 
 Lemma curry_map_rev14 r0 r1 (LE: curry14 r0 <14== curry14 r1) : r0 <1== r1.
@@ -62,10 +62,10 @@ Proof.
 Qed.
 
 Lemma uncurry_bij1_14 r : curry14 (uncurry14 r) <14== r.
-Proof. unfold le14. repeat_intros 14. intros H. apply H. Qed.
+Proof. unfold le14. intros. apply PR. Qed.
 
 Lemma uncurry_bij2_14 r : r <14== curry14 (uncurry14 r).
-Proof. unfold le14. repeat_intros 14. intros H. apply H. Qed.
+Proof. unfold le14. intros. apply PR. Qed.
 
 Lemma curry_bij1_14 r : uncurry14 (curry14 r) <1== r.
 Proof. intros []. intro H. apply H. Qed.
@@ -118,7 +118,7 @@ Lemma monotone14_map (gf: rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 ->
       (MON: _monotone14 gf) :
   _monotone (fun R0 => uncurry14 (gf (curry14 R0))).
 Proof.
-  repeat_intros 3. apply uncurry_map14. apply MON; apply curry_map14; assumption.
+  red; intros. apply uncurry_map14. apply MON; apply curry_map14; assumption.
 Qed.
 
 Lemma _paco14_mon_gen (gf gf': rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 -> rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13) r r'
@@ -174,7 +174,7 @@ Arguments gf : clear implicits.
 
 Theorem _paco14_mon: _monotone14 (paco14 gf).
 Proof.
-  repeat_intros 3. eapply curry_map14, _paco_mon; apply uncurry_map14; assumption.
+  red; intros. eapply curry_map14, _paco_mon; apply uncurry_map14; assumption.
 Qed.
 
 Theorem _paco14_acc: forall
@@ -227,10 +227,10 @@ Qed.
 
 Theorem upaco14_mon: monotone14 (upaco14 gf).
 Proof.
-  repeat_intros 16. intros R  LE0.
-  destruct R.
-  - left. eapply paco14_mon. apply H. apply LE0.
-  - right. apply LE0, H.
+  red; intros.
+  destruct IN.
+  - left. eapply paco14_mon. apply H. apply LE.
+  - right. apply LE, H.
 Qed.
 
 Theorem paco14_mult_strong: forall r,
@@ -252,7 +252,7 @@ Qed.
 Theorem paco14_unfold: forall (MON: monotone14 gf) r,
   paco14 gf r <14= gf (upaco14 gf r).
 Proof.
-  repeat_intros 1. eapply _paco14_unfold; apply monotone14_eq; assumption.
+  intro. eapply _paco14_unfold; apply monotone14_eq; assumption.
 Qed.
 
 End Arg14.

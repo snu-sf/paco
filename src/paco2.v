@@ -17,19 +17,19 @@ Record sig2T  :=
 Definition uncurry2  (R: rel2 T0 T1): rel1 sig2T :=
   fun x => R (proj2T0 x) (proj2T1 x).
 Definition curry2  (R: rel1 sig2T): rel2 T0 T1 :=
-  fun x0 x1 => R (exist2T x1).
+  fun x0 x1 => R (@exist2T x0 x1).
 
 Lemma uncurry_map2 r0 r1 (LE : r0 <2== r1) : uncurry2 r0 <1== uncurry2 r1.
 Proof. intros [] H. apply LE. apply H. Qed.
 
 Lemma uncurry_map_rev2 r0 r1 (LE: uncurry2 r0 <1== uncurry2 r1) : r0 <2== r1.
 Proof.
-  repeat_intros 2. intros H. apply (LE (exist2T x1) H).
+  red; intros. apply (LE (@exist2T x0 x1) PR).
 Qed.
 
 Lemma curry_map2 r0 r1 (LE: r0 <1== r1) : curry2 r0 <2== curry2 r1.
 Proof. 
-  repeat_intros 2. intros H. apply (LE (exist2T x1) H).
+  red; intros. apply (LE (@exist2T x0 x1) PR).
 Qed.
 
 Lemma curry_map_rev2 r0 r1 (LE: curry2 r0 <2== curry2 r1) : r0 <1== r1.
@@ -38,10 +38,10 @@ Proof.
 Qed.
 
 Lemma uncurry_bij1_2 r : curry2 (uncurry2 r) <2== r.
-Proof. unfold le2. repeat_intros 2. intros H. apply H. Qed.
+Proof. unfold le2. intros. apply PR. Qed.
 
 Lemma uncurry_bij2_2 r : r <2== curry2 (uncurry2 r).
-Proof. unfold le2. repeat_intros 2. intros H. apply H. Qed.
+Proof. unfold le2. intros. apply PR. Qed.
 
 Lemma curry_bij1_2 r : uncurry2 (curry2 r) <1== r.
 Proof. intros []. intro H. apply H. Qed.
@@ -94,7 +94,7 @@ Lemma monotone2_map (gf: rel2 T0 T1 -> rel2 T0 T1)
       (MON: _monotone2 gf) :
   _monotone (fun R0 => uncurry2 (gf (curry2 R0))).
 Proof.
-  repeat_intros 3. apply uncurry_map2. apply MON; apply curry_map2; assumption.
+  red; intros. apply uncurry_map2. apply MON; apply curry_map2; assumption.
 Qed.
 
 Lemma _paco2_mon_gen (gf gf': rel2 T0 T1 -> rel2 T0 T1) r r'
@@ -150,7 +150,7 @@ Arguments gf : clear implicits.
 
 Theorem _paco2_mon: _monotone2 (paco2 gf).
 Proof.
-  repeat_intros 3. eapply curry_map2, _paco_mon; apply uncurry_map2; assumption.
+  red; intros. eapply curry_map2, _paco_mon; apply uncurry_map2; assumption.
 Qed.
 
 Theorem _paco2_acc: forall
@@ -203,10 +203,10 @@ Qed.
 
 Theorem upaco2_mon: monotone2 (upaco2 gf).
 Proof.
-  repeat_intros 4. intros R  LE0.
-  destruct R.
-  - left. eapply paco2_mon. apply H. apply LE0.
-  - right. apply LE0, H.
+  red; intros.
+  destruct IN.
+  - left. eapply paco2_mon. apply H. apply LE.
+  - right. apply LE, H.
 Qed.
 
 Theorem paco2_mult_strong: forall r,
@@ -228,7 +228,7 @@ Qed.
 Theorem paco2_unfold: forall (MON: monotone2 gf) r,
   paco2 gf r <2= gf (upaco2 gf r).
 Proof.
-  repeat_intros 1. eapply _paco2_unfold; apply monotone2_eq; assumption.
+  intro. eapply _paco2_unfold; apply monotone2_eq; assumption.
 Qed.
 
 End Arg2.

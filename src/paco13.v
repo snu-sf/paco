@@ -39,19 +39,19 @@ Record sig13T  :=
 Definition uncurry13  (R: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12): rel1 sig13T :=
   fun x => R (proj13T0 x) (proj13T1 x) (proj13T2 x) (proj13T3 x) (proj13T4 x) (proj13T5 x) (proj13T6 x) (proj13T7 x) (proj13T8 x) (proj13T9 x) (proj13T10 x) (proj13T11 x) (proj13T12 x).
 Definition curry13  (R: rel1 sig13T): rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 :=
-  fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 => R (exist13T x12).
+  fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 => R (@exist13T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12).
 
 Lemma uncurry_map13 r0 r1 (LE : r0 <13== r1) : uncurry13 r0 <1== uncurry13 r1.
 Proof. intros [] H. apply LE. apply H. Qed.
 
 Lemma uncurry_map_rev13 r0 r1 (LE: uncurry13 r0 <1== uncurry13 r1) : r0 <13== r1.
 Proof.
-  repeat_intros 13. intros H. apply (LE (exist13T x12) H).
+  red; intros. apply (LE (@exist13T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12) PR).
 Qed.
 
 Lemma curry_map13 r0 r1 (LE: r0 <1== r1) : curry13 r0 <13== curry13 r1.
 Proof. 
-  repeat_intros 13. intros H. apply (LE (exist13T x12) H).
+  red; intros. apply (LE (@exist13T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12) PR).
 Qed.
 
 Lemma curry_map_rev13 r0 r1 (LE: curry13 r0 <13== curry13 r1) : r0 <1== r1.
@@ -60,10 +60,10 @@ Proof.
 Qed.
 
 Lemma uncurry_bij1_13 r : curry13 (uncurry13 r) <13== r.
-Proof. unfold le13. repeat_intros 13. intros H. apply H. Qed.
+Proof. unfold le13. intros. apply PR. Qed.
 
 Lemma uncurry_bij2_13 r : r <13== curry13 (uncurry13 r).
-Proof. unfold le13. repeat_intros 13. intros H. apply H. Qed.
+Proof. unfold le13. intros. apply PR. Qed.
 
 Lemma curry_bij1_13 r : uncurry13 (curry13 r) <1== r.
 Proof. intros []. intro H. apply H. Qed.
@@ -116,7 +116,7 @@ Lemma monotone13_map (gf: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel
       (MON: _monotone13 gf) :
   _monotone (fun R0 => uncurry13 (gf (curry13 R0))).
 Proof.
-  repeat_intros 3. apply uncurry_map13. apply MON; apply curry_map13; assumption.
+  red; intros. apply uncurry_map13. apply MON; apply curry_map13; assumption.
 Qed.
 
 Lemma _paco13_mon_gen (gf gf': rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) r r'
@@ -172,7 +172,7 @@ Arguments gf : clear implicits.
 
 Theorem _paco13_mon: _monotone13 (paco13 gf).
 Proof.
-  repeat_intros 3. eapply curry_map13, _paco_mon; apply uncurry_map13; assumption.
+  red; intros. eapply curry_map13, _paco_mon; apply uncurry_map13; assumption.
 Qed.
 
 Theorem _paco13_acc: forall
@@ -225,10 +225,10 @@ Qed.
 
 Theorem upaco13_mon: monotone13 (upaco13 gf).
 Proof.
-  repeat_intros 15. intros R  LE0.
-  destruct R.
-  - left. eapply paco13_mon. apply H. apply LE0.
-  - right. apply LE0, H.
+  red; intros.
+  destruct IN.
+  - left. eapply paco13_mon. apply H. apply LE.
+  - right. apply LE, H.
 Qed.
 
 Theorem paco13_mult_strong: forall r,
@@ -250,7 +250,7 @@ Qed.
 Theorem paco13_unfold: forall (MON: monotone13 gf) r,
   paco13 gf r <13= gf (upaco13 gf r).
 Proof.
-  repeat_intros 1. eapply _paco13_unfold; apply monotone13_eq; assumption.
+  intro. eapply _paco13_unfold; apply monotone13_eq; assumption.
 Qed.
 
 End Arg13.

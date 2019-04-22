@@ -25,19 +25,19 @@ Record sig6T  :=
 Definition uncurry6  (R: rel6 T0 T1 T2 T3 T4 T5): rel1 sig6T :=
   fun x => R (proj6T0 x) (proj6T1 x) (proj6T2 x) (proj6T3 x) (proj6T4 x) (proj6T5 x).
 Definition curry6  (R: rel1 sig6T): rel6 T0 T1 T2 T3 T4 T5 :=
-  fun x0 x1 x2 x3 x4 x5 => R (exist6T x5).
+  fun x0 x1 x2 x3 x4 x5 => R (@exist6T x0 x1 x2 x3 x4 x5).
 
 Lemma uncurry_map6 r0 r1 (LE : r0 <6== r1) : uncurry6 r0 <1== uncurry6 r1.
 Proof. intros [] H. apply LE. apply H. Qed.
 
 Lemma uncurry_map_rev6 r0 r1 (LE: uncurry6 r0 <1== uncurry6 r1) : r0 <6== r1.
 Proof.
-  repeat_intros 6. intros H. apply (LE (exist6T x5) H).
+  red; intros. apply (LE (@exist6T x0 x1 x2 x3 x4 x5) PR).
 Qed.
 
 Lemma curry_map6 r0 r1 (LE: r0 <1== r1) : curry6 r0 <6== curry6 r1.
 Proof. 
-  repeat_intros 6. intros H. apply (LE (exist6T x5) H).
+  red; intros. apply (LE (@exist6T x0 x1 x2 x3 x4 x5) PR).
 Qed.
 
 Lemma curry_map_rev6 r0 r1 (LE: curry6 r0 <6== curry6 r1) : r0 <1== r1.
@@ -46,10 +46,10 @@ Proof.
 Qed.
 
 Lemma uncurry_bij1_6 r : curry6 (uncurry6 r) <6== r.
-Proof. unfold le6. repeat_intros 6. intros H. apply H. Qed.
+Proof. unfold le6. intros. apply PR. Qed.
 
 Lemma uncurry_bij2_6 r : r <6== curry6 (uncurry6 r).
-Proof. unfold le6. repeat_intros 6. intros H. apply H. Qed.
+Proof. unfold le6. intros. apply PR. Qed.
 
 Lemma curry_bij1_6 r : uncurry6 (curry6 r) <1== r.
 Proof. intros []. intro H. apply H. Qed.
@@ -102,7 +102,7 @@ Lemma monotone6_map (gf: rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5)
       (MON: _monotone6 gf) :
   _monotone (fun R0 => uncurry6 (gf (curry6 R0))).
 Proof.
-  repeat_intros 3. apply uncurry_map6. apply MON; apply curry_map6; assumption.
+  red; intros. apply uncurry_map6. apply MON; apply curry_map6; assumption.
 Qed.
 
 Lemma _paco6_mon_gen (gf gf': rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5) r r'
@@ -158,7 +158,7 @@ Arguments gf : clear implicits.
 
 Theorem _paco6_mon: _monotone6 (paco6 gf).
 Proof.
-  repeat_intros 3. eapply curry_map6, _paco_mon; apply uncurry_map6; assumption.
+  red; intros. eapply curry_map6, _paco_mon; apply uncurry_map6; assumption.
 Qed.
 
 Theorem _paco6_acc: forall
@@ -211,10 +211,10 @@ Qed.
 
 Theorem upaco6_mon: monotone6 (upaco6 gf).
 Proof.
-  repeat_intros 8. intros R  LE0.
-  destruct R.
-  - left. eapply paco6_mon. apply H. apply LE0.
-  - right. apply LE0, H.
+  red; intros.
+  destruct IN.
+  - left. eapply paco6_mon. apply H. apply LE.
+  - right. apply LE, H.
 Qed.
 
 Theorem paco6_mult_strong: forall r,
@@ -236,7 +236,7 @@ Qed.
 Theorem paco6_unfold: forall (MON: monotone6 gf) r,
   paco6 gf r <6= gf (upaco6 gf r).
 Proof.
-  repeat_intros 1. eapply _paco6_unfold; apply monotone6_eq; assumption.
+  intro. eapply _paco6_unfold; apply monotone6_eq; assumption.
 Qed.
 
 End Arg6.

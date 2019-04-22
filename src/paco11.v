@@ -35,19 +35,19 @@ Record sig11T  :=
 Definition uncurry11  (R: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10): rel1 sig11T :=
   fun x => R (proj11T0 x) (proj11T1 x) (proj11T2 x) (proj11T3 x) (proj11T4 x) (proj11T5 x) (proj11T6 x) (proj11T7 x) (proj11T8 x) (proj11T9 x) (proj11T10 x).
 Definition curry11  (R: rel1 sig11T): rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 :=
-  fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 => R (exist11T x10).
+  fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 => R (@exist11T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10).
 
 Lemma uncurry_map11 r0 r1 (LE : r0 <11== r1) : uncurry11 r0 <1== uncurry11 r1.
 Proof. intros [] H. apply LE. apply H. Qed.
 
 Lemma uncurry_map_rev11 r0 r1 (LE: uncurry11 r0 <1== uncurry11 r1) : r0 <11== r1.
 Proof.
-  repeat_intros 11. intros H. apply (LE (exist11T x10) H).
+  red; intros. apply (LE (@exist11T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) PR).
 Qed.
 
 Lemma curry_map11 r0 r1 (LE: r0 <1== r1) : curry11 r0 <11== curry11 r1.
 Proof. 
-  repeat_intros 11. intros H. apply (LE (exist11T x10) H).
+  red; intros. apply (LE (@exist11T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) PR).
 Qed.
 
 Lemma curry_map_rev11 r0 r1 (LE: curry11 r0 <11== curry11 r1) : r0 <1== r1.
@@ -56,10 +56,10 @@ Proof.
 Qed.
 
 Lemma uncurry_bij1_11 r : curry11 (uncurry11 r) <11== r.
-Proof. unfold le11. repeat_intros 11. intros H. apply H. Qed.
+Proof. unfold le11. intros. apply PR. Qed.
 
 Lemma uncurry_bij2_11 r : r <11== curry11 (uncurry11 r).
-Proof. unfold le11. repeat_intros 11. intros H. apply H. Qed.
+Proof. unfold le11. intros. apply PR. Qed.
 
 Lemma curry_bij1_11 r : uncurry11 (curry11 r) <1== r.
 Proof. intros []. intro H. apply H. Qed.
@@ -112,7 +112,7 @@ Lemma monotone11_map (gf: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1
       (MON: _monotone11 gf) :
   _monotone (fun R0 => uncurry11 (gf (curry11 R0))).
 Proof.
-  repeat_intros 3. apply uncurry_map11. apply MON; apply curry_map11; assumption.
+  red; intros. apply uncurry_map11. apply MON; apply curry_map11; assumption.
 Qed.
 
 Lemma _paco11_mon_gen (gf gf': rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) r r'
@@ -168,7 +168,7 @@ Arguments gf : clear implicits.
 
 Theorem _paco11_mon: _monotone11 (paco11 gf).
 Proof.
-  repeat_intros 3. eapply curry_map11, _paco_mon; apply uncurry_map11; assumption.
+  red; intros. eapply curry_map11, _paco_mon; apply uncurry_map11; assumption.
 Qed.
 
 Theorem _paco11_acc: forall
@@ -221,10 +221,10 @@ Qed.
 
 Theorem upaco11_mon: monotone11 (upaco11 gf).
 Proof.
-  repeat_intros 13. intros R  LE0.
-  destruct R.
-  - left. eapply paco11_mon. apply H. apply LE0.
-  - right. apply LE0, H.
+  red; intros.
+  destruct IN.
+  - left. eapply paco11_mon. apply H. apply LE.
+  - right. apply LE, H.
 Qed.
 
 Theorem paco11_mult_strong: forall r,
@@ -246,7 +246,7 @@ Qed.
 Theorem paco11_unfold: forall (MON: monotone11 gf) r,
   paco11 gf r <11= gf (upaco11 gf r).
 Proof.
-  repeat_intros 1. eapply _paco11_unfold; apply monotone11_eq; assumption.
+  intro. eapply _paco11_unfold; apply monotone11_eq; assumption.
 Qed.
 
 End Arg11.

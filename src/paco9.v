@@ -31,19 +31,19 @@ Record sig9T  :=
 Definition uncurry9  (R: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8): rel1 sig9T :=
   fun x => R (proj9T0 x) (proj9T1 x) (proj9T2 x) (proj9T3 x) (proj9T4 x) (proj9T5 x) (proj9T6 x) (proj9T7 x) (proj9T8 x).
 Definition curry9  (R: rel1 sig9T): rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 :=
-  fun x0 x1 x2 x3 x4 x5 x6 x7 x8 => R (exist9T x8).
+  fun x0 x1 x2 x3 x4 x5 x6 x7 x8 => R (@exist9T x0 x1 x2 x3 x4 x5 x6 x7 x8).
 
 Lemma uncurry_map9 r0 r1 (LE : r0 <9== r1) : uncurry9 r0 <1== uncurry9 r1.
 Proof. intros [] H. apply LE. apply H. Qed.
 
 Lemma uncurry_map_rev9 r0 r1 (LE: uncurry9 r0 <1== uncurry9 r1) : r0 <9== r1.
 Proof.
-  repeat_intros 9. intros H. apply (LE (exist9T x8) H).
+  red; intros. apply (LE (@exist9T x0 x1 x2 x3 x4 x5 x6 x7 x8) PR).
 Qed.
 
 Lemma curry_map9 r0 r1 (LE: r0 <1== r1) : curry9 r0 <9== curry9 r1.
 Proof. 
-  repeat_intros 9. intros H. apply (LE (exist9T x8) H).
+  red; intros. apply (LE (@exist9T x0 x1 x2 x3 x4 x5 x6 x7 x8) PR).
 Qed.
 
 Lemma curry_map_rev9 r0 r1 (LE: curry9 r0 <9== curry9 r1) : r0 <1== r1.
@@ -52,10 +52,10 @@ Proof.
 Qed.
 
 Lemma uncurry_bij1_9 r : curry9 (uncurry9 r) <9== r.
-Proof. unfold le9. repeat_intros 9. intros H. apply H. Qed.
+Proof. unfold le9. intros. apply PR. Qed.
 
 Lemma uncurry_bij2_9 r : r <9== curry9 (uncurry9 r).
-Proof. unfold le9. repeat_intros 9. intros H. apply H. Qed.
+Proof. unfold le9. intros. apply PR. Qed.
 
 Lemma curry_bij1_9 r : uncurry9 (curry9 r) <1== r.
 Proof. intros []. intro H. apply H. Qed.
@@ -108,7 +108,7 @@ Lemma monotone9_map (gf: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 
       (MON: _monotone9 gf) :
   _monotone (fun R0 => uncurry9 (gf (curry9 R0))).
 Proof.
-  repeat_intros 3. apply uncurry_map9. apply MON; apply curry_map9; assumption.
+  red; intros. apply uncurry_map9. apply MON; apply curry_map9; assumption.
 Qed.
 
 Lemma _paco9_mon_gen (gf gf': rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8) r r'
@@ -164,7 +164,7 @@ Arguments gf : clear implicits.
 
 Theorem _paco9_mon: _monotone9 (paco9 gf).
 Proof.
-  repeat_intros 3. eapply curry_map9, _paco_mon; apply uncurry_map9; assumption.
+  red; intros. eapply curry_map9, _paco_mon; apply uncurry_map9; assumption.
 Qed.
 
 Theorem _paco9_acc: forall
@@ -217,10 +217,10 @@ Qed.
 
 Theorem upaco9_mon: monotone9 (upaco9 gf).
 Proof.
-  repeat_intros 11. intros R  LE0.
-  destruct R.
-  - left. eapply paco9_mon. apply H. apply LE0.
-  - right. apply LE0, H.
+  red; intros.
+  destruct IN.
+  - left. eapply paco9_mon. apply H. apply LE.
+  - right. apply LE, H.
 Qed.
 
 Theorem paco9_mult_strong: forall r,
@@ -242,7 +242,7 @@ Qed.
 Theorem paco9_unfold: forall (MON: monotone9 gf) r,
   paco9 gf r <9= gf (upaco9 gf r).
 Proof.
-  repeat_intros 1. eapply _paco9_unfold; apply monotone9_eq; assumption.
+  intro. eapply _paco9_unfold; apply monotone9_eq; assumption.
 Qed.
 
 End Arg9.

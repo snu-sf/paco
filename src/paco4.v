@@ -21,19 +21,19 @@ Record sig4T  :=
 Definition uncurry4  (R: rel4 T0 T1 T2 T3): rel1 sig4T :=
   fun x => R (proj4T0 x) (proj4T1 x) (proj4T2 x) (proj4T3 x).
 Definition curry4  (R: rel1 sig4T): rel4 T0 T1 T2 T3 :=
-  fun x0 x1 x2 x3 => R (exist4T x3).
+  fun x0 x1 x2 x3 => R (@exist4T x0 x1 x2 x3).
 
 Lemma uncurry_map4 r0 r1 (LE : r0 <4== r1) : uncurry4 r0 <1== uncurry4 r1.
 Proof. intros [] H. apply LE. apply H. Qed.
 
 Lemma uncurry_map_rev4 r0 r1 (LE: uncurry4 r0 <1== uncurry4 r1) : r0 <4== r1.
 Proof.
-  repeat_intros 4. intros H. apply (LE (exist4T x3) H).
+  red; intros. apply (LE (@exist4T x0 x1 x2 x3) PR).
 Qed.
 
 Lemma curry_map4 r0 r1 (LE: r0 <1== r1) : curry4 r0 <4== curry4 r1.
 Proof. 
-  repeat_intros 4. intros H. apply (LE (exist4T x3) H).
+  red; intros. apply (LE (@exist4T x0 x1 x2 x3) PR).
 Qed.
 
 Lemma curry_map_rev4 r0 r1 (LE: curry4 r0 <4== curry4 r1) : r0 <1== r1.
@@ -42,10 +42,10 @@ Proof.
 Qed.
 
 Lemma uncurry_bij1_4 r : curry4 (uncurry4 r) <4== r.
-Proof. unfold le4. repeat_intros 4. intros H. apply H. Qed.
+Proof. unfold le4. intros. apply PR. Qed.
 
 Lemma uncurry_bij2_4 r : r <4== curry4 (uncurry4 r).
-Proof. unfold le4. repeat_intros 4. intros H. apply H. Qed.
+Proof. unfold le4. intros. apply PR. Qed.
 
 Lemma curry_bij1_4 r : uncurry4 (curry4 r) <1== r.
 Proof. intros []. intro H. apply H. Qed.
@@ -98,7 +98,7 @@ Lemma monotone4_map (gf: rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3)
       (MON: _monotone4 gf) :
   _monotone (fun R0 => uncurry4 (gf (curry4 R0))).
 Proof.
-  repeat_intros 3. apply uncurry_map4. apply MON; apply curry_map4; assumption.
+  red; intros. apply uncurry_map4. apply MON; apply curry_map4; assumption.
 Qed.
 
 Lemma _paco4_mon_gen (gf gf': rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3) r r'
@@ -154,7 +154,7 @@ Arguments gf : clear implicits.
 
 Theorem _paco4_mon: _monotone4 (paco4 gf).
 Proof.
-  repeat_intros 3. eapply curry_map4, _paco_mon; apply uncurry_map4; assumption.
+  red; intros. eapply curry_map4, _paco_mon; apply uncurry_map4; assumption.
 Qed.
 
 Theorem _paco4_acc: forall
@@ -207,10 +207,10 @@ Qed.
 
 Theorem upaco4_mon: monotone4 (upaco4 gf).
 Proof.
-  repeat_intros 6. intros R  LE0.
-  destruct R.
-  - left. eapply paco4_mon. apply H. apply LE0.
-  - right. apply LE0, H.
+  red; intros.
+  destruct IN.
+  - left. eapply paco4_mon. apply H. apply LE.
+  - right. apply LE, H.
 Qed.
 
 Theorem paco4_mult_strong: forall r,
@@ -232,7 +232,7 @@ Qed.
 Theorem paco4_unfold: forall (MON: monotone4 gf) r,
   paco4 gf r <4= gf (upaco4 gf r).
 Proof.
-  repeat_intros 1. eapply _paco4_unfold; apply monotone4_eq; assumption.
+  intro. eapply _paco4_unfold; apply monotone4_eq; assumption.
 Qed.
 
 End Arg4.

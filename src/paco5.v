@@ -23,19 +23,19 @@ Record sig5T  :=
 Definition uncurry5  (R: rel5 T0 T1 T2 T3 T4): rel1 sig5T :=
   fun x => R (proj5T0 x) (proj5T1 x) (proj5T2 x) (proj5T3 x) (proj5T4 x).
 Definition curry5  (R: rel1 sig5T): rel5 T0 T1 T2 T3 T4 :=
-  fun x0 x1 x2 x3 x4 => R (exist5T x4).
+  fun x0 x1 x2 x3 x4 => R (@exist5T x0 x1 x2 x3 x4).
 
 Lemma uncurry_map5 r0 r1 (LE : r0 <5== r1) : uncurry5 r0 <1== uncurry5 r1.
 Proof. intros [] H. apply LE. apply H. Qed.
 
 Lemma uncurry_map_rev5 r0 r1 (LE: uncurry5 r0 <1== uncurry5 r1) : r0 <5== r1.
 Proof.
-  repeat_intros 5. intros H. apply (LE (exist5T x4) H).
+  red; intros. apply (LE (@exist5T x0 x1 x2 x3 x4) PR).
 Qed.
 
 Lemma curry_map5 r0 r1 (LE: r0 <1== r1) : curry5 r0 <5== curry5 r1.
 Proof. 
-  repeat_intros 5. intros H. apply (LE (exist5T x4) H).
+  red; intros. apply (LE (@exist5T x0 x1 x2 x3 x4) PR).
 Qed.
 
 Lemma curry_map_rev5 r0 r1 (LE: curry5 r0 <5== curry5 r1) : r0 <1== r1.
@@ -44,10 +44,10 @@ Proof.
 Qed.
 
 Lemma uncurry_bij1_5 r : curry5 (uncurry5 r) <5== r.
-Proof. unfold le5. repeat_intros 5. intros H. apply H. Qed.
+Proof. unfold le5. intros. apply PR. Qed.
 
 Lemma uncurry_bij2_5 r : r <5== curry5 (uncurry5 r).
-Proof. unfold le5. repeat_intros 5. intros H. apply H. Qed.
+Proof. unfold le5. intros. apply PR. Qed.
 
 Lemma curry_bij1_5 r : uncurry5 (curry5 r) <1== r.
 Proof. intros []. intro H. apply H. Qed.
@@ -100,7 +100,7 @@ Lemma monotone5_map (gf: rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4)
       (MON: _monotone5 gf) :
   _monotone (fun R0 => uncurry5 (gf (curry5 R0))).
 Proof.
-  repeat_intros 3. apply uncurry_map5. apply MON; apply curry_map5; assumption.
+  red; intros. apply uncurry_map5. apply MON; apply curry_map5; assumption.
 Qed.
 
 Lemma _paco5_mon_gen (gf gf': rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4) r r'
@@ -156,7 +156,7 @@ Arguments gf : clear implicits.
 
 Theorem _paco5_mon: _monotone5 (paco5 gf).
 Proof.
-  repeat_intros 3. eapply curry_map5, _paco_mon; apply uncurry_map5; assumption.
+  red; intros. eapply curry_map5, _paco_mon; apply uncurry_map5; assumption.
 Qed.
 
 Theorem _paco5_acc: forall
@@ -209,10 +209,10 @@ Qed.
 
 Theorem upaco5_mon: monotone5 (upaco5 gf).
 Proof.
-  repeat_intros 7. intros R  LE0.
-  destruct R.
-  - left. eapply paco5_mon. apply H. apply LE0.
-  - right. apply LE0, H.
+  red; intros.
+  destruct IN.
+  - left. eapply paco5_mon. apply H. apply LE.
+  - right. apply LE, H.
 Qed.
 
 Theorem paco5_mult_strong: forall r,
@@ -234,7 +234,7 @@ Qed.
 Theorem paco5_unfold: forall (MON: monotone5 gf) r,
   paco5 gf r <5= gf (upaco5 gf r).
 Proof.
-  repeat_intros 1. eapply _paco5_unfold; apply monotone5_eq; assumption.
+  intro. eapply _paco5_unfold; apply monotone5_eq; assumption.
 Qed.
 
 End Arg5.

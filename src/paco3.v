@@ -19,19 +19,19 @@ Record sig3T  :=
 Definition uncurry3  (R: rel3 T0 T1 T2): rel1 sig3T :=
   fun x => R (proj3T0 x) (proj3T1 x) (proj3T2 x).
 Definition curry3  (R: rel1 sig3T): rel3 T0 T1 T2 :=
-  fun x0 x1 x2 => R (exist3T x2).
+  fun x0 x1 x2 => R (@exist3T x0 x1 x2).
 
 Lemma uncurry_map3 r0 r1 (LE : r0 <3== r1) : uncurry3 r0 <1== uncurry3 r1.
 Proof. intros [] H. apply LE. apply H. Qed.
 
 Lemma uncurry_map_rev3 r0 r1 (LE: uncurry3 r0 <1== uncurry3 r1) : r0 <3== r1.
 Proof.
-  repeat_intros 3. intros H. apply (LE (exist3T x2) H).
+  red; intros. apply (LE (@exist3T x0 x1 x2) PR).
 Qed.
 
 Lemma curry_map3 r0 r1 (LE: r0 <1== r1) : curry3 r0 <3== curry3 r1.
 Proof. 
-  repeat_intros 3. intros H. apply (LE (exist3T x2) H).
+  red; intros. apply (LE (@exist3T x0 x1 x2) PR).
 Qed.
 
 Lemma curry_map_rev3 r0 r1 (LE: curry3 r0 <3== curry3 r1) : r0 <1== r1.
@@ -40,10 +40,10 @@ Proof.
 Qed.
 
 Lemma uncurry_bij1_3 r : curry3 (uncurry3 r) <3== r.
-Proof. unfold le3. repeat_intros 3. intros H. apply H. Qed.
+Proof. unfold le3. intros. apply PR. Qed.
 
 Lemma uncurry_bij2_3 r : r <3== curry3 (uncurry3 r).
-Proof. unfold le3. repeat_intros 3. intros H. apply H. Qed.
+Proof. unfold le3. intros. apply PR. Qed.
 
 Lemma curry_bij1_3 r : uncurry3 (curry3 r) <1== r.
 Proof. intros []. intro H. apply H. Qed.
@@ -96,7 +96,7 @@ Lemma monotone3_map (gf: rel3 T0 T1 T2 -> rel3 T0 T1 T2)
       (MON: _monotone3 gf) :
   _monotone (fun R0 => uncurry3 (gf (curry3 R0))).
 Proof.
-  repeat_intros 3. apply uncurry_map3. apply MON; apply curry_map3; assumption.
+  red; intros. apply uncurry_map3. apply MON; apply curry_map3; assumption.
 Qed.
 
 Lemma _paco3_mon_gen (gf gf': rel3 T0 T1 T2 -> rel3 T0 T1 T2) r r'
@@ -152,7 +152,7 @@ Arguments gf : clear implicits.
 
 Theorem _paco3_mon: _monotone3 (paco3 gf).
 Proof.
-  repeat_intros 3. eapply curry_map3, _paco_mon; apply uncurry_map3; assumption.
+  red; intros. eapply curry_map3, _paco_mon; apply uncurry_map3; assumption.
 Qed.
 
 Theorem _paco3_acc: forall
@@ -205,10 +205,10 @@ Qed.
 
 Theorem upaco3_mon: monotone3 (upaco3 gf).
 Proof.
-  repeat_intros 5. intros R  LE0.
-  destruct R.
-  - left. eapply paco3_mon. apply H. apply LE0.
-  - right. apply LE0, H.
+  red; intros.
+  destruct IN.
+  - left. eapply paco3_mon. apply H. apply LE.
+  - right. apply LE, H.
 Qed.
 
 Theorem paco3_mult_strong: forall r,
@@ -230,7 +230,7 @@ Qed.
 Theorem paco3_unfold: forall (MON: monotone3 gf) r,
   paco3 gf r <3= gf (upaco3 gf r).
 Proof.
-  repeat_intros 1. eapply _paco3_unfold; apply monotone3_eq; assumption.
+  intro. eapply _paco3_unfold; apply monotone3_eq; assumption.
 Qed.
 
 End Arg3.
