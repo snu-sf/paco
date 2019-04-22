@@ -1,5 +1,5 @@
-Require Export paconotation.
-Require Import paconotation_internal pacotac_internal paco_internal.
+Require Export Program.Basics. Open Scope program_scope.
+Require Export paconotation paconotation_internal pacotac_internal paco_internal.
 Set Implicit Arguments.
 
 Section PACO4.
@@ -99,6 +99,25 @@ Lemma monotone4_map (gf: rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3)
   _monotone (fun R0 => uncurry4 (gf (curry4 R0))).
 Proof.
   red; intros. apply uncurry_map4. apply MON; apply curry_map4; assumption.
+Qed.
+
+Lemma monotone4_compose (gf gf': rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3)
+      (MON1: monotone4 gf)
+      (MON2: monotone4 gf'):
+  monotone4 (compose gf gf').
+Proof.
+  red; intros. eapply MON1. apply IN.
+  intros. eapply MON2. apply PR. apply LE.
+Qed.
+
+Lemma monotone4_union (gf gf': rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3)
+      (MON1: monotone4 gf)
+      (MON2: monotone4 gf'):
+  monotone4 (gf \5/ gf').
+Proof.
+  red; intros. destruct IN.
+  - left. eapply MON1. apply H. apply LE.
+  - right. eapply MON2. apply H. apply LE.
 Qed.
 
 Lemma _paco4_mon_gen (gf gf': rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3) r r'

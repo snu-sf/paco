@@ -1,5 +1,5 @@
-Require Export paconotation.
-Require Import paconotation_internal pacotac_internal paco_internal.
+Require Export Program.Basics. Open Scope program_scope.
+Require Export paconotation paconotation_internal pacotac_internal paco_internal.
 Set Implicit Arguments.
 
 Section PACO7.
@@ -105,6 +105,25 @@ Lemma monotone7_map (gf: rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6)
   _monotone (fun R0 => uncurry7 (gf (curry7 R0))).
 Proof.
   red; intros. apply uncurry_map7. apply MON; apply curry_map7; assumption.
+Qed.
+
+Lemma monotone7_compose (gf gf': rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6)
+      (MON1: monotone7 gf)
+      (MON2: monotone7 gf'):
+  monotone7 (compose gf gf').
+Proof.
+  red; intros. eapply MON1. apply IN.
+  intros. eapply MON2. apply PR. apply LE.
+Qed.
+
+Lemma monotone7_union (gf gf': rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6)
+      (MON1: monotone7 gf)
+      (MON2: monotone7 gf'):
+  monotone7 (gf \8/ gf').
+Proof.
+  red; intros. destruct IN.
+  - left. eapply MON1. apply H. apply LE.
+  - right. eapply MON2. apply H. apply LE.
 Qed.
 
 Lemma _paco7_mon_gen (gf gf': rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6) r r'

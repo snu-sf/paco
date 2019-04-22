@@ -18,25 +18,6 @@ Variable T10 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) 
 
 Local Notation rel := (rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10).
 
-Lemma monotone11_compose (clo1 clo2: rel -> rel)
-      (MON1: monotone11 clo1)
-      (MON2: monotone11 clo2):
-  monotone11 (compose clo1 clo2).
-Proof.
-  red; intros. eapply MON1. apply IN.
-  intros. eapply MON2. apply PR. apply LE.
-Qed.
-
-Lemma monotone11_union (clo1 clo2: rel -> rel)
-      (MON1: monotone11 clo1)
-      (MON2: monotone11 clo2):
-  monotone11 (clo1 \12/ clo2).
-Proof.
-  red; intros. destruct IN.
-  - left. eapply MON1. apply H. apply LE.
-  - right. eapply MON2. apply H. apply LE.
-Qed.
-
 Section RClo.
 
 Inductive rclo11 (clo: rel->rel) (r: rel): rel :=

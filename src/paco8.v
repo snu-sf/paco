@@ -1,5 +1,5 @@
-Require Export paconotation.
-Require Import paconotation_internal pacotac_internal paco_internal.
+Require Export Program.Basics. Open Scope program_scope.
+Require Export paconotation paconotation_internal pacotac_internal paco_internal.
 Set Implicit Arguments.
 
 Section PACO8.
@@ -107,6 +107,25 @@ Lemma monotone8_map (gf: rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 
   _monotone (fun R0 => uncurry8 (gf (curry8 R0))).
 Proof.
   red; intros. apply uncurry_map8. apply MON; apply curry_map8; assumption.
+Qed.
+
+Lemma monotone8_compose (gf gf': rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7)
+      (MON1: monotone8 gf)
+      (MON2: monotone8 gf'):
+  monotone8 (compose gf gf').
+Proof.
+  red; intros. eapply MON1. apply IN.
+  intros. eapply MON2. apply PR. apply LE.
+Qed.
+
+Lemma monotone8_union (gf gf': rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7)
+      (MON1: monotone8 gf)
+      (MON2: monotone8 gf'):
+  monotone8 (gf \9/ gf').
+Proof.
+  red; intros. destruct IN.
+  - left. eapply MON1. apply H. apply LE.
+  - right. eapply MON2. apply H. apply LE.
 Qed.
 
 Lemma _paco8_mon_gen (gf gf': rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7) r r'

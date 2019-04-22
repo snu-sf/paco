@@ -13,25 +13,6 @@ Variable T5 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (
 
 Local Notation rel := (rel6 T0 T1 T2 T3 T4 T5).
 
-Lemma monotone6_compose (clo1 clo2: rel -> rel)
-      (MON1: monotone6 clo1)
-      (MON2: monotone6 clo2):
-  monotone6 (compose clo1 clo2).
-Proof.
-  red; intros. eapply MON1. apply IN.
-  intros. eapply MON2. apply PR. apply LE.
-Qed.
-
-Lemma monotone6_union (clo1 clo2: rel -> rel)
-      (MON1: monotone6 clo1)
-      (MON2: monotone6 clo2):
-  monotone6 (clo1 \7/ clo2).
-Proof.
-  red; intros. destruct IN.
-  - left. eapply MON1. apply H. apply LE.
-  - right. eapply MON2. apply H. apply LE.
-Qed.
-
 Section RClo.
 
 Inductive rclo6 (clo: rel->rel) (r: rel): rel :=

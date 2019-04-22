@@ -11,25 +11,6 @@ Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
 
 Local Notation rel := (rel4 T0 T1 T2 T3).
 
-Lemma monotone4_compose (clo1 clo2: rel -> rel)
-      (MON1: monotone4 clo1)
-      (MON2: monotone4 clo2):
-  monotone4 (compose clo1 clo2).
-Proof.
-  red; intros. eapply MON1. apply IN.
-  intros. eapply MON2. apply PR. apply LE.
-Qed.
-
-Lemma monotone4_union (clo1 clo2: rel -> rel)
-      (MON1: monotone4 clo1)
-      (MON2: monotone4 clo2):
-  monotone4 (clo1 \5/ clo2).
-Proof.
-  red; intros. destruct IN.
-  - left. eapply MON1. apply H. apply LE.
-  - right. eapply MON2. apply H. apply LE.
-Qed.
-
 Section RClo.
 
 Inductive rclo4 (clo: rel->rel) (r: rel): rel :=

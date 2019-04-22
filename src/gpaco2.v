@@ -9,25 +9,6 @@ Variable T1 : forall (x0: @T0), Type.
 
 Local Notation rel := (rel2 T0 T1).
 
-Lemma monotone2_compose (clo1 clo2: rel -> rel)
-      (MON1: monotone2 clo1)
-      (MON2: monotone2 clo2):
-  monotone2 (compose clo1 clo2).
-Proof.
-  red; intros. eapply MON1. apply IN.
-  intros. eapply MON2. apply PR. apply LE.
-Qed.
-
-Lemma monotone2_union (clo1 clo2: rel -> rel)
-      (MON1: monotone2 clo1)
-      (MON2: monotone2 clo2):
-  monotone2 (clo1 \3/ clo2).
-Proof.
-  red; intros. destruct IN.
-  - left. eapply MON1. apply H. apply LE.
-  - right. eapply MON2. apply H. apply LE.
-Qed.
-
 Section RClo.
 
 Inductive rclo2 (clo: rel->rel) (r: rel): rel :=

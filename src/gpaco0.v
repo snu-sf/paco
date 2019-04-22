@@ -7,25 +7,6 @@ Section GeneralizedPaco0.
 
 Local Notation rel := (rel0).
 
-Lemma monotone0_compose (clo1 clo2: rel -> rel)
-      (MON1: monotone0 clo1)
-      (MON2: monotone0 clo2):
-  monotone0 (compose clo1 clo2).
-Proof.
-  red; intros. eapply MON1. apply IN.
-  intros. eapply MON2. apply PR. apply LE.
-Qed.
-
-Lemma monotone0_union (clo1 clo2: rel -> rel)
-      (MON1: monotone0 clo1)
-      (MON2: monotone0 clo2):
-  monotone0 (clo1 \1/ clo2).
-Proof.
-  red; intros. destruct IN.
-  - left. eapply MON1. apply H. apply LE.
-  - right. eapply MON2. apply H. apply LE.
-Qed.
-
 Section RClo.
 
 Inductive rclo0 (clo: rel->rel) (r: rel): rel :=
