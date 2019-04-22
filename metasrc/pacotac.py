@@ -127,7 +127,7 @@ Ltac pmonauto :=
 """)
 print ()
 
-print ("(** ** pfold_reverse ")
+print ("(** ** [pfold_reverse] = [pstep_reverse] ")
 print ("*)")
 print ()
 print ('Tactic Notation "pfold_reverse_" :=')
@@ -137,6 +137,7 @@ for n in range(relsize+1):
 print ("  end;")
 print ("  eauto with paco.")
 print ("Ltac pfold_reverse := under_forall ltac:(pfold_reverse_).")
+print ("Ltac pstep_reverse := pfold_reverse.")
 print ()
 
 print ("(** ** punfold_reverse H ")

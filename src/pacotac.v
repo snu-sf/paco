@@ -127,7 +127,7 @@ Ltac pmonauto :=
   let IN := fresh "IN" in try (repeat intro; destruct IN; eauto with paco; fail).
 
 
-(** ** pfold_reverse 
+(** ** [pfold_reverse] = [pstep_reverse] 
 *)
 
 Tactic Notation "pfold_reverse_" :=
@@ -150,6 +150,7 @@ Tactic Notation "pfold_reverse_" :=
   end;
   eauto with paco.
 Ltac pfold_reverse := under_forall ltac:(pfold_reverse_).
+Ltac pstep_reverse := pfold_reverse.
 
 (** ** punfold_reverse H 
 *)
