@@ -328,6 +328,18 @@ Inductive cpn6 (r: rel) x0 x1 x2 x3 x4 x5 : Prop :=
     (CLO: clo r x0 x1 x2 x3 x4 x5)
 .
 
+Lemma rclo6_dist clo
+      (MON: monotone6 clo)
+      (DIST: forall r1 r2, clo (r1 \6/ r2) <6= (clo r1 \6/ clo r2)):
+  forall r1 r2, rclo6 clo (r1 \6/ r2) <6= (rclo6 clo r1 \6/ rclo6 clo r2).
+Proof.
+  intros. induction PR.
+  + destruct IN; [left|right]; apply rclo6_base, H.
+  + assert (REL: clo (rclo6 clo r1 \6/ rclo6 clo r2) x0 x1 x2 x3 x4 x5).
+    { eapply MON. apply IN. apply H. }
+    apply DIST in REL. destruct REL; [left|right]; apply rclo6_clo, H0.
+Qed.
+
 Lemma rclo6_compat clo
       (COM: compatible6 clo):
   compatible6 (rclo6 clo).
@@ -476,6 +488,31 @@ Proof.
   _punfold PR; [..|apply gf_mon].
   eapply gf_mon. apply PR.
   intros. destruct PR0; [|contradiction]. apply gpaco6_final. apply gf_mon. right. apply H.
+Qed.
+
+Lemma gpaco6_dist clo r rg
+      (CMP: compatible6 gf clo)
+      (DIST: forall r1 r2, clo (r1 \6/ r2) <6= (clo r1 \6/ clo r2)):
+  gpaco6 gf clo r rg <6= (paco6 gf (rclo6 clo (rg \6/ r)) \6/ rclo6 clo r).
+Proof.
+  intros. apply gpaco6_unfold in PR; [|apply gf_mon].
+  apply rclo6_dist in PR; [|apply CMP|apply DIST].
+  destruct PR; [|right; apply H].
+  left. revert x0 x1 x2 x3 x4 x5 H.
+  pcofix CIH; intros.
+  apply rclo6_compat in H0; [|apply gf_mon|apply CMP].
+  pstep. eapply gf_mon. apply H0. intros.
+  assert (REL: @rclo6 clo (rclo6 clo (gf (gupaco6 gf clo ((rg \6/ r) \6/ (rg \6/ r))) \6/ (rg \6/ r))) x0 x1 x2 x3 x4 x5).
+  { eapply rclo6_mon. apply PR. intros. apply gpaco6_unfold in PR0. apply PR0. apply gf_mon. }
+  apply rclo6_rclo in REL.
+  apply rclo6_dist in REL; [|apply CMP|apply DIST].
+  destruct REL; cycle 1.
+  - right. apply CIH0, H.
+  - right. apply CIH.
+    eapply rclo6_mon. apply H. intros.
+    eapply gf_mon. apply PR0. intros.
+    eapply gupaco6_mon. apply PR1. intros.
+    destruct PR2; apply H1.
 Qed.
 
 End Soundness.

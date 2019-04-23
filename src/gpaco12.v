@@ -334,6 +334,18 @@ Inductive cpn12 (r: rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 : Prop :=
     (CLO: clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
 .
 
+Lemma rclo12_dist clo
+      (MON: monotone12 clo)
+      (DIST: forall r1 r2, clo (r1 \12/ r2) <12= (clo r1 \12/ clo r2)):
+  forall r1 r2, rclo12 clo (r1 \12/ r2) <12= (rclo12 clo r1 \12/ rclo12 clo r2).
+Proof.
+  intros. induction PR.
+  + destruct IN; [left|right]; apply rclo12_base, H.
+  + assert (REL: clo (rclo12 clo r1 \12/ rclo12 clo r2) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11).
+    { eapply MON. apply IN. apply H. }
+    apply DIST in REL. destruct REL; [left|right]; apply rclo12_clo, H0.
+Qed.
+
 Lemma rclo12_compat clo
       (COM: compatible12 clo):
   compatible12 (rclo12 clo).
@@ -482,6 +494,31 @@ Proof.
   _punfold PR; [..|apply gf_mon].
   eapply gf_mon. apply PR.
   intros. destruct PR0; [|contradiction]. apply gpaco12_final. apply gf_mon. right. apply H.
+Qed.
+
+Lemma gpaco12_dist clo r rg
+      (CMP: compatible12 gf clo)
+      (DIST: forall r1 r2, clo (r1 \12/ r2) <12= (clo r1 \12/ clo r2)):
+  gpaco12 gf clo r rg <12= (paco12 gf (rclo12 clo (rg \12/ r)) \12/ rclo12 clo r).
+Proof.
+  intros. apply gpaco12_unfold in PR; [|apply gf_mon].
+  apply rclo12_dist in PR; [|apply CMP|apply DIST].
+  destruct PR; [|right; apply H].
+  left. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 H.
+  pcofix CIH; intros.
+  apply rclo12_compat in H0; [|apply gf_mon|apply CMP].
+  pstep. eapply gf_mon. apply H0. intros.
+  assert (REL: @rclo12 clo (rclo12 clo (gf (gupaco12 gf clo ((rg \12/ r) \12/ (rg \12/ r))) \12/ (rg \12/ r))) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11).
+  { eapply rclo12_mon. apply PR. intros. apply gpaco12_unfold in PR0. apply PR0. apply gf_mon. }
+  apply rclo12_rclo in REL.
+  apply rclo12_dist in REL; [|apply CMP|apply DIST].
+  destruct REL; cycle 1.
+  - right. apply CIH0, H.
+  - right. apply CIH.
+    eapply rclo12_mon. apply H. intros.
+    eapply gf_mon. apply PR0. intros.
+    eapply gupaco12_mon. apply PR1. intros.
+    destruct PR2; apply H1.
 Qed.
 
 End Soundness.

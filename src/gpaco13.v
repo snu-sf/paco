@@ -335,6 +335,18 @@ Inductive cpn13 (r: rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 : Prop :=
     (CLO: clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12)
 .
 
+Lemma rclo13_dist clo
+      (MON: monotone13 clo)
+      (DIST: forall r1 r2, clo (r1 \13/ r2) <13= (clo r1 \13/ clo r2)):
+  forall r1 r2, rclo13 clo (r1 \13/ r2) <13= (rclo13 clo r1 \13/ rclo13 clo r2).
+Proof.
+  intros. induction PR.
+  + destruct IN; [left|right]; apply rclo13_base, H.
+  + assert (REL: clo (rclo13 clo r1 \13/ rclo13 clo r2) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12).
+    { eapply MON. apply IN. apply H. }
+    apply DIST in REL. destruct REL; [left|right]; apply rclo13_clo, H0.
+Qed.
+
 Lemma rclo13_compat clo
       (COM: compatible13 clo):
   compatible13 (rclo13 clo).
@@ -483,6 +495,31 @@ Proof.
   _punfold PR; [..|apply gf_mon].
   eapply gf_mon. apply PR.
   intros. destruct PR0; [|contradiction]. apply gpaco13_final. apply gf_mon. right. apply H.
+Qed.
+
+Lemma gpaco13_dist clo r rg
+      (CMP: compatible13 gf clo)
+      (DIST: forall r1 r2, clo (r1 \13/ r2) <13= (clo r1 \13/ clo r2)):
+  gpaco13 gf clo r rg <13= (paco13 gf (rclo13 clo (rg \13/ r)) \13/ rclo13 clo r).
+Proof.
+  intros. apply gpaco13_unfold in PR; [|apply gf_mon].
+  apply rclo13_dist in PR; [|apply CMP|apply DIST].
+  destruct PR; [|right; apply H].
+  left. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 H.
+  pcofix CIH; intros.
+  apply rclo13_compat in H0; [|apply gf_mon|apply CMP].
+  pstep. eapply gf_mon. apply H0. intros.
+  assert (REL: @rclo13 clo (rclo13 clo (gf (gupaco13 gf clo ((rg \13/ r) \13/ (rg \13/ r))) \13/ (rg \13/ r))) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12).
+  { eapply rclo13_mon. apply PR. intros. apply gpaco13_unfold in PR0. apply PR0. apply gf_mon. }
+  apply rclo13_rclo in REL.
+  apply rclo13_dist in REL; [|apply CMP|apply DIST].
+  destruct REL; cycle 1.
+  - right. apply CIH0, H.
+  - right. apply CIH.
+    eapply rclo13_mon. apply H. intros.
+    eapply gf_mon. apply PR0. intros.
+    eapply gupaco13_mon. apply PR1. intros.
+    destruct PR2; apply H1.
 Qed.
 
 End Soundness.

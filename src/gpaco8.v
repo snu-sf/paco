@@ -330,6 +330,18 @@ Inductive cpn8 (r: rel) x0 x1 x2 x3 x4 x5 x6 x7 : Prop :=
     (CLO: clo r x0 x1 x2 x3 x4 x5 x6 x7)
 .
 
+Lemma rclo8_dist clo
+      (MON: monotone8 clo)
+      (DIST: forall r1 r2, clo (r1 \8/ r2) <8= (clo r1 \8/ clo r2)):
+  forall r1 r2, rclo8 clo (r1 \8/ r2) <8= (rclo8 clo r1 \8/ rclo8 clo r2).
+Proof.
+  intros. induction PR.
+  + destruct IN; [left|right]; apply rclo8_base, H.
+  + assert (REL: clo (rclo8 clo r1 \8/ rclo8 clo r2) x0 x1 x2 x3 x4 x5 x6 x7).
+    { eapply MON. apply IN. apply H. }
+    apply DIST in REL. destruct REL; [left|right]; apply rclo8_clo, H0.
+Qed.
+
 Lemma rclo8_compat clo
       (COM: compatible8 clo):
   compatible8 (rclo8 clo).
@@ -478,6 +490,31 @@ Proof.
   _punfold PR; [..|apply gf_mon].
   eapply gf_mon. apply PR.
   intros. destruct PR0; [|contradiction]. apply gpaco8_final. apply gf_mon. right. apply H.
+Qed.
+
+Lemma gpaco8_dist clo r rg
+      (CMP: compatible8 gf clo)
+      (DIST: forall r1 r2, clo (r1 \8/ r2) <8= (clo r1 \8/ clo r2)):
+  gpaco8 gf clo r rg <8= (paco8 gf (rclo8 clo (rg \8/ r)) \8/ rclo8 clo r).
+Proof.
+  intros. apply gpaco8_unfold in PR; [|apply gf_mon].
+  apply rclo8_dist in PR; [|apply CMP|apply DIST].
+  destruct PR; [|right; apply H].
+  left. revert x0 x1 x2 x3 x4 x5 x6 x7 H.
+  pcofix CIH; intros.
+  apply rclo8_compat in H0; [|apply gf_mon|apply CMP].
+  pstep. eapply gf_mon. apply H0. intros.
+  assert (REL: @rclo8 clo (rclo8 clo (gf (gupaco8 gf clo ((rg \8/ r) \8/ (rg \8/ r))) \8/ (rg \8/ r))) x0 x1 x2 x3 x4 x5 x6 x7).
+  { eapply rclo8_mon. apply PR. intros. apply gpaco8_unfold in PR0. apply PR0. apply gf_mon. }
+  apply rclo8_rclo in REL.
+  apply rclo8_dist in REL; [|apply CMP|apply DIST].
+  destruct REL; cycle 1.
+  - right. apply CIH0, H.
+  - right. apply CIH.
+    eapply rclo8_mon. apply H. intros.
+    eapply gf_mon. apply PR0. intros.
+    eapply gupaco8_mon. apply PR1. intros.
+    destruct PR2; apply H1.
 Qed.
 
 End Soundness.

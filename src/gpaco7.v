@@ -329,6 +329,18 @@ Inductive cpn7 (r: rel) x0 x1 x2 x3 x4 x5 x6 : Prop :=
     (CLO: clo r x0 x1 x2 x3 x4 x5 x6)
 .
 
+Lemma rclo7_dist clo
+      (MON: monotone7 clo)
+      (DIST: forall r1 r2, clo (r1 \7/ r2) <7= (clo r1 \7/ clo r2)):
+  forall r1 r2, rclo7 clo (r1 \7/ r2) <7= (rclo7 clo r1 \7/ rclo7 clo r2).
+Proof.
+  intros. induction PR.
+  + destruct IN; [left|right]; apply rclo7_base, H.
+  + assert (REL: clo (rclo7 clo r1 \7/ rclo7 clo r2) x0 x1 x2 x3 x4 x5 x6).
+    { eapply MON. apply IN. apply H. }
+    apply DIST in REL. destruct REL; [left|right]; apply rclo7_clo, H0.
+Qed.
+
 Lemma rclo7_compat clo
       (COM: compatible7 clo):
   compatible7 (rclo7 clo).
@@ -477,6 +489,31 @@ Proof.
   _punfold PR; [..|apply gf_mon].
   eapply gf_mon. apply PR.
   intros. destruct PR0; [|contradiction]. apply gpaco7_final. apply gf_mon. right. apply H.
+Qed.
+
+Lemma gpaco7_dist clo r rg
+      (CMP: compatible7 gf clo)
+      (DIST: forall r1 r2, clo (r1 \7/ r2) <7= (clo r1 \7/ clo r2)):
+  gpaco7 gf clo r rg <7= (paco7 gf (rclo7 clo (rg \7/ r)) \7/ rclo7 clo r).
+Proof.
+  intros. apply gpaco7_unfold in PR; [|apply gf_mon].
+  apply rclo7_dist in PR; [|apply CMP|apply DIST].
+  destruct PR; [|right; apply H].
+  left. revert x0 x1 x2 x3 x4 x5 x6 H.
+  pcofix CIH; intros.
+  apply rclo7_compat in H0; [|apply gf_mon|apply CMP].
+  pstep. eapply gf_mon. apply H0. intros.
+  assert (REL: @rclo7 clo (rclo7 clo (gf (gupaco7 gf clo ((rg \7/ r) \7/ (rg \7/ r))) \7/ (rg \7/ r))) x0 x1 x2 x3 x4 x5 x6).
+  { eapply rclo7_mon. apply PR. intros. apply gpaco7_unfold in PR0. apply PR0. apply gf_mon. }
+  apply rclo7_rclo in REL.
+  apply rclo7_dist in REL; [|apply CMP|apply DIST].
+  destruct REL; cycle 1.
+  - right. apply CIH0, H.
+  - right. apply CIH.
+    eapply rclo7_mon. apply H. intros.
+    eapply gf_mon. apply PR0. intros.
+    eapply gupaco7_mon. apply PR1. intros.
+    destruct PR2; apply H1.
 Qed.
 
 End Soundness.

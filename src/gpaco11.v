@@ -333,6 +333,18 @@ Inductive cpn11 (r: rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 : Prop :=
     (CLO: clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
 .
 
+Lemma rclo11_dist clo
+      (MON: monotone11 clo)
+      (DIST: forall r1 r2, clo (r1 \11/ r2) <11= (clo r1 \11/ clo r2)):
+  forall r1 r2, rclo11 clo (r1 \11/ r2) <11= (rclo11 clo r1 \11/ rclo11 clo r2).
+Proof.
+  intros. induction PR.
+  + destruct IN; [left|right]; apply rclo11_base, H.
+  + assert (REL: clo (rclo11 clo r1 \11/ rclo11 clo r2) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10).
+    { eapply MON. apply IN. apply H. }
+    apply DIST in REL. destruct REL; [left|right]; apply rclo11_clo, H0.
+Qed.
+
 Lemma rclo11_compat clo
       (COM: compatible11 clo):
   compatible11 (rclo11 clo).
@@ -481,6 +493,31 @@ Proof.
   _punfold PR; [..|apply gf_mon].
   eapply gf_mon. apply PR.
   intros. destruct PR0; [|contradiction]. apply gpaco11_final. apply gf_mon. right. apply H.
+Qed.
+
+Lemma gpaco11_dist clo r rg
+      (CMP: compatible11 gf clo)
+      (DIST: forall r1 r2, clo (r1 \11/ r2) <11= (clo r1 \11/ clo r2)):
+  gpaco11 gf clo r rg <11= (paco11 gf (rclo11 clo (rg \11/ r)) \11/ rclo11 clo r).
+Proof.
+  intros. apply gpaco11_unfold in PR; [|apply gf_mon].
+  apply rclo11_dist in PR; [|apply CMP|apply DIST].
+  destruct PR; [|right; apply H].
+  left. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 H.
+  pcofix CIH; intros.
+  apply rclo11_compat in H0; [|apply gf_mon|apply CMP].
+  pstep. eapply gf_mon. apply H0. intros.
+  assert (REL: @rclo11 clo (rclo11 clo (gf (gupaco11 gf clo ((rg \11/ r) \11/ (rg \11/ r))) \11/ (rg \11/ r))) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10).
+  { eapply rclo11_mon. apply PR. intros. apply gpaco11_unfold in PR0. apply PR0. apply gf_mon. }
+  apply rclo11_rclo in REL.
+  apply rclo11_dist in REL; [|apply CMP|apply DIST].
+  destruct REL; cycle 1.
+  - right. apply CIH0, H.
+  - right. apply CIH.
+    eapply rclo11_mon. apply H. intros.
+    eapply gf_mon. apply PR0. intros.
+    eapply gupaco11_mon. apply PR1. intros.
+    destruct PR2; apply H1.
 Qed.
 
 End Soundness.

@@ -331,6 +331,18 @@ Inductive cpn9 (r: rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 : Prop :=
     (CLO: clo r x0 x1 x2 x3 x4 x5 x6 x7 x8)
 .
 
+Lemma rclo9_dist clo
+      (MON: monotone9 clo)
+      (DIST: forall r1 r2, clo (r1 \9/ r2) <9= (clo r1 \9/ clo r2)):
+  forall r1 r2, rclo9 clo (r1 \9/ r2) <9= (rclo9 clo r1 \9/ rclo9 clo r2).
+Proof.
+  intros. induction PR.
+  + destruct IN; [left|right]; apply rclo9_base, H.
+  + assert (REL: clo (rclo9 clo r1 \9/ rclo9 clo r2) x0 x1 x2 x3 x4 x5 x6 x7 x8).
+    { eapply MON. apply IN. apply H. }
+    apply DIST in REL. destruct REL; [left|right]; apply rclo9_clo, H0.
+Qed.
+
 Lemma rclo9_compat clo
       (COM: compatible9 clo):
   compatible9 (rclo9 clo).
@@ -479,6 +491,31 @@ Proof.
   _punfold PR; [..|apply gf_mon].
   eapply gf_mon. apply PR.
   intros. destruct PR0; [|contradiction]. apply gpaco9_final. apply gf_mon. right. apply H.
+Qed.
+
+Lemma gpaco9_dist clo r rg
+      (CMP: compatible9 gf clo)
+      (DIST: forall r1 r2, clo (r1 \9/ r2) <9= (clo r1 \9/ clo r2)):
+  gpaco9 gf clo r rg <9= (paco9 gf (rclo9 clo (rg \9/ r)) \9/ rclo9 clo r).
+Proof.
+  intros. apply gpaco9_unfold in PR; [|apply gf_mon].
+  apply rclo9_dist in PR; [|apply CMP|apply DIST].
+  destruct PR; [|right; apply H].
+  left. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 H.
+  pcofix CIH; intros.
+  apply rclo9_compat in H0; [|apply gf_mon|apply CMP].
+  pstep. eapply gf_mon. apply H0. intros.
+  assert (REL: @rclo9 clo (rclo9 clo (gf (gupaco9 gf clo ((rg \9/ r) \9/ (rg \9/ r))) \9/ (rg \9/ r))) x0 x1 x2 x3 x4 x5 x6 x7 x8).
+  { eapply rclo9_mon. apply PR. intros. apply gpaco9_unfold in PR0. apply PR0. apply gf_mon. }
+  apply rclo9_rclo in REL.
+  apply rclo9_dist in REL; [|apply CMP|apply DIST].
+  destruct REL; cycle 1.
+  - right. apply CIH0, H.
+  - right. apply CIH.
+    eapply rclo9_mon. apply H. intros.
+    eapply gf_mon. apply PR0. intros.
+    eapply gupaco9_mon. apply PR1. intros.
+    destruct PR2; apply H1.
 Qed.
 
 End Soundness.

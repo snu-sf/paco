@@ -326,6 +326,18 @@ Inductive cpn4 (r: rel) x0 x1 x2 x3 : Prop :=
     (CLO: clo r x0 x1 x2 x3)
 .
 
+Lemma rclo4_dist clo
+      (MON: monotone4 clo)
+      (DIST: forall r1 r2, clo (r1 \4/ r2) <4= (clo r1 \4/ clo r2)):
+  forall r1 r2, rclo4 clo (r1 \4/ r2) <4= (rclo4 clo r1 \4/ rclo4 clo r2).
+Proof.
+  intros. induction PR.
+  + destruct IN; [left|right]; apply rclo4_base, H.
+  + assert (REL: clo (rclo4 clo r1 \4/ rclo4 clo r2) x0 x1 x2 x3).
+    { eapply MON. apply IN. apply H. }
+    apply DIST in REL. destruct REL; [left|right]; apply rclo4_clo, H0.
+Qed.
+
 Lemma rclo4_compat clo
       (COM: compatible4 clo):
   compatible4 (rclo4 clo).
@@ -474,6 +486,31 @@ Proof.
   _punfold PR; [..|apply gf_mon].
   eapply gf_mon. apply PR.
   intros. destruct PR0; [|contradiction]. apply gpaco4_final. apply gf_mon. right. apply H.
+Qed.
+
+Lemma gpaco4_dist clo r rg
+      (CMP: compatible4 gf clo)
+      (DIST: forall r1 r2, clo (r1 \4/ r2) <4= (clo r1 \4/ clo r2)):
+  gpaco4 gf clo r rg <4= (paco4 gf (rclo4 clo (rg \4/ r)) \4/ rclo4 clo r).
+Proof.
+  intros. apply gpaco4_unfold in PR; [|apply gf_mon].
+  apply rclo4_dist in PR; [|apply CMP|apply DIST].
+  destruct PR; [|right; apply H].
+  left. revert x0 x1 x2 x3 H.
+  pcofix CIH; intros.
+  apply rclo4_compat in H0; [|apply gf_mon|apply CMP].
+  pstep. eapply gf_mon. apply H0. intros.
+  assert (REL: @rclo4 clo (rclo4 clo (gf (gupaco4 gf clo ((rg \4/ r) \4/ (rg \4/ r))) \4/ (rg \4/ r))) x0 x1 x2 x3).
+  { eapply rclo4_mon. apply PR. intros. apply gpaco4_unfold in PR0. apply PR0. apply gf_mon. }
+  apply rclo4_rclo in REL.
+  apply rclo4_dist in REL; [|apply CMP|apply DIST].
+  destruct REL; cycle 1.
+  - right. apply CIH0, H.
+  - right. apply CIH.
+    eapply rclo4_mon. apply H. intros.
+    eapply gf_mon. apply PR0. intros.
+    eapply gupaco4_mon. apply PR1. intros.
+    destruct PR2; apply H1.
 Qed.
 
 End Soundness.

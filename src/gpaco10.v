@@ -332,6 +332,18 @@ Inductive cpn10 (r: rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 : Prop :=
     (CLO: clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
 .
 
+Lemma rclo10_dist clo
+      (MON: monotone10 clo)
+      (DIST: forall r1 r2, clo (r1 \10/ r2) <10= (clo r1 \10/ clo r2)):
+  forall r1 r2, rclo10 clo (r1 \10/ r2) <10= (rclo10 clo r1 \10/ rclo10 clo r2).
+Proof.
+  intros. induction PR.
+  + destruct IN; [left|right]; apply rclo10_base, H.
+  + assert (REL: clo (rclo10 clo r1 \10/ rclo10 clo r2) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9).
+    { eapply MON. apply IN. apply H. }
+    apply DIST in REL. destruct REL; [left|right]; apply rclo10_clo, H0.
+Qed.
+
 Lemma rclo10_compat clo
       (COM: compatible10 clo):
   compatible10 (rclo10 clo).
@@ -480,6 +492,31 @@ Proof.
   _punfold PR; [..|apply gf_mon].
   eapply gf_mon. apply PR.
   intros. destruct PR0; [|contradiction]. apply gpaco10_final. apply gf_mon. right. apply H.
+Qed.
+
+Lemma gpaco10_dist clo r rg
+      (CMP: compatible10 gf clo)
+      (DIST: forall r1 r2, clo (r1 \10/ r2) <10= (clo r1 \10/ clo r2)):
+  gpaco10 gf clo r rg <10= (paco10 gf (rclo10 clo (rg \10/ r)) \10/ rclo10 clo r).
+Proof.
+  intros. apply gpaco10_unfold in PR; [|apply gf_mon].
+  apply rclo10_dist in PR; [|apply CMP|apply DIST].
+  destruct PR; [|right; apply H].
+  left. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 H.
+  pcofix CIH; intros.
+  apply rclo10_compat in H0; [|apply gf_mon|apply CMP].
+  pstep. eapply gf_mon. apply H0. intros.
+  assert (REL: @rclo10 clo (rclo10 clo (gf (gupaco10 gf clo ((rg \10/ r) \10/ (rg \10/ r))) \10/ (rg \10/ r))) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9).
+  { eapply rclo10_mon. apply PR. intros. apply gpaco10_unfold in PR0. apply PR0. apply gf_mon. }
+  apply rclo10_rclo in REL.
+  apply rclo10_dist in REL; [|apply CMP|apply DIST].
+  destruct REL; cycle 1.
+  - right. apply CIH0, H.
+  - right. apply CIH.
+    eapply rclo10_mon. apply H. intros.
+    eapply gf_mon. apply PR0. intros.
+    eapply gupaco10_mon. apply PR1. intros.
+    destruct PR2; apply H1.
 Qed.
 
 End Soundness.
