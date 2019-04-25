@@ -122,19 +122,30 @@ Proof.
   econstructor. apply rclo12_base. right. apply PR.
 Qed.
 
-Lemma gpaco12_rclo clo r:
-  rclo12 clo r <12= gupaco12 clo r.
+Lemma gpaco12_rclo clo r rg:
+  rclo12 clo r <12= gpaco12 clo r rg.
 Proof.
   intros. econstructor.
   eapply rclo12_mon. apply PR.
   intros. right. apply PR0.
 Qed.
 
-Lemma gpaco12_clo clo r:
-  clo r <12= gupaco12 clo r.
+Lemma gpaco12_clo clo r rg:
+  clo r <12= gpaco12 clo r rg.
 Proof.
   intros. apply gpaco12_rclo. eapply rclo12_clo', PR.
   apply rclo12_base.
+Qed.
+
+Lemma gpaco12_gen_rclo clo r rg:
+  gpaco12 (rclo12 clo) r rg <12= gpaco12 clo r rg.
+Proof.
+  intros. destruct PR. econstructor.
+  apply rclo12_compose.
+  eapply rclo12_mon. apply IN. intros.
+  destruct PR; [|right; apply H].
+  left. eapply paco12_mon_gen; intros; [apply H| |apply PR].
+  eapply gf_mon, rclo12_compose. apply PR.
 Qed.
 
 Lemma gpaco12_step_gen clo r rg:
@@ -266,10 +277,10 @@ Hint Resolve gpaco12_def_mon : paco.
 Section GeneralMonotonicity.
 
 Variable gf: rel -> rel.
-Hypothesis gf_mon: monotone12 gf.
   
 Lemma gpaco12_mon_gen (gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 r r' rg rg'
       (IN: @gpaco12 gf clo r rg x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
+      (gf_mon: monotone12 gf)
       (LEgf: gf <13= gf')
       (LEclo: clo <13= clo')
       (LEr: r <12= r')
@@ -289,21 +300,23 @@ Qed.
 
 Lemma gpaco12_mon_bot (gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 r' rg'
       (IN: @gpaco12 gf clo bot12 bot12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
+      (gf_mon: monotone12 gf)
       (LEgf: gf <13= gf')
       (LEclo: clo <13= clo'):
   @gpaco12 gf' clo' r' rg' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11.
 Proof.
-  eapply gpaco12_mon_gen. apply IN. apply LEgf. apply LEclo. contradiction. contradiction.
+  eapply gpaco12_mon_gen. apply IN. apply gf_mon. apply LEgf. apply LEclo. contradiction. contradiction.
 Qed.
 
 Lemma gupaco12_mon_gen (gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 r r'
       (IN: @gupaco12 gf clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
+      (gf_mon: monotone12 gf)
       (LEgf: gf <13= gf')
       (LEclo: clo <13= clo')
       (LEr: r <12= r'):
   @gupaco12 gf' clo' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11.
 Proof.
-  eapply gpaco12_mon_gen. apply IN. apply LEgf. apply LEclo. apply LEr. apply LEr.
+  eapply gpaco12_mon_gen. apply IN. apply gf_mon. apply LEgf. apply LEclo. apply LEr. apply LEr.
 Qed.
 
 End GeneralMonotonicity.
@@ -360,6 +373,22 @@ Proof.
       * intros. eapply rclo12_clo. apply PR.
 Qed.
 
+Lemma rclo12_wcompat clo
+      (COM: wcompatible12 clo):
+  wcompatible12 (rclo12 clo).
+Proof.
+  econstructor.
+  - apply rclo12_mon.
+  - intros. induction PR.
+    + eapply gf_mon. apply IN.
+      intros. apply gpaco12_base. apply PR.
+    + eapply gf_mon.
+      * eapply COM. eapply COM. apply IN. apply H.
+      * intros. eapply gpaco12_gupaco. apply gf_mon.
+        eapply gupaco12_mon_gen; intros; [apply PR|apply gf_mon|apply PR0| |apply PR0].
+        eapply rclo12_clo'. apply rclo12_base. apply PR0.
+Qed.
+
 Lemma compat12_wcompat clo
       (CMP: compatible12 clo):
   wcompatible12 clo.
@@ -402,10 +431,10 @@ Proof.
   - apply monotone12_union. apply WCMP1. apply WCMP2.
   - intros. destruct PR.
     + apply WCMP1 in H. eapply gf_mon. apply H.
-      intros. eapply gupaco12_mon_gen. apply gf_mon. apply PR. 
+      intros. eapply gupaco12_mon_gen. apply PR. apply gf_mon. 
       intros; apply PR0. left; apply PR0. intros; apply PR0.
     + apply WCMP2 in H. eapply gf_mon. apply H.
-      intros. eapply gupaco12_mon_gen. apply gf_mon. apply PR.
+      intros. eapply gupaco12_mon_gen. apply PR. apply gf_mon.
       intros; apply PR0. right; apply PR0. intros; apply PR0.
 Qed.
 
@@ -482,7 +511,7 @@ Lemma gpaco12_init clo
 Proof.
   intros. eapply gpaco12_compat_init.
   - apply wcompat12_compat, WCMP. apply gf_mon.
-  - eapply gpaco12_mon_bot. apply gf_mon. apply PR. intros; apply PR0.
+  - eapply gpaco12_mon_bot. apply PR. apply gf_mon. intros; apply PR0.
     intros. apply gpaco12_clo, PR0.
 Qed.
 
@@ -497,7 +526,7 @@ Proof.
 Qed.
 
 Lemma gpaco12_dist clo r rg
-      (CMP: compatible12 gf clo)
+      (CMP: wcompatible12 gf clo)
       (DIST: forall r1 r2, clo (r1 \12/ r2) <12= (clo r1 \12/ clo r2)):
   gpaco12 gf clo r rg <12= (paco12 gf (rclo12 clo (rg \12/ r)) \12/ rclo12 clo r).
 Proof.
@@ -506,19 +535,45 @@ Proof.
   destruct PR; [|right; apply H].
   left. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 H.
   pcofix CIH; intros.
-  apply rclo12_compat in H0; [|apply gf_mon|apply CMP].
+  apply rclo12_wcompat in H0; [|apply gf_mon|apply CMP].
   pstep. eapply gf_mon. apply H0. intros.
-  assert (REL: @rclo12 clo (rclo12 clo (gf (gupaco12 gf clo ((rg \12/ r) \12/ (rg \12/ r))) \12/ (rg \12/ r))) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11).
-  { eapply rclo12_mon. apply PR. intros. apply gpaco12_unfold in PR0. apply PR0. apply gf_mon. }
-  apply rclo12_rclo in REL.
-  apply rclo12_dist in REL; [|apply CMP|apply DIST].
-  destruct REL; cycle 1.
-  - right. apply CIH0, H.
+  apply gpaco12_unfold in PR; [|apply gf_mon].
+  apply rclo12_compose in PR.
+  apply rclo12_dist in PR; [|apply CMP|apply DIST].
+  destruct PR.
   - right. apply CIH.
     eapply rclo12_mon. apply H. intros.
-    eapply gf_mon. apply PR0. intros.
-    eapply gupaco12_mon. apply PR1. intros.
-    destruct PR2; apply H1.
+    eapply gf_mon. apply PR. intros.
+    apply gpaco12_gupaco. apply gf_mon.
+    apply gpaco12_gen_rclo. apply gf_mon.
+    eapply gupaco12_mon. apply PR0. intros.
+    destruct PR1; apply H1.
+  - assert (REL: @rclo12 clo (rclo12 clo (gf (gupaco12 gf clo ((rg \12/ r) \12/ (rg \12/ r))) \12/ (rg \12/ r))) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11).
+    { eapply rclo12_mon. apply H. intros. apply gpaco12_unfold in PR. apply PR. apply gf_mon. }
+    apply rclo12_rclo in REL.
+    apply rclo12_dist in REL; [|apply CMP|apply DIST].
+    right. destruct REL; cycle 1.
+    + apply CIH0, H1.
+    + apply CIH.
+      eapply rclo12_mon. apply H1. intros.
+      eapply gf_mon. apply PR. intros.
+      eapply gupaco12_mon. apply PR0. intros.
+      destruct PR1; apply H2.
+Qed.
+
+Lemma gpaco12_dist_reverse clo r rg:
+  (paco12 gf (rclo12 clo (rg \12/ r)) \12/ rclo12 clo r) <12= gpaco12 gf clo r rg.
+Proof.
+  intros. destruct PR; cycle 1.
+  - eapply gpaco12_rclo. apply H.
+  - econstructor. apply rclo12_base. left.
+    revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 H. pcofix CIH; intros.
+    _punfold H0; [|apply gf_mon]. pstep.
+    eapply gf_mon. apply H0. intros.
+    destruct PR.
+    + apply rclo12_base. right. apply CIH, H.
+    + eapply rclo12_mon. apply H. intros.
+      right. apply CIH0. apply PR.
 Qed.
 
 End Soundness.
@@ -530,3 +585,5 @@ Hint Unfold gupaco12 : paco.
 Hint Resolve gpaco12_base : paco.
 Hint Resolve gpaco12_step : paco.
 Hint Resolve gpaco12_final : paco.
+Hint Resolve rclo12_base : paco.
+Hint Constructors gpaco12 : paco.

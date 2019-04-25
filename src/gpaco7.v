@@ -117,19 +117,30 @@ Proof.
   econstructor. apply rclo7_base. right. apply PR.
 Qed.
 
-Lemma gpaco7_rclo clo r:
-  rclo7 clo r <7= gupaco7 clo r.
+Lemma gpaco7_rclo clo r rg:
+  rclo7 clo r <7= gpaco7 clo r rg.
 Proof.
   intros. econstructor.
   eapply rclo7_mon. apply PR.
   intros. right. apply PR0.
 Qed.
 
-Lemma gpaco7_clo clo r:
-  clo r <7= gupaco7 clo r.
+Lemma gpaco7_clo clo r rg:
+  clo r <7= gpaco7 clo r rg.
 Proof.
   intros. apply gpaco7_rclo. eapply rclo7_clo', PR.
   apply rclo7_base.
+Qed.
+
+Lemma gpaco7_gen_rclo clo r rg:
+  gpaco7 (rclo7 clo) r rg <7= gpaco7 clo r rg.
+Proof.
+  intros. destruct PR. econstructor.
+  apply rclo7_compose.
+  eapply rclo7_mon. apply IN. intros.
+  destruct PR; [|right; apply H].
+  left. eapply paco7_mon_gen; intros; [apply H| |apply PR].
+  eapply gf_mon, rclo7_compose. apply PR.
 Qed.
 
 Lemma gpaco7_step_gen clo r rg:
@@ -261,10 +272,10 @@ Hint Resolve gpaco7_def_mon : paco.
 Section GeneralMonotonicity.
 
 Variable gf: rel -> rel.
-Hypothesis gf_mon: monotone7 gf.
   
 Lemma gpaco7_mon_gen (gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 x5 x6 r r' rg rg'
       (IN: @gpaco7 gf clo r rg x0 x1 x2 x3 x4 x5 x6)
+      (gf_mon: monotone7 gf)
       (LEgf: gf <8= gf')
       (LEclo: clo <8= clo')
       (LEr: r <7= r')
@@ -284,21 +295,23 @@ Qed.
 
 Lemma gpaco7_mon_bot (gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 x5 x6 r' rg'
       (IN: @gpaco7 gf clo bot7 bot7 x0 x1 x2 x3 x4 x5 x6)
+      (gf_mon: monotone7 gf)
       (LEgf: gf <8= gf')
       (LEclo: clo <8= clo'):
   @gpaco7 gf' clo' r' rg' x0 x1 x2 x3 x4 x5 x6.
 Proof.
-  eapply gpaco7_mon_gen. apply IN. apply LEgf. apply LEclo. contradiction. contradiction.
+  eapply gpaco7_mon_gen. apply IN. apply gf_mon. apply LEgf. apply LEclo. contradiction. contradiction.
 Qed.
 
 Lemma gupaco7_mon_gen (gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 x5 x6 r r'
       (IN: @gupaco7 gf clo r x0 x1 x2 x3 x4 x5 x6)
+      (gf_mon: monotone7 gf)
       (LEgf: gf <8= gf')
       (LEclo: clo <8= clo')
       (LEr: r <7= r'):
   @gupaco7 gf' clo' r' x0 x1 x2 x3 x4 x5 x6.
 Proof.
-  eapply gpaco7_mon_gen. apply IN. apply LEgf. apply LEclo. apply LEr. apply LEr.
+  eapply gpaco7_mon_gen. apply IN. apply gf_mon. apply LEgf. apply LEclo. apply LEr. apply LEr.
 Qed.
 
 End GeneralMonotonicity.
@@ -355,6 +368,22 @@ Proof.
       * intros. eapply rclo7_clo. apply PR.
 Qed.
 
+Lemma rclo7_wcompat clo
+      (COM: wcompatible7 clo):
+  wcompatible7 (rclo7 clo).
+Proof.
+  econstructor.
+  - apply rclo7_mon.
+  - intros. induction PR.
+    + eapply gf_mon. apply IN.
+      intros. apply gpaco7_base. apply PR.
+    + eapply gf_mon.
+      * eapply COM. eapply COM. apply IN. apply H.
+      * intros. eapply gpaco7_gupaco. apply gf_mon.
+        eapply gupaco7_mon_gen; intros; [apply PR|apply gf_mon|apply PR0| |apply PR0].
+        eapply rclo7_clo'. apply rclo7_base. apply PR0.
+Qed.
+
 Lemma compat7_wcompat clo
       (CMP: compatible7 clo):
   wcompatible7 clo.
@@ -397,10 +426,10 @@ Proof.
   - apply monotone7_union. apply WCMP1. apply WCMP2.
   - intros. destruct PR.
     + apply WCMP1 in H. eapply gf_mon. apply H.
-      intros. eapply gupaco7_mon_gen. apply gf_mon. apply PR. 
+      intros. eapply gupaco7_mon_gen. apply PR. apply gf_mon. 
       intros; apply PR0. left; apply PR0. intros; apply PR0.
     + apply WCMP2 in H. eapply gf_mon. apply H.
-      intros. eapply gupaco7_mon_gen. apply gf_mon. apply PR.
+      intros. eapply gupaco7_mon_gen. apply PR. apply gf_mon.
       intros; apply PR0. right; apply PR0. intros; apply PR0.
 Qed.
 
@@ -477,7 +506,7 @@ Lemma gpaco7_init clo
 Proof.
   intros. eapply gpaco7_compat_init.
   - apply wcompat7_compat, WCMP. apply gf_mon.
-  - eapply gpaco7_mon_bot. apply gf_mon. apply PR. intros; apply PR0.
+  - eapply gpaco7_mon_bot. apply PR. apply gf_mon. intros; apply PR0.
     intros. apply gpaco7_clo, PR0.
 Qed.
 
@@ -492,7 +521,7 @@ Proof.
 Qed.
 
 Lemma gpaco7_dist clo r rg
-      (CMP: compatible7 gf clo)
+      (CMP: wcompatible7 gf clo)
       (DIST: forall r1 r2, clo (r1 \7/ r2) <7= (clo r1 \7/ clo r2)):
   gpaco7 gf clo r rg <7= (paco7 gf (rclo7 clo (rg \7/ r)) \7/ rclo7 clo r).
 Proof.
@@ -501,19 +530,45 @@ Proof.
   destruct PR; [|right; apply H].
   left. revert x0 x1 x2 x3 x4 x5 x6 H.
   pcofix CIH; intros.
-  apply rclo7_compat in H0; [|apply gf_mon|apply CMP].
+  apply rclo7_wcompat in H0; [|apply gf_mon|apply CMP].
   pstep. eapply gf_mon. apply H0. intros.
-  assert (REL: @rclo7 clo (rclo7 clo (gf (gupaco7 gf clo ((rg \7/ r) \7/ (rg \7/ r))) \7/ (rg \7/ r))) x0 x1 x2 x3 x4 x5 x6).
-  { eapply rclo7_mon. apply PR. intros. apply gpaco7_unfold in PR0. apply PR0. apply gf_mon. }
-  apply rclo7_rclo in REL.
-  apply rclo7_dist in REL; [|apply CMP|apply DIST].
-  destruct REL; cycle 1.
-  - right. apply CIH0, H.
+  apply gpaco7_unfold in PR; [|apply gf_mon].
+  apply rclo7_compose in PR.
+  apply rclo7_dist in PR; [|apply CMP|apply DIST].
+  destruct PR.
   - right. apply CIH.
     eapply rclo7_mon. apply H. intros.
-    eapply gf_mon. apply PR0. intros.
-    eapply gupaco7_mon. apply PR1. intros.
-    destruct PR2; apply H1.
+    eapply gf_mon. apply PR. intros.
+    apply gpaco7_gupaco. apply gf_mon.
+    apply gpaco7_gen_rclo. apply gf_mon.
+    eapply gupaco7_mon. apply PR0. intros.
+    destruct PR1; apply H1.
+  - assert (REL: @rclo7 clo (rclo7 clo (gf (gupaco7 gf clo ((rg \7/ r) \7/ (rg \7/ r))) \7/ (rg \7/ r))) x0 x1 x2 x3 x4 x5 x6).
+    { eapply rclo7_mon. apply H. intros. apply gpaco7_unfold in PR. apply PR. apply gf_mon. }
+    apply rclo7_rclo in REL.
+    apply rclo7_dist in REL; [|apply CMP|apply DIST].
+    right. destruct REL; cycle 1.
+    + apply CIH0, H1.
+    + apply CIH.
+      eapply rclo7_mon. apply H1. intros.
+      eapply gf_mon. apply PR. intros.
+      eapply gupaco7_mon. apply PR0. intros.
+      destruct PR1; apply H2.
+Qed.
+
+Lemma gpaco7_dist_reverse clo r rg:
+  (paco7 gf (rclo7 clo (rg \7/ r)) \7/ rclo7 clo r) <7= gpaco7 gf clo r rg.
+Proof.
+  intros. destruct PR; cycle 1.
+  - eapply gpaco7_rclo. apply H.
+  - econstructor. apply rclo7_base. left.
+    revert x0 x1 x2 x3 x4 x5 x6 H. pcofix CIH; intros.
+    _punfold H0; [|apply gf_mon]. pstep.
+    eapply gf_mon. apply H0. intros.
+    destruct PR.
+    + apply rclo7_base. right. apply CIH, H.
+    + eapply rclo7_mon. apply H. intros.
+      right. apply CIH0. apply PR.
 Qed.
 
 End Soundness.
@@ -525,3 +580,5 @@ Hint Unfold gupaco7 : paco.
 Hint Resolve gpaco7_base : paco.
 Hint Resolve gpaco7_step : paco.
 Hint Resolve gpaco7_final : paco.
+Hint Resolve rclo7_base : paco.
+Hint Constructors gpaco7 : paco.

@@ -120,19 +120,30 @@ Proof.
   econstructor. apply rclo10_base. right. apply PR.
 Qed.
 
-Lemma gpaco10_rclo clo r:
-  rclo10 clo r <10= gupaco10 clo r.
+Lemma gpaco10_rclo clo r rg:
+  rclo10 clo r <10= gpaco10 clo r rg.
 Proof.
   intros. econstructor.
   eapply rclo10_mon. apply PR.
   intros. right. apply PR0.
 Qed.
 
-Lemma gpaco10_clo clo r:
-  clo r <10= gupaco10 clo r.
+Lemma gpaco10_clo clo r rg:
+  clo r <10= gpaco10 clo r rg.
 Proof.
   intros. apply gpaco10_rclo. eapply rclo10_clo', PR.
   apply rclo10_base.
+Qed.
+
+Lemma gpaco10_gen_rclo clo r rg:
+  gpaco10 (rclo10 clo) r rg <10= gpaco10 clo r rg.
+Proof.
+  intros. destruct PR. econstructor.
+  apply rclo10_compose.
+  eapply rclo10_mon. apply IN. intros.
+  destruct PR; [|right; apply H].
+  left. eapply paco10_mon_gen; intros; [apply H| |apply PR].
+  eapply gf_mon, rclo10_compose. apply PR.
 Qed.
 
 Lemma gpaco10_step_gen clo r rg:
@@ -264,10 +275,10 @@ Hint Resolve gpaco10_def_mon : paco.
 Section GeneralMonotonicity.
 
 Variable gf: rel -> rel.
-Hypothesis gf_mon: monotone10 gf.
   
 Lemma gpaco10_mon_gen (gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 r r' rg rg'
       (IN: @gpaco10 gf clo r rg x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
+      (gf_mon: monotone10 gf)
       (LEgf: gf <11= gf')
       (LEclo: clo <11= clo')
       (LEr: r <10= r')
@@ -287,21 +298,23 @@ Qed.
 
 Lemma gpaco10_mon_bot (gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 r' rg'
       (IN: @gpaco10 gf clo bot10 bot10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
+      (gf_mon: monotone10 gf)
       (LEgf: gf <11= gf')
       (LEclo: clo <11= clo'):
   @gpaco10 gf' clo' r' rg' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9.
 Proof.
-  eapply gpaco10_mon_gen. apply IN. apply LEgf. apply LEclo. contradiction. contradiction.
+  eapply gpaco10_mon_gen. apply IN. apply gf_mon. apply LEgf. apply LEclo. contradiction. contradiction.
 Qed.
 
 Lemma gupaco10_mon_gen (gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 r r'
       (IN: @gupaco10 gf clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
+      (gf_mon: monotone10 gf)
       (LEgf: gf <11= gf')
       (LEclo: clo <11= clo')
       (LEr: r <10= r'):
   @gupaco10 gf' clo' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9.
 Proof.
-  eapply gpaco10_mon_gen. apply IN. apply LEgf. apply LEclo. apply LEr. apply LEr.
+  eapply gpaco10_mon_gen. apply IN. apply gf_mon. apply LEgf. apply LEclo. apply LEr. apply LEr.
 Qed.
 
 End GeneralMonotonicity.
@@ -358,6 +371,22 @@ Proof.
       * intros. eapply rclo10_clo. apply PR.
 Qed.
 
+Lemma rclo10_wcompat clo
+      (COM: wcompatible10 clo):
+  wcompatible10 (rclo10 clo).
+Proof.
+  econstructor.
+  - apply rclo10_mon.
+  - intros. induction PR.
+    + eapply gf_mon. apply IN.
+      intros. apply gpaco10_base. apply PR.
+    + eapply gf_mon.
+      * eapply COM. eapply COM. apply IN. apply H.
+      * intros. eapply gpaco10_gupaco. apply gf_mon.
+        eapply gupaco10_mon_gen; intros; [apply PR|apply gf_mon|apply PR0| |apply PR0].
+        eapply rclo10_clo'. apply rclo10_base. apply PR0.
+Qed.
+
 Lemma compat10_wcompat clo
       (CMP: compatible10 clo):
   wcompatible10 clo.
@@ -400,10 +429,10 @@ Proof.
   - apply monotone10_union. apply WCMP1. apply WCMP2.
   - intros. destruct PR.
     + apply WCMP1 in H. eapply gf_mon. apply H.
-      intros. eapply gupaco10_mon_gen. apply gf_mon. apply PR. 
+      intros. eapply gupaco10_mon_gen. apply PR. apply gf_mon. 
       intros; apply PR0. left; apply PR0. intros; apply PR0.
     + apply WCMP2 in H. eapply gf_mon. apply H.
-      intros. eapply gupaco10_mon_gen. apply gf_mon. apply PR.
+      intros. eapply gupaco10_mon_gen. apply PR. apply gf_mon.
       intros; apply PR0. right; apply PR0. intros; apply PR0.
 Qed.
 
@@ -480,7 +509,7 @@ Lemma gpaco10_init clo
 Proof.
   intros. eapply gpaco10_compat_init.
   - apply wcompat10_compat, WCMP. apply gf_mon.
-  - eapply gpaco10_mon_bot. apply gf_mon. apply PR. intros; apply PR0.
+  - eapply gpaco10_mon_bot. apply PR. apply gf_mon. intros; apply PR0.
     intros. apply gpaco10_clo, PR0.
 Qed.
 
@@ -495,7 +524,7 @@ Proof.
 Qed.
 
 Lemma gpaco10_dist clo r rg
-      (CMP: compatible10 gf clo)
+      (CMP: wcompatible10 gf clo)
       (DIST: forall r1 r2, clo (r1 \10/ r2) <10= (clo r1 \10/ clo r2)):
   gpaco10 gf clo r rg <10= (paco10 gf (rclo10 clo (rg \10/ r)) \10/ rclo10 clo r).
 Proof.
@@ -504,19 +533,45 @@ Proof.
   destruct PR; [|right; apply H].
   left. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 H.
   pcofix CIH; intros.
-  apply rclo10_compat in H0; [|apply gf_mon|apply CMP].
+  apply rclo10_wcompat in H0; [|apply gf_mon|apply CMP].
   pstep. eapply gf_mon. apply H0. intros.
-  assert (REL: @rclo10 clo (rclo10 clo (gf (gupaco10 gf clo ((rg \10/ r) \10/ (rg \10/ r))) \10/ (rg \10/ r))) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9).
-  { eapply rclo10_mon. apply PR. intros. apply gpaco10_unfold in PR0. apply PR0. apply gf_mon. }
-  apply rclo10_rclo in REL.
-  apply rclo10_dist in REL; [|apply CMP|apply DIST].
-  destruct REL; cycle 1.
-  - right. apply CIH0, H.
+  apply gpaco10_unfold in PR; [|apply gf_mon].
+  apply rclo10_compose in PR.
+  apply rclo10_dist in PR; [|apply CMP|apply DIST].
+  destruct PR.
   - right. apply CIH.
     eapply rclo10_mon. apply H. intros.
-    eapply gf_mon. apply PR0. intros.
-    eapply gupaco10_mon. apply PR1. intros.
-    destruct PR2; apply H1.
+    eapply gf_mon. apply PR. intros.
+    apply gpaco10_gupaco. apply gf_mon.
+    apply gpaco10_gen_rclo. apply gf_mon.
+    eapply gupaco10_mon. apply PR0. intros.
+    destruct PR1; apply H1.
+  - assert (REL: @rclo10 clo (rclo10 clo (gf (gupaco10 gf clo ((rg \10/ r) \10/ (rg \10/ r))) \10/ (rg \10/ r))) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9).
+    { eapply rclo10_mon. apply H. intros. apply gpaco10_unfold in PR. apply PR. apply gf_mon. }
+    apply rclo10_rclo in REL.
+    apply rclo10_dist in REL; [|apply CMP|apply DIST].
+    right. destruct REL; cycle 1.
+    + apply CIH0, H1.
+    + apply CIH.
+      eapply rclo10_mon. apply H1. intros.
+      eapply gf_mon. apply PR. intros.
+      eapply gupaco10_mon. apply PR0. intros.
+      destruct PR1; apply H2.
+Qed.
+
+Lemma gpaco10_dist_reverse clo r rg:
+  (paco10 gf (rclo10 clo (rg \10/ r)) \10/ rclo10 clo r) <10= gpaco10 gf clo r rg.
+Proof.
+  intros. destruct PR; cycle 1.
+  - eapply gpaco10_rclo. apply H.
+  - econstructor. apply rclo10_base. left.
+    revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 H. pcofix CIH; intros.
+    _punfold H0; [|apply gf_mon]. pstep.
+    eapply gf_mon. apply H0. intros.
+    destruct PR.
+    + apply rclo10_base. right. apply CIH, H.
+    + eapply rclo10_mon. apply H. intros.
+      right. apply CIH0. apply PR.
 Qed.
 
 End Soundness.
@@ -528,3 +583,5 @@ Hint Unfold gupaco10 : paco.
 Hint Resolve gpaco10_base : paco.
 Hint Resolve gpaco10_step : paco.
 Hint Resolve gpaco10_final : paco.
+Hint Resolve rclo10_base : paco.
+Hint Constructors gpaco10 : paco.

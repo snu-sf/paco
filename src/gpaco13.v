@@ -123,19 +123,30 @@ Proof.
   econstructor. apply rclo13_base. right. apply PR.
 Qed.
 
-Lemma gpaco13_rclo clo r:
-  rclo13 clo r <13= gupaco13 clo r.
+Lemma gpaco13_rclo clo r rg:
+  rclo13 clo r <13= gpaco13 clo r rg.
 Proof.
   intros. econstructor.
   eapply rclo13_mon. apply PR.
   intros. right. apply PR0.
 Qed.
 
-Lemma gpaco13_clo clo r:
-  clo r <13= gupaco13 clo r.
+Lemma gpaco13_clo clo r rg:
+  clo r <13= gpaco13 clo r rg.
 Proof.
   intros. apply gpaco13_rclo. eapply rclo13_clo', PR.
   apply rclo13_base.
+Qed.
+
+Lemma gpaco13_gen_rclo clo r rg:
+  gpaco13 (rclo13 clo) r rg <13= gpaco13 clo r rg.
+Proof.
+  intros. destruct PR. econstructor.
+  apply rclo13_compose.
+  eapply rclo13_mon. apply IN. intros.
+  destruct PR; [|right; apply H].
+  left. eapply paco13_mon_gen; intros; [apply H| |apply PR].
+  eapply gf_mon, rclo13_compose. apply PR.
 Qed.
 
 Lemma gpaco13_step_gen clo r rg:
@@ -267,10 +278,10 @@ Hint Resolve gpaco13_def_mon : paco.
 Section GeneralMonotonicity.
 
 Variable gf: rel -> rel.
-Hypothesis gf_mon: monotone13 gf.
   
 Lemma gpaco13_mon_gen (gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 r r' rg rg'
       (IN: @gpaco13 gf clo r rg x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12)
+      (gf_mon: monotone13 gf)
       (LEgf: gf <14= gf')
       (LEclo: clo <14= clo')
       (LEr: r <13= r')
@@ -290,21 +301,23 @@ Qed.
 
 Lemma gpaco13_mon_bot (gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 r' rg'
       (IN: @gpaco13 gf clo bot13 bot13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12)
+      (gf_mon: monotone13 gf)
       (LEgf: gf <14= gf')
       (LEclo: clo <14= clo'):
   @gpaco13 gf' clo' r' rg' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12.
 Proof.
-  eapply gpaco13_mon_gen. apply IN. apply LEgf. apply LEclo. contradiction. contradiction.
+  eapply gpaco13_mon_gen. apply IN. apply gf_mon. apply LEgf. apply LEclo. contradiction. contradiction.
 Qed.
 
 Lemma gupaco13_mon_gen (gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 r r'
       (IN: @gupaco13 gf clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12)
+      (gf_mon: monotone13 gf)
       (LEgf: gf <14= gf')
       (LEclo: clo <14= clo')
       (LEr: r <13= r'):
   @gupaco13 gf' clo' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12.
 Proof.
-  eapply gpaco13_mon_gen. apply IN. apply LEgf. apply LEclo. apply LEr. apply LEr.
+  eapply gpaco13_mon_gen. apply IN. apply gf_mon. apply LEgf. apply LEclo. apply LEr. apply LEr.
 Qed.
 
 End GeneralMonotonicity.
@@ -361,6 +374,22 @@ Proof.
       * intros. eapply rclo13_clo. apply PR.
 Qed.
 
+Lemma rclo13_wcompat clo
+      (COM: wcompatible13 clo):
+  wcompatible13 (rclo13 clo).
+Proof.
+  econstructor.
+  - apply rclo13_mon.
+  - intros. induction PR.
+    + eapply gf_mon. apply IN.
+      intros. apply gpaco13_base. apply PR.
+    + eapply gf_mon.
+      * eapply COM. eapply COM. apply IN. apply H.
+      * intros. eapply gpaco13_gupaco. apply gf_mon.
+        eapply gupaco13_mon_gen; intros; [apply PR|apply gf_mon|apply PR0| |apply PR0].
+        eapply rclo13_clo'. apply rclo13_base. apply PR0.
+Qed.
+
 Lemma compat13_wcompat clo
       (CMP: compatible13 clo):
   wcompatible13 clo.
@@ -403,10 +432,10 @@ Proof.
   - apply monotone13_union. apply WCMP1. apply WCMP2.
   - intros. destruct PR.
     + apply WCMP1 in H. eapply gf_mon. apply H.
-      intros. eapply gupaco13_mon_gen. apply gf_mon. apply PR. 
+      intros. eapply gupaco13_mon_gen. apply PR. apply gf_mon. 
       intros; apply PR0. left; apply PR0. intros; apply PR0.
     + apply WCMP2 in H. eapply gf_mon. apply H.
-      intros. eapply gupaco13_mon_gen. apply gf_mon. apply PR.
+      intros. eapply gupaco13_mon_gen. apply PR. apply gf_mon.
       intros; apply PR0. right; apply PR0. intros; apply PR0.
 Qed.
 
@@ -483,7 +512,7 @@ Lemma gpaco13_init clo
 Proof.
   intros. eapply gpaco13_compat_init.
   - apply wcompat13_compat, WCMP. apply gf_mon.
-  - eapply gpaco13_mon_bot. apply gf_mon. apply PR. intros; apply PR0.
+  - eapply gpaco13_mon_bot. apply PR. apply gf_mon. intros; apply PR0.
     intros. apply gpaco13_clo, PR0.
 Qed.
 
@@ -498,7 +527,7 @@ Proof.
 Qed.
 
 Lemma gpaco13_dist clo r rg
-      (CMP: compatible13 gf clo)
+      (CMP: wcompatible13 gf clo)
       (DIST: forall r1 r2, clo (r1 \13/ r2) <13= (clo r1 \13/ clo r2)):
   gpaco13 gf clo r rg <13= (paco13 gf (rclo13 clo (rg \13/ r)) \13/ rclo13 clo r).
 Proof.
@@ -507,19 +536,45 @@ Proof.
   destruct PR; [|right; apply H].
   left. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 H.
   pcofix CIH; intros.
-  apply rclo13_compat in H0; [|apply gf_mon|apply CMP].
+  apply rclo13_wcompat in H0; [|apply gf_mon|apply CMP].
   pstep. eapply gf_mon. apply H0. intros.
-  assert (REL: @rclo13 clo (rclo13 clo (gf (gupaco13 gf clo ((rg \13/ r) \13/ (rg \13/ r))) \13/ (rg \13/ r))) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12).
-  { eapply rclo13_mon. apply PR. intros. apply gpaco13_unfold in PR0. apply PR0. apply gf_mon. }
-  apply rclo13_rclo in REL.
-  apply rclo13_dist in REL; [|apply CMP|apply DIST].
-  destruct REL; cycle 1.
-  - right. apply CIH0, H.
+  apply gpaco13_unfold in PR; [|apply gf_mon].
+  apply rclo13_compose in PR.
+  apply rclo13_dist in PR; [|apply CMP|apply DIST].
+  destruct PR.
   - right. apply CIH.
     eapply rclo13_mon. apply H. intros.
-    eapply gf_mon. apply PR0. intros.
-    eapply gupaco13_mon. apply PR1. intros.
-    destruct PR2; apply H1.
+    eapply gf_mon. apply PR. intros.
+    apply gpaco13_gupaco. apply gf_mon.
+    apply gpaco13_gen_rclo. apply gf_mon.
+    eapply gupaco13_mon. apply PR0. intros.
+    destruct PR1; apply H1.
+  - assert (REL: @rclo13 clo (rclo13 clo (gf (gupaco13 gf clo ((rg \13/ r) \13/ (rg \13/ r))) \13/ (rg \13/ r))) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12).
+    { eapply rclo13_mon. apply H. intros. apply gpaco13_unfold in PR. apply PR. apply gf_mon. }
+    apply rclo13_rclo in REL.
+    apply rclo13_dist in REL; [|apply CMP|apply DIST].
+    right. destruct REL; cycle 1.
+    + apply CIH0, H1.
+    + apply CIH.
+      eapply rclo13_mon. apply H1. intros.
+      eapply gf_mon. apply PR. intros.
+      eapply gupaco13_mon. apply PR0. intros.
+      destruct PR1; apply H2.
+Qed.
+
+Lemma gpaco13_dist_reverse clo r rg:
+  (paco13 gf (rclo13 clo (rg \13/ r)) \13/ rclo13 clo r) <13= gpaco13 gf clo r rg.
+Proof.
+  intros. destruct PR; cycle 1.
+  - eapply gpaco13_rclo. apply H.
+  - econstructor. apply rclo13_base. left.
+    revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 H. pcofix CIH; intros.
+    _punfold H0; [|apply gf_mon]. pstep.
+    eapply gf_mon. apply H0. intros.
+    destruct PR.
+    + apply rclo13_base. right. apply CIH, H.
+    + eapply rclo13_mon. apply H. intros.
+      right. apply CIH0. apply PR.
 Qed.
 
 End Soundness.
@@ -531,3 +586,5 @@ Hint Unfold gupaco13 : paco.
 Hint Resolve gpaco13_base : paco.
 Hint Resolve gpaco13_step : paco.
 Hint Resolve gpaco13_final : paco.
+Hint Resolve rclo13_base : paco.
+Hint Constructors gpaco13 : paco.

@@ -112,19 +112,30 @@ Proof.
   econstructor. apply rclo2_base. right. apply PR.
 Qed.
 
-Lemma gpaco2_rclo clo r:
-  rclo2 clo r <2= gupaco2 clo r.
+Lemma gpaco2_rclo clo r rg:
+  rclo2 clo r <2= gpaco2 clo r rg.
 Proof.
   intros. econstructor.
   eapply rclo2_mon. apply PR.
   intros. right. apply PR0.
 Qed.
 
-Lemma gpaco2_clo clo r:
-  clo r <2= gupaco2 clo r.
+Lemma gpaco2_clo clo r rg:
+  clo r <2= gpaco2 clo r rg.
 Proof.
   intros. apply gpaco2_rclo. eapply rclo2_clo', PR.
   apply rclo2_base.
+Qed.
+
+Lemma gpaco2_gen_rclo clo r rg:
+  gpaco2 (rclo2 clo) r rg <2= gpaco2 clo r rg.
+Proof.
+  intros. destruct PR. econstructor.
+  apply rclo2_compose.
+  eapply rclo2_mon. apply IN. intros.
+  destruct PR; [|right; apply H].
+  left. eapply paco2_mon_gen; intros; [apply H| |apply PR].
+  eapply gf_mon, rclo2_compose. apply PR.
 Qed.
 
 Lemma gpaco2_step_gen clo r rg:
@@ -256,10 +267,10 @@ Hint Resolve gpaco2_def_mon : paco.
 Section GeneralMonotonicity.
 
 Variable gf: rel -> rel.
-Hypothesis gf_mon: monotone2 gf.
   
 Lemma gpaco2_mon_gen (gf' clo clo': rel -> rel) x0 x1 r r' rg rg'
       (IN: @gpaco2 gf clo r rg x0 x1)
+      (gf_mon: monotone2 gf)
       (LEgf: gf <3= gf')
       (LEclo: clo <3= clo')
       (LEr: r <2= r')
@@ -279,21 +290,23 @@ Qed.
 
 Lemma gpaco2_mon_bot (gf' clo clo': rel -> rel) x0 x1 r' rg'
       (IN: @gpaco2 gf clo bot2 bot2 x0 x1)
+      (gf_mon: monotone2 gf)
       (LEgf: gf <3= gf')
       (LEclo: clo <3= clo'):
   @gpaco2 gf' clo' r' rg' x0 x1.
 Proof.
-  eapply gpaco2_mon_gen. apply IN. apply LEgf. apply LEclo. contradiction. contradiction.
+  eapply gpaco2_mon_gen. apply IN. apply gf_mon. apply LEgf. apply LEclo. contradiction. contradiction.
 Qed.
 
 Lemma gupaco2_mon_gen (gf' clo clo': rel -> rel) x0 x1 r r'
       (IN: @gupaco2 gf clo r x0 x1)
+      (gf_mon: monotone2 gf)
       (LEgf: gf <3= gf')
       (LEclo: clo <3= clo')
       (LEr: r <2= r'):
   @gupaco2 gf' clo' r' x0 x1.
 Proof.
-  eapply gpaco2_mon_gen. apply IN. apply LEgf. apply LEclo. apply LEr. apply LEr.
+  eapply gpaco2_mon_gen. apply IN. apply gf_mon. apply LEgf. apply LEclo. apply LEr. apply LEr.
 Qed.
 
 End GeneralMonotonicity.
@@ -350,6 +363,22 @@ Proof.
       * intros. eapply rclo2_clo. apply PR.
 Qed.
 
+Lemma rclo2_wcompat clo
+      (COM: wcompatible2 clo):
+  wcompatible2 (rclo2 clo).
+Proof.
+  econstructor.
+  - apply rclo2_mon.
+  - intros. induction PR.
+    + eapply gf_mon. apply IN.
+      intros. apply gpaco2_base. apply PR.
+    + eapply gf_mon.
+      * eapply COM. eapply COM. apply IN. apply H.
+      * intros. eapply gpaco2_gupaco. apply gf_mon.
+        eapply gupaco2_mon_gen; intros; [apply PR|apply gf_mon|apply PR0| |apply PR0].
+        eapply rclo2_clo'. apply rclo2_base. apply PR0.
+Qed.
+
 Lemma compat2_wcompat clo
       (CMP: compatible2 clo):
   wcompatible2 clo.
@@ -392,10 +421,10 @@ Proof.
   - apply monotone2_union. apply WCMP1. apply WCMP2.
   - intros. destruct PR.
     + apply WCMP1 in H. eapply gf_mon. apply H.
-      intros. eapply gupaco2_mon_gen. apply gf_mon. apply PR. 
+      intros. eapply gupaco2_mon_gen. apply PR. apply gf_mon. 
       intros; apply PR0. left; apply PR0. intros; apply PR0.
     + apply WCMP2 in H. eapply gf_mon. apply H.
-      intros. eapply gupaco2_mon_gen. apply gf_mon. apply PR.
+      intros. eapply gupaco2_mon_gen. apply PR. apply gf_mon.
       intros; apply PR0. right; apply PR0. intros; apply PR0.
 Qed.
 
@@ -472,7 +501,7 @@ Lemma gpaco2_init clo
 Proof.
   intros. eapply gpaco2_compat_init.
   - apply wcompat2_compat, WCMP. apply gf_mon.
-  - eapply gpaco2_mon_bot. apply gf_mon. apply PR. intros; apply PR0.
+  - eapply gpaco2_mon_bot. apply PR. apply gf_mon. intros; apply PR0.
     intros. apply gpaco2_clo, PR0.
 Qed.
 
@@ -487,7 +516,7 @@ Proof.
 Qed.
 
 Lemma gpaco2_dist clo r rg
-      (CMP: compatible2 gf clo)
+      (CMP: wcompatible2 gf clo)
       (DIST: forall r1 r2, clo (r1 \2/ r2) <2= (clo r1 \2/ clo r2)):
   gpaco2 gf clo r rg <2= (paco2 gf (rclo2 clo (rg \2/ r)) \2/ rclo2 clo r).
 Proof.
@@ -496,19 +525,45 @@ Proof.
   destruct PR; [|right; apply H].
   left. revert x0 x1 H.
   pcofix CIH; intros.
-  apply rclo2_compat in H0; [|apply gf_mon|apply CMP].
+  apply rclo2_wcompat in H0; [|apply gf_mon|apply CMP].
   pstep. eapply gf_mon. apply H0. intros.
-  assert (REL: @rclo2 clo (rclo2 clo (gf (gupaco2 gf clo ((rg \2/ r) \2/ (rg \2/ r))) \2/ (rg \2/ r))) x0 x1).
-  { eapply rclo2_mon. apply PR. intros. apply gpaco2_unfold in PR0. apply PR0. apply gf_mon. }
-  apply rclo2_rclo in REL.
-  apply rclo2_dist in REL; [|apply CMP|apply DIST].
-  destruct REL; cycle 1.
-  - right. apply CIH0, H.
+  apply gpaco2_unfold in PR; [|apply gf_mon].
+  apply rclo2_compose in PR.
+  apply rclo2_dist in PR; [|apply CMP|apply DIST].
+  destruct PR.
   - right. apply CIH.
     eapply rclo2_mon. apply H. intros.
-    eapply gf_mon. apply PR0. intros.
-    eapply gupaco2_mon. apply PR1. intros.
-    destruct PR2; apply H1.
+    eapply gf_mon. apply PR. intros.
+    apply gpaco2_gupaco. apply gf_mon.
+    apply gpaco2_gen_rclo. apply gf_mon.
+    eapply gupaco2_mon. apply PR0. intros.
+    destruct PR1; apply H1.
+  - assert (REL: @rclo2 clo (rclo2 clo (gf (gupaco2 gf clo ((rg \2/ r) \2/ (rg \2/ r))) \2/ (rg \2/ r))) x0 x1).
+    { eapply rclo2_mon. apply H. intros. apply gpaco2_unfold in PR. apply PR. apply gf_mon. }
+    apply rclo2_rclo in REL.
+    apply rclo2_dist in REL; [|apply CMP|apply DIST].
+    right. destruct REL; cycle 1.
+    + apply CIH0, H1.
+    + apply CIH.
+      eapply rclo2_mon. apply H1. intros.
+      eapply gf_mon. apply PR. intros.
+      eapply gupaco2_mon. apply PR0. intros.
+      destruct PR1; apply H2.
+Qed.
+
+Lemma gpaco2_dist_reverse clo r rg:
+  (paco2 gf (rclo2 clo (rg \2/ r)) \2/ rclo2 clo r) <2= gpaco2 gf clo r rg.
+Proof.
+  intros. destruct PR; cycle 1.
+  - eapply gpaco2_rclo. apply H.
+  - econstructor. apply rclo2_base. left.
+    revert x0 x1 H. pcofix CIH; intros.
+    _punfold H0; [|apply gf_mon]. pstep.
+    eapply gf_mon. apply H0. intros.
+    destruct PR.
+    + apply rclo2_base. right. apply CIH, H.
+    + eapply rclo2_mon. apply H. intros.
+      right. apply CIH0. apply PR.
 Qed.
 
 End Soundness.
@@ -520,3 +575,5 @@ Hint Unfold gupaco2 : paco.
 Hint Resolve gpaco2_base : paco.
 Hint Resolve gpaco2_step : paco.
 Hint Resolve gpaco2_final : paco.
+Hint Resolve rclo2_base : paco.
+Hint Constructors gpaco2 : paco.

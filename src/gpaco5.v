@@ -115,19 +115,30 @@ Proof.
   econstructor. apply rclo5_base. right. apply PR.
 Qed.
 
-Lemma gpaco5_rclo clo r:
-  rclo5 clo r <5= gupaco5 clo r.
+Lemma gpaco5_rclo clo r rg:
+  rclo5 clo r <5= gpaco5 clo r rg.
 Proof.
   intros. econstructor.
   eapply rclo5_mon. apply PR.
   intros. right. apply PR0.
 Qed.
 
-Lemma gpaco5_clo clo r:
-  clo r <5= gupaco5 clo r.
+Lemma gpaco5_clo clo r rg:
+  clo r <5= gpaco5 clo r rg.
 Proof.
   intros. apply gpaco5_rclo. eapply rclo5_clo', PR.
   apply rclo5_base.
+Qed.
+
+Lemma gpaco5_gen_rclo clo r rg:
+  gpaco5 (rclo5 clo) r rg <5= gpaco5 clo r rg.
+Proof.
+  intros. destruct PR. econstructor.
+  apply rclo5_compose.
+  eapply rclo5_mon. apply IN. intros.
+  destruct PR; [|right; apply H].
+  left. eapply paco5_mon_gen; intros; [apply H| |apply PR].
+  eapply gf_mon, rclo5_compose. apply PR.
 Qed.
 
 Lemma gpaco5_step_gen clo r rg:
@@ -259,10 +270,10 @@ Hint Resolve gpaco5_def_mon : paco.
 Section GeneralMonotonicity.
 
 Variable gf: rel -> rel.
-Hypothesis gf_mon: monotone5 gf.
   
 Lemma gpaco5_mon_gen (gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 r r' rg rg'
       (IN: @gpaco5 gf clo r rg x0 x1 x2 x3 x4)
+      (gf_mon: monotone5 gf)
       (LEgf: gf <6= gf')
       (LEclo: clo <6= clo')
       (LEr: r <5= r')
@@ -282,21 +293,23 @@ Qed.
 
 Lemma gpaco5_mon_bot (gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 r' rg'
       (IN: @gpaco5 gf clo bot5 bot5 x0 x1 x2 x3 x4)
+      (gf_mon: monotone5 gf)
       (LEgf: gf <6= gf')
       (LEclo: clo <6= clo'):
   @gpaco5 gf' clo' r' rg' x0 x1 x2 x3 x4.
 Proof.
-  eapply gpaco5_mon_gen. apply IN. apply LEgf. apply LEclo. contradiction. contradiction.
+  eapply gpaco5_mon_gen. apply IN. apply gf_mon. apply LEgf. apply LEclo. contradiction. contradiction.
 Qed.
 
 Lemma gupaco5_mon_gen (gf' clo clo': rel -> rel) x0 x1 x2 x3 x4 r r'
       (IN: @gupaco5 gf clo r x0 x1 x2 x3 x4)
+      (gf_mon: monotone5 gf)
       (LEgf: gf <6= gf')
       (LEclo: clo <6= clo')
       (LEr: r <5= r'):
   @gupaco5 gf' clo' r' x0 x1 x2 x3 x4.
 Proof.
-  eapply gpaco5_mon_gen. apply IN. apply LEgf. apply LEclo. apply LEr. apply LEr.
+  eapply gpaco5_mon_gen. apply IN. apply gf_mon. apply LEgf. apply LEclo. apply LEr. apply LEr.
 Qed.
 
 End GeneralMonotonicity.
@@ -353,6 +366,22 @@ Proof.
       * intros. eapply rclo5_clo. apply PR.
 Qed.
 
+Lemma rclo5_wcompat clo
+      (COM: wcompatible5 clo):
+  wcompatible5 (rclo5 clo).
+Proof.
+  econstructor.
+  - apply rclo5_mon.
+  - intros. induction PR.
+    + eapply gf_mon. apply IN.
+      intros. apply gpaco5_base. apply PR.
+    + eapply gf_mon.
+      * eapply COM. eapply COM. apply IN. apply H.
+      * intros. eapply gpaco5_gupaco. apply gf_mon.
+        eapply gupaco5_mon_gen; intros; [apply PR|apply gf_mon|apply PR0| |apply PR0].
+        eapply rclo5_clo'. apply rclo5_base. apply PR0.
+Qed.
+
 Lemma compat5_wcompat clo
       (CMP: compatible5 clo):
   wcompatible5 clo.
@@ -395,10 +424,10 @@ Proof.
   - apply monotone5_union. apply WCMP1. apply WCMP2.
   - intros. destruct PR.
     + apply WCMP1 in H. eapply gf_mon. apply H.
-      intros. eapply gupaco5_mon_gen. apply gf_mon. apply PR. 
+      intros. eapply gupaco5_mon_gen. apply PR. apply gf_mon. 
       intros; apply PR0. left; apply PR0. intros; apply PR0.
     + apply WCMP2 in H. eapply gf_mon. apply H.
-      intros. eapply gupaco5_mon_gen. apply gf_mon. apply PR.
+      intros. eapply gupaco5_mon_gen. apply PR. apply gf_mon.
       intros; apply PR0. right; apply PR0. intros; apply PR0.
 Qed.
 
@@ -475,7 +504,7 @@ Lemma gpaco5_init clo
 Proof.
   intros. eapply gpaco5_compat_init.
   - apply wcompat5_compat, WCMP. apply gf_mon.
-  - eapply gpaco5_mon_bot. apply gf_mon. apply PR. intros; apply PR0.
+  - eapply gpaco5_mon_bot. apply PR. apply gf_mon. intros; apply PR0.
     intros. apply gpaco5_clo, PR0.
 Qed.
 
@@ -490,7 +519,7 @@ Proof.
 Qed.
 
 Lemma gpaco5_dist clo r rg
-      (CMP: compatible5 gf clo)
+      (CMP: wcompatible5 gf clo)
       (DIST: forall r1 r2, clo (r1 \5/ r2) <5= (clo r1 \5/ clo r2)):
   gpaco5 gf clo r rg <5= (paco5 gf (rclo5 clo (rg \5/ r)) \5/ rclo5 clo r).
 Proof.
@@ -499,19 +528,45 @@ Proof.
   destruct PR; [|right; apply H].
   left. revert x0 x1 x2 x3 x4 H.
   pcofix CIH; intros.
-  apply rclo5_compat in H0; [|apply gf_mon|apply CMP].
+  apply rclo5_wcompat in H0; [|apply gf_mon|apply CMP].
   pstep. eapply gf_mon. apply H0. intros.
-  assert (REL: @rclo5 clo (rclo5 clo (gf (gupaco5 gf clo ((rg \5/ r) \5/ (rg \5/ r))) \5/ (rg \5/ r))) x0 x1 x2 x3 x4).
-  { eapply rclo5_mon. apply PR. intros. apply gpaco5_unfold in PR0. apply PR0. apply gf_mon. }
-  apply rclo5_rclo in REL.
-  apply rclo5_dist in REL; [|apply CMP|apply DIST].
-  destruct REL; cycle 1.
-  - right. apply CIH0, H.
+  apply gpaco5_unfold in PR; [|apply gf_mon].
+  apply rclo5_compose in PR.
+  apply rclo5_dist in PR; [|apply CMP|apply DIST].
+  destruct PR.
   - right. apply CIH.
     eapply rclo5_mon. apply H. intros.
-    eapply gf_mon. apply PR0. intros.
-    eapply gupaco5_mon. apply PR1. intros.
-    destruct PR2; apply H1.
+    eapply gf_mon. apply PR. intros.
+    apply gpaco5_gupaco. apply gf_mon.
+    apply gpaco5_gen_rclo. apply gf_mon.
+    eapply gupaco5_mon. apply PR0. intros.
+    destruct PR1; apply H1.
+  - assert (REL: @rclo5 clo (rclo5 clo (gf (gupaco5 gf clo ((rg \5/ r) \5/ (rg \5/ r))) \5/ (rg \5/ r))) x0 x1 x2 x3 x4).
+    { eapply rclo5_mon. apply H. intros. apply gpaco5_unfold in PR. apply PR. apply gf_mon. }
+    apply rclo5_rclo in REL.
+    apply rclo5_dist in REL; [|apply CMP|apply DIST].
+    right. destruct REL; cycle 1.
+    + apply CIH0, H1.
+    + apply CIH.
+      eapply rclo5_mon. apply H1. intros.
+      eapply gf_mon. apply PR. intros.
+      eapply gupaco5_mon. apply PR0. intros.
+      destruct PR1; apply H2.
+Qed.
+
+Lemma gpaco5_dist_reverse clo r rg:
+  (paco5 gf (rclo5 clo (rg \5/ r)) \5/ rclo5 clo r) <5= gpaco5 gf clo r rg.
+Proof.
+  intros. destruct PR; cycle 1.
+  - eapply gpaco5_rclo. apply H.
+  - econstructor. apply rclo5_base. left.
+    revert x0 x1 x2 x3 x4 H. pcofix CIH; intros.
+    _punfold H0; [|apply gf_mon]. pstep.
+    eapply gf_mon. apply H0. intros.
+    destruct PR.
+    + apply rclo5_base. right. apply CIH, H.
+    + eapply rclo5_mon. apply H. intros.
+      right. apply CIH0. apply PR.
 Qed.
 
 End Soundness.
@@ -523,3 +578,5 @@ Hint Unfold gupaco5 : paco.
 Hint Resolve gpaco5_base : paco.
 Hint Resolve gpaco5_step : paco.
 Hint Resolve gpaco5_final : paco.
+Hint Resolve rclo5_base : paco.
+Hint Constructors gpaco5 : paco.

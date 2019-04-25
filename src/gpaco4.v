@@ -114,19 +114,30 @@ Proof.
   econstructor. apply rclo4_base. right. apply PR.
 Qed.
 
-Lemma gpaco4_rclo clo r:
-  rclo4 clo r <4= gupaco4 clo r.
+Lemma gpaco4_rclo clo r rg:
+  rclo4 clo r <4= gpaco4 clo r rg.
 Proof.
   intros. econstructor.
   eapply rclo4_mon. apply PR.
   intros. right. apply PR0.
 Qed.
 
-Lemma gpaco4_clo clo r:
-  clo r <4= gupaco4 clo r.
+Lemma gpaco4_clo clo r rg:
+  clo r <4= gpaco4 clo r rg.
 Proof.
   intros. apply gpaco4_rclo. eapply rclo4_clo', PR.
   apply rclo4_base.
+Qed.
+
+Lemma gpaco4_gen_rclo clo r rg:
+  gpaco4 (rclo4 clo) r rg <4= gpaco4 clo r rg.
+Proof.
+  intros. destruct PR. econstructor.
+  apply rclo4_compose.
+  eapply rclo4_mon. apply IN. intros.
+  destruct PR; [|right; apply H].
+  left. eapply paco4_mon_gen; intros; [apply H| |apply PR].
+  eapply gf_mon, rclo4_compose. apply PR.
 Qed.
 
 Lemma gpaco4_step_gen clo r rg:
@@ -258,10 +269,10 @@ Hint Resolve gpaco4_def_mon : paco.
 Section GeneralMonotonicity.
 
 Variable gf: rel -> rel.
-Hypothesis gf_mon: monotone4 gf.
   
 Lemma gpaco4_mon_gen (gf' clo clo': rel -> rel) x0 x1 x2 x3 r r' rg rg'
       (IN: @gpaco4 gf clo r rg x0 x1 x2 x3)
+      (gf_mon: monotone4 gf)
       (LEgf: gf <5= gf')
       (LEclo: clo <5= clo')
       (LEr: r <4= r')
@@ -281,21 +292,23 @@ Qed.
 
 Lemma gpaco4_mon_bot (gf' clo clo': rel -> rel) x0 x1 x2 x3 r' rg'
       (IN: @gpaco4 gf clo bot4 bot4 x0 x1 x2 x3)
+      (gf_mon: monotone4 gf)
       (LEgf: gf <5= gf')
       (LEclo: clo <5= clo'):
   @gpaco4 gf' clo' r' rg' x0 x1 x2 x3.
 Proof.
-  eapply gpaco4_mon_gen. apply IN. apply LEgf. apply LEclo. contradiction. contradiction.
+  eapply gpaco4_mon_gen. apply IN. apply gf_mon. apply LEgf. apply LEclo. contradiction. contradiction.
 Qed.
 
 Lemma gupaco4_mon_gen (gf' clo clo': rel -> rel) x0 x1 x2 x3 r r'
       (IN: @gupaco4 gf clo r x0 x1 x2 x3)
+      (gf_mon: monotone4 gf)
       (LEgf: gf <5= gf')
       (LEclo: clo <5= clo')
       (LEr: r <4= r'):
   @gupaco4 gf' clo' r' x0 x1 x2 x3.
 Proof.
-  eapply gpaco4_mon_gen. apply IN. apply LEgf. apply LEclo. apply LEr. apply LEr.
+  eapply gpaco4_mon_gen. apply IN. apply gf_mon. apply LEgf. apply LEclo. apply LEr. apply LEr.
 Qed.
 
 End GeneralMonotonicity.
@@ -352,6 +365,22 @@ Proof.
       * intros. eapply rclo4_clo. apply PR.
 Qed.
 
+Lemma rclo4_wcompat clo
+      (COM: wcompatible4 clo):
+  wcompatible4 (rclo4 clo).
+Proof.
+  econstructor.
+  - apply rclo4_mon.
+  - intros. induction PR.
+    + eapply gf_mon. apply IN.
+      intros. apply gpaco4_base. apply PR.
+    + eapply gf_mon.
+      * eapply COM. eapply COM. apply IN. apply H.
+      * intros. eapply gpaco4_gupaco. apply gf_mon.
+        eapply gupaco4_mon_gen; intros; [apply PR|apply gf_mon|apply PR0| |apply PR0].
+        eapply rclo4_clo'. apply rclo4_base. apply PR0.
+Qed.
+
 Lemma compat4_wcompat clo
       (CMP: compatible4 clo):
   wcompatible4 clo.
@@ -394,10 +423,10 @@ Proof.
   - apply monotone4_union. apply WCMP1. apply WCMP2.
   - intros. destruct PR.
     + apply WCMP1 in H. eapply gf_mon. apply H.
-      intros. eapply gupaco4_mon_gen. apply gf_mon. apply PR. 
+      intros. eapply gupaco4_mon_gen. apply PR. apply gf_mon. 
       intros; apply PR0. left; apply PR0. intros; apply PR0.
     + apply WCMP2 in H. eapply gf_mon. apply H.
-      intros. eapply gupaco4_mon_gen. apply gf_mon. apply PR.
+      intros. eapply gupaco4_mon_gen. apply PR. apply gf_mon.
       intros; apply PR0. right; apply PR0. intros; apply PR0.
 Qed.
 
@@ -474,7 +503,7 @@ Lemma gpaco4_init clo
 Proof.
   intros. eapply gpaco4_compat_init.
   - apply wcompat4_compat, WCMP. apply gf_mon.
-  - eapply gpaco4_mon_bot. apply gf_mon. apply PR. intros; apply PR0.
+  - eapply gpaco4_mon_bot. apply PR. apply gf_mon. intros; apply PR0.
     intros. apply gpaco4_clo, PR0.
 Qed.
 
@@ -489,7 +518,7 @@ Proof.
 Qed.
 
 Lemma gpaco4_dist clo r rg
-      (CMP: compatible4 gf clo)
+      (CMP: wcompatible4 gf clo)
       (DIST: forall r1 r2, clo (r1 \4/ r2) <4= (clo r1 \4/ clo r2)):
   gpaco4 gf clo r rg <4= (paco4 gf (rclo4 clo (rg \4/ r)) \4/ rclo4 clo r).
 Proof.
@@ -498,19 +527,45 @@ Proof.
   destruct PR; [|right; apply H].
   left. revert x0 x1 x2 x3 H.
   pcofix CIH; intros.
-  apply rclo4_compat in H0; [|apply gf_mon|apply CMP].
+  apply rclo4_wcompat in H0; [|apply gf_mon|apply CMP].
   pstep. eapply gf_mon. apply H0. intros.
-  assert (REL: @rclo4 clo (rclo4 clo (gf (gupaco4 gf clo ((rg \4/ r) \4/ (rg \4/ r))) \4/ (rg \4/ r))) x0 x1 x2 x3).
-  { eapply rclo4_mon. apply PR. intros. apply gpaco4_unfold in PR0. apply PR0. apply gf_mon. }
-  apply rclo4_rclo in REL.
-  apply rclo4_dist in REL; [|apply CMP|apply DIST].
-  destruct REL; cycle 1.
-  - right. apply CIH0, H.
+  apply gpaco4_unfold in PR; [|apply gf_mon].
+  apply rclo4_compose in PR.
+  apply rclo4_dist in PR; [|apply CMP|apply DIST].
+  destruct PR.
   - right. apply CIH.
     eapply rclo4_mon. apply H. intros.
-    eapply gf_mon. apply PR0. intros.
-    eapply gupaco4_mon. apply PR1. intros.
-    destruct PR2; apply H1.
+    eapply gf_mon. apply PR. intros.
+    apply gpaco4_gupaco. apply gf_mon.
+    apply gpaco4_gen_rclo. apply gf_mon.
+    eapply gupaco4_mon. apply PR0. intros.
+    destruct PR1; apply H1.
+  - assert (REL: @rclo4 clo (rclo4 clo (gf (gupaco4 gf clo ((rg \4/ r) \4/ (rg \4/ r))) \4/ (rg \4/ r))) x0 x1 x2 x3).
+    { eapply rclo4_mon. apply H. intros. apply gpaco4_unfold in PR. apply PR. apply gf_mon. }
+    apply rclo4_rclo in REL.
+    apply rclo4_dist in REL; [|apply CMP|apply DIST].
+    right. destruct REL; cycle 1.
+    + apply CIH0, H1.
+    + apply CIH.
+      eapply rclo4_mon. apply H1. intros.
+      eapply gf_mon. apply PR. intros.
+      eapply gupaco4_mon. apply PR0. intros.
+      destruct PR1; apply H2.
+Qed.
+
+Lemma gpaco4_dist_reverse clo r rg:
+  (paco4 gf (rclo4 clo (rg \4/ r)) \4/ rclo4 clo r) <4= gpaco4 gf clo r rg.
+Proof.
+  intros. destruct PR; cycle 1.
+  - eapply gpaco4_rclo. apply H.
+  - econstructor. apply rclo4_base. left.
+    revert x0 x1 x2 x3 H. pcofix CIH; intros.
+    _punfold H0; [|apply gf_mon]. pstep.
+    eapply gf_mon. apply H0. intros.
+    destruct PR.
+    + apply rclo4_base. right. apply CIH, H.
+    + eapply rclo4_mon. apply H. intros.
+      right. apply CIH0. apply PR.
 Qed.
 
 End Soundness.
@@ -522,3 +577,5 @@ Hint Unfold gupaco4 : paco.
 Hint Resolve gpaco4_base : paco.
 Hint Resolve gpaco4_step : paco.
 Hint Resolve gpaco4_final : paco.
+Hint Resolve rclo4_base : paco.
+Hint Constructors gpaco4 : paco.

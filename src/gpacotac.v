@@ -186,26 +186,49 @@ Tactic Notation "gclo_" :=
   end.
 Ltac gclo := repeat red; under_forall ltac:(gclo_).
 
+(** ** grclo
+*)
+
+Tactic Notation "grclo_" :=
+  match goal with
+  | [|- context[gpaco0]]  => eapply gpaco0_gupaco, gpaco0_rclo; [eauto with paco|]
+  | [|- context[gpaco1]]  => eapply gpaco1_gupaco, gpaco1_rclo; [eauto with paco|]
+  | [|- context[gpaco2]]  => eapply gpaco2_gupaco, gpaco2_rclo; [eauto with paco|]
+  | [|- context[gpaco3]]  => eapply gpaco3_gupaco, gpaco3_rclo; [eauto with paco|]
+  | [|- context[gpaco4]]  => eapply gpaco4_gupaco, gpaco4_rclo; [eauto with paco|]
+  | [|- context[gpaco5]]  => eapply gpaco5_gupaco, gpaco5_rclo; [eauto with paco|]
+  | [|- context[gpaco6]]  => eapply gpaco6_gupaco, gpaco6_rclo; [eauto with paco|]
+  | [|- context[gpaco7]]  => eapply gpaco7_gupaco, gpaco7_rclo; [eauto with paco|]
+  | [|- context[gpaco8]]  => eapply gpaco8_gupaco, gpaco8_rclo; [eauto with paco|]
+  | [|- context[gpaco9]]  => eapply gpaco9_gupaco, gpaco9_rclo; [eauto with paco|]
+  | [|- context[gpaco10]]  => eapply gpaco10_gupaco, gpaco10_rclo; [eauto with paco|]
+  | [|- context[gpaco11]]  => eapply gpaco11_gupaco, gpaco11_rclo; [eauto with paco|]
+  | [|- context[gpaco12]]  => eapply gpaco12_gupaco, gpaco12_rclo; [eauto with paco|]
+  | [|- context[gpaco13]]  => eapply gpaco13_gupaco, gpaco13_rclo; [eauto with paco|]
+  | [|- context[gpaco14]]  => eapply gpaco14_gupaco, gpaco14_rclo; [eauto with paco|]
+  end.
+Ltac grclo := repeat red; under_forall ltac:(grclo_).
+
 (** ** guclo H
 *)
 
 Tactic Notation "guclo_" constr(H) :=
   match goal with
-  | [|- context[gpaco0]]  => eapply gpaco0_uclo; [|eapply H|]; [eauto with paco|..]
-  | [|- context[gpaco1]]  => eapply gpaco1_uclo; [|eapply H|]; [eauto with paco|..]
-  | [|- context[gpaco2]]  => eapply gpaco2_uclo; [|eapply H|]; [eauto with paco|..]
-  | [|- context[gpaco3]]  => eapply gpaco3_uclo; [|eapply H|]; [eauto with paco|..]
-  | [|- context[gpaco4]]  => eapply gpaco4_uclo; [|eapply H|]; [eauto with paco|..]
-  | [|- context[gpaco5]]  => eapply gpaco5_uclo; [|eapply H|]; [eauto with paco|..]
-  | [|- context[gpaco6]]  => eapply gpaco6_uclo; [|eapply H|]; [eauto with paco|..]
-  | [|- context[gpaco7]]  => eapply gpaco7_uclo; [|eapply H|]; [eauto with paco|..]
-  | [|- context[gpaco8]]  => eapply gpaco8_uclo; [|eapply H|]; [eauto with paco|..]
-  | [|- context[gpaco9]]  => eapply gpaco9_uclo; [|eapply H|]; [eauto with paco|..]
-  | [|- context[gpaco10]]  => eapply gpaco10_uclo; [|eapply H|]; [eauto with paco|..]
-  | [|- context[gpaco11]]  => eapply gpaco11_uclo; [|eapply H|]; [eauto with paco|..]
-  | [|- context[gpaco12]]  => eapply gpaco12_uclo; [|eapply H|]; [eauto with paco|..]
-  | [|- context[gpaco13]]  => eapply gpaco13_uclo; [|eapply H|]; [eauto with paco|..]
-  | [|- context[gpaco14]]  => eapply gpaco14_uclo; [|eapply H|]; [eauto with paco|..]
+  | [|- context[gpaco0]]  => eapply gpaco0_uclo; [|eapply H|]; eauto with paco
+  | [|- context[gpaco1]]  => eapply gpaco1_uclo; [|eapply H|]; eauto with paco
+  | [|- context[gpaco2]]  => eapply gpaco2_uclo; [|eapply H|]; eauto with paco
+  | [|- context[gpaco3]]  => eapply gpaco3_uclo; [|eapply H|]; eauto with paco
+  | [|- context[gpaco4]]  => eapply gpaco4_uclo; [|eapply H|]; eauto with paco
+  | [|- context[gpaco5]]  => eapply gpaco5_uclo; [|eapply H|]; eauto with paco
+  | [|- context[gpaco6]]  => eapply gpaco6_uclo; [|eapply H|]; eauto with paco
+  | [|- context[gpaco7]]  => eapply gpaco7_uclo; [|eapply H|]; eauto with paco
+  | [|- context[gpaco8]]  => eapply gpaco8_uclo; [|eapply H|]; eauto with paco
+  | [|- context[gpaco9]]  => eapply gpaco9_uclo; [|eapply H|]; eauto with paco
+  | [|- context[gpaco10]]  => eapply gpaco10_uclo; [|eapply H|]; eauto with paco
+  | [|- context[gpaco11]]  => eapply gpaco11_uclo; [|eapply H|]; eauto with paco
+  | [|- context[gpaco12]]  => eapply gpaco12_uclo; [|eapply H|]; eauto with paco
+  | [|- context[gpaco13]]  => eapply gpaco13_uclo; [|eapply H|]; eauto with paco
+  | [|- context[gpaco14]]  => eapply gpaco14_uclo; [|eapply H|]; eauto with paco
   end.
 Ltac guclo H := repeat red; under_forall ltac:(guclo_ H).
 
