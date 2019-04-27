@@ -336,13 +336,6 @@ Structure wcompatible8 clo : Prop :=
           clo (gf r) <8= gf (gupaco8 gf clo r);
     }.
 
-Inductive cpn8 (r: rel) x0 x1 x2 x3 x4 x5 x6 x7 : Prop :=
-| cpn8_intro
-    clo
-    (COM: compatible8 clo)
-    (CLO: clo r x0 x1 x2 x3 x4 x5 x6 x7)
-.
-
 Lemma rclo8_dist clo
       (MON: monotone8 clo)
       (DIST: forall r1 r2, clo (r1 \8/ r2) <8= (clo r1 \8/ clo r2)):
@@ -434,52 +427,6 @@ Proof.
       intros; apply PR0. right; apply PR0. intros; apply PR0.
 Qed.
 
-Lemma cpn8_mon: monotone8 cpn8.
-Proof.
-  red. intros.
-  destruct IN. exists clo.
-  - apply COM.
-  - eapply compat8_mon; [apply COM|apply CLO|apply LE].
-Qed.
-
-Lemma cpn8_greatest: forall clo (COM: compatible8 clo), clo <9= cpn8.
-Proof. intros. econstructor;[apply COM|apply PR]. Qed.
-
-Lemma cpn8_compat: compatible8 cpn8.
-Proof.
-  econstructor; [apply cpn8_mon|intros].
-  destruct PR; eapply gf_mon with (r:=clo r).
-  - eapply (compat8_compat COM); apply CLO.
-  - intros. econstructor; [apply COM|apply PR].
-Qed.
-
-Lemma cpn8_wcompat: wcompatible8 cpn8.
-Proof. apply compat8_wcompat, cpn8_compat. Qed.
-
-Lemma cpn8_gupaco:
-  gupaco8 gf cpn8 <9= cpn8.
-Proof.
-  intros. eapply cpn8_greatest, PR. apply wcompat8_compat. apply cpn8_wcompat.
-Qed.
-
-Lemma cpn8_uclo uclo
-      (MON: monotone8 uclo)
-      (WCOM: forall r, uclo (gf r) <8= gf (gupaco8 gf (uclo \9/ cpn8) r)):
-  uclo <9= gupaco8 gf cpn8.
-Proof.
-  intros. apply gpaco8_clo.
-  exists (gupaco8 gf (uclo \9/ cpn8)).
-  - apply wcompat8_compat.
-    econstructor.
-    + apply monotone8_union. apply MON. apply cpn8_mon.
-    + intros. destruct PR0.
-      * apply WCOM, H.
-      * apply compat8_compat in H; [| apply cpn8_compat].
-        eapply gf_mon. apply H. intros.
-        apply gpaco8_clo. right. apply PR0.
-  - apply gpaco8_clo. left. apply PR.
-Qed.
-
 End Compatibility.
 
 Section Soundness.
@@ -520,6 +467,13 @@ Proof.
   eapply gf_mon. apply PR.
   intros. destruct PR0; [|contradiction]. apply gpaco8_final. apply gf_mon. right. apply H.
 Qed.
+
+End Soundness.
+
+Section Distributivity.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone8 gf.
 
 Lemma gpaco8_dist clo r rg
       (CMP: wcompatible8 gf clo)
@@ -572,7 +526,94 @@ Proof.
       right. apply CIH0. apply PR.
 Qed.
 
-End Soundness.
+End Distributivity.
+
+Section Companion.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone8 gf.
+
+Inductive cpn8 (r: rel) x0 x1 x2 x3 x4 x5 x6 x7 : Prop :=
+| cpn8_intro
+    clo
+    (COM: compatible8 gf clo)
+    (CLO: clo r x0 x1 x2 x3 x4 x5 x6 x7)
+.
+
+Lemma cpn8_mon: monotone8 cpn8.
+Proof.
+  red. intros.
+  destruct IN. exists clo.
+  - apply COM.
+  - eapply compat8_mon; [apply COM|apply CLO|apply LE].
+Qed.
+
+Lemma cpn8_greatest: forall clo (COM: compatible8 gf clo), clo <9= cpn8.
+Proof. intros. econstructor;[apply COM|apply PR]. Qed.
+
+Lemma cpn8_compat: compatible8 gf cpn8.
+Proof.
+  econstructor; [apply cpn8_mon|intros].
+  destruct PR; eapply gf_mon with (r:=clo r).
+  - eapply (compat8_compat COM); apply CLO.
+  - intros. econstructor; [apply COM|apply PR].
+Qed.
+
+Lemma cpn8_wcompat: wcompatible8 gf cpn8.
+Proof. apply compat8_wcompat, cpn8_compat. apply gf_mon. Qed.
+
+Lemma cpn8_gupaco:
+  gupaco8 gf cpn8 <9= cpn8.
+Proof.
+  intros. eapply cpn8_greatest, PR. apply wcompat8_compat. apply gf_mon. apply cpn8_wcompat.
+Qed.
+
+Lemma cpn8_cpn r:
+  cpn8 (cpn8 r) <8= cpn8 r.
+Proof.
+  intros. apply cpn8_gupaco, gpaco8_gupaco, gpaco8_clo. apply gf_mon.
+  eapply cpn8_mon, gpaco8_clo. apply PR.
+Qed.
+
+Lemma cpn8_base r:
+  r <8= cpn8 r.
+Proof.
+  intros. apply cpn8_gupaco. apply gpaco8_base, PR.
+Qed.
+
+Lemma cpn8_clo
+      r clo (LE: clo <9= cpn8):
+  clo (cpn8 r) <8= cpn8 r.
+Proof.
+  intros. apply cpn8_cpn, LE, PR.
+Qed.
+
+Lemma cpn8_step r:
+  gf (cpn8 r) <8= cpn8 r.
+Proof.
+  intros. apply cpn8_gupaco. apply gpaco8_step. apply gf_mon.
+  eapply gf_mon, gpaco8_clo. apply PR.
+Qed.
+
+Lemma cpn8_uclo uclo
+      (MON: monotone8 uclo)
+      (WCOM: forall r, uclo (gf r) <8= gf (gupaco8 gf (uclo \9/ cpn8) r)):
+  uclo <9= gupaco8 gf cpn8.
+Proof.
+  intros. apply gpaco8_clo.
+  exists (gupaco8 gf (uclo \9/ cpn8)).
+  - apply wcompat8_compat. apply gf_mon.
+    econstructor.
+    + apply monotone8_union. apply MON. apply cpn8_mon.
+    + intros. destruct PR0.
+      * apply WCOM, H.
+      * apply compat8_compat with (gf:=gf) in H; [| apply cpn8_compat].
+        eapply gf_mon. apply H. intros.
+        apply gpaco8_clo. right. apply PR0.
+  - apply gpaco8_clo. left. apply PR.
+Qed.
+
+End Companion.
 
 End GeneralizedPaco8.
 

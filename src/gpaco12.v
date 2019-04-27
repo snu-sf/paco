@@ -340,13 +340,6 @@ Structure wcompatible12 clo : Prop :=
           clo (gf r) <12= gf (gupaco12 gf clo r);
     }.
 
-Inductive cpn12 (r: rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 : Prop :=
-| cpn12_intro
-    clo
-    (COM: compatible12 clo)
-    (CLO: clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
-.
-
 Lemma rclo12_dist clo
       (MON: monotone12 clo)
       (DIST: forall r1 r2, clo (r1 \12/ r2) <12= (clo r1 \12/ clo r2)):
@@ -438,52 +431,6 @@ Proof.
       intros; apply PR0. right; apply PR0. intros; apply PR0.
 Qed.
 
-Lemma cpn12_mon: monotone12 cpn12.
-Proof.
-  red. intros.
-  destruct IN. exists clo.
-  - apply COM.
-  - eapply compat12_mon; [apply COM|apply CLO|apply LE].
-Qed.
-
-Lemma cpn12_greatest: forall clo (COM: compatible12 clo), clo <13= cpn12.
-Proof. intros. econstructor;[apply COM|apply PR]. Qed.
-
-Lemma cpn12_compat: compatible12 cpn12.
-Proof.
-  econstructor; [apply cpn12_mon|intros].
-  destruct PR; eapply gf_mon with (r:=clo r).
-  - eapply (compat12_compat COM); apply CLO.
-  - intros. econstructor; [apply COM|apply PR].
-Qed.
-
-Lemma cpn12_wcompat: wcompatible12 cpn12.
-Proof. apply compat12_wcompat, cpn12_compat. Qed.
-
-Lemma cpn12_gupaco:
-  gupaco12 gf cpn12 <13= cpn12.
-Proof.
-  intros. eapply cpn12_greatest, PR. apply wcompat12_compat. apply cpn12_wcompat.
-Qed.
-
-Lemma cpn12_uclo uclo
-      (MON: monotone12 uclo)
-      (WCOM: forall r, uclo (gf r) <12= gf (gupaco12 gf (uclo \13/ cpn12) r)):
-  uclo <13= gupaco12 gf cpn12.
-Proof.
-  intros. apply gpaco12_clo.
-  exists (gupaco12 gf (uclo \13/ cpn12)).
-  - apply wcompat12_compat.
-    econstructor.
-    + apply monotone12_union. apply MON. apply cpn12_mon.
-    + intros. destruct PR0.
-      * apply WCOM, H.
-      * apply compat12_compat in H; [| apply cpn12_compat].
-        eapply gf_mon. apply H. intros.
-        apply gpaco12_clo. right. apply PR0.
-  - apply gpaco12_clo. left. apply PR.
-Qed.
-
 End Compatibility.
 
 Section Soundness.
@@ -524,6 +471,13 @@ Proof.
   eapply gf_mon. apply PR.
   intros. destruct PR0; [|contradiction]. apply gpaco12_final. apply gf_mon. right. apply H.
 Qed.
+
+End Soundness.
+
+Section Distributivity.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone12 gf.
 
 Lemma gpaco12_dist clo r rg
       (CMP: wcompatible12 gf clo)
@@ -576,7 +530,94 @@ Proof.
       right. apply CIH0. apply PR.
 Qed.
 
-End Soundness.
+End Distributivity.
+
+Section Companion.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone12 gf.
+
+Inductive cpn12 (r: rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 : Prop :=
+| cpn12_intro
+    clo
+    (COM: compatible12 gf clo)
+    (CLO: clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
+.
+
+Lemma cpn12_mon: monotone12 cpn12.
+Proof.
+  red. intros.
+  destruct IN. exists clo.
+  - apply COM.
+  - eapply compat12_mon; [apply COM|apply CLO|apply LE].
+Qed.
+
+Lemma cpn12_greatest: forall clo (COM: compatible12 gf clo), clo <13= cpn12.
+Proof. intros. econstructor;[apply COM|apply PR]. Qed.
+
+Lemma cpn12_compat: compatible12 gf cpn12.
+Proof.
+  econstructor; [apply cpn12_mon|intros].
+  destruct PR; eapply gf_mon with (r:=clo r).
+  - eapply (compat12_compat COM); apply CLO.
+  - intros. econstructor; [apply COM|apply PR].
+Qed.
+
+Lemma cpn12_wcompat: wcompatible12 gf cpn12.
+Proof. apply compat12_wcompat, cpn12_compat. apply gf_mon. Qed.
+
+Lemma cpn12_gupaco:
+  gupaco12 gf cpn12 <13= cpn12.
+Proof.
+  intros. eapply cpn12_greatest, PR. apply wcompat12_compat. apply gf_mon. apply cpn12_wcompat.
+Qed.
+
+Lemma cpn12_cpn r:
+  cpn12 (cpn12 r) <12= cpn12 r.
+Proof.
+  intros. apply cpn12_gupaco, gpaco12_gupaco, gpaco12_clo. apply gf_mon.
+  eapply cpn12_mon, gpaco12_clo. apply PR.
+Qed.
+
+Lemma cpn12_base r:
+  r <12= cpn12 r.
+Proof.
+  intros. apply cpn12_gupaco. apply gpaco12_base, PR.
+Qed.
+
+Lemma cpn12_clo
+      r clo (LE: clo <13= cpn12):
+  clo (cpn12 r) <12= cpn12 r.
+Proof.
+  intros. apply cpn12_cpn, LE, PR.
+Qed.
+
+Lemma cpn12_step r:
+  gf (cpn12 r) <12= cpn12 r.
+Proof.
+  intros. apply cpn12_gupaco. apply gpaco12_step. apply gf_mon.
+  eapply gf_mon, gpaco12_clo. apply PR.
+Qed.
+
+Lemma cpn12_uclo uclo
+      (MON: monotone12 uclo)
+      (WCOM: forall r, uclo (gf r) <12= gf (gupaco12 gf (uclo \13/ cpn12) r)):
+  uclo <13= gupaco12 gf cpn12.
+Proof.
+  intros. apply gpaco12_clo.
+  exists (gupaco12 gf (uclo \13/ cpn12)).
+  - apply wcompat12_compat. apply gf_mon.
+    econstructor.
+    + apply monotone12_union. apply MON. apply cpn12_mon.
+    + intros. destruct PR0.
+      * apply WCOM, H.
+      * apply compat12_compat with (gf:=gf) in H; [| apply cpn12_compat].
+        eapply gf_mon. apply H. intros.
+        apply gpaco12_clo. right. apply PR0.
+  - apply gpaco12_clo. left. apply PR.
+Qed.
+
+End Companion.
 
 End GeneralizedPaco12.
 

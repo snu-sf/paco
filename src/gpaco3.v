@@ -331,13 +331,6 @@ Structure wcompatible3 clo : Prop :=
           clo (gf r) <3= gf (gupaco3 gf clo r);
     }.
 
-Inductive cpn3 (r: rel) x0 x1 x2 : Prop :=
-| cpn3_intro
-    clo
-    (COM: compatible3 clo)
-    (CLO: clo r x0 x1 x2)
-.
-
 Lemma rclo3_dist clo
       (MON: monotone3 clo)
       (DIST: forall r1 r2, clo (r1 \3/ r2) <3= (clo r1 \3/ clo r2)):
@@ -429,52 +422,6 @@ Proof.
       intros; apply PR0. right; apply PR0. intros; apply PR0.
 Qed.
 
-Lemma cpn3_mon: monotone3 cpn3.
-Proof.
-  red. intros.
-  destruct IN. exists clo.
-  - apply COM.
-  - eapply compat3_mon; [apply COM|apply CLO|apply LE].
-Qed.
-
-Lemma cpn3_greatest: forall clo (COM: compatible3 clo), clo <4= cpn3.
-Proof. intros. econstructor;[apply COM|apply PR]. Qed.
-
-Lemma cpn3_compat: compatible3 cpn3.
-Proof.
-  econstructor; [apply cpn3_mon|intros].
-  destruct PR; eapply gf_mon with (r:=clo r).
-  - eapply (compat3_compat COM); apply CLO.
-  - intros. econstructor; [apply COM|apply PR].
-Qed.
-
-Lemma cpn3_wcompat: wcompatible3 cpn3.
-Proof. apply compat3_wcompat, cpn3_compat. Qed.
-
-Lemma cpn3_gupaco:
-  gupaco3 gf cpn3 <4= cpn3.
-Proof.
-  intros. eapply cpn3_greatest, PR. apply wcompat3_compat. apply cpn3_wcompat.
-Qed.
-
-Lemma cpn3_uclo uclo
-      (MON: monotone3 uclo)
-      (WCOM: forall r, uclo (gf r) <3= gf (gupaco3 gf (uclo \4/ cpn3) r)):
-  uclo <4= gupaco3 gf cpn3.
-Proof.
-  intros. apply gpaco3_clo.
-  exists (gupaco3 gf (uclo \4/ cpn3)).
-  - apply wcompat3_compat.
-    econstructor.
-    + apply monotone3_union. apply MON. apply cpn3_mon.
-    + intros. destruct PR0.
-      * apply WCOM, H.
-      * apply compat3_compat in H; [| apply cpn3_compat].
-        eapply gf_mon. apply H. intros.
-        apply gpaco3_clo. right. apply PR0.
-  - apply gpaco3_clo. left. apply PR.
-Qed.
-
 End Compatibility.
 
 Section Soundness.
@@ -515,6 +462,13 @@ Proof.
   eapply gf_mon. apply PR.
   intros. destruct PR0; [|contradiction]. apply gpaco3_final. apply gf_mon. right. apply H.
 Qed.
+
+End Soundness.
+
+Section Distributivity.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone3 gf.
 
 Lemma gpaco3_dist clo r rg
       (CMP: wcompatible3 gf clo)
@@ -567,7 +521,94 @@ Proof.
       right. apply CIH0. apply PR.
 Qed.
 
-End Soundness.
+End Distributivity.
+
+Section Companion.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone3 gf.
+
+Inductive cpn3 (r: rel) x0 x1 x2 : Prop :=
+| cpn3_intro
+    clo
+    (COM: compatible3 gf clo)
+    (CLO: clo r x0 x1 x2)
+.
+
+Lemma cpn3_mon: monotone3 cpn3.
+Proof.
+  red. intros.
+  destruct IN. exists clo.
+  - apply COM.
+  - eapply compat3_mon; [apply COM|apply CLO|apply LE].
+Qed.
+
+Lemma cpn3_greatest: forall clo (COM: compatible3 gf clo), clo <4= cpn3.
+Proof. intros. econstructor;[apply COM|apply PR]. Qed.
+
+Lemma cpn3_compat: compatible3 gf cpn3.
+Proof.
+  econstructor; [apply cpn3_mon|intros].
+  destruct PR; eapply gf_mon with (r:=clo r).
+  - eapply (compat3_compat COM); apply CLO.
+  - intros. econstructor; [apply COM|apply PR].
+Qed.
+
+Lemma cpn3_wcompat: wcompatible3 gf cpn3.
+Proof. apply compat3_wcompat, cpn3_compat. apply gf_mon. Qed.
+
+Lemma cpn3_gupaco:
+  gupaco3 gf cpn3 <4= cpn3.
+Proof.
+  intros. eapply cpn3_greatest, PR. apply wcompat3_compat. apply gf_mon. apply cpn3_wcompat.
+Qed.
+
+Lemma cpn3_cpn r:
+  cpn3 (cpn3 r) <3= cpn3 r.
+Proof.
+  intros. apply cpn3_gupaco, gpaco3_gupaco, gpaco3_clo. apply gf_mon.
+  eapply cpn3_mon, gpaco3_clo. apply PR.
+Qed.
+
+Lemma cpn3_base r:
+  r <3= cpn3 r.
+Proof.
+  intros. apply cpn3_gupaco. apply gpaco3_base, PR.
+Qed.
+
+Lemma cpn3_clo
+      r clo (LE: clo <4= cpn3):
+  clo (cpn3 r) <3= cpn3 r.
+Proof.
+  intros. apply cpn3_cpn, LE, PR.
+Qed.
+
+Lemma cpn3_step r:
+  gf (cpn3 r) <3= cpn3 r.
+Proof.
+  intros. apply cpn3_gupaco. apply gpaco3_step. apply gf_mon.
+  eapply gf_mon, gpaco3_clo. apply PR.
+Qed.
+
+Lemma cpn3_uclo uclo
+      (MON: monotone3 uclo)
+      (WCOM: forall r, uclo (gf r) <3= gf (gupaco3 gf (uclo \4/ cpn3) r)):
+  uclo <4= gupaco3 gf cpn3.
+Proof.
+  intros. apply gpaco3_clo.
+  exists (gupaco3 gf (uclo \4/ cpn3)).
+  - apply wcompat3_compat. apply gf_mon.
+    econstructor.
+    + apply monotone3_union. apply MON. apply cpn3_mon.
+    + intros. destruct PR0.
+      * apply WCOM, H.
+      * apply compat3_compat with (gf:=gf) in H; [| apply cpn3_compat].
+        eapply gf_mon. apply H. intros.
+        apply gpaco3_clo. right. apply PR0.
+  - apply gpaco3_clo. left. apply PR.
+Qed.
+
+End Companion.
 
 End GeneralizedPaco3.
 

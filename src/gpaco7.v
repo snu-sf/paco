@@ -335,13 +335,6 @@ Structure wcompatible7 clo : Prop :=
           clo (gf r) <7= gf (gupaco7 gf clo r);
     }.
 
-Inductive cpn7 (r: rel) x0 x1 x2 x3 x4 x5 x6 : Prop :=
-| cpn7_intro
-    clo
-    (COM: compatible7 clo)
-    (CLO: clo r x0 x1 x2 x3 x4 x5 x6)
-.
-
 Lemma rclo7_dist clo
       (MON: monotone7 clo)
       (DIST: forall r1 r2, clo (r1 \7/ r2) <7= (clo r1 \7/ clo r2)):
@@ -433,52 +426,6 @@ Proof.
       intros; apply PR0. right; apply PR0. intros; apply PR0.
 Qed.
 
-Lemma cpn7_mon: monotone7 cpn7.
-Proof.
-  red. intros.
-  destruct IN. exists clo.
-  - apply COM.
-  - eapply compat7_mon; [apply COM|apply CLO|apply LE].
-Qed.
-
-Lemma cpn7_greatest: forall clo (COM: compatible7 clo), clo <8= cpn7.
-Proof. intros. econstructor;[apply COM|apply PR]. Qed.
-
-Lemma cpn7_compat: compatible7 cpn7.
-Proof.
-  econstructor; [apply cpn7_mon|intros].
-  destruct PR; eapply gf_mon with (r:=clo r).
-  - eapply (compat7_compat COM); apply CLO.
-  - intros. econstructor; [apply COM|apply PR].
-Qed.
-
-Lemma cpn7_wcompat: wcompatible7 cpn7.
-Proof. apply compat7_wcompat, cpn7_compat. Qed.
-
-Lemma cpn7_gupaco:
-  gupaco7 gf cpn7 <8= cpn7.
-Proof.
-  intros. eapply cpn7_greatest, PR. apply wcompat7_compat. apply cpn7_wcompat.
-Qed.
-
-Lemma cpn7_uclo uclo
-      (MON: monotone7 uclo)
-      (WCOM: forall r, uclo (gf r) <7= gf (gupaco7 gf (uclo \8/ cpn7) r)):
-  uclo <8= gupaco7 gf cpn7.
-Proof.
-  intros. apply gpaco7_clo.
-  exists (gupaco7 gf (uclo \8/ cpn7)).
-  - apply wcompat7_compat.
-    econstructor.
-    + apply monotone7_union. apply MON. apply cpn7_mon.
-    + intros. destruct PR0.
-      * apply WCOM, H.
-      * apply compat7_compat in H; [| apply cpn7_compat].
-        eapply gf_mon. apply H. intros.
-        apply gpaco7_clo. right. apply PR0.
-  - apply gpaco7_clo. left. apply PR.
-Qed.
-
 End Compatibility.
 
 Section Soundness.
@@ -519,6 +466,13 @@ Proof.
   eapply gf_mon. apply PR.
   intros. destruct PR0; [|contradiction]. apply gpaco7_final. apply gf_mon. right. apply H.
 Qed.
+
+End Soundness.
+
+Section Distributivity.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone7 gf.
 
 Lemma gpaco7_dist clo r rg
       (CMP: wcompatible7 gf clo)
@@ -571,7 +525,94 @@ Proof.
       right. apply CIH0. apply PR.
 Qed.
 
-End Soundness.
+End Distributivity.
+
+Section Companion.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone7 gf.
+
+Inductive cpn7 (r: rel) x0 x1 x2 x3 x4 x5 x6 : Prop :=
+| cpn7_intro
+    clo
+    (COM: compatible7 gf clo)
+    (CLO: clo r x0 x1 x2 x3 x4 x5 x6)
+.
+
+Lemma cpn7_mon: monotone7 cpn7.
+Proof.
+  red. intros.
+  destruct IN. exists clo.
+  - apply COM.
+  - eapply compat7_mon; [apply COM|apply CLO|apply LE].
+Qed.
+
+Lemma cpn7_greatest: forall clo (COM: compatible7 gf clo), clo <8= cpn7.
+Proof. intros. econstructor;[apply COM|apply PR]. Qed.
+
+Lemma cpn7_compat: compatible7 gf cpn7.
+Proof.
+  econstructor; [apply cpn7_mon|intros].
+  destruct PR; eapply gf_mon with (r:=clo r).
+  - eapply (compat7_compat COM); apply CLO.
+  - intros. econstructor; [apply COM|apply PR].
+Qed.
+
+Lemma cpn7_wcompat: wcompatible7 gf cpn7.
+Proof. apply compat7_wcompat, cpn7_compat. apply gf_mon. Qed.
+
+Lemma cpn7_gupaco:
+  gupaco7 gf cpn7 <8= cpn7.
+Proof.
+  intros. eapply cpn7_greatest, PR. apply wcompat7_compat. apply gf_mon. apply cpn7_wcompat.
+Qed.
+
+Lemma cpn7_cpn r:
+  cpn7 (cpn7 r) <7= cpn7 r.
+Proof.
+  intros. apply cpn7_gupaco, gpaco7_gupaco, gpaco7_clo. apply gf_mon.
+  eapply cpn7_mon, gpaco7_clo. apply PR.
+Qed.
+
+Lemma cpn7_base r:
+  r <7= cpn7 r.
+Proof.
+  intros. apply cpn7_gupaco. apply gpaco7_base, PR.
+Qed.
+
+Lemma cpn7_clo
+      r clo (LE: clo <8= cpn7):
+  clo (cpn7 r) <7= cpn7 r.
+Proof.
+  intros. apply cpn7_cpn, LE, PR.
+Qed.
+
+Lemma cpn7_step r:
+  gf (cpn7 r) <7= cpn7 r.
+Proof.
+  intros. apply cpn7_gupaco. apply gpaco7_step. apply gf_mon.
+  eapply gf_mon, gpaco7_clo. apply PR.
+Qed.
+
+Lemma cpn7_uclo uclo
+      (MON: monotone7 uclo)
+      (WCOM: forall r, uclo (gf r) <7= gf (gupaco7 gf (uclo \8/ cpn7) r)):
+  uclo <8= gupaco7 gf cpn7.
+Proof.
+  intros. apply gpaco7_clo.
+  exists (gupaco7 gf (uclo \8/ cpn7)).
+  - apply wcompat7_compat. apply gf_mon.
+    econstructor.
+    + apply monotone7_union. apply MON. apply cpn7_mon.
+    + intros. destruct PR0.
+      * apply WCOM, H.
+      * apply compat7_compat with (gf:=gf) in H; [| apply cpn7_compat].
+        eapply gf_mon. apply H. intros.
+        apply gpaco7_clo. right. apply PR0.
+  - apply gpaco7_clo. left. apply PR.
+Qed.
+
+End Companion.
 
 End GeneralizedPaco7.
 

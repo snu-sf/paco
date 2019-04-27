@@ -339,13 +339,6 @@ Structure wcompatible11 clo : Prop :=
           clo (gf r) <11= gf (gupaco11 gf clo r);
     }.
 
-Inductive cpn11 (r: rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 : Prop :=
-| cpn11_intro
-    clo
-    (COM: compatible11 clo)
-    (CLO: clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
-.
-
 Lemma rclo11_dist clo
       (MON: monotone11 clo)
       (DIST: forall r1 r2, clo (r1 \11/ r2) <11= (clo r1 \11/ clo r2)):
@@ -437,52 +430,6 @@ Proof.
       intros; apply PR0. right; apply PR0. intros; apply PR0.
 Qed.
 
-Lemma cpn11_mon: monotone11 cpn11.
-Proof.
-  red. intros.
-  destruct IN. exists clo.
-  - apply COM.
-  - eapply compat11_mon; [apply COM|apply CLO|apply LE].
-Qed.
-
-Lemma cpn11_greatest: forall clo (COM: compatible11 clo), clo <12= cpn11.
-Proof. intros. econstructor;[apply COM|apply PR]. Qed.
-
-Lemma cpn11_compat: compatible11 cpn11.
-Proof.
-  econstructor; [apply cpn11_mon|intros].
-  destruct PR; eapply gf_mon with (r:=clo r).
-  - eapply (compat11_compat COM); apply CLO.
-  - intros. econstructor; [apply COM|apply PR].
-Qed.
-
-Lemma cpn11_wcompat: wcompatible11 cpn11.
-Proof. apply compat11_wcompat, cpn11_compat. Qed.
-
-Lemma cpn11_gupaco:
-  gupaco11 gf cpn11 <12= cpn11.
-Proof.
-  intros. eapply cpn11_greatest, PR. apply wcompat11_compat. apply cpn11_wcompat.
-Qed.
-
-Lemma cpn11_uclo uclo
-      (MON: monotone11 uclo)
-      (WCOM: forall r, uclo (gf r) <11= gf (gupaco11 gf (uclo \12/ cpn11) r)):
-  uclo <12= gupaco11 gf cpn11.
-Proof.
-  intros. apply gpaco11_clo.
-  exists (gupaco11 gf (uclo \12/ cpn11)).
-  - apply wcompat11_compat.
-    econstructor.
-    + apply monotone11_union. apply MON. apply cpn11_mon.
-    + intros. destruct PR0.
-      * apply WCOM, H.
-      * apply compat11_compat in H; [| apply cpn11_compat].
-        eapply gf_mon. apply H. intros.
-        apply gpaco11_clo. right. apply PR0.
-  - apply gpaco11_clo. left. apply PR.
-Qed.
-
 End Compatibility.
 
 Section Soundness.
@@ -523,6 +470,13 @@ Proof.
   eapply gf_mon. apply PR.
   intros. destruct PR0; [|contradiction]. apply gpaco11_final. apply gf_mon. right. apply H.
 Qed.
+
+End Soundness.
+
+Section Distributivity.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone11 gf.
 
 Lemma gpaco11_dist clo r rg
       (CMP: wcompatible11 gf clo)
@@ -575,7 +529,94 @@ Proof.
       right. apply CIH0. apply PR.
 Qed.
 
-End Soundness.
+End Distributivity.
+
+Section Companion.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone11 gf.
+
+Inductive cpn11 (r: rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 : Prop :=
+| cpn11_intro
+    clo
+    (COM: compatible11 gf clo)
+    (CLO: clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
+.
+
+Lemma cpn11_mon: monotone11 cpn11.
+Proof.
+  red. intros.
+  destruct IN. exists clo.
+  - apply COM.
+  - eapply compat11_mon; [apply COM|apply CLO|apply LE].
+Qed.
+
+Lemma cpn11_greatest: forall clo (COM: compatible11 gf clo), clo <12= cpn11.
+Proof. intros. econstructor;[apply COM|apply PR]. Qed.
+
+Lemma cpn11_compat: compatible11 gf cpn11.
+Proof.
+  econstructor; [apply cpn11_mon|intros].
+  destruct PR; eapply gf_mon with (r:=clo r).
+  - eapply (compat11_compat COM); apply CLO.
+  - intros. econstructor; [apply COM|apply PR].
+Qed.
+
+Lemma cpn11_wcompat: wcompatible11 gf cpn11.
+Proof. apply compat11_wcompat, cpn11_compat. apply gf_mon. Qed.
+
+Lemma cpn11_gupaco:
+  gupaco11 gf cpn11 <12= cpn11.
+Proof.
+  intros. eapply cpn11_greatest, PR. apply wcompat11_compat. apply gf_mon. apply cpn11_wcompat.
+Qed.
+
+Lemma cpn11_cpn r:
+  cpn11 (cpn11 r) <11= cpn11 r.
+Proof.
+  intros. apply cpn11_gupaco, gpaco11_gupaco, gpaco11_clo. apply gf_mon.
+  eapply cpn11_mon, gpaco11_clo. apply PR.
+Qed.
+
+Lemma cpn11_base r:
+  r <11= cpn11 r.
+Proof.
+  intros. apply cpn11_gupaco. apply gpaco11_base, PR.
+Qed.
+
+Lemma cpn11_clo
+      r clo (LE: clo <12= cpn11):
+  clo (cpn11 r) <11= cpn11 r.
+Proof.
+  intros. apply cpn11_cpn, LE, PR.
+Qed.
+
+Lemma cpn11_step r:
+  gf (cpn11 r) <11= cpn11 r.
+Proof.
+  intros. apply cpn11_gupaco. apply gpaco11_step. apply gf_mon.
+  eapply gf_mon, gpaco11_clo. apply PR.
+Qed.
+
+Lemma cpn11_uclo uclo
+      (MON: monotone11 uclo)
+      (WCOM: forall r, uclo (gf r) <11= gf (gupaco11 gf (uclo \12/ cpn11) r)):
+  uclo <12= gupaco11 gf cpn11.
+Proof.
+  intros. apply gpaco11_clo.
+  exists (gupaco11 gf (uclo \12/ cpn11)).
+  - apply wcompat11_compat. apply gf_mon.
+    econstructor.
+    + apply monotone11_union. apply MON. apply cpn11_mon.
+    + intros. destruct PR0.
+      * apply WCOM, H.
+      * apply compat11_compat with (gf:=gf) in H; [| apply cpn11_compat].
+        eapply gf_mon. apply H. intros.
+        apply gpaco11_clo. right. apply PR0.
+  - apply gpaco11_clo. left. apply PR.
+Qed.
+
+End Companion.
 
 End GeneralizedPaco11.
 

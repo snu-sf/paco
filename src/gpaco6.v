@@ -334,13 +334,6 @@ Structure wcompatible6 clo : Prop :=
           clo (gf r) <6= gf (gupaco6 gf clo r);
     }.
 
-Inductive cpn6 (r: rel) x0 x1 x2 x3 x4 x5 : Prop :=
-| cpn6_intro
-    clo
-    (COM: compatible6 clo)
-    (CLO: clo r x0 x1 x2 x3 x4 x5)
-.
-
 Lemma rclo6_dist clo
       (MON: monotone6 clo)
       (DIST: forall r1 r2, clo (r1 \6/ r2) <6= (clo r1 \6/ clo r2)):
@@ -432,52 +425,6 @@ Proof.
       intros; apply PR0. right; apply PR0. intros; apply PR0.
 Qed.
 
-Lemma cpn6_mon: monotone6 cpn6.
-Proof.
-  red. intros.
-  destruct IN. exists clo.
-  - apply COM.
-  - eapply compat6_mon; [apply COM|apply CLO|apply LE].
-Qed.
-
-Lemma cpn6_greatest: forall clo (COM: compatible6 clo), clo <7= cpn6.
-Proof. intros. econstructor;[apply COM|apply PR]. Qed.
-
-Lemma cpn6_compat: compatible6 cpn6.
-Proof.
-  econstructor; [apply cpn6_mon|intros].
-  destruct PR; eapply gf_mon with (r:=clo r).
-  - eapply (compat6_compat COM); apply CLO.
-  - intros. econstructor; [apply COM|apply PR].
-Qed.
-
-Lemma cpn6_wcompat: wcompatible6 cpn6.
-Proof. apply compat6_wcompat, cpn6_compat. Qed.
-
-Lemma cpn6_gupaco:
-  gupaco6 gf cpn6 <7= cpn6.
-Proof.
-  intros. eapply cpn6_greatest, PR. apply wcompat6_compat. apply cpn6_wcompat.
-Qed.
-
-Lemma cpn6_uclo uclo
-      (MON: monotone6 uclo)
-      (WCOM: forall r, uclo (gf r) <6= gf (gupaco6 gf (uclo \7/ cpn6) r)):
-  uclo <7= gupaco6 gf cpn6.
-Proof.
-  intros. apply gpaco6_clo.
-  exists (gupaco6 gf (uclo \7/ cpn6)).
-  - apply wcompat6_compat.
-    econstructor.
-    + apply monotone6_union. apply MON. apply cpn6_mon.
-    + intros. destruct PR0.
-      * apply WCOM, H.
-      * apply compat6_compat in H; [| apply cpn6_compat].
-        eapply gf_mon. apply H. intros.
-        apply gpaco6_clo. right. apply PR0.
-  - apply gpaco6_clo. left. apply PR.
-Qed.
-
 End Compatibility.
 
 Section Soundness.
@@ -518,6 +465,13 @@ Proof.
   eapply gf_mon. apply PR.
   intros. destruct PR0; [|contradiction]. apply gpaco6_final. apply gf_mon. right. apply H.
 Qed.
+
+End Soundness.
+
+Section Distributivity.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone6 gf.
 
 Lemma gpaco6_dist clo r rg
       (CMP: wcompatible6 gf clo)
@@ -570,7 +524,94 @@ Proof.
       right. apply CIH0. apply PR.
 Qed.
 
-End Soundness.
+End Distributivity.
+
+Section Companion.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone6 gf.
+
+Inductive cpn6 (r: rel) x0 x1 x2 x3 x4 x5 : Prop :=
+| cpn6_intro
+    clo
+    (COM: compatible6 gf clo)
+    (CLO: clo r x0 x1 x2 x3 x4 x5)
+.
+
+Lemma cpn6_mon: monotone6 cpn6.
+Proof.
+  red. intros.
+  destruct IN. exists clo.
+  - apply COM.
+  - eapply compat6_mon; [apply COM|apply CLO|apply LE].
+Qed.
+
+Lemma cpn6_greatest: forall clo (COM: compatible6 gf clo), clo <7= cpn6.
+Proof. intros. econstructor;[apply COM|apply PR]. Qed.
+
+Lemma cpn6_compat: compatible6 gf cpn6.
+Proof.
+  econstructor; [apply cpn6_mon|intros].
+  destruct PR; eapply gf_mon with (r:=clo r).
+  - eapply (compat6_compat COM); apply CLO.
+  - intros. econstructor; [apply COM|apply PR].
+Qed.
+
+Lemma cpn6_wcompat: wcompatible6 gf cpn6.
+Proof. apply compat6_wcompat, cpn6_compat. apply gf_mon. Qed.
+
+Lemma cpn6_gupaco:
+  gupaco6 gf cpn6 <7= cpn6.
+Proof.
+  intros. eapply cpn6_greatest, PR. apply wcompat6_compat. apply gf_mon. apply cpn6_wcompat.
+Qed.
+
+Lemma cpn6_cpn r:
+  cpn6 (cpn6 r) <6= cpn6 r.
+Proof.
+  intros. apply cpn6_gupaco, gpaco6_gupaco, gpaco6_clo. apply gf_mon.
+  eapply cpn6_mon, gpaco6_clo. apply PR.
+Qed.
+
+Lemma cpn6_base r:
+  r <6= cpn6 r.
+Proof.
+  intros. apply cpn6_gupaco. apply gpaco6_base, PR.
+Qed.
+
+Lemma cpn6_clo
+      r clo (LE: clo <7= cpn6):
+  clo (cpn6 r) <6= cpn6 r.
+Proof.
+  intros. apply cpn6_cpn, LE, PR.
+Qed.
+
+Lemma cpn6_step r:
+  gf (cpn6 r) <6= cpn6 r.
+Proof.
+  intros. apply cpn6_gupaco. apply gpaco6_step. apply gf_mon.
+  eapply gf_mon, gpaco6_clo. apply PR.
+Qed.
+
+Lemma cpn6_uclo uclo
+      (MON: monotone6 uclo)
+      (WCOM: forall r, uclo (gf r) <6= gf (gupaco6 gf (uclo \7/ cpn6) r)):
+  uclo <7= gupaco6 gf cpn6.
+Proof.
+  intros. apply gpaco6_clo.
+  exists (gupaco6 gf (uclo \7/ cpn6)).
+  - apply wcompat6_compat. apply gf_mon.
+    econstructor.
+    + apply monotone6_union. apply MON. apply cpn6_mon.
+    + intros. destruct PR0.
+      * apply WCOM, H.
+      * apply compat6_compat with (gf:=gf) in H; [| apply cpn6_compat].
+        eapply gf_mon. apply H. intros.
+        apply gpaco6_clo. right. apply PR0.
+  - apply gpaco6_clo. left. apply PR.
+Qed.
+
+End Companion.
 
 End GeneralizedPaco6.
 

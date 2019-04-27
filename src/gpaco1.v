@@ -329,13 +329,6 @@ Structure wcompatible1 clo : Prop :=
           clo (gf r) <1= gf (gupaco1 gf clo r);
     }.
 
-Inductive cpn1 (r: rel) x0 : Prop :=
-| cpn1_intro
-    clo
-    (COM: compatible1 clo)
-    (CLO: clo r x0)
-.
-
 Lemma rclo1_dist clo
       (MON: monotone1 clo)
       (DIST: forall r1 r2, clo (r1 \1/ r2) <1= (clo r1 \1/ clo r2)):
@@ -427,52 +420,6 @@ Proof.
       intros; apply PR0. right; apply PR0. intros; apply PR0.
 Qed.
 
-Lemma cpn1_mon: monotone1 cpn1.
-Proof.
-  red. intros.
-  destruct IN. exists clo.
-  - apply COM.
-  - eapply compat1_mon; [apply COM|apply CLO|apply LE].
-Qed.
-
-Lemma cpn1_greatest: forall clo (COM: compatible1 clo), clo <2= cpn1.
-Proof. intros. econstructor;[apply COM|apply PR]. Qed.
-
-Lemma cpn1_compat: compatible1 cpn1.
-Proof.
-  econstructor; [apply cpn1_mon|intros].
-  destruct PR; eapply gf_mon with (r:=clo r).
-  - eapply (compat1_compat COM); apply CLO.
-  - intros. econstructor; [apply COM|apply PR].
-Qed.
-
-Lemma cpn1_wcompat: wcompatible1 cpn1.
-Proof. apply compat1_wcompat, cpn1_compat. Qed.
-
-Lemma cpn1_gupaco:
-  gupaco1 gf cpn1 <2= cpn1.
-Proof.
-  intros. eapply cpn1_greatest, PR. apply wcompat1_compat. apply cpn1_wcompat.
-Qed.
-
-Lemma cpn1_uclo uclo
-      (MON: monotone1 uclo)
-      (WCOM: forall r, uclo (gf r) <1= gf (gupaco1 gf (uclo \2/ cpn1) r)):
-  uclo <2= gupaco1 gf cpn1.
-Proof.
-  intros. apply gpaco1_clo.
-  exists (gupaco1 gf (uclo \2/ cpn1)).
-  - apply wcompat1_compat.
-    econstructor.
-    + apply monotone1_union. apply MON. apply cpn1_mon.
-    + intros. destruct PR0.
-      * apply WCOM, H.
-      * apply compat1_compat in H; [| apply cpn1_compat].
-        eapply gf_mon. apply H. intros.
-        apply gpaco1_clo. right. apply PR0.
-  - apply gpaco1_clo. left. apply PR.
-Qed.
-
 End Compatibility.
 
 Section Soundness.
@@ -513,6 +460,13 @@ Proof.
   eapply gf_mon. apply PR.
   intros. destruct PR0; [|contradiction]. apply gpaco1_final. apply gf_mon. right. apply H.
 Qed.
+
+End Soundness.
+
+Section Distributivity.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone1 gf.
 
 Lemma gpaco1_dist clo r rg
       (CMP: wcompatible1 gf clo)
@@ -565,7 +519,94 @@ Proof.
       right. apply CIH0. apply PR.
 Qed.
 
-End Soundness.
+End Distributivity.
+
+Section Companion.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone1 gf.
+
+Inductive cpn1 (r: rel) x0 : Prop :=
+| cpn1_intro
+    clo
+    (COM: compatible1 gf clo)
+    (CLO: clo r x0)
+.
+
+Lemma cpn1_mon: monotone1 cpn1.
+Proof.
+  red. intros.
+  destruct IN. exists clo.
+  - apply COM.
+  - eapply compat1_mon; [apply COM|apply CLO|apply LE].
+Qed.
+
+Lemma cpn1_greatest: forall clo (COM: compatible1 gf clo), clo <2= cpn1.
+Proof. intros. econstructor;[apply COM|apply PR]. Qed.
+
+Lemma cpn1_compat: compatible1 gf cpn1.
+Proof.
+  econstructor; [apply cpn1_mon|intros].
+  destruct PR; eapply gf_mon with (r:=clo r).
+  - eapply (compat1_compat COM); apply CLO.
+  - intros. econstructor; [apply COM|apply PR].
+Qed.
+
+Lemma cpn1_wcompat: wcompatible1 gf cpn1.
+Proof. apply compat1_wcompat, cpn1_compat. apply gf_mon. Qed.
+
+Lemma cpn1_gupaco:
+  gupaco1 gf cpn1 <2= cpn1.
+Proof.
+  intros. eapply cpn1_greatest, PR. apply wcompat1_compat. apply gf_mon. apply cpn1_wcompat.
+Qed.
+
+Lemma cpn1_cpn r:
+  cpn1 (cpn1 r) <1= cpn1 r.
+Proof.
+  intros. apply cpn1_gupaco, gpaco1_gupaco, gpaco1_clo. apply gf_mon.
+  eapply cpn1_mon, gpaco1_clo. apply PR.
+Qed.
+
+Lemma cpn1_base r:
+  r <1= cpn1 r.
+Proof.
+  intros. apply cpn1_gupaco. apply gpaco1_base, PR.
+Qed.
+
+Lemma cpn1_clo
+      r clo (LE: clo <2= cpn1):
+  clo (cpn1 r) <1= cpn1 r.
+Proof.
+  intros. apply cpn1_cpn, LE, PR.
+Qed.
+
+Lemma cpn1_step r:
+  gf (cpn1 r) <1= cpn1 r.
+Proof.
+  intros. apply cpn1_gupaco. apply gpaco1_step. apply gf_mon.
+  eapply gf_mon, gpaco1_clo. apply PR.
+Qed.
+
+Lemma cpn1_uclo uclo
+      (MON: monotone1 uclo)
+      (WCOM: forall r, uclo (gf r) <1= gf (gupaco1 gf (uclo \2/ cpn1) r)):
+  uclo <2= gupaco1 gf cpn1.
+Proof.
+  intros. apply gpaco1_clo.
+  exists (gupaco1 gf (uclo \2/ cpn1)).
+  - apply wcompat1_compat. apply gf_mon.
+    econstructor.
+    + apply monotone1_union. apply MON. apply cpn1_mon.
+    + intros. destruct PR0.
+      * apply WCOM, H.
+      * apply compat1_compat with (gf:=gf) in H; [| apply cpn1_compat].
+        eapply gf_mon. apply H. intros.
+        apply gpaco1_clo. right. apply PR0.
+  - apply gpaco1_clo. left. apply PR.
+Qed.
+
+End Companion.
 
 End GeneralizedPaco1.
 

@@ -342,13 +342,6 @@ Structure wcompatible14 clo : Prop :=
           clo (gf r) <14= gf (gupaco14 gf clo r);
     }.
 
-Inductive cpn14 (r: rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 : Prop :=
-| cpn14_intro
-    clo
-    (COM: compatible14 clo)
-    (CLO: clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13)
-.
-
 Lemma rclo14_dist clo
       (MON: monotone14 clo)
       (DIST: forall r1 r2, clo (r1 \14/ r2) <14= (clo r1 \14/ clo r2)):
@@ -440,52 +433,6 @@ Proof.
       intros; apply PR0. right; apply PR0. intros; apply PR0.
 Qed.
 
-Lemma cpn14_mon: monotone14 cpn14.
-Proof.
-  red. intros.
-  destruct IN. exists clo.
-  - apply COM.
-  - eapply compat14_mon; [apply COM|apply CLO|apply LE].
-Qed.
-
-Lemma cpn14_greatest: forall clo (COM: compatible14 clo), clo <15= cpn14.
-Proof. intros. econstructor;[apply COM|apply PR]. Qed.
-
-Lemma cpn14_compat: compatible14 cpn14.
-Proof.
-  econstructor; [apply cpn14_mon|intros].
-  destruct PR; eapply gf_mon with (r:=clo r).
-  - eapply (compat14_compat COM); apply CLO.
-  - intros. econstructor; [apply COM|apply PR].
-Qed.
-
-Lemma cpn14_wcompat: wcompatible14 cpn14.
-Proof. apply compat14_wcompat, cpn14_compat. Qed.
-
-Lemma cpn14_gupaco:
-  gupaco14 gf cpn14 <15= cpn14.
-Proof.
-  intros. eapply cpn14_greatest, PR. apply wcompat14_compat. apply cpn14_wcompat.
-Qed.
-
-Lemma cpn14_uclo uclo
-      (MON: monotone14 uclo)
-      (WCOM: forall r, uclo (gf r) <14= gf (gupaco14 gf (uclo \15/ cpn14) r)):
-  uclo <15= gupaco14 gf cpn14.
-Proof.
-  intros. apply gpaco14_clo.
-  exists (gupaco14 gf (uclo \15/ cpn14)).
-  - apply wcompat14_compat.
-    econstructor.
-    + apply monotone14_union. apply MON. apply cpn14_mon.
-    + intros. destruct PR0.
-      * apply WCOM, H.
-      * apply compat14_compat in H; [| apply cpn14_compat].
-        eapply gf_mon. apply H. intros.
-        apply gpaco14_clo. right. apply PR0.
-  - apply gpaco14_clo. left. apply PR.
-Qed.
-
 End Compatibility.
 
 Section Soundness.
@@ -526,6 +473,13 @@ Proof.
   eapply gf_mon. apply PR.
   intros. destruct PR0; [|contradiction]. apply gpaco14_final. apply gf_mon. right. apply H.
 Qed.
+
+End Soundness.
+
+Section Distributivity.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone14 gf.
 
 Lemma gpaco14_dist clo r rg
       (CMP: wcompatible14 gf clo)
@@ -578,7 +532,94 @@ Proof.
       right. apply CIH0. apply PR.
 Qed.
 
-End Soundness.
+End Distributivity.
+
+Section Companion.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone14 gf.
+
+Inductive cpn14 (r: rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 : Prop :=
+| cpn14_intro
+    clo
+    (COM: compatible14 gf clo)
+    (CLO: clo r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13)
+.
+
+Lemma cpn14_mon: monotone14 cpn14.
+Proof.
+  red. intros.
+  destruct IN. exists clo.
+  - apply COM.
+  - eapply compat14_mon; [apply COM|apply CLO|apply LE].
+Qed.
+
+Lemma cpn14_greatest: forall clo (COM: compatible14 gf clo), clo <15= cpn14.
+Proof. intros. econstructor;[apply COM|apply PR]. Qed.
+
+Lemma cpn14_compat: compatible14 gf cpn14.
+Proof.
+  econstructor; [apply cpn14_mon|intros].
+  destruct PR; eapply gf_mon with (r:=clo r).
+  - eapply (compat14_compat COM); apply CLO.
+  - intros. econstructor; [apply COM|apply PR].
+Qed.
+
+Lemma cpn14_wcompat: wcompatible14 gf cpn14.
+Proof. apply compat14_wcompat, cpn14_compat. apply gf_mon. Qed.
+
+Lemma cpn14_gupaco:
+  gupaco14 gf cpn14 <15= cpn14.
+Proof.
+  intros. eapply cpn14_greatest, PR. apply wcompat14_compat. apply gf_mon. apply cpn14_wcompat.
+Qed.
+
+Lemma cpn14_cpn r:
+  cpn14 (cpn14 r) <14= cpn14 r.
+Proof.
+  intros. apply cpn14_gupaco, gpaco14_gupaco, gpaco14_clo. apply gf_mon.
+  eapply cpn14_mon, gpaco14_clo. apply PR.
+Qed.
+
+Lemma cpn14_base r:
+  r <14= cpn14 r.
+Proof.
+  intros. apply cpn14_gupaco. apply gpaco14_base, PR.
+Qed.
+
+Lemma cpn14_clo
+      r clo (LE: clo <15= cpn14):
+  clo (cpn14 r) <14= cpn14 r.
+Proof.
+  intros. apply cpn14_cpn, LE, PR.
+Qed.
+
+Lemma cpn14_step r:
+  gf (cpn14 r) <14= cpn14 r.
+Proof.
+  intros. apply cpn14_gupaco. apply gpaco14_step. apply gf_mon.
+  eapply gf_mon, gpaco14_clo. apply PR.
+Qed.
+
+Lemma cpn14_uclo uclo
+      (MON: monotone14 uclo)
+      (WCOM: forall r, uclo (gf r) <14= gf (gupaco14 gf (uclo \15/ cpn14) r)):
+  uclo <15= gupaco14 gf cpn14.
+Proof.
+  intros. apply gpaco14_clo.
+  exists (gupaco14 gf (uclo \15/ cpn14)).
+  - apply wcompat14_compat. apply gf_mon.
+    econstructor.
+    + apply monotone14_union. apply MON. apply cpn14_mon.
+    + intros. destruct PR0.
+      * apply WCOM, H.
+      * apply compat14_compat with (gf:=gf) in H; [| apply cpn14_compat].
+        eapply gf_mon. apply H. intros.
+        apply gpaco14_clo. right. apply PR0.
+  - apply gpaco14_clo. left. apply PR.
+Qed.
+
+End Companion.
 
 End GeneralizedPaco14.
 

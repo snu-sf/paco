@@ -333,13 +333,6 @@ Structure wcompatible5 clo : Prop :=
           clo (gf r) <5= gf (gupaco5 gf clo r);
     }.
 
-Inductive cpn5 (r: rel) x0 x1 x2 x3 x4 : Prop :=
-| cpn5_intro
-    clo
-    (COM: compatible5 clo)
-    (CLO: clo r x0 x1 x2 x3 x4)
-.
-
 Lemma rclo5_dist clo
       (MON: monotone5 clo)
       (DIST: forall r1 r2, clo (r1 \5/ r2) <5= (clo r1 \5/ clo r2)):
@@ -431,52 +424,6 @@ Proof.
       intros; apply PR0. right; apply PR0. intros; apply PR0.
 Qed.
 
-Lemma cpn5_mon: monotone5 cpn5.
-Proof.
-  red. intros.
-  destruct IN. exists clo.
-  - apply COM.
-  - eapply compat5_mon; [apply COM|apply CLO|apply LE].
-Qed.
-
-Lemma cpn5_greatest: forall clo (COM: compatible5 clo), clo <6= cpn5.
-Proof. intros. econstructor;[apply COM|apply PR]. Qed.
-
-Lemma cpn5_compat: compatible5 cpn5.
-Proof.
-  econstructor; [apply cpn5_mon|intros].
-  destruct PR; eapply gf_mon with (r:=clo r).
-  - eapply (compat5_compat COM); apply CLO.
-  - intros. econstructor; [apply COM|apply PR].
-Qed.
-
-Lemma cpn5_wcompat: wcompatible5 cpn5.
-Proof. apply compat5_wcompat, cpn5_compat. Qed.
-
-Lemma cpn5_gupaco:
-  gupaco5 gf cpn5 <6= cpn5.
-Proof.
-  intros. eapply cpn5_greatest, PR. apply wcompat5_compat. apply cpn5_wcompat.
-Qed.
-
-Lemma cpn5_uclo uclo
-      (MON: monotone5 uclo)
-      (WCOM: forall r, uclo (gf r) <5= gf (gupaco5 gf (uclo \6/ cpn5) r)):
-  uclo <6= gupaco5 gf cpn5.
-Proof.
-  intros. apply gpaco5_clo.
-  exists (gupaco5 gf (uclo \6/ cpn5)).
-  - apply wcompat5_compat.
-    econstructor.
-    + apply monotone5_union. apply MON. apply cpn5_mon.
-    + intros. destruct PR0.
-      * apply WCOM, H.
-      * apply compat5_compat in H; [| apply cpn5_compat].
-        eapply gf_mon. apply H. intros.
-        apply gpaco5_clo. right. apply PR0.
-  - apply gpaco5_clo. left. apply PR.
-Qed.
-
 End Compatibility.
 
 Section Soundness.
@@ -517,6 +464,13 @@ Proof.
   eapply gf_mon. apply PR.
   intros. destruct PR0; [|contradiction]. apply gpaco5_final. apply gf_mon. right. apply H.
 Qed.
+
+End Soundness.
+
+Section Distributivity.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone5 gf.
 
 Lemma gpaco5_dist clo r rg
       (CMP: wcompatible5 gf clo)
@@ -569,7 +523,94 @@ Proof.
       right. apply CIH0. apply PR.
 Qed.
 
-End Soundness.
+End Distributivity.
+
+Section Companion.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone5 gf.
+
+Inductive cpn5 (r: rel) x0 x1 x2 x3 x4 : Prop :=
+| cpn5_intro
+    clo
+    (COM: compatible5 gf clo)
+    (CLO: clo r x0 x1 x2 x3 x4)
+.
+
+Lemma cpn5_mon: monotone5 cpn5.
+Proof.
+  red. intros.
+  destruct IN. exists clo.
+  - apply COM.
+  - eapply compat5_mon; [apply COM|apply CLO|apply LE].
+Qed.
+
+Lemma cpn5_greatest: forall clo (COM: compatible5 gf clo), clo <6= cpn5.
+Proof. intros. econstructor;[apply COM|apply PR]. Qed.
+
+Lemma cpn5_compat: compatible5 gf cpn5.
+Proof.
+  econstructor; [apply cpn5_mon|intros].
+  destruct PR; eapply gf_mon with (r:=clo r).
+  - eapply (compat5_compat COM); apply CLO.
+  - intros. econstructor; [apply COM|apply PR].
+Qed.
+
+Lemma cpn5_wcompat: wcompatible5 gf cpn5.
+Proof. apply compat5_wcompat, cpn5_compat. apply gf_mon. Qed.
+
+Lemma cpn5_gupaco:
+  gupaco5 gf cpn5 <6= cpn5.
+Proof.
+  intros. eapply cpn5_greatest, PR. apply wcompat5_compat. apply gf_mon. apply cpn5_wcompat.
+Qed.
+
+Lemma cpn5_cpn r:
+  cpn5 (cpn5 r) <5= cpn5 r.
+Proof.
+  intros. apply cpn5_gupaco, gpaco5_gupaco, gpaco5_clo. apply gf_mon.
+  eapply cpn5_mon, gpaco5_clo. apply PR.
+Qed.
+
+Lemma cpn5_base r:
+  r <5= cpn5 r.
+Proof.
+  intros. apply cpn5_gupaco. apply gpaco5_base, PR.
+Qed.
+
+Lemma cpn5_clo
+      r clo (LE: clo <6= cpn5):
+  clo (cpn5 r) <5= cpn5 r.
+Proof.
+  intros. apply cpn5_cpn, LE, PR.
+Qed.
+
+Lemma cpn5_step r:
+  gf (cpn5 r) <5= cpn5 r.
+Proof.
+  intros. apply cpn5_gupaco. apply gpaco5_step. apply gf_mon.
+  eapply gf_mon, gpaco5_clo. apply PR.
+Qed.
+
+Lemma cpn5_uclo uclo
+      (MON: monotone5 uclo)
+      (WCOM: forall r, uclo (gf r) <5= gf (gupaco5 gf (uclo \6/ cpn5) r)):
+  uclo <6= gupaco5 gf cpn5.
+Proof.
+  intros. apply gpaco5_clo.
+  exists (gupaco5 gf (uclo \6/ cpn5)).
+  - apply wcompat5_compat. apply gf_mon.
+    econstructor.
+    + apply monotone5_union. apply MON. apply cpn5_mon.
+    + intros. destruct PR0.
+      * apply WCOM, H.
+      * apply compat5_compat with (gf:=gf) in H; [| apply cpn5_compat].
+        eapply gf_mon. apply H. intros.
+        apply gpaco5_clo. right. apply PR0.
+  - apply gpaco5_clo. left. apply PR.
+Qed.
+
+End Companion.
 
 End GeneralizedPaco5.
 

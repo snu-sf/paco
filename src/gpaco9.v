@@ -337,13 +337,6 @@ Structure wcompatible9 clo : Prop :=
           clo (gf r) <9= gf (gupaco9 gf clo r);
     }.
 
-Inductive cpn9 (r: rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 : Prop :=
-| cpn9_intro
-    clo
-    (COM: compatible9 clo)
-    (CLO: clo r x0 x1 x2 x3 x4 x5 x6 x7 x8)
-.
-
 Lemma rclo9_dist clo
       (MON: monotone9 clo)
       (DIST: forall r1 r2, clo (r1 \9/ r2) <9= (clo r1 \9/ clo r2)):
@@ -435,52 +428,6 @@ Proof.
       intros; apply PR0. right; apply PR0. intros; apply PR0.
 Qed.
 
-Lemma cpn9_mon: monotone9 cpn9.
-Proof.
-  red. intros.
-  destruct IN. exists clo.
-  - apply COM.
-  - eapply compat9_mon; [apply COM|apply CLO|apply LE].
-Qed.
-
-Lemma cpn9_greatest: forall clo (COM: compatible9 clo), clo <10= cpn9.
-Proof. intros. econstructor;[apply COM|apply PR]. Qed.
-
-Lemma cpn9_compat: compatible9 cpn9.
-Proof.
-  econstructor; [apply cpn9_mon|intros].
-  destruct PR; eapply gf_mon with (r:=clo r).
-  - eapply (compat9_compat COM); apply CLO.
-  - intros. econstructor; [apply COM|apply PR].
-Qed.
-
-Lemma cpn9_wcompat: wcompatible9 cpn9.
-Proof. apply compat9_wcompat, cpn9_compat. Qed.
-
-Lemma cpn9_gupaco:
-  gupaco9 gf cpn9 <10= cpn9.
-Proof.
-  intros. eapply cpn9_greatest, PR. apply wcompat9_compat. apply cpn9_wcompat.
-Qed.
-
-Lemma cpn9_uclo uclo
-      (MON: monotone9 uclo)
-      (WCOM: forall r, uclo (gf r) <9= gf (gupaco9 gf (uclo \10/ cpn9) r)):
-  uclo <10= gupaco9 gf cpn9.
-Proof.
-  intros. apply gpaco9_clo.
-  exists (gupaco9 gf (uclo \10/ cpn9)).
-  - apply wcompat9_compat.
-    econstructor.
-    + apply monotone9_union. apply MON. apply cpn9_mon.
-    + intros. destruct PR0.
-      * apply WCOM, H.
-      * apply compat9_compat in H; [| apply cpn9_compat].
-        eapply gf_mon. apply H. intros.
-        apply gpaco9_clo. right. apply PR0.
-  - apply gpaco9_clo. left. apply PR.
-Qed.
-
 End Compatibility.
 
 Section Soundness.
@@ -521,6 +468,13 @@ Proof.
   eapply gf_mon. apply PR.
   intros. destruct PR0; [|contradiction]. apply gpaco9_final. apply gf_mon. right. apply H.
 Qed.
+
+End Soundness.
+
+Section Distributivity.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone9 gf.
 
 Lemma gpaco9_dist clo r rg
       (CMP: wcompatible9 gf clo)
@@ -573,7 +527,94 @@ Proof.
       right. apply CIH0. apply PR.
 Qed.
 
-End Soundness.
+End Distributivity.
+
+Section Companion.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone9 gf.
+
+Inductive cpn9 (r: rel) x0 x1 x2 x3 x4 x5 x6 x7 x8 : Prop :=
+| cpn9_intro
+    clo
+    (COM: compatible9 gf clo)
+    (CLO: clo r x0 x1 x2 x3 x4 x5 x6 x7 x8)
+.
+
+Lemma cpn9_mon: monotone9 cpn9.
+Proof.
+  red. intros.
+  destruct IN. exists clo.
+  - apply COM.
+  - eapply compat9_mon; [apply COM|apply CLO|apply LE].
+Qed.
+
+Lemma cpn9_greatest: forall clo (COM: compatible9 gf clo), clo <10= cpn9.
+Proof. intros. econstructor;[apply COM|apply PR]. Qed.
+
+Lemma cpn9_compat: compatible9 gf cpn9.
+Proof.
+  econstructor; [apply cpn9_mon|intros].
+  destruct PR; eapply gf_mon with (r:=clo r).
+  - eapply (compat9_compat COM); apply CLO.
+  - intros. econstructor; [apply COM|apply PR].
+Qed.
+
+Lemma cpn9_wcompat: wcompatible9 gf cpn9.
+Proof. apply compat9_wcompat, cpn9_compat. apply gf_mon. Qed.
+
+Lemma cpn9_gupaco:
+  gupaco9 gf cpn9 <10= cpn9.
+Proof.
+  intros. eapply cpn9_greatest, PR. apply wcompat9_compat. apply gf_mon. apply cpn9_wcompat.
+Qed.
+
+Lemma cpn9_cpn r:
+  cpn9 (cpn9 r) <9= cpn9 r.
+Proof.
+  intros. apply cpn9_gupaco, gpaco9_gupaco, gpaco9_clo. apply gf_mon.
+  eapply cpn9_mon, gpaco9_clo. apply PR.
+Qed.
+
+Lemma cpn9_base r:
+  r <9= cpn9 r.
+Proof.
+  intros. apply cpn9_gupaco. apply gpaco9_base, PR.
+Qed.
+
+Lemma cpn9_clo
+      r clo (LE: clo <10= cpn9):
+  clo (cpn9 r) <9= cpn9 r.
+Proof.
+  intros. apply cpn9_cpn, LE, PR.
+Qed.
+
+Lemma cpn9_step r:
+  gf (cpn9 r) <9= cpn9 r.
+Proof.
+  intros. apply cpn9_gupaco. apply gpaco9_step. apply gf_mon.
+  eapply gf_mon, gpaco9_clo. apply PR.
+Qed.
+
+Lemma cpn9_uclo uclo
+      (MON: monotone9 uclo)
+      (WCOM: forall r, uclo (gf r) <9= gf (gupaco9 gf (uclo \10/ cpn9) r)):
+  uclo <10= gupaco9 gf cpn9.
+Proof.
+  intros. apply gpaco9_clo.
+  exists (gupaco9 gf (uclo \10/ cpn9)).
+  - apply wcompat9_compat. apply gf_mon.
+    econstructor.
+    + apply monotone9_union. apply MON. apply cpn9_mon.
+    + intros. destruct PR0.
+      * apply WCOM, H.
+      * apply compat9_compat with (gf:=gf) in H; [| apply cpn9_compat].
+        eapply gf_mon. apply H. intros.
+        apply gpaco9_clo. right. apply PR0.
+  - apply gpaco9_clo. left. apply PR.
+Qed.
+
+End Companion.
 
 End GeneralizedPaco9.
 
