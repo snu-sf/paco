@@ -173,11 +173,14 @@ Ltac paco_simp_hyp CIH :=
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp CIH :=
-  let CIH := fresh CIH in let TMP := fresh "_paco_TMP_" in
+  let CIH := fresh CIH in
   intro CIH; paco_simp_hyp CIH;
-  generalize _paco_mark_cons; intro TMP;
-  repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
-  simplJM; paco_revert_hyp _paco_mark.
+  first [try(match goal with [ |- context[_paco_id] ] => fail 2 | [ |- context[_paco_foo] ] => fail 2 end) |
+    let TMP := fresh "_paco_TMP_" in
+    generalize _paco_mark_cons; intro TMP;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    simplJM; paco_revert_hyp _paco_mark
+  ].
 
 Ltac paco_ren_r nr cr :=
   first [rename cr into nr | let nr := fresh nr in rename cr into nr].

@@ -1,5 +1,6 @@
 Require Export Program.Basics. Open Scope program_scope.
-Require Export paconotation paconotation_internal pacotac_internal paco_internal.
+Require Import paconotation_internal paco_internal pacotac_internal.
+Require Export paconotation.
 Set Implicit Arguments.
 
 Section PACO1.
