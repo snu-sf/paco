@@ -1,3 +1,9 @@
+changes from v3.0.0 to v4.0.0
+=========================
+- Support "paco" and "gpaco", and remove "gcpn".
+- Support the following tactics for "gpaco". 
+  ginit, gfinal, gunfold, gunfoldbot, gbase, gstep, gupaco, gclo, grclo, guclo, glecpn, gcofix
+
 changes from v2.1.0 to v3.0.0
 =========================
 - Support "gcpn", which supports more general incremental principles.
