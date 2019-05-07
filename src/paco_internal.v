@@ -24,8 +24,8 @@ Definition upaco( r: rel1 T0) := paco r \1/ r.
 
 End Arg1_def.
 
-Arguments paco [ T0 ].
-Arguments upaco [ T0 ].
+Arguments paco [ T0 ] gf r x0.
+Arguments upaco [ T0 ] gf r x0.
 Hint Unfold upaco.
 
 (* Less than or equal - internal use only *)
@@ -118,7 +118,7 @@ Proof. unfold le1. eapply paco_fold. Qed.
 Theorem _paco_unfold: forall (MON: _monotone gf) r,
   paco gf r <1== gf (upaco gf r).
 Proof.
-  unfold le1. repeat_intros 1.
+  unfold le1. intro.
   eapply paco_unfold; apply monotone_eq; eauto.
 Qed.
 
@@ -127,10 +127,10 @@ End Arg1.
 Hint Unfold monotone.
 Hint Resolve paco_fold.
 
-Arguments paco_mon_gen        [ T0 ].
-Arguments paco_acc            [ T0 ].
-Arguments paco_mon            [ T0 ].
-Arguments paco_mult_strong    [ T0 ].
-Arguments paco_mult           [ T0 ].
-Arguments paco_fold           [ T0 ].
-Arguments paco_unfold         [ T0 ].
+Arguments paco_mon_gen        [ T0 ] gf gf' r r' x PR LEgf LEr.
+Arguments paco_acc            [ T0 ] gf l r OBG x0 PR.
+Arguments paco_mon            [ T0 ] gf x0 r r' IN LE.
+Arguments paco_mult_strong    [ T0 ] gf r x0 PR.
+Arguments paco_mult           [ T0 ] gf r x0 PR.
+Arguments paco_fold           [ T0 ] gf r x0 PR.
+Arguments paco_unfold         [ T0 ] gf MON r x0 PR.

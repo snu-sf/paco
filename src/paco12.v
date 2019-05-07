@@ -65,10 +65,10 @@ Lemma uncurry_bij2_12 r : r <12== curry12 (uncurry12 r).
 Proof. unfold le12. intros. apply PR. Qed.
 
 Lemma curry_bij1_12 r : uncurry12 (curry12 r) <1== r.
-Proof. intros []. intro H. apply H. Qed.
+Proof. intros [] H. apply H. Qed.
 
 Lemma curry_bij2_12 r : r <1== uncurry12 (curry12 r).
-Proof. intros []. intro H. apply H. Qed.
+Proof. intros [] H. apply H. Qed.
 
 Lemma uncurry_adjoint1_12 r0 r1 (LE: uncurry12 r0 <1== r1) : r0 <12== curry12 r1.
 Proof.
@@ -211,7 +211,7 @@ Theorem _paco12_mult_strong: forall r,
 Proof.
   intros. apply curry_map12.
   eapply le1_trans; [| eapply _paco_mult_strong].
-  apply _paco_mon; intros []; intros H; apply H.
+  apply _paco_mon; intros [] H; apply H.
 Qed.
 
 Theorem _paco12_fold: forall r,
