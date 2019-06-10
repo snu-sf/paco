@@ -90,6 +90,17 @@ print ("  end.")
 print ("Ltac gupaco := repeat red; under_forall ltac:(gupaco_).")
 print ()
 
+print ("(** ** gpaco")
+print ("*)")
+print ()
+print ('Tactic Notation "gpaco_" :=')
+print ("  match goal with")
+for n in range(relsize+1):
+    print ("  | [|- context[gpaco"+str(n)+"]] => eapply gpaco"+str(n)+"_gpaco; [eauto with paco|]")
+print ("  end.")
+print ("Ltac gpaco := repeat red; under_forall ltac:(gpaco_).")
+print ()
+
 print ("(** ** gclo")
 print ("*)")
 print ()

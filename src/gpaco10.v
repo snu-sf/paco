@@ -239,6 +239,24 @@ Proof.
     + right. apply H0.
 Qed.
 
+Lemma gpaco10_gpaco clo r rg:
+  gpaco10 clo (gpaco10 clo r rg) (gupaco10 clo (rg \10/ r)) <10= gpaco10 clo r rg.
+Proof.
+  intros. apply gpaco10_unfold in PR.
+  econstructor. apply rclo10_rclo. eapply rclo10_mon. apply PR. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 PR. intros.
+  destruct PR; [|destruct H; apply IN].
+  apply rclo10_base. left. pstep.
+  eapply gf_mon. apply H. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 H. intros.
+  cut (@gupaco10 clo (rg \10/ r) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9).
+  { intros. destruct H. eapply rclo10_mon. apply IN. intros.
+    destruct PR0; [|right; apply H].
+    left. eapply paco10_mon. apply H. intros. destruct PR0; apply H0.
+  }
+  apply gpaco10_gupaco. eapply gupaco10_mon. apply PR. intros.
+  destruct PR0; [apply H|].
+  eapply gpaco10_mon; [apply H|right|left]; intros; apply PR0.
+Qed.
+
 Lemma gpaco10_uclo uclo clo r rg 
       (LEclo: uclo <11= gupaco10 clo) :
   uclo (gpaco10 clo r rg) <10= gpaco10 clo r rg.

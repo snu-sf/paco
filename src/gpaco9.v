@@ -238,6 +238,24 @@ Proof.
     + right. apply H0.
 Qed.
 
+Lemma gpaco9_gpaco clo r rg:
+  gpaco9 clo (gpaco9 clo r rg) (gupaco9 clo (rg \9/ r)) <9= gpaco9 clo r rg.
+Proof.
+  intros. apply gpaco9_unfold in PR.
+  econstructor. apply rclo9_rclo. eapply rclo9_mon. apply PR. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 PR. intros.
+  destruct PR; [|destruct H; apply IN].
+  apply rclo9_base. left. pstep.
+  eapply gf_mon. apply H. clear x0 x1 x2 x3 x4 x5 x6 x7 x8 H. intros.
+  cut (@gupaco9 clo (rg \9/ r) x0 x1 x2 x3 x4 x5 x6 x7 x8).
+  { intros. destruct H. eapply rclo9_mon. apply IN. intros.
+    destruct PR0; [|right; apply H].
+    left. eapply paco9_mon. apply H. intros. destruct PR0; apply H0.
+  }
+  apply gpaco9_gupaco. eapply gupaco9_mon. apply PR. intros.
+  destruct PR0; [apply H|].
+  eapply gpaco9_mon; [apply H|right|left]; intros; apply PR0.
+Qed.
+
 Lemma gpaco9_uclo uclo clo r rg 
       (LEclo: uclo <10= gupaco9 clo) :
   uclo (gpaco9 clo r rg) <9= gpaco9 clo r rg.

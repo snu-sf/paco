@@ -232,6 +232,24 @@ Proof.
     + right. apply H0.
 Qed.
 
+Lemma gpaco3_gpaco clo r rg:
+  gpaco3 clo (gpaco3 clo r rg) (gupaco3 clo (rg \3/ r)) <3= gpaco3 clo r rg.
+Proof.
+  intros. apply gpaco3_unfold in PR.
+  econstructor. apply rclo3_rclo. eapply rclo3_mon. apply PR. clear x0 x1 x2 PR. intros.
+  destruct PR; [|destruct H; apply IN].
+  apply rclo3_base. left. pstep.
+  eapply gf_mon. apply H. clear x0 x1 x2 H. intros.
+  cut (@gupaco3 clo (rg \3/ r) x0 x1 x2).
+  { intros. destruct H. eapply rclo3_mon. apply IN. intros.
+    destruct PR0; [|right; apply H].
+    left. eapply paco3_mon. apply H. intros. destruct PR0; apply H0.
+  }
+  apply gpaco3_gupaco. eapply gupaco3_mon. apply PR. intros.
+  destruct PR0; [apply H|].
+  eapply gpaco3_mon; [apply H|right|left]; intros; apply PR0.
+Qed.
+
 Lemma gpaco3_uclo uclo clo r rg 
       (LEclo: uclo <4= gupaco3 clo) :
   uclo (gpaco3 clo r rg) <3= gpaco3 clo r rg.

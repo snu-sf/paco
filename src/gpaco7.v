@@ -236,6 +236,24 @@ Proof.
     + right. apply H0.
 Qed.
 
+Lemma gpaco7_gpaco clo r rg:
+  gpaco7 clo (gpaco7 clo r rg) (gupaco7 clo (rg \7/ r)) <7= gpaco7 clo r rg.
+Proof.
+  intros. apply gpaco7_unfold in PR.
+  econstructor. apply rclo7_rclo. eapply rclo7_mon. apply PR. clear x0 x1 x2 x3 x4 x5 x6 PR. intros.
+  destruct PR; [|destruct H; apply IN].
+  apply rclo7_base. left. pstep.
+  eapply gf_mon. apply H. clear x0 x1 x2 x3 x4 x5 x6 H. intros.
+  cut (@gupaco7 clo (rg \7/ r) x0 x1 x2 x3 x4 x5 x6).
+  { intros. destruct H. eapply rclo7_mon. apply IN. intros.
+    destruct PR0; [|right; apply H].
+    left. eapply paco7_mon. apply H. intros. destruct PR0; apply H0.
+  }
+  apply gpaco7_gupaco. eapply gupaco7_mon. apply PR. intros.
+  destruct PR0; [apply H|].
+  eapply gpaco7_mon; [apply H|right|left]; intros; apply PR0.
+Qed.
+
 Lemma gpaco7_uclo uclo clo r rg 
       (LEclo: uclo <8= gupaco7 clo) :
   uclo (gpaco7 clo r rg) <7= gpaco7 clo r rg.

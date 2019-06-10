@@ -235,6 +235,24 @@ Proof.
     + right. apply H0.
 Qed.
 
+Lemma gpaco6_gpaco clo r rg:
+  gpaco6 clo (gpaco6 clo r rg) (gupaco6 clo (rg \6/ r)) <6= gpaco6 clo r rg.
+Proof.
+  intros. apply gpaco6_unfold in PR.
+  econstructor. apply rclo6_rclo. eapply rclo6_mon. apply PR. clear x0 x1 x2 x3 x4 x5 PR. intros.
+  destruct PR; [|destruct H; apply IN].
+  apply rclo6_base. left. pstep.
+  eapply gf_mon. apply H. clear x0 x1 x2 x3 x4 x5 H. intros.
+  cut (@gupaco6 clo (rg \6/ r) x0 x1 x2 x3 x4 x5).
+  { intros. destruct H. eapply rclo6_mon. apply IN. intros.
+    destruct PR0; [|right; apply H].
+    left. eapply paco6_mon. apply H. intros. destruct PR0; apply H0.
+  }
+  apply gpaco6_gupaco. eapply gupaco6_mon. apply PR. intros.
+  destruct PR0; [apply H|].
+  eapply gpaco6_mon; [apply H|right|left]; intros; apply PR0.
+Qed.
+
 Lemma gpaco6_uclo uclo clo r rg 
       (LEclo: uclo <7= gupaco6 clo) :
   uclo (gpaco6 clo r rg) <6= gpaco6 clo r rg.

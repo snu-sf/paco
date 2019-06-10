@@ -237,6 +237,24 @@ Proof.
     + right. apply H0.
 Qed.
 
+Lemma gpaco8_gpaco clo r rg:
+  gpaco8 clo (gpaco8 clo r rg) (gupaco8 clo (rg \8/ r)) <8= gpaco8 clo r rg.
+Proof.
+  intros. apply gpaco8_unfold in PR.
+  econstructor. apply rclo8_rclo. eapply rclo8_mon. apply PR. clear x0 x1 x2 x3 x4 x5 x6 x7 PR. intros.
+  destruct PR; [|destruct H; apply IN].
+  apply rclo8_base. left. pstep.
+  eapply gf_mon. apply H. clear x0 x1 x2 x3 x4 x5 x6 x7 H. intros.
+  cut (@gupaco8 clo (rg \8/ r) x0 x1 x2 x3 x4 x5 x6 x7).
+  { intros. destruct H. eapply rclo8_mon. apply IN. intros.
+    destruct PR0; [|right; apply H].
+    left. eapply paco8_mon. apply H. intros. destruct PR0; apply H0.
+  }
+  apply gpaco8_gupaco. eapply gupaco8_mon. apply PR. intros.
+  destruct PR0; [apply H|].
+  eapply gpaco8_mon; [apply H|right|left]; intros; apply PR0.
+Qed.
+
 Lemma gpaco8_uclo uclo clo r rg 
       (LEclo: uclo <9= gupaco8 clo) :
   uclo (gpaco8 clo r rg) <8= gpaco8 clo r rg.

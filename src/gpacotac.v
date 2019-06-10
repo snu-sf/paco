@@ -163,6 +163,29 @@ Tactic Notation "gupaco_" :=
   end.
 Ltac gupaco := repeat red; under_forall ltac:(gupaco_).
 
+(** ** gpaco
+*)
+
+Tactic Notation "gpaco_" :=
+  match goal with
+  | [|- context[gpaco0]] => eapply gpaco0_gpaco; [eauto with paco|]
+  | [|- context[gpaco1]] => eapply gpaco1_gpaco; [eauto with paco|]
+  | [|- context[gpaco2]] => eapply gpaco2_gpaco; [eauto with paco|]
+  | [|- context[gpaco3]] => eapply gpaco3_gpaco; [eauto with paco|]
+  | [|- context[gpaco4]] => eapply gpaco4_gpaco; [eauto with paco|]
+  | [|- context[gpaco5]] => eapply gpaco5_gpaco; [eauto with paco|]
+  | [|- context[gpaco6]] => eapply gpaco6_gpaco; [eauto with paco|]
+  | [|- context[gpaco7]] => eapply gpaco7_gpaco; [eauto with paco|]
+  | [|- context[gpaco8]] => eapply gpaco8_gpaco; [eauto with paco|]
+  | [|- context[gpaco9]] => eapply gpaco9_gpaco; [eauto with paco|]
+  | [|- context[gpaco10]] => eapply gpaco10_gpaco; [eauto with paco|]
+  | [|- context[gpaco11]] => eapply gpaco11_gpaco; [eauto with paco|]
+  | [|- context[gpaco12]] => eapply gpaco12_gpaco; [eauto with paco|]
+  | [|- context[gpaco13]] => eapply gpaco13_gpaco; [eauto with paco|]
+  | [|- context[gpaco14]] => eapply gpaco14_gpaco; [eauto with paco|]
+  end.
+Ltac gpaco := repeat red; under_forall ltac:(gpaco_).
+
 (** ** gclo
 *)
 

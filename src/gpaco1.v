@@ -230,6 +230,24 @@ Proof.
     + right. apply H0.
 Qed.
 
+Lemma gpaco1_gpaco clo r rg:
+  gpaco1 clo (gpaco1 clo r rg) (gupaco1 clo (rg \1/ r)) <1= gpaco1 clo r rg.
+Proof.
+  intros. apply gpaco1_unfold in PR.
+  econstructor. apply rclo1_rclo. eapply rclo1_mon. apply PR. clear x0 PR. intros.
+  destruct PR; [|destruct H; apply IN].
+  apply rclo1_base. left. pstep.
+  eapply gf_mon. apply H. clear x0 H. intros.
+  cut (@gupaco1 clo (rg \1/ r) x0).
+  { intros. destruct H. eapply rclo1_mon. apply IN. intros.
+    destruct PR0; [|right; apply H].
+    left. eapply paco1_mon. apply H. intros. destruct PR0; apply H0.
+  }
+  apply gpaco1_gupaco. eapply gupaco1_mon. apply PR. intros.
+  destruct PR0; [apply H|].
+  eapply gpaco1_mon; [apply H|right|left]; intros; apply PR0.
+Qed.
+
 Lemma gpaco1_uclo uclo clo r rg 
       (LEclo: uclo <2= gupaco1 clo) :
   uclo (gpaco1 clo r rg) <1= gpaco1 clo r rg.

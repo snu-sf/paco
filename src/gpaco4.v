@@ -233,6 +233,24 @@ Proof.
     + right. apply H0.
 Qed.
 
+Lemma gpaco4_gpaco clo r rg:
+  gpaco4 clo (gpaco4 clo r rg) (gupaco4 clo (rg \4/ r)) <4= gpaco4 clo r rg.
+Proof.
+  intros. apply gpaco4_unfold in PR.
+  econstructor. apply rclo4_rclo. eapply rclo4_mon. apply PR. clear x0 x1 x2 x3 PR. intros.
+  destruct PR; [|destruct H; apply IN].
+  apply rclo4_base. left. pstep.
+  eapply gf_mon. apply H. clear x0 x1 x2 x3 H. intros.
+  cut (@gupaco4 clo (rg \4/ r) x0 x1 x2 x3).
+  { intros. destruct H. eapply rclo4_mon. apply IN. intros.
+    destruct PR0; [|right; apply H].
+    left. eapply paco4_mon. apply H. intros. destruct PR0; apply H0.
+  }
+  apply gpaco4_gupaco. eapply gupaco4_mon. apply PR. intros.
+  destruct PR0; [apply H|].
+  eapply gpaco4_mon; [apply H|right|left]; intros; apply PR0.
+Qed.
+
 Lemma gpaco4_uclo uclo clo r rg 
       (LEclo: uclo <5= gupaco4 clo) :
   uclo (gpaco4 clo r rg) <4= gpaco4 clo r rg.
