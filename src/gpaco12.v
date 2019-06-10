@@ -122,6 +122,16 @@ Proof.
   econstructor. apply rclo12_base. right. apply PR.
 Qed.
 
+Lemma gpaco12_gen_guard  clo r rg:
+  gpaco12 clo r (rg \12/ r) <12= gpaco12 clo r rg.
+Proof.
+  intros. destruct PR. econstructor.
+  eapply rclo12_mon. apply IN. intros.
+  destruct PR; [|right; apply H].
+  left. eapply paco12_mon_gen; intros. apply H. apply PR.
+  destruct PR. apply H0. right. apply H0.
+Qed.
+
 Lemma gpaco12_rclo clo r rg:
   rclo12 clo r <12= gpaco12 clo r rg.
 Proof.

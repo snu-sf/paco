@@ -117,6 +117,16 @@ Proof.
   econstructor. apply rclo7_base. right. apply PR.
 Qed.
 
+Lemma gpaco7_gen_guard  clo r rg:
+  gpaco7 clo r (rg \7/ r) <7= gpaco7 clo r rg.
+Proof.
+  intros. destruct PR. econstructor.
+  eapply rclo7_mon. apply IN. intros.
+  destruct PR; [|right; apply H].
+  left. eapply paco7_mon_gen; intros. apply H. apply PR.
+  destruct PR. apply H0. right. apply H0.
+Qed.
+
 Lemma gpaco7_rclo clo r rg:
   rclo7 clo r <7= gpaco7 clo r rg.
 Proof.

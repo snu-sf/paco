@@ -121,6 +121,16 @@ Proof.
   econstructor. apply rclo11_base. right. apply PR.
 Qed.
 
+Lemma gpaco11_gen_guard  clo r rg:
+  gpaco11 clo r (rg \11/ r) <11= gpaco11 clo r rg.
+Proof.
+  intros. destruct PR. econstructor.
+  eapply rclo11_mon. apply IN. intros.
+  destruct PR; [|right; apply H].
+  left. eapply paco11_mon_gen; intros. apply H. apply PR.
+  destruct PR. apply H0. right. apply H0.
+Qed.
+
 Lemma gpaco11_rclo clo r rg:
   rclo11 clo r <11= gpaco11 clo r rg.
 Proof.

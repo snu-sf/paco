@@ -112,6 +112,16 @@ Proof.
   econstructor. apply rclo2_base. right. apply PR.
 Qed.
 
+Lemma gpaco2_gen_guard  clo r rg:
+  gpaco2 clo r (rg \2/ r) <2= gpaco2 clo r rg.
+Proof.
+  intros. destruct PR. econstructor.
+  eapply rclo2_mon. apply IN. intros.
+  destruct PR; [|right; apply H].
+  left. eapply paco2_mon_gen; intros. apply H. apply PR.
+  destruct PR. apply H0. right. apply H0.
+Qed.
+
 Lemma gpaco2_rclo clo r rg:
   rclo2 clo r <2= gpaco2 clo r rg.
 Proof.

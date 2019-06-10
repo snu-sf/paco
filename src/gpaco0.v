@@ -110,6 +110,16 @@ Proof.
   econstructor. apply rclo0_base. right. apply PR.
 Qed.
 
+Lemma gpaco0_gen_guard  clo r rg:
+  gpaco0 clo r (rg \0/ r) <0= gpaco0 clo r rg.
+Proof.
+  intros. destruct PR. econstructor.
+  eapply rclo0_mon. apply IN. intros.
+  destruct PR; [|right; apply H].
+  left. eapply paco0_mon_gen; intros. apply H. apply PR.
+  destruct PR. apply H0. right. apply H0.
+Qed.
+
 Lemma gpaco0_rclo clo r rg:
   rclo0 clo r <0= gpaco0 clo r rg.
 Proof.

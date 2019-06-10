@@ -115,6 +115,16 @@ Proof.
   econstructor. apply rclo5_base. right. apply PR.
 Qed.
 
+Lemma gpaco5_gen_guard  clo r rg:
+  gpaco5 clo r (rg \5/ r) <5= gpaco5 clo r rg.
+Proof.
+  intros. destruct PR. econstructor.
+  eapply rclo5_mon. apply IN. intros.
+  destruct PR; [|right; apply H].
+  left. eapply paco5_mon_gen; intros. apply H. apply PR.
+  destruct PR. apply H0. right. apply H0.
+Qed.
+
 Lemma gpaco5_rclo clo r rg:
   rclo5 clo r <5= gpaco5 clo r rg.
 Proof.

@@ -116,6 +116,16 @@ Proof.
   econstructor. apply rclo6_base. right. apply PR.
 Qed.
 
+Lemma gpaco6_gen_guard  clo r rg:
+  gpaco6 clo r (rg \6/ r) <6= gpaco6 clo r rg.
+Proof.
+  intros. destruct PR. econstructor.
+  eapply rclo6_mon. apply IN. intros.
+  destruct PR; [|right; apply H].
+  left. eapply paco6_mon_gen; intros. apply H. apply PR.
+  destruct PR. apply H0. right. apply H0.
+Qed.
+
 Lemma gpaco6_rclo clo r rg:
   rclo6 clo r <6= gpaco6 clo r rg.
 Proof.

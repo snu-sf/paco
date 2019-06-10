@@ -123,6 +123,16 @@ Proof.
   econstructor. apply rclo13_base. right. apply PR.
 Qed.
 
+Lemma gpaco13_gen_guard  clo r rg:
+  gpaco13 clo r (rg \13/ r) <13= gpaco13 clo r rg.
+Proof.
+  intros. destruct PR. econstructor.
+  eapply rclo13_mon. apply IN. intros.
+  destruct PR; [|right; apply H].
+  left. eapply paco13_mon_gen; intros. apply H. apply PR.
+  destruct PR. apply H0. right. apply H0.
+Qed.
+
 Lemma gpaco13_rclo clo r rg:
   rclo13 clo r <13= gpaco13 clo r rg.
 Proof.

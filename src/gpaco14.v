@@ -124,6 +124,16 @@ Proof.
   econstructor. apply rclo14_base. right. apply PR.
 Qed.
 
+Lemma gpaco14_gen_guard  clo r rg:
+  gpaco14 clo r (rg \14/ r) <14= gpaco14 clo r rg.
+Proof.
+  intros. destruct PR. econstructor.
+  eapply rclo14_mon. apply IN. intros.
+  destruct PR; [|right; apply H].
+  left. eapply paco14_mon_gen; intros. apply H. apply PR.
+  destruct PR. apply H0. right. apply H0.
+Qed.
+
 Lemma gpaco14_rclo clo r rg:
   rclo14 clo r <14= gpaco14 clo r rg.
 Proof.

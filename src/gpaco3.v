@@ -113,6 +113,16 @@ Proof.
   econstructor. apply rclo3_base. right. apply PR.
 Qed.
 
+Lemma gpaco3_gen_guard  clo r rg:
+  gpaco3 clo r (rg \3/ r) <3= gpaco3 clo r rg.
+Proof.
+  intros. destruct PR. econstructor.
+  eapply rclo3_mon. apply IN. intros.
+  destruct PR; [|right; apply H].
+  left. eapply paco3_mon_gen; intros. apply H. apply PR.
+  destruct PR. apply H0. right. apply H0.
+Qed.
+
 Lemma gpaco3_rclo clo r rg:
   rclo3 clo r <3= gpaco3 clo r rg.
 Proof.

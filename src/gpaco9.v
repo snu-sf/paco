@@ -119,6 +119,16 @@ Proof.
   econstructor. apply rclo9_base. right. apply PR.
 Qed.
 
+Lemma gpaco9_gen_guard  clo r rg:
+  gpaco9 clo r (rg \9/ r) <9= gpaco9 clo r rg.
+Proof.
+  intros. destruct PR. econstructor.
+  eapply rclo9_mon. apply IN. intros.
+  destruct PR; [|right; apply H].
+  left. eapply paco9_mon_gen; intros. apply H. apply PR.
+  destruct PR. apply H0. right. apply H0.
+Qed.
+
 Lemma gpaco9_rclo clo r rg:
   rclo9 clo r <9= gpaco9 clo r rg.
 Proof.
