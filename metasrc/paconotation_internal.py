@@ -8,7 +8,7 @@ if len(sys.argv) < 2:
 
 relsize = int(sys.argv[1])
 
-print ("Require Import paconotation.")
+print ("From Paco Require Import paconotation.")
 print ("")
 
 print ("(** ** Less than or equal *)")

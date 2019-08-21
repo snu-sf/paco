@@ -7,8 +7,8 @@ if len(sys.argv) < 2:
 n = int(sys.argv[1])
 
 print ("Require Export Program.Basics. Open Scope program_scope.")
-print ("Require Import paconotation_internal paco_internal pacotac_internal.")
-print ("Require Export paconotation.")
+print ("From Paco Require Import paconotation_internal paco_internal pacotac_internal.")
+print ("From Paco Require Export paconotation.")
 print ("Set Implicit Arguments.")
 print ("")
 print ("Section PACO"+str(n)+".")

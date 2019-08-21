@@ -1,5 +1,5 @@
 Require Export Program.Basics. Open Scope program_scope.
-Require Import paco6 pacotac.
+From Paco Require Import paco6 pacotac.
 Set Implicit Arguments.
 
 Section GeneralizedPaco6.

@@ -1,4 +1,4 @@
-Require Import pacotac_internal pacotac pacoall gpacoall.
+From Paco Require Import pacotac_internal pacotac pacoall gpacoall.
 
 (** ** ginit
 *)

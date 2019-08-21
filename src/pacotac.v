@@ -1,7 +1,7 @@
 
 Require Import Program.Tactics.
-Require Export paconotation.
-Require Import pacotac_internal pacoall.
+From Paco Require Export paconotation.
+From Paco Require Import pacotac_internal pacoall.
 Set Implicit Arguments.
 
 Ltac under_forall tac := generalize _paco_mark_cons; intros; tac; paco_revert_hyp _paco_mark.
