@@ -20,7 +20,7 @@ for i in `seq 0 $maxsize`; do
 done
 
 echo -n "" > $PACOSRCDIR/paco.v
-echo "Require Export pacoall." >> $PACOSRCDIR/paco.v
-echo "Require Export pacotac." >> $PACOSRCDIR/paco.v
-echo "Require Export gpacoall." >> $PACOSRCDIR/paco.v
-echo "Require Export gpacotac." >> $PACOSRCDIR/paco.v
+echo "From Paco Require Export pacoall." >> $PACOSRCDIR/paco.v
+echo "From Paco Require Export pacotac." >> $PACOSRCDIR/paco.v
+echo "From Paco Require Export gpacoall." >> $PACOSRCDIR/paco.v
+echo "From Paco Require Export gpacotac." >> $PACOSRCDIR/paco.v

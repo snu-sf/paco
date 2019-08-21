@@ -1,4 +1,4 @@
-Require Import paconotation.
+From Paco Require Import paconotation.
 
 (** ** Less than or equal *)
 

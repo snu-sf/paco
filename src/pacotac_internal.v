@@ -1,6 +1,6 @@
 Require Import JMeq.
-Require Import hpattern.
-Require Export paconotation.
+From Paco Require Import hpattern.
+From Paco Require Export paconotation.
 
 (** * Tactic support for [paco] library
 

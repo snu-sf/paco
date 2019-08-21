@@ -7,7 +7,7 @@ if len(sys.argv) < 2:
 n = int(sys.argv[1])
 
 print ("Require Export Program.Basics. Open Scope program_scope.")
-print ("Require Import paco"+str(n)+" pacotac.")
+print ("From Paco Require Import paco"+str(n)+" pacotac.")
 print ("Set Implicit Arguments.")
 print ("")
 print ("Section GeneralizedPaco"+str(n)+".")

@@ -9,8 +9,8 @@ if len(sys.argv) < 2:
 relsize = int(sys.argv[1])
 
 print ('Require Import JMeq.')
-print ('Require Import hpattern.')
-print ('Require Export paconotation.')
+print ('From Paco Require Import hpattern.')
+print ('From Paco Require Export paconotation.')
 print ()
 print ('(** * Tactic support for [paco] library')
 print ()

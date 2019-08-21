@@ -12,5 +12,5 @@ relsize=$1
 
 python paco.py ${relsize} > $PACOSRCDIR/paco${relsize}.v;
 python gpaco.py ${relsize} > $PACOSRCDIR/gpaco${relsize}.v;
-echo "Require Export paco${relsize}." >> $PACOSRCDIR/pacoall.v;
-echo "Require Export gpaco${relsize}." >> $PACOSRCDIR/gpacoall.v;
+echo "From Paco Require Export paco${relsize}." >> $PACOSRCDIR/pacoall.v;
+echo "From Paco Require Export gpaco${relsize}." >> $PACOSRCDIR/gpacoall.v;

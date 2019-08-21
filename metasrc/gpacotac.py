@@ -8,7 +8,7 @@ if len(sys.argv) < 2:
 
 relsize = int(sys.argv[1])
 
-print ("Require Import pacotac_internal pacotac pacoall gpacoall.")
+print ("From Paco Require Import pacotac_internal pacotac pacoall gpacoall.")
 print ()
 
 print ("(** ** ginit")

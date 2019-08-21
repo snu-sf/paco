@@ -1,5 +1,5 @@
-Require Export paconotation.
-Require Import pacotac_internal paconotation_internal.
+From Paco Require Export paconotation.
+From Paco Require Import pacotac_internal paconotation_internal.
 Set Implicit Arguments.
 Set Primitive Projections.
 
