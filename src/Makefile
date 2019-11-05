@@ -22,9 +22,6 @@ doc: Makefile.coq
 install-doc: doc
 	$(MAKE) -f Makefile.coq install-doc
 
-%: Makefile.coq
-	$(MAKE) -f Makefile.coq "$@"
-
 clean: Makefile.coq
-	$(MAKE) -f Makefile.coq clean
-	rm -f _CoqProject Makefile.coq
+	$(MAKE) -f Makefile.coq cleanall
+	rm -f _CoqProject Makefile.coq Makefile.coq.conf
