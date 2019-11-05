@@ -1,3 +1,5 @@
+travis ci test
+
 # Paco: Coq library for Parametric Coinduction
 
 [![Build Status](https://travis-ci.org/snu-sf/paco.svg?branch=master)](https://travis-ci.org/snu-sf/paco)
