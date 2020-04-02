@@ -182,8 +182,6 @@ Proof.
   intros H; split; intros I x; apply H; trivial.
 Qed.
 
-Set Printing Universes.
-
 Definition _rel@{u} (t : arity@{u}) : Type@{u} := tuple t -> Prop.
 
 Require Setoid.
@@ -229,22 +227,35 @@ Proof.
   reflexivity.
 Qed.
 
+Lemma Transitive_le_ (r r' r'' : _rel t) :
+  _le r r' -> _le r' r'' -> _le r r''.
+Proof.
+  firstorder.
+Qed.
+
+Lemma Transitive_le (x y z : rel t) :
+  le x y -> le y z -> le x z.
+Proof.
+  rewrite <- 3 uncurry_le.
+  apply Transitive_le_.
+Qed.
+
 Definition uncurry_relT (gf : rel t -> rel t) : _rel t -> _rel t :=
   fun r => uncurry (gf (curry r)).
 
 Definition curry_relT (gf : _rel t -> _rel t) : rel t -> rel t :=
   fun r => curry (gf (uncurry r)).
 
-Lemma uncurry_relT_le (gf : rel t -> rel t) (r r' : _rel t) :
-  _le (uncurry_relT gf r) (uncurry_relT gf r') <->
-  le (gf (curry r)) (gf (curry r')).
+Lemma uncurry_relT_le (gf gf' : rel t -> rel t) (r r' : _rel t) :
+  _le (uncurry_relT gf r) (uncurry_relT gf' r') <->
+  le (gf (curry r)) (gf' (curry r')).
 Proof.
   apply uncurry_le.
 Qed.
 
-Lemma curry_relT_le (gf : _rel t -> _rel t) (r r' : rel t) :
-  le (curry_relT gf r) (curry_relT gf r') <->
-  _le (gf (uncurry r)) (gf (uncurry r')).
+Lemma curry_relT_le (gf gf' : _rel t -> _rel t) (r r' : rel t) :
+  le (curry_relT gf r) (curry_relT gf' r') <->
+  _le (gf (uncurry r)) (gf' (uncurry r')).
 Proof.
   apply curry_le.
 Qed.
@@ -263,14 +274,65 @@ Proof.
   rewrite curry_relT_le. apply H. apply uncurry_le. assumption.
 Qed.
 
+Definition union (r r' : rel t) : rel t :=
+  curry (fun u => uncurry r u \/ uncurry r' u).
+
+Lemma _union_monotone (r1 r1' r2 r2' : _rel t) :
+  _le r1 r1' -> _le r2 r2' -> _le (fun u => r1 u \/ r2 u) (fun u => r1' u \/ r2' u).
+Proof.
+  intros HL HR.
+  intros ? []; [ left | right ]; auto.
+Qed.
+
+Lemma union_monotone (r1 r1' r2 r2' : rel t) :
+  le r1 r1' -> le r2 r2' -> le (union r1 r2) (union r1' r2').
+Proof.
+  unfold union.
+  intros HL HR.
+  apply curry_le, _union_monotone; apply uncurry_le; assumption.
+Qed.
+
+Definition le_relT (gf gf' : rel t -> rel t) : Prop :=
+  forall r, le (gf r) (gf' r).
+
 Definition _paco (gf : rel t -> rel t) (r : rel t) : rel t :=
   curry (paco (uncurry_relT gf) (uncurry r)).
 
 Definition _upaco (gf : rel t -> rel t) (r : rel t) : rel t :=
-  curry (fun u => paco (uncurry_relT gf) (uncurry r) u \/ uncurry r u).
+  union (_paco gf r) r.
+
+Lemma paco_mon_gen (gf gf' : rel t -> rel t) (r r' : rel t) :
+  le_relT gf gf' -> le r r' -> le (_paco gf r) (_paco gf' r').
+Proof.
+  intros Hgf Hr. apply curry_le. red. apply _paco_mon_gen.
+  - intro; apply uncurry_relT_le, Hgf.
+  - apply uncurry_le; assumption.
+Qed.
+
+Lemma curry_le_r (r : rel t) (r' : _rel t) :
+  _le (uncurry r) r' <-> le r (curry r').
+Proof.
+  unfold le. rewrite Forall_forall.
+  apply iff_forall. intros u. rewrite uncurry_curry.
+  reflexivity.
+Qed.
+
+Theorem _paco_acc: forall (gf : rel t -> rel t) (rr : rel t)
+  l r (OBG: forall rr (INC: le r rr) (CIH: le l rr), le l (_paco gf rr)),
+  le l (_paco gf r).
+Proof.
+  intros. apply curry_le_r.
+  eapply _paco_acc. intros.
+  apply curry_le_r. apply curry_le_r in INC. apply curry_le_r in CIH.
+  specialize (OBG _ INC CIH). unfold _paco in OBG.
+  eapply Transitive_le; [ apply OBG | ].
+  apply curry_le.
+  red; apply paco_internal._paco_mon_gen; trivial. apply uncurry_curry.
+Qed.
 
 End INTERNAL.
 
+(*
 Fixpoint telesig (t : telescope) : Type :=
   match t with
   | @tscp A f => paco_sigT (fun x : A => telesig (f x))
@@ -354,3 +416,4 @@ Proof.
 Abort.
 
 End TEST.
+*)

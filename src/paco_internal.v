@@ -66,6 +66,14 @@ Proof.
   - apply LEgf, SIM.
 Qed.
 
+Lemma _paco_mon_gen T0 gf gf' r r'
+    (LEgf: gf <2= gf')
+    (LEr: r <1= r'):
+  @paco T0 gf r <1= paco gf' r'.
+Proof.
+  intros x0 PR; eapply paco_mon_gen; eassumption.
+Qed.
+
 Section Arg1.
 
 Variable T0 : Type.
