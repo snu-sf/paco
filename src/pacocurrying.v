@@ -69,89 +69,70 @@ Ltac curry_goal :=
 Set Printing Universes.
 
 (* Tuple of types *)
-Fixpoint tytuple@{u v} (n : nat) : Type@{v} :=
-  match n with
-  | O => unit
-  | S n => paco_sigT@{v _} (fun A : Type@{u} => A -> tytuple n)
-  end.
+Inductive arity@{u} : Type :=
+| arity0
+| arityS : forall A : Type@{u}, (A -> arity) -> arity
+.
+Arguments arityS : clear implicits.
 
 (* From: [A0, A1, ...]
    To:   [forall (x0 : A0) (x1 : A1 x0) ..., T] *)
-Fixpoint funtype@{u v w} {n : nat} (r : Type@{w}) : tytuple@{u v} n -> Type@{w} :=
-  match n with
-  | O => fun _ => r
-  | S n => fun t => forall x : paco_projT1 t, funtype r (paco_projT2 t x)
+Fixpoint funtype@{u v w} (t : arity@{u}) (r : Type@{v}) : Type@{w} :=
+  match t with
+  | arity0 => r
+  | arityS A t => forall x : A, funtype (t x) r
   end.
 
-Fixpoint tuple@{u v w} {n : nat} : tytuple@{u v} n -> Type@{w} :=
-  match n with
-  | O => fun _ => unit
-  | S n => fun t => paco_sigT (fun x => tuple (paco_projT2 t x))
+Fixpoint tuple@{u} (t : arity@{u}) : Type@{u} :=
+  match t with
+  | arity0 => unit
+  | arityS A t => paco_sigT (fun x : A => tuple (t x))
   end.
 
-Fixpoint uncurry@{u v w} {n : nat} (r : Type@{w}) : forall t : tytuple n,
-    funtype@{u v w} r t -> tuple t -> r :=
-  match n with
-  | O => fun _ y _ => y
-  | S n => fun _ f u => uncurry r _ (f (paco_projT1 u)) (paco_projT2 u)
+Fixpoint uncurry@{u v w} {r : Type@{v}} (t : arity) :
+    funtype@{u v w} t r -> tuple t -> r :=
+  match t with
+  | arity0 => fun y _ => y
+  | arityS A t => fun f u => uncurry (t _) (f (paco_projT1 u)) (paco_projT2 u)
   end.
 
-Definition rel@{u v w} {n : nat} : tytuple@{u v} n -> Type@{w} :=
-  funtype@{u v w} Prop.
+Definition rel@{u v} (t : arity) : Type@{v} :=
+  funtype@{u v v} t Prop.
 
 (* From: [A0, A1, ...]
    To:   [forall (x0 : A0) (x1 : A1) ..., Type] *)
-Definition crel@{u v v' w} {n : nat} : tytuple@{u v} n -> Type@{w} :=
-  funtype@{u v w} Type@{v'}.
+Definition crel@{u v} (t : arity) : Type@{v} :=
+  funtype@{u v v} t Type@{u}.
 
-Fixpoint snoctype@{u v v' w} {n : nat} : forall t : tytuple@{u v} n, crel@{u v v' w} t -> tytuple@{u v} (S n).
- refine
+Fixpoint snoctype@{u v} (t : arity) : crel@{u v} t -> arity :=
+  match t with
+  | arity0 => fun A => arityS A (fun _ => arity0)
+  | arityS A t => fun T => arityS A (fun x => snoctype (t x) (T x))
+  end.
+
+Fixpoint const {r : Type} (y : r) (t : arity) : funtype t r :=
+  match t with
+  | arity0 => y
+  | arityS A t => fun x => const y (t x)
+  end.
+
+Fixpoint tyfun_adj (t : arity) :
+  forall (T : crel t),
+    funtype (snoctype t T) arity ->
+    funtype t arity :=
+  match t with
+  | arity0 => fun A t => arityS A t
+  | arityS A t => fun T f x => tyfun_adj (t x) (T x) (f x)
+  end.
+
+Fixpoint _tyforall (t : arity) (f : funtype t arity -> Type) (n : nat) : Type :=
   match n with
-  | O => fun t A => paco_existT _ A (fun _ : A => tt)
-  | S n => fun t F =>
-    paco_existT@{v v} _ (paco_projT1@{v v} t) (fun x => _)
-  end.
- apply (@snoctype _ _ (F x)).
-Defined.
-(* WTF can't write the term directly *)
-
-Fixpoint const {n : nat} {r : Type} (y : r) : forall t : tytuple n, funtype r t :=
-  match n with
-  | O => fun _ => y
-  | S n => fun t x => const y (paco_projT2 t x)
+  | O => f (const arity0 t)
+  | S n => forall T : crel t, _tyforall (snoctype t T) (fun g => f (tyfun_adj t T g)) n
   end.
 
-Fixpoint map_funtype {n : nat} {r s : Type} (f : r -> s)
-  : forall t : tytuple n, funtype r t -> funtype s t :=
-  match n with
-  | O => fun _ x => f x
-  | S n => fun t g y => map_funtype f _ (g y)
-  end.
-
-Fixpoint deptype {n : nat} (r : Type) (d : r -> Type) {struct n} : forall t : tytuple n,
-    funtype r t -> Type :=
-  match n with
-  | O => fun _ x => d x
-  | S n => fun t f => forall x : _, deptype d _ (f x)
-  end.
-
-Fixpoint tyfun_adj {n : nat} (r : Type) {struct n} :
-  forall (t : tytuple n) (T : crel t),
-    funtype r (snoctype t T) ->
-    funtype (paco_sigT (fun A => A -> r)) t :=
-  match n with
-  | O => fun _ A f => paco_existT _ A f
-  | S n => fun t T f x => @tyfun_adj n r _ (T x) (f x)
-  end.
-
-Fixpoint _tyforall {n m : nat} (t : tytuple n) {struct m} : (funtype (tytuple m) t -> Type) -> Type :=
-  match m with
-  | O => fun f => f (const tt t)
-  | S m => fun f => forall T : crel t, @_tyforall (S n) m (snoctype t T) (fun g => f (tyfun_adj _ T g))
-  end.
-
-Definition tyforall {n : nat} : (tytuple n -> Type) -> Type :=
-  @_tyforall 0 n tt.
+Definition tyforall : (arity -> Type) -> nat -> Type :=
+  @_tyforall arity0.
 
 Fixpoint telesig (t : telescope) : Type :=
   match t with
