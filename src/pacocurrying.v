@@ -227,6 +227,32 @@ Proof.
   reflexivity.
 Qed.
 
+Lemma curry_le_l (r : _rel t) (r' : rel t) :
+  _le r (uncurry r') <-> le (curry r) r'.
+Proof.
+  unfold le; rewrite Forall_forall.
+  apply iff_forall. intros u. rewrite uncurry_curry.
+  reflexivity.
+Qed.
+
+Lemma curry_le_r (r : rel t) (r' : _rel t) :
+  _le (uncurry r) r' <-> le r (curry r').
+Proof.
+  unfold le. rewrite Forall_forall.
+  apply iff_forall. intros u. rewrite uncurry_curry.
+  reflexivity.
+Qed.
+
+Lemma Reflexive_le_ (r : _rel t) : _le r r.
+Proof.
+  firstorder.
+Qed.
+
+Lemma Reflexive_le (r : rel t) : le r r.
+Proof.
+  apply uncurry_le, Reflexive_le_.
+Qed.
+
 Lemma Transitive_le_ (r r' r'' : _rel t) :
   _le r r' -> _le r' r'' -> _le r r''.
 Proof.
@@ -295,29 +321,60 @@ Qed.
 Definition le_relT (gf gf' : rel t -> rel t) : Prop :=
   forall r, le (gf r) (gf' r).
 
+Lemma Reflexive_le_relT gf : le_relT gf gf.
+Proof.
+  intros r; apply Reflexive_le.
+Qed.
+
 Definition _paco (gf : rel t -> rel t) (r : rel t) : rel t :=
   curry (paco (uncurry_relT gf) (uncurry r)).
 
 Definition _upaco (gf : rel t -> rel t) (r : rel t) : rel t :=
   union (_paco gf r) r.
 
-Lemma paco_mon_gen (gf gf' : rel t -> rel t) (r r' : rel t) :
-  le_relT gf gf' -> le r r' -> le (_paco gf r) (_paco gf' r').
+Definition _bot : rel t :=
+  curry (fun _ => False).
+
+Lemma paco_mon_gen :
+  forall (gf gf' : rel t -> rel t), le_relT gf gf' ->
+  forall (r r' : rel t), le r r' ->
+  le (_paco gf r) (_paco gf' r').
 Proof.
-  intros Hgf Hr. apply curry_le. red. apply _paco_mon_gen.
-  - intro; apply uncurry_relT_le, Hgf.
+  intros. apply curry_le. red. apply _paco_mon_gen.
+  - intro; apply uncurry_relT_le; trivial.
   - apply uncurry_le; assumption.
 Qed.
 
-Lemma curry_le_r (r : rel t) (r' : _rel t) :
-  _le (uncurry r) r' <-> le r (curry r').
+Lemma bot_min r : le _bot r.
+Proof. apply curry_le_l. red. contradiction. Qed.
+
+Lemma paco_mon_bot (gf gf' : rel t -> rel t) (r : rel t) :
+  le_relT gf gf' -> le (_paco gf _bot) (_paco gf' r).
 Proof.
-  unfold le. rewrite Forall_forall.
-  apply iff_forall. intros u. rewrite uncurry_curry.
-  reflexivity.
+  intros H. apply paco_mon_gen with (2 := bot_min r). auto.
 Qed.
 
-Theorem _paco_acc: forall (gf : rel t -> rel t) (rr : rel t)
+Lemma upaco_mon_gen (gf gf': rel t -> rel t) r r'
+    (LEgf: le_relT gf gf')
+    (LEr: le r r'):
+  le (_upaco gf r) (_upaco gf' r').
+Proof.
+  apply union_monotone; [ | assumption ].
+  apply paco_mon_gen; assumption.
+Qed.
+
+Lemma upaco_mon_bot (gf gf' : rel t -> rel t) (r : rel t) :
+  le_relT gf gf' -> le (_upaco gf _bot) (_upaco gf' r).
+Proof.
+  intros H. apply upaco_mon_gen with (2 := bot_min r). auto.
+Qed.
+
+Theorem _paco_mon gf : monotone (_paco gf).
+Proof.
+  red. apply paco_mon_gen. apply Reflexive_le_relT.
+Qed.
+
+Theorem _paco_acc: forall (gf : rel t -> rel t)
   l r (OBG: forall rr (INC: le r rr) (CIH: le l rr), le l (_paco gf rr)),
   le l (_paco gf r).
 Proof.
