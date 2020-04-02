@@ -134,6 +134,15 @@ Fixpoint _tyforall (t : arity) (f : funtype t arity -> Type) (n : nat) : Type :=
 Definition tyforall : (arity -> Type) -> nat -> Type :=
   @_tyforall arity0.
 
+Fixpoint _propforall (t : arity) (f : funtype t arity -> Prop) (n : nat) : Prop :=
+  match n with
+  | O => f (const arity0 t)
+  | S n => forall T : crel t, _propforall (snoctype t T) (fun g => f (tyfun_adj t T g)) n
+  end.
+
+Definition propforall : (arity -> Prop) -> nat -> Prop :=
+  @_propforall arity0.
+
 Fixpoint telesig (t : telescope) : Type :=
   match t with
   | @tscp A f => paco_sigT (fun x : A => telesig (f x))
