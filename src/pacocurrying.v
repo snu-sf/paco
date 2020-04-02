@@ -66,8 +66,6 @@ Ltac curry_goal :=
     else idtac
   end.
 
-Set Printing Universes.
-
 (* Tuple of types *)
 Inductive arity@{u} : Type :=
 | arity0
@@ -108,12 +106,16 @@ Fixpoint uncurry@{u v w} {r : Type@{v}} (t : arity) :
   | arityS A t => fun f u => uncurry (t _) (f (paco_projT1 u)) (paco_projT2 u)
   end.
 
+Arguments uncurry {r} [t].
+
 Fixpoint curry {r : Type} (t : arity) :
   (tuple t -> r) -> funtype t r :=
   match t with
   | arity0 => fun f => f tt
   | arityS A t => fun f x => curry (t x) (fun u => f (paco_existT _ x u))
   end.
+
+Arguments curry {r} [t].
 
 Definition rel@{u v} (t : arity) : Type@{v} :=
   funtype@{u v v} t Prop.
@@ -162,11 +164,112 @@ Fixpoint _propforall (t : arity) (f : funtype t arity -> Prop) (n : nat) : Prop 
 Definition propforall : (arity -> Prop) -> nat -> Prop :=
   @_propforall arity0.
 
-Definition le {t : arity} (r r' : rel t) : Prop :=
-  Forall t (fun u : tuple t => uncurry t r u -> uncurry t r' u).
+Lemma Forall_forall (t : arity) (P : tuple t -> Prop) :
+  Forall t P <-> forall u, P u.
+Proof.
+  induction t; cbn.
+  - split; [ destruct u | ]; trivial.
+  - split.
+    + intros I [x y]; specialize (I x). eapply H with (u := y); trivial.
+    + intros I x; apply H; trivial.
+Qed.
 
-Definition monotone {t : arity} (gf : rel t -> rel t) : Prop :=
+From Paco Require Import paco_internal.
+
+Lemma iff_forall {A} (P Q : A -> Prop) :
+  (forall x, P x <-> Q x) -> (forall x, P x) <-> (forall x, Q x).
+Proof.
+  intros H; split; intros I x; apply H; trivial.
+Qed.
+
+Set Printing Universes.
+
+Definition _rel@{u} (t : arity@{u}) : Type@{u} := tuple t -> Prop.
+
+Require Setoid.
+
+Lemma uncurry_curry : forall {t : arity} (r : _rel t) (u : tuple t),
+  uncurry (curry r) u <-> r u.
+Proof.
+  induction t; cbn; intros.
+  - destruct u; reflexivity.
+  - destruct u as [x y]; cbn; apply H.
+Qed.
+
+Section INTERNAL.
+
+Universe u.
+Context {t : arity@{u}}.
+
+Definition le (r r' : rel t) : Prop :=
+  Forall t (fun u : tuple t => uncurry r u -> uncurry r' u).
+
+Definition monotone (gf : rel t -> rel t) : Prop :=
   forall r r' : rel t, le r r' -> le (gf r) (gf r').
+
+Definition _le (r r' : _rel t) : Prop :=
+  forall u, r u -> r' u.
+
+Definition _monotone (gf : _rel t -> _rel t) : Prop :=
+  forall r r' : _rel t, _le r r' -> _le (gf r) (gf r').
+
+Lemma uncurry_le (r r' : rel t)
+  : _le (uncurry r) (uncurry r') <-> le r r'.
+Proof.
+  symmetry.
+  apply Forall_forall.
+Qed.
+
+Lemma curry_le (r r' : _rel t)
+  : le (curry r) (curry r') <-> _le r r'.
+Proof.
+  etransitivity; [ apply Forall_forall | ].
+  apply iff_forall; intros u.
+  rewrite 2 uncurry_curry.
+  reflexivity.
+Qed.
+
+Definition uncurry_relT (gf : rel t -> rel t) : _rel t -> _rel t :=
+  fun r => uncurry (gf (curry r)).
+
+Definition curry_relT (gf : _rel t -> _rel t) : rel t -> rel t :=
+  fun r => curry (gf (uncurry r)).
+
+Lemma uncurry_relT_le (gf : rel t -> rel t) (r r' : _rel t) :
+  _le (uncurry_relT gf r) (uncurry_relT gf r') <->
+  le (gf (curry r)) (gf (curry r')).
+Proof.
+  apply uncurry_le.
+Qed.
+
+Lemma curry_relT_le (gf : _rel t -> _rel t) (r r' : rel t) :
+  le (curry_relT gf r) (curry_relT gf r') <->
+  _le (gf (uncurry r)) (gf (uncurry r')).
+Proof.
+  apply curry_le.
+Qed.
+
+Lemma uncurry_monotone (gf : rel t -> rel t)
+  : monotone gf -> _monotone (uncurry_relT gf).
+Proof.
+  unfold monotone, _monotone. intros.
+  rewrite uncurry_relT_le. apply H. apply curry_le. assumption.
+Qed.
+
+Lemma curry_monotone (gf : _rel t -> _rel t)
+  : _monotone gf -> monotone (curry_relT gf).
+Proof.
+  unfold monotone, _monotone. intros.
+  rewrite curry_relT_le. apply H. apply uncurry_le. assumption.
+Qed.
+
+Definition _paco (gf : rel t -> rel t) (r : rel t) : rel t :=
+  curry (paco (uncurry_relT gf) (uncurry r)).
+
+Definition _upaco (gf : rel t -> rel t) (r : rel t) : rel t :=
+  curry (fun u => paco (uncurry_relT gf) (uncurry r) u \/ uncurry r u).
+
+End INTERNAL.
 
 Fixpoint telesig (t : telescope) : Type :=
   match t with
