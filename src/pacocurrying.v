@@ -75,25 +75,44 @@ Inductive arity@{u} : Type :=
 .
 Arguments arityS : clear implicits.
 
-(* From: [A0, A1, ...]
-   To:   [forall (x0 : A0) (x1 : A1 x0) ..., T] *)
-Fixpoint funtype@{u v w} (t : arity@{u}) (r : Type@{v}) : Type@{w} :=
-  match t with
-  | arity0 => r
-  | arityS A t => forall x : A, funtype (t x) r
-  end.
-
 Fixpoint tuple@{u} (t : arity@{u}) : Type@{u} :=
   match t with
   | arity0 => unit
   | arityS A t => paco_sigT (fun x : A => tuple (t x))
   end.
 
+(* From: [A0, A1, ...]
+   To:   [forall (x0 : A0) (x1 : A1 x0) ..., P x0 x1 ...] *)
+Fixpoint Forall (t : arity) : (tuple t -> Prop) -> Prop :=
+  match t with
+  | arity0 => fun f => f tt
+  | arityS A t => fun f =>
+    forall x : A, Forall (t x) (fun u => f (paco_existT _ x u))
+  end.
+
+(* From: [A0, A1, ...]
+   To:   [forall (x0 : A0) (x1 : A1 x0) ..., T] *)
+Fixpoint Pi@{u v w} (t : arity@{u}) : (tuple t -> Type@{v}) -> Type@{w} :=
+  match t with
+  | arity0 => fun f => f tt
+  | arityS A t => fun f => forall x : A, Pi (t x) (fun u => f (paco_existT _ x u))
+  end.
+
+Definition funtype@{u v w} (t : arity@{u}) (r : Type@{v}) : Type@{w} :=
+  Pi@{u v w} t (fun _ => r).
+
 Fixpoint uncurry@{u v w} {r : Type@{v}} (t : arity) :
-    funtype@{u v w} t r -> tuple t -> r :=
+  funtype@{u v w} t r -> tuple t -> r :=
   match t with
   | arity0 => fun y _ => y
   | arityS A t => fun f u => uncurry (t _) (f (paco_projT1 u)) (paco_projT2 u)
+  end.
+
+Fixpoint curry {r : Type} (t : arity) :
+  (tuple t -> r) -> funtype t r :=
+  match t with
+  | arity0 => fun f => f tt
+  | arityS A t => fun f x => curry (t x) (fun u => f (paco_existT _ x u))
   end.
 
 Definition rel@{u v} (t : arity) : Type@{v} :=
@@ -142,6 +161,12 @@ Fixpoint _propforall (t : arity) (f : funtype t arity -> Prop) (n : nat) : Prop 
 
 Definition propforall : (arity -> Prop) -> nat -> Prop :=
   @_propforall arity0.
+
+Definition le {t : arity} (r r' : rel t) : Prop :=
+  Forall t (fun u : tuple t => uncurry t r u -> uncurry t r' u).
+
+Definition monotone {t : arity} (gf : rel t -> rel t) : Prop :=
+  forall r r' : rel t, le r r' -> le (gf r) (gf r').
 
 Fixpoint telesig (t : telescope) : Type :=
   match t with
