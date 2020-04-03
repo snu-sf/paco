@@ -1,174 +1,239 @@
-From Coq Require Import Program.Basics. Local Open Scope program_scope. 
-From Paco Require Export paconotation.
-From Paco Require Import paco_sigma paco_internal.
-Set Implicit Arguments.
-Set Primitive Projections.
+Require Export Program.Basics. Open Scope program_scope.
+From Paco Require Export paco_rel.
+From Paco Require Import gpaco_internal.
 
-Lemma pcofix {T0} (gf : (T0 -> Prop) -> (T0 -> Prop)) (r0 : T0 -> Prop) {A} (f : A -> T0)
-  : (forall (r : _ -> Prop),
-      (forall y, r0 y -> r y) ->
-      (forall x, r (f x)) ->
-      forall x, paco gf r (f x)) ->
-    forall x, paco gf r0 (f x).
+Set Implicit Arguments.
+Set Universe Polymorphism.
+
+Section INTERNAL.
+
+Universe u.
+Context {t : arity@{u}}.
+
+Notation rel := (rel t).
+Notation _rel := (_rel t).
+Local Infix "<=" := le.
+
+Definition _rclo (clo: rel->rel) (r: rel) : rel :=
+  curry (rclo (uncurry_relT clo) (uncurry r)).
+
+Lemma le_transport (r0 r0' : _rel) :
+  r0 <1= r0' ->
+  forall r1 r1',
+  _le r1 r0 ->
+  _le r0' r1' ->
+  _le r1 r1'.
 Proof.
-  intros H x. eapply paco_acc with (l := fun y => exists x, f x = y).
-  - intros rr Hr0 Hrr _ [x' []]. apply H; eauto.
-  - eauto.
+  red; auto.
 Qed.
 
-(* Simple variant of [cofix] with goals with one variable and one hypothesis *)
-Ltac pcofix_ CIH :=
-  let CIH1 := fresh CIH in
-  let CIH' := fresh CIH in
-  apply paco_sigT_curry;
-  apply pcofix; intros r0 Hr0 CIH';
-  assert (CIH1 := paco_sigT_curry (U := fun x _ => r0 x) CIH');
-  clear CIH'; cbn in CIH1;
-  apply (paco_sigT_uncurry_ (U := fun x _ => _ x)).
+Lemma monotone_transport {gf gf' : _rel -> _rel}
+      {gf_mon : paco_internal.monotone gf}
+      {gf_mon' : paco_internal.monotone gf'} :
+  forall r0 r0',
+  gf r0 <1= gf' r0' ->
+  forall r1 r1',
+  _le r1 r0 ->
+  _le r0' r1' ->
+  _le (gf r1) (gf' r1').
+Proof.
+  red; intros.
+  eapply le_transport; [ apply H | .. | eassumption ].
+  - eapply gf_mon; assumption.
+  - eapply gf_mon'; eassumption.
+Qed.
 
-(* Apply monotonicity lemma [MON : monotonic F] to a goal:
-[[
-  H : F r x |- F r' x
-]]
-   And clears out [x] if it is no longer used.
- *)
-Ltac monotonic MON H :=
-  match goal with
-  | [ |- _ ?x ] => revert H; try (revert x); apply MON
+Lemma rclo_transport {clo0 clo0' : _rel -> _rel} {r0 r0' : _rel} :
+  rclo clo0 r0 <1= rclo clo0' r0' ->
+  forall clo1 clo1' r1 r1',
+  _le_relT clo1 clo0 ->
+  _le_relT clo0' clo1' ->
+  _le r1 r0 ->
+  _le r0' r1' ->
+  _le (rclo clo1 r1) (rclo clo1' r1').
+Proof.
+  red; intros.
+  eapply le_transport; [ apply H | .. | eassumption ];
+    red; eapply rclo_mon_gen; assumption.
+Qed.
+
+Lemma gpaco_transport {gf0 gf0' : _rel -> _rel} {clo0 clo0' : _rel -> _rel} {r0 r0' s0 s0' : _rel} :
+  gpaco gf0 clo0 r0 s0 <1= gpaco gf0' clo0' r0' s0' ->
+  __monotone gf0' ->
+  forall gf1 gf1' clo1 clo1' r1 r1' s1 s1',
+  __monotone gf1 ->
+  _le_relT gf1 gf0 ->
+  _le_relT gf0' gf1' ->
+  _le_relT clo1 clo0 ->
+  _le_relT clo0' clo1' ->
+  _le r1 r0 ->
+  _le r0' r1' ->
+  _le s1 s0 ->
+  _le s0' s1' ->
+  _le (gpaco gf1 clo1 r1 s1) (gpaco gf1' clo1' r1' s1').
+Proof.
+  red; intros.
+  eapply le_transport; [ apply H | .. | eassumption ].
+  all: red; apply gpaco_mon_gen; assumption.
+Qed.
+
+Lemma le_uncurry_curry_l (gf gf' : _rel) :
+  _le gf gf' ->
+  _le (uncurry (curry gf)) gf'.
+Proof.
+  red; intros.
+  eapply H, uncurry_curry; assumption.
+Qed.
+
+Ltac simpl_le etc :=
+  repeat 
+    lazymatch goal with
+    | [ |- _le_relT _ _ ] => let r := fresh "r" in intros r
+    | [ |- forall r : rel1 _, _ ] =>
+      let r := fresh r in intros r
+    | _ => apply Reflexive_le_ + apply le_uncurry_curry_l + (red; apply rclo_mon_gen) + etc
+    end.
+
+Ltac finish_translate etc _L_ :=
+  lazymatch goal with
+  | [ |- le _ _ ] =>
+    apply (proj2 (curry_le _ _)) + apply curry_le_r;
+    try ((red; apply _L_) + apply le_transport with (1 := _L_); simpl_le etc)
+  | [ |- _monotone _ ] =>
+    apply curry_monotone;
+    try (apply _L_)
   end.
 
-Lemma monotone_compose {T0} {gf gf' : rel1 T0 -> rel1 T0} :
-  monotone gf ->
-  monotone gf' ->
-  monotone (compose gf gf').
+Ltac translate_ etc X :=
+  let _L_ := fresh "_L_" in
+  pose proof X as _L_;
+  repeat lazymatch goal with
+  | [ |- forall clo : rel -> rel, _ ] =>
+    let clo := fresh clo in
+    intros clo;
+    specialize (_L_ (uncurry_relT clo))
+  | [ |- forall r : rel, _ ] =>
+    let r := fresh r in
+    intros r;
+    specialize (_L_ (uncurry r))
+  | [ |- forall H : le_relT _ _, _ ] =>
+    let H := fresh H in
+    intros H;
+    apply uncurry_relT_le_relT in H;
+    specialize (_L_ H);
+    clear H
+  | [ |- forall H : le _ _, _ ] =>
+    let H := fresh H in
+    intros H;
+    apply uncurry_le in H;
+    specialize (_L_ H);
+    clear H
+  | _ => finish_translate etc _L_
+  end.
+
+Section A.
+
+Ltac translate X := translate_ fail (@X (tuple t)).
+
+Lemma _rclo_mon_gen : forall clo clo' r r'
+      (LEclo: le_relT clo clo')
+      (LEr: r <= r'),
+  _rclo clo r <= _rclo clo' r'.
 Proof.
-  intros H H' x0 r Hr. apply H, H', Hr.
+  translate rclo_mon_gen.
 Qed.
 
-Existing Instance monotone_compose.
-
-Section GeneralizedPaco.
-
-Variable T0 : Type.
-
-Local Notation rel := (rel1 T0).
-
-Section RClo.
-
-Inductive rclo (clo: rel->rel) (r: rel) (x0 : T0) : Prop :=
-| rclo_base
-    (IN: r x0):
-    @rclo clo r x0
-| rclo_clo'
-    r'
-    (LE: r' <1= rclo clo r)
-    (IN: clo r' x0):
-    @rclo clo r x0
-.
-
-Lemma rclo_mon_gen clo clo' r r'
-      (LEclo: clo <2= clo')
-      (LEr: r <1= r') :
-  rclo clo r <1= @rclo clo' r'.
+Lemma _rclo_mon clo : _monotone (_rclo clo).
 Proof.
-  intros x IN; induction IN; intros.
-  - econstructor 1. apply LEr, IN.
-  - econstructor 2; [intros; eapply H, PR|apply LEclo, IN].
+  translate rclo_mon.
 Qed.
 
-Lemma rclo_mon clo : monotone (rclo clo).
+Lemma _rclo_clo : forall clo r,
+  clo (_rclo clo r) <= _rclo clo r.
 Proof.
-  repeat intro. eapply rclo_mon_gen; eassumption + eauto.
+  translate rclo_clo.
 Qed.
 
-Global Existing Instance rclo_mon.
-
-Lemma rclo_clo clo r:
-  clo (rclo clo r) <1= rclo clo r.
+Lemma _rclo_rclo : forall clo r,
+  _rclo clo (_rclo clo r) <= _rclo clo r.
 Proof.
-  intros. econstructor 2; [exact (fun _ H => H) | apply PR]. 
+  translate rclo_rclo.
 Qed.
 
-Lemma rclo_rclo clo r:
-  rclo clo (rclo clo r) <1= rclo clo r.
+Lemma _rclo_compose : forall clo r,
+  _rclo (_rclo clo) r <= _rclo clo r.
 Proof.
-  intros. induction PR.
-  - eapply IN.
-  - econstructor 2; [eapply H | eapply IN].
+  translate rclo_compose.
 Qed.
 
-Lemma rclo_compose clo r:
-  rclo (rclo clo) r <1= rclo clo r.
+End A.
+
+Definition _gpaco (gf : rel -> rel) (clo : rel -> rel) (r rg : rel) : rel :=
+  curry (gpaco (uncurry_relT gf) (uncurry_relT clo) (uncurry r) (uncurry rg)).
+
+Definition _gupaco gf clo r := _gpaco gf clo r r.
+
+Lemma _gupaco_equiv gf clo r x :
+  uncurry (_gupaco gf clo r) x <->
+  gupaco (uncurry_relT gf) (uncurry_relT clo) (uncurry r) x.
 Proof.
-  intros. induction PR.
-  - apply rclo_base, IN.
-  - apply rclo_rclo. monotonic rclo_mon IN. apply H.
+  unfold _gupaco, _gpaco.
+  apply uncurry_curry.
 Qed.
 
-End RClo.  
-
-Section Main.
-
-Variant gpaco (gf : rel -> rel) (clo : rel -> rel) (r rg : rel) x0 : Prop :=
-| gpaco_intro (IN: @rclo clo (paco (compose gf (rclo clo)) (rg \1/ r) \1/ r) x0)
-.
-
-Definition gupaco gf clo r := gpaco gf clo r r.
+Lemma __monotone_equiv (gf : rel -> rel) (gf' : _rel -> _rel) :
+  (forall r x, uncurry (gf r) x <-> gf' (uncurry r) x) ->
+  __monotone gf' ->
+  _monotone gf.
+Proof.
+  intros H MON r r' Hr.
+  apply uncurry_le.
+  intros u. rewrite 2 H.
+  apply MON.
+  apply uncurry_le, Hr.
+Qed.
 
 Section GPaco.
 
-Variable gf : rel -> rel.
+Ltac simpl_paco := (red; apply gpaco_mon_gen) + (apply uncurry_monotone; assumption).
 
-Local Notation gpaco := (gpaco gf).
-Local Notation gupaco := (gupaco gf).
+Ltac translate' := translate_ simpl_paco.
+Ltac translate X := translate' (@X (tuple t)).
 
-Lemma gpaco_mon clo r r' rg rg'
-      (LEr: r <1= r')
-      (LErg: rg <1= rg'):
-  gpaco clo r rg <1= gpaco clo r' rg'.
+Lemma _gpaco_mon : forall gf clo r r' rg rg'
+      (LEr: r <= r')
+      (LErg: rg <= rg'),
+  _gpaco gf clo r rg <= _gpaco gf clo r' rg'.
 Proof.
-  intros x0 IN; destruct IN. constructor.
-  monotonic rclo_mon IN.
-  intros. destruct PR; [|right; apply LEr, H].
-  left. monotonic paco_mon H.
-  intros. destruct PR; [left|right]; auto.
+  translate gpaco_mon.
 Qed.
 
-Lemma gupaco_mon clo : monotone (gupaco clo).
+Lemma _gupaco_mon : forall gf clo, _monotone (_gupaco gf clo).
 Proof.
-  intros r r' LEr. red; apply gpaco_mon; apply LEr.
-Qed.
-Global Existing Instance gupaco_mon.
-
-Lemma gpaco_base clo r rg: r <1= gpaco clo r rg.
-Proof.
-  econstructor. apply rclo_base. right. apply PR.
+  intros; eapply __monotone_equiv; [ apply _gupaco_equiv | apply gupaco_mon ].
 Qed.
 
-Lemma gpaco_gen_guard clo r rg:
-  gpaco clo r (rg \1/ r) <1= gpaco clo r rg.
+Lemma _gpaco_base : forall gf clo r rg, r <= _gpaco gf clo r rg.
 Proof.
-  intros. destruct PR. econstructor.
-  monotonic rclo_mon IN.
-  intros.
-  destruct PR; [|right; apply H].
-  left. monotonic paco_mon_gen H. trivial.
-  destruct 1; auto.
+  translate gpaco_base.
 Qed.
 
-Lemma gpaco_rclo clo r rg:
-  rclo clo r <1= gpaco clo r rg.
+Lemma _gpaco_gen_guard gf (gf_mon : _monotone gf) : forall clo r rg,
+  _gpaco gf clo r (union rg r) <= _gpaco gf clo r rg.
 Proof.
-  intros. econstructor.
-  monotonic rclo_mon PR.
-  right; assumption.
+  translate' (@gpaco_gen_guard (tuple t) (uncurry_relT gf)).
 Qed.
 
-Lemma gpaco_clo clo r rg:
-  clo r <1= gpaco clo r rg.
+Lemma _gpaco_rclo : forall gf clo r rg,
+  _rclo clo r <= _gpaco gf clo r rg.
 Proof.
-  intros. apply gpaco_rclo. eapply rclo_clo', PR.
-  apply rclo_base.
+  translate gpaco_rclo.
+Qed.
+
+Lemma _gpaco_clo : forall gf clo r rg,
+  clo r <= _gpaco gf clo r rg.
+Proof.
+  translate gpaco_clo.
 Qed.
 
 End GPaco.
