@@ -168,6 +168,12 @@ Proof.
   intros Hle r. apply uncurry_relT_le, Hle.
 Qed.
 
+Lemma le_curry_uncurry_r (gf : rel t) :
+  le gf (curry (uncurry gf)).
+Proof.
+  apply Forall_forall, uncurry_curry.
+Qed.
+
 Definition _bot : rel t :=
   curry (fun _ => False).
 

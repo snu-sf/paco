@@ -11,6 +11,8 @@ Proof.
   intros H; split; intros I x; apply H; trivial.
 Qed.
 
+Delimit Scope paco_scope with paco.
+
 (* Universe-polymorphic [eq] *)
 Inductive paco_eq@{u} {A : Type@{u}} (a : A) : A -> Prop :=
 | paco_eq_refl : paco_eq a a.

@@ -96,8 +96,7 @@ Theorem _paco_fold: forall gf r,
   gf (_upaco gf r) <= _paco gf r.
 Proof.
   intros. eapply Transitive_le; [ | eapply curry_le, _paco_fold ].
-  unfold uncurry_relT. rewrite curry_uncurry.
-  apply Reflexive_le.
+  apply le_curry_uncurry_r.
 Qed.
 
 Theorem _paco_unfold: forall gf (MON: _monotone gf) r,
