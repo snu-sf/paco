@@ -1,6 +1,6 @@
 From Coq Require Import Program.Basics. Local Open Scope program_scope. 
 From Paco Require Export paconotation.
-From Paco Require Import paco_currying paco_internal (* TODO put sigT elsewhere *).
+From Paco Require Import paco_sigma paco_internal.
 Set Implicit Arguments.
 Set Primitive Projections.
 
@@ -20,11 +20,11 @@ Qed.
 Ltac pcofix_ CIH :=
   let CIH1 := fresh CIH in
   let CIH' := fresh CIH in
-  apply paco_currying.paco_sigT_curry;
+  apply paco_sigT_curry;
   apply pcofix; intros r0 Hr0 CIH';
-  assert (CIH1 := paco_currying.paco_sigT_curry (U := fun x _ => r0 x) CIH');
+  assert (CIH1 := paco_sigT_curry (U := fun x _ => r0 x) CIH');
   clear CIH'; cbn in CIH1;
-  apply (paco_currying.paco_sigT_uncurry_ (U := fun x _ => _ x)).
+  apply (paco_sigT_uncurry_ (U := fun x _ => _ x)).
 
 (* Apply monotonicity lemma [MON : monotonic F] to a goal:
 [[
