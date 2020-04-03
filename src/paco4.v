@@ -111,7 +111,7 @@ Proof.
   exact (_paco_mult (t := t) gf).
 Qed.
 
-Theorem paco4_fold: forall (MON: monotone4 gf) r,
+Theorem paco4_fold: forall r,
   gf (upaco4 gf r) <4= paco4 gf r.
 Proof.
   exact (_paco_fold (t := t) gf).

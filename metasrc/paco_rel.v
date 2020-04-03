@@ -5,8 +5,8 @@ Set Universe Polymorphism.
 
 Section REL.
 
-Universe u v w.
-Context {n : nat} {t : arity@{u v w} n}.
+Universe u.
+Context {t : arity@{u}}.
 
 Definition le (r r' : rel t) : Prop :=
   Forall t (fun u : tuple t => uncurry r u -> uncurry r' u).
@@ -166,6 +166,12 @@ Lemma uncurry_relT_le_relT (gf gf' : rel t -> rel t) :
   _le_relT (uncurry_relT gf) (uncurry_relT gf').
 Proof.
   intros Hle r. apply uncurry_relT_le, Hle.
+Qed.
+
+Lemma le_curry_uncurry_r (gf : rel t) :
+  le gf (curry (uncurry gf)).
+Proof.
+  apply Forall_forall, uncurry_curry.
 Qed.
 
 Definition _bot : rel t :=

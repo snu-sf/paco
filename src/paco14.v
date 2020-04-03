@@ -131,7 +131,7 @@ Proof.
   exact (_paco_mult (t := t) gf).
 Qed.
 
-Theorem paco14_fold: forall (MON: monotone14 gf) r,
+Theorem paco14_fold: forall r,
   gf (upaco14 gf r) <14= paco14 gf r.
 Proof.
   exact (_paco_fold (t := t) gf).

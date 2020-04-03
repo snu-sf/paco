@@ -109,7 +109,7 @@ Proof.
   exact (_paco_mult (t := t) gf).
 Qed.
 
-Theorem paco3_fold: forall (MON: monotone3 gf) r,
+Theorem paco3_fold: forall r,
   gf (upaco3 gf r) <3= paco3 gf r.
 Proof.
   exact (_paco_fold (t := t) gf).

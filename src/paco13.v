@@ -129,7 +129,7 @@ Proof.
   exact (_paco_mult (t := t) gf).
 Qed.
 
-Theorem paco13_fold: forall (MON: monotone13 gf) r,
+Theorem paco13_fold: forall r,
   gf (upaco13 gf r) <13= paco13 gf r.
 Proof.
   exact (_paco_fold (t := t) gf).

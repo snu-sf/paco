@@ -121,7 +121,7 @@ Proof.
   exact (_paco_mult (t := t) gf).
 Qed.
 
-Theorem paco9_fold: forall (MON: monotone9 gf) r,
+Theorem paco9_fold: forall r,
   gf (upaco9 gf r) <9= paco9 gf r.
 Proof.
   exact (_paco_fold (t := t) gf).

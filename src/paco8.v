@@ -119,7 +119,7 @@ Proof.
   exact (_paco_mult (t := t) gf).
 Qed.
 
-Theorem paco8_fold: forall (MON: monotone8 gf) r,
+Theorem paco8_fold: forall r,
   gf (upaco8 gf r) <8= paco8 gf r.
 Proof.
   exact (_paco_fold (t := t) gf).

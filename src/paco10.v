@@ -123,7 +123,7 @@ Proof.
   exact (_paco_mult (t := t) gf).
 Qed.
 
-Theorem paco10_fold: forall (MON: monotone10 gf) r,
+Theorem paco10_fold: forall r,
   gf (upaco10 gf r) <10= paco10 gf r.
 Proof.
   exact (_paco_fold (t := t) gf).

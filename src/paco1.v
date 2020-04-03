@@ -105,7 +105,7 @@ Proof.
   exact (_paco_mult (t := t) gf).
 Qed.
 
-Theorem paco1_fold: forall (MON: monotone1 gf) r,
+Theorem paco1_fold: forall r,
   gf (upaco1 gf r) <1= paco1 gf r.
 Proof.
   exact (_paco_fold (t := t) gf).

@@ -3,9 +3,6 @@ Require Setoid.
 Set Implicit Arguments.
 Set Universe Polymorphism.
 
-Delimit Scope paco_scope with paco.
-Local Open Scope paco_scope.
-
 (* General fact(s) I don't know where to put *)
 
 Lemma iff_forall {A} (P Q : A -> Prop) :
@@ -13,6 +10,8 @@ Lemma iff_forall {A} (P Q : A -> Prop) :
 Proof.
   intros H; split; intros I x; apply H; trivial.
 Qed.
+
+Delimit Scope paco_scope with paco.
 
 (* Universe-polymorphic [eq] *)
 Inductive paco_eq@{u} {A : Type@{u}} (a : A) : A -> Prop :=
@@ -37,8 +36,6 @@ Qed.
 (** Universe-polymorphic [sigT] *)
 Inductive paco_sigT@{u v} {A : Type@{u}} (T : A -> Type@{v}) : Type :=
   paco_existT { paco_projT1 : A; paco_projT2 : T paco_projT1 }.
-
-Local Notation "{ x : A & P }" := (paco_sigT (fun x : A => P)) : paco_scope.
 
 Lemma paco_sigT_curry@{u v} {A : Type@{u}} {T : A -> Type@{v}}
       {U : forall x : A, T x -> Prop} :
@@ -74,165 +71,122 @@ Qed.
 
 (** * Arity-generic constructions *)
 
-Set Printing Universes.
-
 (* Tuple of types *)
-Fixpoint arity@{u v w} (n : nat) : Type@{v} :=
-  match n with
-  | O => unit
-  | S n => paco_sigT@{u v} (fun A : Type@{w} => A -> arity n)
-  end.
+Inductive arity@{u} : Type :=
+| arity0
+| arityS : forall A : Type@{u}, (A -> arity) -> arity
+.
+Arguments arityS : clear implicits.
 
-Notation arity_hd := (@paco_projT1 Type (fun A => A -> arity _)).
-Notation arity_tl := (@paco_projT2 Type (fun A => A -> arity _)).
-
-Definition arity0 : arity 0 := tt.
-Notation arityS := (@paco_existT Type (fun A => A -> arity _)).
-
-Lemma arity_inv {n} : forall (t : arity n),
-  (match n return arity n -> arity n with
-  | O => fun _ => tt
-  | S n => fun t : arity (S n) => arityS (arity_hd t) (arity_tl t)
-  end t = t)%paco.
-Proof.
-  destruct n; destruct t; reflexivity.
-Defined.
-
-Fixpoint tuple@{u v w} {n} : arity@{u v w} n -> Type@{u} :=
-  match n with
-  | O => fun _ => unit
-  | S n => fun t => paco_sigT (fun x : paco_projT1 t => tuple (paco_projT2 t x))
+Fixpoint tuple@{u} (t : arity@{u}) : Type@{u} :=
+  match t with
+  | arity0 => unit
+  | arityS A t => paco_sigT (fun x : A => tuple (t x))
   end.
 
 (* From: [A0, A1, ...]
    To:   [forall (x0 : A0) (x1 : A1 x0) ..., P x0 x1 ...] *)
-Fixpoint Forall {n} : forall (t : arity n), (tuple t -> Prop) -> Prop :=
-  match n with
-  | O => fun _ f => f tt
-  | S n => fun t f =>
-    forall x, Forall (arity_tl t x) (fun u => f (paco_existT _ x u))
+Fixpoint Forall@{u} (t : arity@{u}) : (tuple t -> Prop) -> Prop :=
+  match t with
+  | arity0 => fun f => f tt
+  | arityS A t => fun f =>
+    forall x : A, Forall (t x) (fun u => f (paco_existT _ x u))
   end.
 
 (* From: [A0, A1, ...]
    To:   [forall (x0 : A0) (x1 : A1 x0) ..., T] *)
-Fixpoint Pi {n} : forall (t : arity n), (tuple t -> Type) -> Type :=
-  match n with
-  | O => fun _ f => f tt
-  | S n => fun t f => forall x, Pi (arity_tl t x) (fun u => f (paco_existT _ x u))
+Fixpoint Pi@{u v w} (t : arity@{u}) : (tuple t -> Type@{v}) -> Type@{w} :=
+  match t with
+  | arity0 => fun f => f tt
+  | arityS A t => fun f => forall x : A, Pi (t x) (fun u => f (paco_existT _ x u))
   end.
 
-Notation funtype t r := (@Pi _ t (fun _ => r)).
+Definition funtype@{u v w} (t : arity@{u}) (r : Type@{v}) : Type@{w} :=
+  Pi@{u v w} t (fun _ => r).
 
-Fixpoint uncurry@{u v w} {n} {r : Type@{u}} : forall t : arity@{u v w} n,
-  funtype t r -> tuple t -> r :=
-  match n with
-  | O => fun _ y _ => y
-  | S n => fun t f u => uncurry (paco_projT2 t _) (f _) (paco_projT2 u)
+Fixpoint uncurry@{u v w} {r : Type@{v}} (t : arity) :
+  funtype@{u v w} t r -> tuple t -> r :=
+  match t with
+  | arity0 => fun y _ => y
+  | arityS A t => fun f u => uncurry (t _) (f (paco_projT1 u)) (paco_projT2 u)
   end.
 
-Arguments uncurry {n r} [t].
+Arguments uncurry {r} [t].
 
-Fixpoint curry@{u v w} {n} {r : Type@{u}} : forall (t : arity@{u v w} n),
-  (tuple t -> r) -> funtype t r :=
-  match n with
-  | O => fun _ f => f tt
-  | S n => fun t f x =>
-      curry (paco_projT2 t x) (fun u => f (paco_existT _ x u))
+Fixpoint curry@{u v w} {r : Type@{v}} (t : arity) :
+  (tuple t -> r) -> funtype@{u v w} t r :=
+  match t with
+  | arity0 => fun f => f tt
+  | arityS A t => fun f x => curry (t x) (fun u => f (paco_existT _ x u))
   end.
 
-Arguments curry {n r} [t].
+Arguments curry {r} [t].
 
-Notation rel t := (funtype t Prop).
-Notation crel t := (funtype t Type).
+Definition rel@{u v} (t : arity) : Type@{v} :=
+  funtype@{u v v} t Prop.
 
-Fixpoint snoctype {n} : forall (t : arity n), crel t -> arity (S n) :=
-  match n with
-  | O => fun _ A => arityS A (fun _ => arity0)
-  | S n => fun t T => arityS _ (fun x => snoctype (arity_tl t x) (T x))
+(* From: [A0, A1, ...]
+   To:   [forall (x0 : A0) (x1 : A1) ..., Type] *)
+Definition crel@{u v} (t : arity) : Type@{v} :=
+  funtype@{u v v} t Type@{u}.
+
+Fixpoint snoctype@{u v} (t : arity) : crel@{u v} t -> arity :=
+  match t with
+  | arity0 => fun A => arityS A (fun _ => arity0)
+  | arityS A t => fun T => arityS A (fun x => snoctype (t x) (T x))
   end.
 
-Fixpoint const {n} {r : Type} (y : r) : forall (t : arity n), funtype t r :=
-  match n with
-  | O => fun _ => y
-  | S n => fun t x => const y (arity_tl t x)
+Fixpoint const@{u v w} {r : Type@{v}} (y : r) (t : arity) : funtype@{u v w} t r :=
+  match t with
+  | arity0 => y
+  | arityS A t => fun x => const y (t x)
   end.
 
-Fixpoint tyfun_adj {n m} : forall (t : arity n) (T : crel t),
-    funtype (snoctype t T) (arity m) ->
-    funtype t (arity (S m)) :=
-  match n with
-  | O => fun _ A t' => arityS A t'
-  | S n => fun t T f x => tyfun_adj (arity_tl t x) (T x) (f x)
+Fixpoint tyfun_adj@{u v w} (t : arity) :
+  forall (T : crel@{u v} t),
+    funtype@{u v w} (snoctype t T) arity ->
+    funtype@{u v w} t arity :=
+  match t with
+  | arity0 => fun A t => arityS A t
+  | arityS A t => fun T f x => tyfun_adj (t x) (T x) (f x)
   end.
 
-Fixpoint _tyforall {m} (t : arity m) {n} :
-  (funtype t (arity n) -> Type) -> Type :=
+Fixpoint _tyforall (t : arity) (f : funtype t arity -> Type) (n : nat) : Type :=
   match n with
-  | O => fun f => f (const arity0 t)
-  | S n => fun f => forall T : crel t, _tyforall (snoctype t T) (fun g => f (tyfun_adj t T g))
+  | O => f (const arity0 t)
+  | S n => forall T : crel t, _tyforall (snoctype t T) (fun g => f (tyfun_adj t T g)) n
   end.
 
-Definition tyforall : forall n, (arity n -> Type) -> Type :=
-  @_tyforall _ arity0.
+Definition tyforall : (arity -> Type) -> nat -> Type :=
+  @_tyforall arity0.
 
-Fixpoint _propforall {m} (t : arity m) {n} :
-  (funtype t (arity n) -> Prop) -> Prop :=
+Fixpoint _propforall (t : arity) (f : funtype t arity -> Prop) (n : nat) : Prop :=
   match n with
-  | O => fun f => f (const arity0 t)
-  | S n => fun f => forall T : crel t, _propforall (snoctype t T) (fun g => f (tyfun_adj t T g))
+  | O => f (const arity0 t)
+  | S n => forall T : crel t, _propforall (snoctype t T) (fun g => f (tyfun_adj t T g)) n
   end.
 
-Definition propforall : forall n, (arity n -> Prop) -> Prop :=
-  @_propforall _ arity0.
+Definition propforall : (arity -> Prop) -> nat -> Prop :=
+  @_propforall arity0.
 
-Lemma Forall_forall {n} (t : arity n) (P : tuple t -> Prop) :
+Lemma Forall_forall (t : arity) (P : tuple t -> Prop) :
   Forall t P <-> forall u, P u.
 Proof.
-  induction n; cbn.
+  induction t; cbn.
   - split; [ destruct u | ]; trivial.
   - split.
-    + intros I [x y]; specialize (I x). eapply IHn with (u := y); trivial.
-    + intros I x; apply IHn; trivial.
+    + intros I [x y]; specialize (I x). eapply H with (u := y); trivial.
+    + intros I x; apply H; trivial.
 Qed.
 
-Definition _rel@{u v w} {n} (t : arity@{u v w} n) : Type@{u} := tuple@{u v w} t -> Prop.
+Definition _rel@{u} (t : arity@{u}) : Type@{u} := tuple t -> Prop.
 
-Lemma curry_uncurry_ext : forall {n} {A : Type}
-                             (t : A -> arity n) {R : Type}
-                             (f : forall a, funtype (t a) R),
-    ((fun x => curry (uncurry (f x))) = f)%paco.
-Proof.
-  induction n; cbn; intros.
-  - constructor.
-  - change (fun u => ?f u) with f.
-    specialize (IHn { a : A & arity_hd (t a) }%paco).
-    specialize (IHn _ _ (fun u => f _ (paco_projT2 u))).
-    apply (f_equal (fun g x y => g (paco_existT _ x y))) in IHn.
-    apply IHn.
-Qed.
-
-Lemma curry_uncurry : forall {n} (t : arity n) (R : Type) (f : funtype t R),
-    (curry (uncurry f) = f)%paco.
-Proof.
-  intros.
-  assert (H := curry_uncurry_ext (fun _ : unit => t) (fun _ : unit => f)).
-  apply (f_equal (fun f => f tt)) in H.
-  exact H.
-Qed.
-
-Lemma uncurry_curry_eq : forall {n} {R : Type}
-                             {t : arity n} (f : tuple t -> R) (x : tuple t),
-  (uncurry (curry f) x = f x)%paco.
-Proof.
-  induction n; cbn; intros R t f []; cbn.
-  - reflexivity.
-  - rewrite IHn. reflexivity.
-Qed.
-
-Lemma uncurry_curry@{u v w} : forall {n} {t : arity@{u v w} n} (r : _rel t) (u : tuple t),
+Lemma uncurry_curry : forall {t : arity} (r : _rel t) (u : tuple t),
   uncurry (curry r) u <-> r u.
 Proof.
-  intros; destruct (uncurry_curry_eq r u); reflexivity.
+  induction t; cbn; intros.
+  - destruct u; reflexivity.
+  - destruct u as [x y]; cbn; apply H.
 Qed.
 
 (** * Tactics *)

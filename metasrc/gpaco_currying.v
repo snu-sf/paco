@@ -7,8 +7,8 @@ Set Universe Polymorphism.
 
 Section INTERNAL.
 
-Universe u v w.
-Context {n : nat} {t : arity@{u v w} n}.
+Universe u.
+Context {t : arity@{u}}.
 
 Notation rel := (rel t).
 Notation _rel := (_rel t).
