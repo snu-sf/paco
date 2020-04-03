@@ -1,5 +1,5 @@
 Require Export Program.Basics. Open Scope program_scope.
-From Paco Require Import paconotation_internal paco_internal pacotac_internal.
+From Paco Require Import paconotation_internal paco_internal pacotac_internal paco_currying.
 From Paco Require Export paconotation.
 Set Implicit Arguments.
 
@@ -11,76 +11,19 @@ Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
 Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
 Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), Type.
 
-(** ** Signatures *)
-
-Record sig5T  :=
-  exist5T {
-      proj5T0: @T0;
-      proj5T1: @T1 proj5T0;
-      proj5T2: @T2 proj5T0 proj5T1;
-      proj5T3: @T3 proj5T0 proj5T1 proj5T2;
-      proj5T4: @T4 proj5T0 proj5T1 proj5T2 proj5T3;
-    }.
-Definition uncurry5  (R: rel5 T0 T1 T2 T3 T4): rel1 sig5T :=
-  fun x => R (proj5T0 x) (proj5T1 x) (proj5T2 x) (proj5T3 x) (proj5T4 x).
-Definition curry5  (R: rel1 sig5T): rel5 T0 T1 T2 T3 T4 :=
-  fun x0 x1 x2 x3 x4 => R (@exist5T x0 x1 x2 x3 x4).
-
-Lemma uncurry_map5 r0 r1 (LE : r0 <5== r1) : uncurry5 r0 <1== uncurry5 r1.
-Proof. intros [] H. apply LE. apply H. Qed.
-
-Lemma uncurry_map_rev5 r0 r1 (LE: uncurry5 r0 <1== uncurry5 r1) : r0 <5== r1.
-Proof.
-  red; intros. apply (LE (@exist5T x0 x1 x2 x3 x4) PR).
-Qed.
-
-Lemma curry_map5 r0 r1 (LE: r0 <1== r1) : curry5 r0 <5== curry5 r1.
-Proof. 
-  red; intros. apply (LE (@exist5T x0 x1 x2 x3 x4) PR).
-Qed.
-
-Lemma curry_map_rev5 r0 r1 (LE: curry5 r0 <5== curry5 r1) : r0 <1== r1.
-Proof. 
-  intros [] H. apply LE. apply H.
-Qed.
-
-Lemma uncurry_bij1_5 r : curry5 (uncurry5 r) <5== r.
-Proof. unfold le5. intros. apply PR. Qed.
-
-Lemma uncurry_bij2_5 r : r <5== curry5 (uncurry5 r).
-Proof. unfold le5. intros. apply PR. Qed.
-
-Lemma curry_bij1_5 r : uncurry5 (curry5 r) <1== r.
-Proof. intros [] H. apply H. Qed.
-
-Lemma curry_bij2_5 r : r <1== uncurry5 (curry5 r).
-Proof. intros [] H. apply H. Qed.
-
-Lemma uncurry_adjoint1_5 r0 r1 (LE: uncurry5 r0 <1== r1) : r0 <5== curry5 r1.
-Proof.
-  apply uncurry_map_rev5. eapply le1_trans; [apply LE|]. apply curry_bij2_5.
-Qed.
-
-Lemma uncurry_adjoint2_5 r0 r1 (LE: r0 <5== curry5 r1) : uncurry5 r0 <1== r1.
-Proof.
-  apply curry_map_rev5. eapply le5_trans; [|apply LE]. apply uncurry_bij2_5.
-Qed.
-
-Lemma curry_adjoint1_5 r0 r1 (LE: curry5 r0 <5== r1) : r0 <1== uncurry5 r1.
-Proof.
-  apply curry_map_rev5. eapply le5_trans; [apply LE|]. apply uncurry_bij2_5.
-Qed.
-
-Lemma curry_adjoint2_5 r0 r1 (LE: r0 <1== uncurry5 r1) : curry5 r0 <5== r1.
-Proof.
-  apply uncurry_map_rev5. eapply le1_trans; [|apply LE]. apply curry_bij1_5.
-Qed.
-
 (** ** Predicates of Arity 5
 *)
 
+Notation t := (
+    arityS (@T0) (fun x0 =>
+    arityS (@T1 x0) (fun x1 =>
+    arityS (@T2 x0 x1) (fun x2 =>
+    arityS (@T3 x0 x1 x2) (fun x3 =>
+    arityS (@T4 x0 x1 x2 x3) (fun x4 =>
+    arity0)))))).
+
 Definition paco5(gf : rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4)(r: rel5 T0 T1 T2 T3 T4) : rel5 T0 T1 T2 T3 T4 :=
-  curry5 (paco (fun R0 => uncurry5 (gf (curry5 R0))) (uncurry5 r)).
+  _paco (t := t) gf r.
 
 Definition upaco5(gf : rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4)(r: rel5 T0 T1 T2 T3 T4) := paco5 gf r \5/ r.
 Arguments paco5 : clear implicits.
@@ -88,85 +31,52 @@ Arguments upaco5 : clear implicits.
 Hint Unfold upaco5 : core.
 
 Definition monotone5 (gf: rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4) :=
-  forall x0 x1 x2 x3 x4 r r' (IN: gf r x0 x1 x2 x3 x4) (LE: r <5= r'), gf r' x0 x1 x2 x3 x4.
+  forall r r' (LE: r <5= r'), gf r <5= gf r'.
 
-Definition _monotone5 (gf: rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4) :=
-  forall r r'(LE: r <5= r'), gf r <5== gf r'.
-
-Lemma monotone5_eq (gf: rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4) :
-  monotone5 gf <-> _monotone5 gf.
-Proof. unfold monotone5, _monotone5, le5. split; intros; eapply H; eassumption. Qed.
-
-Lemma monotone5_map (gf: rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4)
-      (MON: _monotone5 gf) :
-  _monotone (fun R0 => uncurry5 (gf (curry5 R0))).
-Proof.
-  red; intros. apply uncurry_map5. apply MON; apply curry_map5; assumption.
-Qed.
-
-Lemma monotone5_compose (gf gf': rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4)
+Lemma monotone5_compose : forall (gf gf': rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4)
       (MON1: monotone5 gf)
-      (MON2: monotone5 gf'):
+      (MON2: monotone5 gf'),
   monotone5 (compose gf gf').
 Proof.
-  red; intros. eapply MON1. apply IN.
-  intros. eapply MON2. apply PR. apply LE.
+  exact (_monotone_compose (t := t)).
 Qed.
 
-Lemma monotone5_union (gf gf': rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4)
+Lemma monotone5_union : forall (gf gf': rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4)
       (MON1: monotone5 gf)
-      (MON2: monotone5 gf'):
+      (MON2: monotone5 gf'),
   monotone5 (gf \6/ gf').
 Proof.
-  red; intros. destruct IN.
-  - left. eapply MON1. apply H. apply LE.
-  - right. eapply MON2. apply H. apply LE.
+  exact (_monotone_union (t := t)).
 Qed.
 
-Lemma _paco5_mon_gen (gf gf': rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4) r r'
+Lemma paco5_mon_gen : forall (gf gf': rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4)
     (LEgf: gf <6= gf')
-    (LEr: r <5= r'):
-  paco5 gf r <5== paco5 gf' r'.
+    r r' (LEr: r <5= r'),
+  paco5 gf r <5= paco5 gf' r'.
 Proof.
-  apply curry_map5. red; intros. eapply paco_mon_gen. apply PR.
-  - intros. apply LEgf, PR0.
-  - intros. apply LEr, PR0.
+  exact (_paco_mon_gen (t := t)).
 Qed.
 
-Lemma paco5_mon_gen (gf gf': rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4) r r' x0 x1 x2 x3 x4
-    (REL: paco5 gf r x0 x1 x2 x3 x4)
+Lemma paco5_mon_bot : forall (gf gf': rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4) r'
+    (LEgf: gf <6= gf'),
+  paco5 gf bot5 <5= paco5 gf' r'.
+Proof.
+  exact (_paco_mon_bot (t := t)).
+Qed.
+
+Lemma upaco5_mon_gen : forall (gf gf': rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4)
     (LEgf: gf <6= gf')
-    (LEr: r <5= r'):
-  paco5 gf' r' x0 x1 x2 x3 x4.
+    r r' (LEr: r <5= r'),
+  upaco5 gf r <5= upaco5 gf' r'.
 Proof.
-  eapply _paco5_mon_gen; [apply LEgf | apply LEr | apply REL].
+  exact (_upaco_mon_gen (t := t)).
 Qed.
 
-Lemma paco5_mon_bot (gf gf': rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4) r' x0 x1 x2 x3 x4
-    (REL: paco5 gf bot5 x0 x1 x2 x3 x4)
-    (LEgf: gf <6= gf'):
-  paco5 gf' r' x0 x1 x2 x3 x4.
+Lemma upaco5_mon_bot : forall (gf gf': rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4) r'
+    (LEgf: gf <6= gf'),
+  upaco5 gf bot5 <5= upaco5 gf' r'.
 Proof.
-  eapply paco5_mon_gen; [apply REL | apply LEgf | intros; contradiction PR].
-Qed.
-
-Lemma upaco5_mon_gen (gf gf': rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4) r r' x0 x1 x2 x3 x4
-    (REL: upaco5 gf r x0 x1 x2 x3 x4)
-    (LEgf: gf <6= gf')
-    (LEr: r <5= r'):
-  upaco5 gf' r' x0 x1 x2 x3 x4.
-Proof.
-  destruct REL.
-  - left. eapply paco5_mon_gen; [apply H | apply LEgf | apply LEr].
-  - right. apply LEr, H.
-Qed.
-
-Lemma upaco5_mon_bot (gf gf': rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4) r' x0 x1 x2 x3 x4
-    (REL: upaco5 gf bot5 x0 x1 x2 x3 x4)
-    (LEgf: gf <6= gf'):
-  upaco5 gf' r' x0 x1 x2 x3 x4.
-Proof.
-  eapply upaco5_mon_gen; [apply REL | apply LEgf | intros; contradiction PR].
+  exact (_upaco_mon_bot (t := t)).
 Qed.
 
 Section Arg5.
@@ -174,87 +84,45 @@ Section Arg5.
 Variable gf : rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4.
 Arguments gf : clear implicits.
 
-Theorem _paco5_mon: _monotone5 (paco5 gf).
-Proof.
-  red; intros. eapply curry_map5, _paco_mon; apply uncurry_map5; assumption.
-Qed.
-
-Theorem _paco5_acc: forall
-  l r (OBG: forall rr (INC: r <5== rr) (CIH: l <5== rr), l <5== paco5 gf rr),
-  l <5== paco5 gf r.
-Proof.
-  intros. apply uncurry_adjoint1_5.
-  eapply _paco_acc. intros.
-  apply uncurry_adjoint1_5 in INC. apply uncurry_adjoint1_5 in CIH.
-  apply uncurry_adjoint2_5.
-  eapply le5_trans. eapply (OBG _ INC CIH).
-  apply curry_map5.
-  apply _paco_mon; try apply le1_refl; apply curry_bij1_5.
-Qed.
-
-Theorem _paco5_mult_strong: forall r,
-  paco5 gf (upaco5 gf r) <5== paco5 gf r.
-Proof.
-  intros. apply curry_map5.
-  eapply le1_trans; [| eapply _paco_mult_strong].
-  apply _paco_mon; intros [] H; apply H.
-Qed.
-
-Theorem _paco5_fold: forall r,
-  gf (upaco5 gf r) <5== paco5 gf r.
-Proof.
-  intros. apply uncurry_adjoint1_5.
-  eapply le1_trans; [| apply _paco_fold]. apply le1_refl.
-Qed.
-
-Theorem _paco5_unfold: forall (MON: _monotone5 gf) r,
-  paco5 gf r <5== gf (upaco5 gf r).
-Proof.
-  intros. apply curry_adjoint2_5.
-  eapply _paco_unfold; apply monotone5_map; assumption.
-Qed.
-
 Theorem paco5_acc: forall
   l r (OBG: forall rr (INC: r <5= rr) (CIH: l <5= rr), l <5= paco5 gf rr),
   l <5= paco5 gf r.
 Proof.
-  apply _paco5_acc.
+  exact (_paco_acc (t := t) gf).
 Qed.
 
 Theorem paco5_mon: monotone5 (paco5 gf).
 Proof.
-  apply monotone5_eq.
-  apply _paco5_mon.
+  exact (_paco_mon (t := t) gf).
 Qed.
 
 Theorem upaco5_mon: monotone5 (upaco5 gf).
 Proof.
-  red; intros.
-  destruct IN.
-  - left. eapply paco5_mon. apply H. apply LE.
-  - right. apply LE, H.
+  exact (_upaco_mon (t := t) gf).
 Qed.
 
 Theorem paco5_mult_strong: forall r,
   paco5 gf (upaco5 gf r) <5= paco5 gf r.
 Proof.
-  apply _paco5_mult_strong.
+  exact (_paco_mult_strong (t := t) gf).
 Qed.
 
 Corollary paco5_mult: forall r,
   paco5 gf (paco5 gf r) <5= paco5 gf r.
-Proof. intros; eapply paco5_mult_strong, paco5_mon; [apply PR|..]; intros; left; assumption. Qed.
+Proof.
+  exact (_paco_mult (t := t) gf).
+Qed.
 
-Theorem paco5_fold: forall r,
+Theorem paco5_fold: forall (MON: monotone5 gf) r,
   gf (upaco5 gf r) <5= paco5 gf r.
 Proof.
-  apply _paco5_fold.
+  exact (_paco_fold (t := t) gf).
 Qed.
 
 Theorem paco5_unfold: forall (MON: monotone5 gf) r,
   paco5 gf r <5= gf (upaco5 gf r).
 Proof.
-  intro. eapply _paco5_unfold; apply monotone5_eq; assumption.
+  exact (_paco_unfold (t := t) gf).
 Qed.
 
 End Arg5.

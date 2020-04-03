@@ -1,5 +1,5 @@
 Require Export Program.Basics. Open Scope program_scope.
-From Paco Require Import paconotation_internal paco_internal pacotac_internal.
+From Paco Require Import paconotation_internal paco_internal pacotac_internal paco_currying.
 From Paco Require Export paconotation.
 Set Implicit Arguments.
 
@@ -18,83 +18,26 @@ Variable T9 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (
 Variable T10 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6) (x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8), Type.
 Variable T11 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6) (x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: @T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9), Type.
 
-(** ** Signatures *)
-
-Record sig12T  :=
-  exist12T {
-      proj12T0: @T0;
-      proj12T1: @T1 proj12T0;
-      proj12T2: @T2 proj12T0 proj12T1;
-      proj12T3: @T3 proj12T0 proj12T1 proj12T2;
-      proj12T4: @T4 proj12T0 proj12T1 proj12T2 proj12T3;
-      proj12T5: @T5 proj12T0 proj12T1 proj12T2 proj12T3 proj12T4;
-      proj12T6: @T6 proj12T0 proj12T1 proj12T2 proj12T3 proj12T4 proj12T5;
-      proj12T7: @T7 proj12T0 proj12T1 proj12T2 proj12T3 proj12T4 proj12T5 proj12T6;
-      proj12T8: @T8 proj12T0 proj12T1 proj12T2 proj12T3 proj12T4 proj12T5 proj12T6 proj12T7;
-      proj12T9: @T9 proj12T0 proj12T1 proj12T2 proj12T3 proj12T4 proj12T5 proj12T6 proj12T7 proj12T8;
-      proj12T10: @T10 proj12T0 proj12T1 proj12T2 proj12T3 proj12T4 proj12T5 proj12T6 proj12T7 proj12T8 proj12T9;
-      proj12T11: @T11 proj12T0 proj12T1 proj12T2 proj12T3 proj12T4 proj12T5 proj12T6 proj12T7 proj12T8 proj12T9 proj12T10;
-    }.
-Definition uncurry12  (R: rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11): rel1 sig12T :=
-  fun x => R (proj12T0 x) (proj12T1 x) (proj12T2 x) (proj12T3 x) (proj12T4 x) (proj12T5 x) (proj12T6 x) (proj12T7 x) (proj12T8 x) (proj12T9 x) (proj12T10 x) (proj12T11 x).
-Definition curry12  (R: rel1 sig12T): rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 :=
-  fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 => R (@exist12T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11).
-
-Lemma uncurry_map12 r0 r1 (LE : r0 <12== r1) : uncurry12 r0 <1== uncurry12 r1.
-Proof. intros [] H. apply LE. apply H. Qed.
-
-Lemma uncurry_map_rev12 r0 r1 (LE: uncurry12 r0 <1== uncurry12 r1) : r0 <12== r1.
-Proof.
-  red; intros. apply (LE (@exist12T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) PR).
-Qed.
-
-Lemma curry_map12 r0 r1 (LE: r0 <1== r1) : curry12 r0 <12== curry12 r1.
-Proof. 
-  red; intros. apply (LE (@exist12T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) PR).
-Qed.
-
-Lemma curry_map_rev12 r0 r1 (LE: curry12 r0 <12== curry12 r1) : r0 <1== r1.
-Proof. 
-  intros [] H. apply LE. apply H.
-Qed.
-
-Lemma uncurry_bij1_12 r : curry12 (uncurry12 r) <12== r.
-Proof. unfold le12. intros. apply PR. Qed.
-
-Lemma uncurry_bij2_12 r : r <12== curry12 (uncurry12 r).
-Proof. unfold le12. intros. apply PR. Qed.
-
-Lemma curry_bij1_12 r : uncurry12 (curry12 r) <1== r.
-Proof. intros [] H. apply H. Qed.
-
-Lemma curry_bij2_12 r : r <1== uncurry12 (curry12 r).
-Proof. intros [] H. apply H. Qed.
-
-Lemma uncurry_adjoint1_12 r0 r1 (LE: uncurry12 r0 <1== r1) : r0 <12== curry12 r1.
-Proof.
-  apply uncurry_map_rev12. eapply le1_trans; [apply LE|]. apply curry_bij2_12.
-Qed.
-
-Lemma uncurry_adjoint2_12 r0 r1 (LE: r0 <12== curry12 r1) : uncurry12 r0 <1== r1.
-Proof.
-  apply curry_map_rev12. eapply le12_trans; [|apply LE]. apply uncurry_bij2_12.
-Qed.
-
-Lemma curry_adjoint1_12 r0 r1 (LE: curry12 r0 <12== r1) : r0 <1== uncurry12 r1.
-Proof.
-  apply curry_map_rev12. eapply le12_trans; [apply LE|]. apply uncurry_bij2_12.
-Qed.
-
-Lemma curry_adjoint2_12 r0 r1 (LE: r0 <1== uncurry12 r1) : curry12 r0 <12== r1.
-Proof.
-  apply uncurry_map_rev12. eapply le1_trans; [|apply LE]. apply curry_bij1_12.
-Qed.
-
 (** ** Predicates of Arity 12
 *)
 
+Notation t := (
+    arityS (@T0) (fun x0 =>
+    arityS (@T1 x0) (fun x1 =>
+    arityS (@T2 x0 x1) (fun x2 =>
+    arityS (@T3 x0 x1 x2) (fun x3 =>
+    arityS (@T4 x0 x1 x2 x3) (fun x4 =>
+    arityS (@T5 x0 x1 x2 x3 x4) (fun x5 =>
+    arityS (@T6 x0 x1 x2 x3 x4 x5) (fun x6 =>
+    arityS (@T7 x0 x1 x2 x3 x4 x5 x6) (fun x7 =>
+    arityS (@T8 x0 x1 x2 x3 x4 x5 x6 x7) (fun x8 =>
+    arityS (@T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (fun x9 =>
+    arityS (@T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (fun x10 =>
+    arityS (@T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) (fun x11 =>
+    arity0))))))))))))).
+
 Definition paco12(gf : rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11)(r: rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) : rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 :=
-  curry12 (paco (fun R0 => uncurry12 (gf (curry12 R0))) (uncurry12 r)).
+  _paco (t := t) gf r.
 
 Definition upaco12(gf : rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11)(r: rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) := paco12 gf r \12/ r.
 Arguments paco12 : clear implicits.
@@ -102,85 +45,52 @@ Arguments upaco12 : clear implicits.
 Hint Unfold upaco12 : core.
 
 Definition monotone12 (gf: rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) :=
-  forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 r r' (IN: gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) (LE: r <12= r'), gf r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11.
+  forall r r' (LE: r <12= r'), gf r <12= gf r'.
 
-Definition _monotone12 (gf: rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) :=
-  forall r r'(LE: r <12= r'), gf r <12== gf r'.
-
-Lemma monotone12_eq (gf: rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) :
-  monotone12 gf <-> _monotone12 gf.
-Proof. unfold monotone12, _monotone12, le12. split; intros; eapply H; eassumption. Qed.
-
-Lemma monotone12_map (gf: rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11)
-      (MON: _monotone12 gf) :
-  _monotone (fun R0 => uncurry12 (gf (curry12 R0))).
-Proof.
-  red; intros. apply uncurry_map12. apply MON; apply curry_map12; assumption.
-Qed.
-
-Lemma monotone12_compose (gf gf': rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11)
+Lemma monotone12_compose : forall (gf gf': rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11)
       (MON1: monotone12 gf)
-      (MON2: monotone12 gf'):
+      (MON2: monotone12 gf'),
   monotone12 (compose gf gf').
 Proof.
-  red; intros. eapply MON1. apply IN.
-  intros. eapply MON2. apply PR. apply LE.
+  exact (_monotone_compose (t := t)).
 Qed.
 
-Lemma monotone12_union (gf gf': rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11)
+Lemma monotone12_union : forall (gf gf': rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11)
       (MON1: monotone12 gf)
-      (MON2: monotone12 gf'):
+      (MON2: monotone12 gf'),
   monotone12 (gf \13/ gf').
 Proof.
-  red; intros. destruct IN.
-  - left. eapply MON1. apply H. apply LE.
-  - right. eapply MON2. apply H. apply LE.
+  exact (_monotone_union (t := t)).
 Qed.
 
-Lemma _paco12_mon_gen (gf gf': rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) r r'
+Lemma paco12_mon_gen : forall (gf gf': rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11)
     (LEgf: gf <13= gf')
-    (LEr: r <12= r'):
-  paco12 gf r <12== paco12 gf' r'.
+    r r' (LEr: r <12= r'),
+  paco12 gf r <12= paco12 gf' r'.
 Proof.
-  apply curry_map12. red; intros. eapply paco_mon_gen. apply PR.
-  - intros. apply LEgf, PR0.
-  - intros. apply LEr, PR0.
+  exact (_paco_mon_gen (t := t)).
 Qed.
 
-Lemma paco12_mon_gen (gf gf': rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11
-    (REL: paco12 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
+Lemma paco12_mon_bot : forall (gf gf': rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) r'
+    (LEgf: gf <13= gf'),
+  paco12 gf bot12 <12= paco12 gf' r'.
+Proof.
+  exact (_paco_mon_bot (t := t)).
+Qed.
+
+Lemma upaco12_mon_gen : forall (gf gf': rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11)
     (LEgf: gf <13= gf')
-    (LEr: r <12= r'):
-  paco12 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11.
+    r r' (LEr: r <12= r'),
+  upaco12 gf r <12= upaco12 gf' r'.
 Proof.
-  eapply _paco12_mon_gen; [apply LEgf | apply LEr | apply REL].
+  exact (_upaco_mon_gen (t := t)).
 Qed.
 
-Lemma paco12_mon_bot (gf gf': rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11
-    (REL: paco12 gf bot12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
-    (LEgf: gf <13= gf'):
-  paco12 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11.
+Lemma upaco12_mon_bot : forall (gf gf': rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) r'
+    (LEgf: gf <13= gf'),
+  upaco12 gf bot12 <12= upaco12 gf' r'.
 Proof.
-  eapply paco12_mon_gen; [apply REL | apply LEgf | intros; contradiction PR].
-Qed.
-
-Lemma upaco12_mon_gen (gf gf': rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) r r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11
-    (REL: upaco12 gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
-    (LEgf: gf <13= gf')
-    (LEr: r <12= r'):
-  upaco12 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11.
-Proof.
-  destruct REL.
-  - left. eapply paco12_mon_gen; [apply H | apply LEgf | apply LEr].
-  - right. apply LEr, H.
-Qed.
-
-Lemma upaco12_mon_bot (gf gf': rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11
-    (REL: upaco12 gf bot12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
-    (LEgf: gf <13= gf'):
-  upaco12 gf' r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11.
-Proof.
-  eapply upaco12_mon_gen; [apply REL | apply LEgf | intros; contradiction PR].
+  exact (_upaco_mon_bot (t := t)).
 Qed.
 
 Section Arg12.
@@ -188,87 +98,45 @@ Section Arg12.
 Variable gf : rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11.
 Arguments gf : clear implicits.
 
-Theorem _paco12_mon: _monotone12 (paco12 gf).
-Proof.
-  red; intros. eapply curry_map12, _paco_mon; apply uncurry_map12; assumption.
-Qed.
-
-Theorem _paco12_acc: forall
-  l r (OBG: forall rr (INC: r <12== rr) (CIH: l <12== rr), l <12== paco12 gf rr),
-  l <12== paco12 gf r.
-Proof.
-  intros. apply uncurry_adjoint1_12.
-  eapply _paco_acc. intros.
-  apply uncurry_adjoint1_12 in INC. apply uncurry_adjoint1_12 in CIH.
-  apply uncurry_adjoint2_12.
-  eapply le12_trans. eapply (OBG _ INC CIH).
-  apply curry_map12.
-  apply _paco_mon; try apply le1_refl; apply curry_bij1_12.
-Qed.
-
-Theorem _paco12_mult_strong: forall r,
-  paco12 gf (upaco12 gf r) <12== paco12 gf r.
-Proof.
-  intros. apply curry_map12.
-  eapply le1_trans; [| eapply _paco_mult_strong].
-  apply _paco_mon; intros [] H; apply H.
-Qed.
-
-Theorem _paco12_fold: forall r,
-  gf (upaco12 gf r) <12== paco12 gf r.
-Proof.
-  intros. apply uncurry_adjoint1_12.
-  eapply le1_trans; [| apply _paco_fold]. apply le1_refl.
-Qed.
-
-Theorem _paco12_unfold: forall (MON: _monotone12 gf) r,
-  paco12 gf r <12== gf (upaco12 gf r).
-Proof.
-  intros. apply curry_adjoint2_12.
-  eapply _paco_unfold; apply monotone12_map; assumption.
-Qed.
-
 Theorem paco12_acc: forall
   l r (OBG: forall rr (INC: r <12= rr) (CIH: l <12= rr), l <12= paco12 gf rr),
   l <12= paco12 gf r.
 Proof.
-  apply _paco12_acc.
+  exact (_paco_acc (t := t) gf).
 Qed.
 
 Theorem paco12_mon: monotone12 (paco12 gf).
 Proof.
-  apply monotone12_eq.
-  apply _paco12_mon.
+  exact (_paco_mon (t := t) gf).
 Qed.
 
 Theorem upaco12_mon: monotone12 (upaco12 gf).
 Proof.
-  red; intros.
-  destruct IN.
-  - left. eapply paco12_mon. apply H. apply LE.
-  - right. apply LE, H.
+  exact (_upaco_mon (t := t) gf).
 Qed.
 
 Theorem paco12_mult_strong: forall r,
   paco12 gf (upaco12 gf r) <12= paco12 gf r.
 Proof.
-  apply _paco12_mult_strong.
+  exact (_paco_mult_strong (t := t) gf).
 Qed.
 
 Corollary paco12_mult: forall r,
   paco12 gf (paco12 gf r) <12= paco12 gf r.
-Proof. intros; eapply paco12_mult_strong, paco12_mon; [apply PR|..]; intros; left; assumption. Qed.
+Proof.
+  exact (_paco_mult (t := t) gf).
+Qed.
 
-Theorem paco12_fold: forall r,
+Theorem paco12_fold: forall (MON: monotone12 gf) r,
   gf (upaco12 gf r) <12= paco12 gf r.
 Proof.
-  apply _paco12_fold.
+  exact (_paco_fold (t := t) gf).
 Qed.
 
 Theorem paco12_unfold: forall (MON: monotone12 gf) r,
   paco12 gf r <12= gf (upaco12 gf r).
 Proof.
-  intro. eapply _paco12_unfold; apply monotone12_eq; assumption.
+  exact (_paco_unfold (t := t) gf).
 Qed.
 
 End Arg12.
