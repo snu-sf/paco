@@ -7,8 +7,8 @@ Set Universe Polymorphism.
 
 Section INTERNAL.
 
-Universe u.
-Context {t : arity@{u}}.
+Universe u v w.
+Context {n : nat} {t : arity@{u v w} n}.
 
 Notation rel := (rel t).
 Notation _rel := (_rel t).
@@ -195,7 +195,16 @@ Qed.
 
 Section GPaco.
 
-Ltac simpl_paco := (red; apply gpaco_mon_gen) + (apply uncurry_monotone; assumption).
+Ltac simpl_paco :=
+  (red; apply gpaco_mon_gen) +
+  (apply uncurry_monotone; assumption) +
+  (intros _r; match goal with
+              | [ |- ?G ] =>
+                match G with
+                | context _ [ curry (uncurry ?r) ] =>
+                  destruct curry_uncurry
+                end
+              end).
 
 Ltac translate' := translate_ simpl_paco.
 Ltac translate X := translate' (@X (tuple t)).
@@ -233,7 +242,7 @@ Qed.
 Lemma _gpaco_clo : forall gf clo r rg,
   clo r <= _gpaco gf clo r rg.
 Proof.
-  translate gpaco_clo.
+  translate gpaco_clo. red. unfold uncurry_relT.
 Qed.
 
 End GPaco.

@@ -5,8 +5,8 @@ Set Universe Polymorphism.
 
 Section REL.
 
-Universe u.
-Context {t : arity@{u}}.
+Universe u v w.
+Context {n : nat} {t : arity@{u v w} n}.
 
 Definition le (r r' : rel t) : Prop :=
   Forall t (fun u : tuple t => uncurry r u -> uncurry r' u).

@@ -6,8 +6,8 @@ Set Universe Polymorphism.
 
 Section INTERNAL.
 
-Universe u.
-Context {t : arity@{u}}.
+Universe u v w.
+Context {n : nat} {t : arity@{u v w} n}.
 
 Local Infix "<=" := le.
 
@@ -116,5 +116,5 @@ End INTERNAL.
 Arguments _paco_fold : clear implicits.
 Arguments _paco_unfold : clear implicits.
 
-Arguments _paco_fold {t}.
-Arguments _paco_unfold {t}.
+Arguments _paco_fold {n t}.
+Arguments _paco_unfold {n t}.
