@@ -655,3 +655,6 @@ Proof.
         apply gpaco_clo. right. apply PR0.
   - apply gpaco_clo. left. apply PR.
 Qed.
+
+End Companion.
+End GeneralizedPaco.
