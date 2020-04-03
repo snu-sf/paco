@@ -8,8 +8,12 @@ rm -f $PACOSRCDIR/paco*.v
 rm -f $PACOSRCDIR/gpaco*.v
 python paconotation.py $(expr $maxsize + 1) > $PACOSRCDIR/paconotation.v
 python paconotation_internal.py $maxsize > $PACOSRCDIR/paconotation_internal.v
+cp paco_sigma.v $PACOSRCDIR/paco_sigma.v
+cp paco_rel.v $PACOSRCDIR/paco_rel.v
 cp paco_internal.v $PACOSRCDIR/paco_internal.v
 cp paco_currying.v $PACOSRCDIR/paco_currying.v
+cp gpaco_internal.v $PACOSRCDIR/gpaco_internal.v
+cp gpaco_currying.v $PACOSRCDIR/gpaco_currying.v
 python pacotac_internal.py $maxsize > $PACOSRCDIR/pacotac_internal.v
 python pacotac.py $maxsize > $PACOSRCDIR/pacotac.v
 python gpacotac.py $maxsize > $PACOSRCDIR/gpacotac.v
