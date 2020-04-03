@@ -217,7 +217,7 @@ Proof.
   specialize (OBG _ INC CIH). unfold _paco in OBG.
   eapply Transitive_le; [ apply OBG | ].
   apply curry_le.
-  red; apply paco_internal.paco_mon_gen; trivial. apply uncurry_curry.
+  red; apply paco_mon_gen; trivial. apply uncurry_curry.
 Qed.
 
 Theorem _paco_mult_strong: forall gf r,

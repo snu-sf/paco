@@ -37,6 +37,16 @@ Ltac monotonic MON H :=
   | [ |- _ ?x ] => revert H; try (revert x); apply MON
   end.
 
+Lemma monotone_compose {T0} {gf gf' : rel1 T0 -> rel1 T0} :
+  monotone gf ->
+  monotone gf' ->
+  monotone (compose gf gf').
+Proof.
+  intros H H' x0 r Hr. apply H, H', Hr.
+Qed.
+
+Existing Instance monotone_compose.
+
 Section GeneralizedPaco.
 
 Variable T0 : Type.
@@ -71,6 +81,8 @@ Proof.
   repeat intro. eapply rclo_mon_gen; eassumption + eauto.
 Qed.
 
+Global Existing Instance rclo_mon.
+
 Lemma rclo_clo clo r:
   clo (rclo clo r) <1= rclo clo r.
 Proof.
@@ -97,8 +109,9 @@ End RClo.
 
 Section Main.
 
-Variable gf: rel -> rel.
-Hypothesis gf_mon: monotone gf.
+Section GPacoDef.
+
+Variable gf : rel -> rel.
 
 Variant gpaco clo r rg x0 : Prop :=
 | gpaco_intro (IN: @rclo clo (paco (compose gf (rclo clo)) (rg \1/ r) \1/ r) x0)
@@ -106,25 +119,19 @@ Variant gpaco clo r rg x0 : Prop :=
 
 Definition gupaco clo r := gpaco clo r r.
 
-Lemma monotone_compose gf' :
-  monotone gf ->
-  monotone gf' ->
-  monotone (compose gf gf').
-Proof.
-  intros H H' x0 r Hr. apply H, H', Hr.
-Qed.
+End GPacoDef.
 
-Lemma gpaco_def_mon clo : monotone (compose gf (rclo clo)).
-Proof.
-  eapply monotone_compose. apply gf_mon. apply rclo_mon.
-Qed.
+Section GPaco.
 
-Hint Resolve gpaco_def_mon : paco.
+Variable gf : rel -> rel.
+
+Local Notation gpaco := (gpaco gf).
+Local Notation gupaco := (gupaco gf).
 
 Lemma gpaco_mon clo r r' rg rg'
       (LEr: r <1= r')
       (LErg: rg <1= rg'):
-  @gpaco clo r rg <1= @gpaco clo r' rg'.
+  gpaco clo r rg <1= gpaco clo r' rg'.
 Proof.
   intros x0 IN; destruct IN. constructor.
   monotonic rclo_mon IN.
@@ -133,19 +140,18 @@ Proof.
   intros. destruct PR; [left|right]; auto.
 Qed.
 
-Lemma gupaco_mon clo r r'
-      (LEr: r <1= r'):
-  @gupaco clo r <1= @gupaco clo r'.
+Lemma gupaco_mon clo : monotone (gupaco clo).
 Proof.
-  apply gpaco_mon; apply LEr.
+  intros r r' LEr. red; apply gpaco_mon; apply LEr.
 Qed.
+Global Existing Instance gupaco_mon.
 
 Lemma gpaco_base clo r rg: r <1= gpaco clo r rg.
 Proof.
   econstructor. apply rclo_base. right. apply PR.
 Qed.
 
-Lemma gpaco_gen_guard  clo r rg:
+Lemma gpaco_gen_guard clo r rg:
   gpaco clo r (rg \1/ r) <1= gpaco clo r rg.
 Proof.
   intros. destruct PR. econstructor.
@@ -171,6 +177,22 @@ Proof.
   apply rclo_base.
 Qed.
 
+End GPaco.
+
+Section GPacoMon.
+
+Context {gf : rel -> rel} {gf_mon : monotone gf}.
+
+Local Notation gpaco := (gpaco gf).
+Local Notation gupaco := (gupaco gf).
+
+Lemma gpaco_def_mon clo : monotone (compose gf (rclo clo)).
+Proof using gf_mon.
+  typeclasses eauto.
+Qed.
+
+Hint Resolve gpaco_def_mon : paco.
+
 Lemma gpaco_gen_rclo clo r rg:
   gpaco (rclo clo) r rg <1= gpaco clo r rg.
 Proof.
@@ -190,7 +212,7 @@ Proof.
   apply paco_fold. monotonic gf_mon PR.
   destruct 1. monotonic rclo_mon IN.
   destruct 1.
-  - left. revert H; apply paco_mon. destruct 1; trivial.
+  - left. monotonic paco_mon H. destruct 1; trivial.
   - right. trivial.
 Qed.
 
@@ -198,7 +220,7 @@ Lemma gpaco_step clo r rg:
   gf (gpaco clo rg rg) <1= gpaco clo r rg.
 Proof.
   intros. apply gpaco_step_gen.
-  revert PR; apply gf_mon, gpaco_mon; auto.
+  monotonic gf_mon PR; apply gpaco_mon; auto.
 Qed.
 
 Lemma gpaco_final clo r rg:
@@ -319,16 +341,17 @@ Proof.
     monotonic gupaco_mon IN. apply H.
 Qed.
 
+End GPacoMon.
+
 End Main.
 
 Hint Resolve gpaco_def_mon : paco.
 
 Section GeneralMonotonicity.
 
-Variable gf: rel -> rel.
+Context {gf: rel -> rel} {gf_mon : monotone gf}.
   
 Lemma gpaco_mon_gen (gf' clo clo': rel -> rel) r r' rg rg'
-      (gf_mon: monotone gf)
       (LEgf: gf <2= gf')
       (LEclo: clo <2= clo')
       (LEr: r <1= r')
@@ -347,7 +370,6 @@ Proof.
 Qed.
 
 Lemma gpaco_mon_bot (gf' clo clo': rel -> rel) r' rg'
-      (gf_mon: monotone gf)
       (LEgf: gf <2= gf')
       (LEclo: clo <2= clo'):
   @gpaco gf clo bot1 bot1 <1= @gpaco gf' clo' r' rg'.
@@ -355,8 +377,8 @@ Proof.
   apply gpaco_mon_gen; assumption + contradiction.
 Qed.
 
-Lemma gupaco_mon_gen (gf' clo clo': rel -> rel) r r'
-      (gf_mon: monotone gf)
+Lemma gupaco_mon_gen
+      (gf' clo clo': rel -> rel) r r'
       (LEgf: gf <2= gf')
       (LEclo: clo <2= clo')
       (LEr: r <1= r'):
@@ -367,10 +389,9 @@ Qed.
 
 End GeneralMonotonicity.
 
-Section Compatibility.
+Section CompatibilityDef.
 
 Variable gf: rel -> rel.
-Hypothesis gf_mon: monotone gf.
 
 Structure compatible (clo: rel -> rel) : Prop :=
   compat_intro {
@@ -385,6 +406,15 @@ Structure wcompatible clo : Prop :=
       wcompat_wcompat : forall r,
           clo (gf r) <1= gf (gupaco gf clo r);
     }.
+
+End CompatibilityDef.
+
+Section Compatibility.
+
+Context {gf : rel -> rel} {gf_mon: monotone gf}.
+
+Local Notation compatible := (compatible gf).
+Local Notation wcompatible := (wcompatible gf).
 
 Lemma rclo_dist clo
       (MON: monotone clo)
@@ -402,30 +432,28 @@ Lemma rclo_compat clo
       (COM: compatible clo):
   compatible (rclo clo).
 Proof.
-  econstructor.
-  - apply rclo_mon.
-  - intros. induction PR.
-    + monotonic gf_mon IN.
-      intros. eapply rclo_base. apply PR.
-    + eapply gf_mon.
-      * intros. eapply rclo_clo. apply PR.
-      * eapply COM. eapply COM. apply H. apply IN.
+  econstructor; [ typeclasses eauto | ].
+  intros. induction PR.
+  - monotonic gf_mon IN.
+    intros. eapply rclo_base. apply PR.
+  - eapply gf_mon.
+    + intros. eapply rclo_clo. apply PR.
+    + eapply COM. eapply COM. apply H. apply IN.
 Qed.
 
 Lemma rclo_wcompat clo
       (COM: wcompatible clo):
   wcompatible (rclo clo).
 Proof.
-  econstructor.
-  - apply rclo_mon.
-  - intros. induction PR.
-    + monotonic gf_mon IN.
-      intros. apply gpaco_base. apply PR.
-    + eapply gf_mon.
-      * intros. eapply gpaco_gupaco. apply gf_mon.
-        monotonic gupaco_mon_gen PR; [apply gf_mon|trivial| |eauto].
-        intros ? ?; eapply rclo_clo'. apply rclo_base.
-      * eapply COM. eapply COM. apply H. apply IN.
+  econstructor; [ typeclasses eauto | ].
+  intros. induction PR.
+  - monotonic gf_mon IN.
+    intros. apply gpaco_base. apply PR.
+  - eapply gf_mon.
+    + intros. apply gpaco_gupaco.
+      monotonic gupaco_mon_gen PR; [trivial| |eauto].
+      intros ? ?; eapply rclo_clo'. apply rclo_base.
+    + eapply COM. eapply COM. apply H. apply IN.
 Qed.
 
 Lemma compat_wcompat clo
@@ -442,22 +470,20 @@ Lemma wcompat_compat clo
       (WCMP: wcompatible clo) :
   compatible (gupaco gf clo).
 Proof.
-  econstructor.
-  { red; red; intros. monotonic gpaco_mon PR; apply LE. }
-
-  intros. apply gpaco_unfold in PR; [|apply gf_mon].
+  econstructor; [ typeclasses eauto | ].
+  intros. apply gpaco_unfold in PR.
   induction PR.
   - destruct IN; cycle 1.
     + monotonic gf_mon H.
       intros. apply gpaco_base, PR.
     + monotonic gf_mon H.
-      intros. apply gpaco_gupaco. apply gf_mon.
+      intros. apply gpaco_gupaco.
       monotonic gupaco_mon PR.
-      intros. apply gpaco_step. apply gf_mon.
+      intros. apply gpaco_step.
       apply (or_ind (fun x => x) (fun x => x)) in PR.
       monotonic gf_mon PR.
       apply gpaco_base.
-  - eapply gf_mon; [ eapply gpaco_gupaco, gf_mon | ].
+  - eapply gf_mon; [ apply gpaco_gupaco | ].
     apply WCMP. eapply WCMP. apply H. apply IN.
 Qed.
 
@@ -479,8 +505,7 @@ End Compatibility.
 
 Section Soundness.
 
-Variable gf: rel -> rel.
-Hypothesis gf_mon: monotone gf.
+Context {gf: rel -> rel} {gf_mon: monotone gf}.
 
 Lemma gpaco_compat_init clo
       (CMP: compatible gf clo):
@@ -489,10 +514,10 @@ Proof.
   intros. destruct PR. revert x0 IN.
   pcofix_ CIH. intros x H. apply paco_fold.
   eapply gf_mon; [right; apply CIH, rclo_rclo, PR |].
-  apply compat_compat with (gf:=gf). apply rclo_compat. apply gf_mon. apply CMP.
+  apply compat_compat with (gf:=gf). apply rclo_compat. apply CMP.
   monotonic rclo_mon H.
-  intros. destruct PR; [|contradiction]. apply paco_unfold in H; [..|apply gpaco_def_mon, gf_mon].
-  monotonic gpaco_def_mon H; [ apply gf_mon| ].
+  intros. destruct PR; [|contradiction]. apply paco_unfold in H; [..|apply gpaco_def_mon ].
+  monotonic gpaco_def_mon H.
   intros. destruct PR; [left; apply H|destruct H; contradiction].
 Qed.
 
@@ -501,8 +526,8 @@ Lemma gpaco_init clo
   gpaco gf clo bot1 bot1 <1= paco gf bot1.
 Proof.
   intros. eapply gpaco_compat_init.
-  - apply wcompat_compat, WCMP. apply gf_mon.
-  - monotonic gpaco_mon_bot PR. apply gf_mon. intros; apply PR.
+  - apply wcompat_compat, WCMP.
+  - monotonic gpaco_mon_bot PR. intros; apply PR.
     intros. apply gpaco_clo, PR.
 Qed.
 
@@ -528,21 +553,21 @@ Lemma gpaco_dist clo r rg
       (DIST: forall r1 r2, clo (r1 \1/ r2) <1= (clo r1 \1/ clo r2)):
   gpaco gf clo r rg <1= (paco gf (rclo clo (rg \1/ r)) \1/ rclo clo r).
 Proof.
-  intros x PR. apply gpaco_unfold in PR; [|apply gf_mon].
+  intros x PR. apply gpaco_unfold in PR.
   apply rclo_dist in PR; [|apply CMP|apply DIST].
   destruct PR; [|right; apply H].
   left. revert x H.
   pcofix_ CIH; intros x PR.
-  apply rclo_wcompat in PR; [|apply gf_mon|apply CMP].
+  apply rclo_wcompat in PR; [|apply CMP].
   apply paco_fold. monotonic gf_mon PR. intros x PR.
-  apply gpaco_unfold in PR; [|apply gf_mon].
+  apply gpaco_unfold in PR.
   apply rclo_compose in PR.
   apply rclo_dist in PR; [|apply CMP|apply DIST].
   destruct PR as [PR|PR].
   - right. apply CIH.
     monotonic rclo_mon PR. apply gf_mon. intros x PR.
-    apply gpaco_gupaco; [apply gf_mon |].
-    apply gpaco_gen_rclo; [apply gf_mon|].
+    apply gpaco_gupaco.
+    apply gpaco_gen_rclo.
     monotonic gupaco_mon PR. intros x PR.
     destruct PR as [PR|PR]; apply PR.
   - assert (REL: @rclo clo (rclo clo (gf (gupaco gf clo ((rg \1/ r) \1/ (rg \1/ r))) \1/ (rg \1/ r))) x).
@@ -603,18 +628,18 @@ Proof.
 Qed.
 
 Lemma cpn_wcompat: wcompatible gf cpn.
-Proof. apply compat_wcompat, cpn_compat. apply gf_mon. Qed.
+Proof. apply compat_wcompat, cpn_compat. Qed.
 
 Lemma cpn_gupaco:
   gupaco gf cpn <2= cpn.
 Proof.
-  intros. eapply cpn_greatest, PR. apply wcompat_compat. apply gf_mon. apply cpn_wcompat.
+  intros. eapply cpn_greatest, PR. apply wcompat_compat. apply cpn_wcompat.
 Qed.
 
 Lemma cpn_cpn r:
   cpn (cpn r) <1= cpn r.
 Proof.
-  intros. apply cpn_gupaco, gpaco_gupaco, gpaco_clo. apply gf_mon.
+  intros. apply cpn_gupaco, gpaco_gupaco, gpaco_clo.
   eapply cpn_mon; [ apply gpaco_clo | apply PR ].
 Qed.
 
@@ -634,7 +659,7 @@ Qed.
 Lemma cpn_step r:
   gf (cpn r) <1= cpn r.
 Proof.
-  intros. apply cpn_gupaco. apply gpaco_step. apply gf_mon.
+  intros. apply cpn_gupaco. apply gpaco_step.
   monotonic gf_mon PR; apply gpaco_clo.
 Qed.
 
@@ -645,7 +670,7 @@ Lemma cpn_uclo uclo
 Proof.
   intros. apply gpaco_clo.
   exists (gupaco gf (uclo \2/ cpn)).
-  - apply wcompat_compat. apply gf_mon.
+  - apply wcompat_compat.
     econstructor.
     + apply monotone_union. apply MON. apply cpn_mon.
     + intros. destruct PR0.

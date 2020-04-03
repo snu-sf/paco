@@ -44,6 +44,8 @@ Ltac paco_cofix_auto :=
 Definition monotone T0 (gf: rel1 T0 -> rel1 T0) :=
   forall r r' (LE: r <1= r'), gf r <1== gf r'.
 
+Existing Class monotone.
+
 Lemma monotone_union T0 (gf1 gf2 : rel1 T0 -> rel1 T0) :
   monotone gf1 ->
   monotone gf2 ->
@@ -51,6 +53,8 @@ Lemma monotone_union T0 (gf1 gf2 : rel1 T0 -> rel1 T0) :
 Proof.
   intros H1 H2 r r' Hr x []; [left; eapply H1 | right; eapply H2]; eassumption.
 Qed.
+
+Existing Instance monotone_union.
 
 Lemma paco_mon_gen T0
     gf gf' (LEgf: gf <2= gf')
@@ -82,6 +86,8 @@ Qed.
 
 Theorem paco_mon: monotone (paco gf).
 Proof. paco_cofix_auto; repeat (left; do 2 paco_revert; paco_cofix_auto). Qed.
+
+Global Existing Instance paco_mon.
 
 Theorem paco_mult_strong: forall r,
   paco gf (upaco gf r) <1= paco gf r.
