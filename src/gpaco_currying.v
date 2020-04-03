@@ -198,11 +198,11 @@ Section GPaco.
 Ltac simpl_paco :=
   (red; apply gpaco_mon_gen) +
   (apply uncurry_monotone; assumption) +
-  (intros _r; match goal with
+  (intros _r; unfold uncurry_relT; match goal with
               | [ |- ?G ] =>
                 match G with
-                | context _ [ curry (uncurry ?r) ] =>
-                  destruct curry_uncurry
+                | context _ctx [ curry (uncurry ?r) ] =>
+                  destruct (paco_sigma.eq_sym (curry_uncurry _ _ r))
                 end
               end).
 
@@ -242,19 +242,14 @@ Qed.
 Lemma _gpaco_clo : forall gf clo r rg,
   clo r <= _gpaco gf clo r rg.
 Proof.
-  translate gpaco_clo. red. unfold uncurry_relT.
+  translate gpaco_clo.
 Qed.
 
 End GPaco.
 
 Section GPacoMon.
 
-Context {gf : rel -> rel} {gf_mon : monotone gf}.
-
-Local Notation gpaco := (gpaco gf).
-Local Notation gupaco := (gupaco gf).
-
-Lemma gpaco_def_mon clo : monotone (compose gf (rclo clo)).
+Lemma gpaco_def_mon : clo : monotone (compose gf (rclo clo)).
 Proof using gf_mon.
   typeclasses eauto.
 Qed.

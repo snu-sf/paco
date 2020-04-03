@@ -15,7 +15,7 @@ Definition _paco (gf : rel t -> rel t) (r : rel t) : rel t :=
   curry (paco (uncurry_relT gf) (uncurry r)).
 
 Definition _upaco (gf : rel t -> rel t) (r : rel t) : rel t :=
-  union (_paco gf r) r.
+  curry (upaco (uncurry_relT gf) (uncurry r)).
 
 Lemma _paco_mon_gen :
   forall (gf gf' : rel t -> rel t), le_relT gf gf' ->
@@ -38,8 +38,9 @@ Lemma _upaco_mon_gen (gf gf': rel t -> rel t)
     r r' (LEr: r <= r'):
   _upaco gf r <= _upaco gf' r'.
 Proof.
-  apply union_monotone; [ | assumption ].
-  apply _paco_mon_gen; assumption.
+  apply curry_le, _union_monotone.
+  - apply curry_le, _paco_mon_gen; assumption.
+  - apply uncurry_le; assumption.
 Qed.
 
 Lemma _upaco_mon_bot (gf gf' : rel t -> rel t) (r : rel t) :
@@ -80,7 +81,6 @@ Proof.
   - intros x; apply uncurry_relT_le, Reflexive_le.
   - intros x; unfold _upaco, union. rewrite uncurry_curry.
     intros []; [ left | right ]; auto.
-    apply uncurry_curry; auto.
 Qed.
 
 Corollary _paco_mult: forall gf r,
@@ -89,17 +89,15 @@ Proof.
   intros;
   eapply Transitive_le; [ | eapply _paco_mult_strong ].
   apply _paco_mon_gen. apply Reflexive_le_relT.
-  apply curry_le; left.
-  apply uncurry_curry. auto.
+  apply curry_le; left; assumption.
 Qed.
 
-Theorem _paco_fold: forall gf (MON: _monotone gf) r,
+Theorem _paco_fold: forall gf r,
   gf (_upaco gf r) <= _paco gf r.
 Proof.
   intros. eapply Transitive_le; [ | eapply curry_le, _paco_fold ].
-  apply curry_le_r. apply uncurry_monotone; auto.
-  intros ? []; [ left | right ]; auto.
-  apply uncurry_curry; auto.
+  unfold uncurry_relT. rewrite curry_uncurry.
+  apply Reflexive_le.
 Qed.
 
 Theorem _paco_unfold: forall gf (MON: _monotone gf) r,
@@ -108,7 +106,6 @@ Proof.
   intros. eapply Transitive_le; [ eapply curry_le, _paco_unfold, uncurry_monotone; auto | ].
   apply curry_le_l. apply uncurry_monotone; auto.
   intros ? []; [ left | right ]; auto.
-  apply uncurry_curry; auto.
 Qed.
 
 End INTERNAL.

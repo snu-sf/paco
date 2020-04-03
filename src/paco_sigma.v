@@ -27,6 +27,11 @@ Proof.
   intros []; constructor.
 Qed.
 
+Lemma eq_sym@{u} {A : Type@{u}} {x y : A} : (x = y)%paco -> (y = x)%paco.
+Proof.
+  intros []; constructor.
+Qed.
+
 (** * Sigma *)
 
 (** Universe-polymorphic [sigT] *)
