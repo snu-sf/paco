@@ -15,7 +15,13 @@ Definition _paco (gf : rel t -> rel t) (r : rel t) : rel t :=
   curry (paco (uncurry_relT gf) (uncurry r)).
 
 Definition _upaco (gf : rel t -> rel t) (r : rel t) : rel t :=
-  curry (upaco (uncurry_relT gf) (uncurry r)).
+  union (_paco gf r) r.
+
+Definition UPACO_SPEC : Prop :=
+  paco_eq _upaco (fun gf r => curry (upaco (uncurry_relT gf) (uncurry r))).
+
+Definition CURRY_UNCURRY : Prop :=
+  forall r : rel t, paco_eq (curry (uncurry r)) r.
 
 Lemma _paco_mon_gen :
   forall (gf gf' : rel t -> rel t), le_relT gf gf' ->
@@ -39,7 +45,7 @@ Lemma _upaco_mon_gen (gf gf': rel t -> rel t)
   _upaco gf r <= _upaco gf' r'.
 Proof.
   apply curry_le, _union_monotone.
-  - apply curry_le, _paco_mon_gen; assumption.
+  - apply uncurry_le, _paco_mon_gen; assumption.
   - apply uncurry_le; assumption.
 Qed.
 
@@ -81,6 +87,7 @@ Proof.
   - intros x; apply uncurry_relT_le, Reflexive_le.
   - intros x; unfold _upaco, union. rewrite uncurry_curry.
     intros []; [ left | right ]; auto.
+    apply uncurry_curry; auto.
 Qed.
 
 Corollary _paco_mult: forall gf r,
@@ -89,13 +96,15 @@ Proof.
   intros;
   eapply Transitive_le; [ | eapply _paco_mult_strong ].
   apply _paco_mon_gen. apply Reflexive_le_relT.
-  apply curry_le; left; assumption.
+  apply curry_le. left. apply uncurry_curry. assumption.
 Qed.
 
-Theorem _paco_fold: forall gf r,
+Theorem _paco_fold: UPACO_SPEC -> forall gf r,
   gf (_upaco gf r) <= _paco gf r.
 Proof.
-  intros. eapply Transitive_le; [ | eapply curry_le, _paco_fold ].
+  intros upaco_spec. red in upaco_spec.
+  intros. rewrite upaco_spec.
+  eapply Transitive_le; [ | eapply curry_le, _paco_fold ].
   apply le_curry_uncurry_r.
 Qed.
 
@@ -105,6 +114,7 @@ Proof.
   intros. eapply Transitive_le; [ eapply curry_le, _paco_unfold, uncurry_monotone; auto | ].
   apply curry_le_l. apply uncurry_monotone; auto.
   intros ? []; [ left | right ]; auto.
+  apply uncurry_curry; auto.
 Qed.
 
 End INTERNAL.
@@ -114,3 +124,15 @@ Arguments _paco_unfold : clear implicits.
 
 Arguments _paco_fold {t}.
 Arguments _paco_unfold {t}.
+
+Lemma upaco_spec {n} (t : arityn n) : UPACO_SPEC (t := aton t).
+Proof.
+  assert (H := @curry_uncurry n).
+  specialize (H ((rel (aton t) -> rel (aton t)) * funtype (aton t) Prop)%type).
+  specialize (H (fun _ => t) Prop Prop).
+  specialize (H (fun gfr => paco (uncurry_relT (fst gfr)) (uncurry (snd gfr)))).
+  specialize (H (fun gfr u p => p \/ uncurry (snd gfr) u)).
+  apply (f_equal (fun h gf r => h (gf, r))) in H.
+  cbn in H. unfold _upaco, union, upaco, _paco.
+  apply H.
+Qed.

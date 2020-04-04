@@ -189,6 +189,27 @@ Proof.
   - destruct u as [x y]; cbn; apply H.
 Qed.
 
+Fixpoint arityn (n : nat) : Type :=
+  match n with
+  | O => True : Type
+  | S n => paco_sigT (fun A : Type => A -> arityn n)
+  end.
+
+Fixpoint aton {n : nat} : arityn n -> arity :=
+  match n with
+  | O => fun _ => arity0
+  | S n => fun t => arityS (paco_projT1 t) (fun x => aton (paco_projT2 t x))
+  end.
+
+Definition arityn0 : arityn 0 := I.
+Definition aritynS {n} : forall A : Type, (A -> arityn n) -> arityn (S n) :=
+  paco_existT _.
+
+Arguments aritynS : clear implicits.
+Arguments aritynS {n}.
+
+Coercion aton : arityn >-> arity.
+
 (** * Tactics *)
 
 Ltac fresh_hyp :=
