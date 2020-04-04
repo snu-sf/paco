@@ -127,7 +127,7 @@ Arguments _paco_unfold {t}.
 
 Lemma upaco_spec {n} (t : arityn n) : UPACO_SPEC (t := aton t).
 Proof.
-  assert (H := @curry_uncurry n).
+  assert (H := @curry_uncurry_ctx n).
   specialize (H ((rel (aton t) -> rel (aton t)) * funtype (aton t) Prop)%type).
   specialize (H (fun _ => t) Prop Prop).
   specialize (H (fun gfr => paco (uncurry_relT (fst gfr)) (uncurry (snd gfr)))).

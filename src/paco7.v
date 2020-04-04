@@ -16,15 +16,15 @@ Variable T6 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (
 (** ** Predicates of Arity 7
 *)
 
-Notation t := (
-    arityS (@T0) (fun x0 =>
-    arityS (@T1 x0) (fun x1 =>
-    arityS (@T2 x0 x1) (fun x2 =>
-    arityS (@T3 x0 x1 x2) (fun x3 =>
-    arityS (@T4 x0 x1 x2 x3) (fun x4 =>
-    arityS (@T5 x0 x1 x2 x3 x4) (fun x5 =>
-    arityS (@T6 x0 x1 x2 x3 x4 x5) (fun x6 =>
-    arity0)))))))).
+Definition t : arityn 7 := Eval compute in (
+    aritynS (@T0) (fun x0 =>
+    aritynS (@T1 x0) (fun x1 =>
+    aritynS (@T2 x0 x1) (fun x2 =>
+    aritynS (@T3 x0 x1 x2) (fun x3 =>
+    aritynS (@T4 x0 x1 x2 x3) (fun x4 =>
+    aritynS (@T5 x0 x1 x2 x3 x4) (fun x5 =>
+    aritynS (@T6 x0 x1 x2 x3 x4 x5) (fun x6 =>
+    arityn0)))))))).
 
 Definition paco7(gf : rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6)(r: rel7 T0 T1 T2 T3 T4 T5 T6) : rel7 T0 T1 T2 T3 T4 T5 T6 :=
   _paco (t := t) gf r.
@@ -120,7 +120,7 @@ Qed.
 Theorem paco7_fold: forall r,
   gf (upaco7 gf r) <7= paco7 gf r.
 Proof.
-  exact (_paco_fold (t := t) gf).
+  exact (_paco_fold (t := t) (upaco_spec t) gf).
 Qed.
 
 Theorem paco7_unfold: forall (MON: monotone7 gf) r,

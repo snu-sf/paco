@@ -3,15 +3,13 @@ From Paco Require Export paco_rel.
 From Paco Require Import gpaco_internal.
 
 Set Implicit Arguments.
-Set Universe Polymorphism.
 
 Section INTERNAL.
 
-Universe u.
-Context {t : arity@{u}}.
+Context (n : nat) {t : arityn n}.
 
-Notation rel := (rel t).
-Notation _rel := (_rel t).
+Notation rel := (rel (aton t)).
+Notation _rel := (_rel (aton t)).
 Local Infix "<=" := le.
 
 Definition _rclo (clo: rel->rel) (r: rel) : rel :=
@@ -198,13 +196,15 @@ Section GPaco.
 Ltac simpl_paco :=
   (red; apply gpaco_mon_gen) +
   (apply uncurry_monotone; assumption) +
-  (intros _r; unfold uncurry_relT; match goal with
-              | [ |- ?G ] =>
-                match G with
-                | context _ctx [ curry (uncurry ?r) ] =>
-                  destruct (paco_sigma.eq_sym (curry_uncurry _ _ r))
-                end
-              end).
+  (try (let _r := fresh "r" in intros _r);
+   try (unfold uncurry_relT);
+   match goal with
+   | [ |- ?G ] =>
+     match G with
+     | context _ctx [ curry (@uncurry _ _ ?r) ] =>
+       destruct (paco_sigma.eq_sym (curry_uncurry t r))
+     end
+   end).
 
 Ltac translate' := translate_ simpl_paco.
 Ltac translate X := translate' (@X (tuple t)).
@@ -249,7 +249,7 @@ End GPaco.
 
 Section GPacoMon.
 
-Lemma gpaco_def_mon : clo : monotone (compose gf (rclo clo)).
+Lemma gpaco_def_mon : clo : _monotone (compose gf (rclo clo)).
 Proof using gf_mon.
   typeclasses eauto.
 Qed.

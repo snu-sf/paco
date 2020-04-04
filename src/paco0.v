@@ -9,8 +9,8 @@ Section PACO0.
 (** ** Predicates of Arity 0
 *)
 
-Notation t := (
-    arity0).
+Definition t : arityn 0 := Eval compute in (
+    arityn0).
 
 Definition paco0(gf : rel0 -> rel0)(r: rel0) : rel0 :=
   _paco (t := t) gf r.
@@ -106,7 +106,7 @@ Qed.
 Theorem paco0_fold: forall r,
   gf (upaco0 gf r) <0= paco0 gf r.
 Proof.
-  exact (_paco_fold (t := t) gf).
+  exact (_paco_fold (t := t) (upaco_spec t) gf).
 Qed.
 
 Theorem paco0_unfold: forall (MON: monotone0 gf) r,

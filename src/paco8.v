@@ -17,16 +17,16 @@ Variable T7 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (
 (** ** Predicates of Arity 8
 *)
 
-Notation t := (
-    arityS (@T0) (fun x0 =>
-    arityS (@T1 x0) (fun x1 =>
-    arityS (@T2 x0 x1) (fun x2 =>
-    arityS (@T3 x0 x1 x2) (fun x3 =>
-    arityS (@T4 x0 x1 x2 x3) (fun x4 =>
-    arityS (@T5 x0 x1 x2 x3 x4) (fun x5 =>
-    arityS (@T6 x0 x1 x2 x3 x4 x5) (fun x6 =>
-    arityS (@T7 x0 x1 x2 x3 x4 x5 x6) (fun x7 =>
-    arity0))))))))).
+Definition t : arityn 8 := Eval compute in (
+    aritynS (@T0) (fun x0 =>
+    aritynS (@T1 x0) (fun x1 =>
+    aritynS (@T2 x0 x1) (fun x2 =>
+    aritynS (@T3 x0 x1 x2) (fun x3 =>
+    aritynS (@T4 x0 x1 x2 x3) (fun x4 =>
+    aritynS (@T5 x0 x1 x2 x3 x4) (fun x5 =>
+    aritynS (@T6 x0 x1 x2 x3 x4 x5) (fun x6 =>
+    aritynS (@T7 x0 x1 x2 x3 x4 x5 x6) (fun x7 =>
+    arityn0))))))))).
 
 Definition paco8(gf : rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7)(r: rel8 T0 T1 T2 T3 T4 T5 T6 T7) : rel8 T0 T1 T2 T3 T4 T5 T6 T7 :=
   _paco (t := t) gf r.
@@ -122,7 +122,7 @@ Qed.
 Theorem paco8_fold: forall r,
   gf (upaco8 gf r) <8= paco8 gf r.
 Proof.
-  exact (_paco_fold (t := t) gf).
+  exact (_paco_fold (t := t) (upaco_spec t) gf).
 Qed.
 
 Theorem paco8_unfold: forall (MON: monotone8 gf) r,

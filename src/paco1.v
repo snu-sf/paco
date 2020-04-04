@@ -10,9 +10,9 @@ Variable T0 : Type.
 (** ** Predicates of Arity 1
 *)
 
-Notation t := (
-    arityS (@T0) (fun x0 =>
-    arity0)).
+Definition t : arityn 1 := Eval compute in (
+    aritynS (@T0) (fun x0 =>
+    arityn0)).
 
 Definition paco1(gf : rel1 T0 -> rel1 T0)(r: rel1 T0) : rel1 T0 :=
   _paco (t := t) gf r.
@@ -108,7 +108,7 @@ Qed.
 Theorem paco1_fold: forall r,
   gf (upaco1 gf r) <1= paco1 gf r.
 Proof.
-  exact (_paco_fold (t := t) gf).
+  exact (_paco_fold (t := t) (upaco_spec t) gf).
 Qed.
 
 Theorem paco1_unfold: forall (MON: monotone1 gf) r,

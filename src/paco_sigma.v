@@ -210,6 +210,48 @@ Arguments aritynS {n}.
 
 Coercion aton : arityn >-> arity.
 
+Lemma curry_uncurry_ctx : forall n (A : Type) (t : A -> arityn n) (R S : Type) (f : forall a, tuple (aton (t a)) -> R) (g : forall a, tuple (aton (t a)) -> R -> S),
+  paco_eq
+    (fun a => curry (fun u => g a u (uncurry (curry (f a)) u)))
+    (fun a => curry (fun u => g a u (f a u))).
+Proof.
+  induction n; cbn; intros.
+  - reflexivity.
+  - specialize (IHn (paco_sigT (fun a : A => paco_projT1 (t a)))).
+    specialize (IHn (fun x => paco_projT2 (t _) (paco_projT2 x))).
+    specialize (IHn R S).
+    specialize (IHn (fun x u => f _ (paco_existT _ (paco_projT2 x) u))).
+    specialize (IHn (fun x u r => g _ (paco_existT _ (paco_projT2 x) u) r)).
+    apply (f_equal (fun h a x => h (paco_existT _ a x))) in IHn.
+    apply IHn.
+Qed.
+
+Arguments curry_uncurry_ctx {n A} t {R S} f.
+
+Lemma curry_uncurry_ext : forall n (A : Type) (t : A -> arityn n) (R : Type)
+    (f : forall a, funtype (aton (t a)) R),
+    paco_eq (fun a => curry (uncurry (f a))) f.
+Proof.
+  induction n; cbn; intros.
+  - constructor.
+  - specialize (IHn (paco_sigT (fun a => paco_projT1 (t a)))).
+    specialize (IHn (fun u => paco_projT2 (t (paco_projT1 u)) (paco_projT2 u))).
+    specialize (IHn R).
+    specialize (IHn (fun u => f _ (paco_projT2 u))).
+    apply (f_equal (fun h a x => h (paco_existT _ a x))) in IHn.
+    apply IHn.
+Qed.
+
+Arguments curry_uncurry_ext {n A} t {R} f.
+
+Lemma curry_uncurry : forall n (t : arityn n) (R : Type) (f : funtype (aton t) R),
+    paco_eq (curry (uncurry f)) f.
+Proof.
+  intros; apply (f_equal (fun f => f tt) (curry_uncurry_ext (fun _ : unit => t) (fun _ => f))).
+Qed.
+
+Arguments curry_uncurry {n} t {R} f.
+
 (** * Tactics *)
 
 Ltac fresh_hyp :=

@@ -181,19 +181,3 @@ Lemma _bot_min r : _bot <= r.
 Proof. apply curry_le_l. red. contradiction. Qed.
 
 End REL.
-
-Lemma curry_uncurry : forall n (A : Type) (t : A -> arityn n) (R S : Type) (f : forall a, tuple (aton (t a)) -> R) (g : forall a, tuple (aton (t a)) -> R -> S),
-  paco_eq
-    (fun a => curry (fun u => g a u (uncurry (curry (f a)) u)))
-    (fun a => curry (fun u => g a u (f a u))).
-Proof.
-  induction n; cbn; intros.
-  - reflexivity.
-  - specialize (IHn (paco_sigT (fun a : A => paco_projT1 (t a)))).
-    specialize (IHn (fun x => paco_projT2 (t _) (paco_projT2 x))).
-    specialize (IHn R S).
-    specialize (IHn (fun x u => f _ (paco_existT _ (paco_projT2 x) u))).
-    specialize (IHn (fun x u r => g _ (paco_existT _ (paco_projT2 x) u) r)).
-    apply (f_equal (fun h a x => h (paco_existT _ a x))) in IHn.
-    apply IHn.
-Qed.

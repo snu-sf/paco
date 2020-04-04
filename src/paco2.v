@@ -11,10 +11,10 @@ Variable T1 : forall (x0: @T0), Type.
 (** ** Predicates of Arity 2
 *)
 
-Notation t := (
-    arityS (@T0) (fun x0 =>
-    arityS (@T1 x0) (fun x1 =>
-    arity0))).
+Definition t : arityn 2 := Eval compute in (
+    aritynS (@T0) (fun x0 =>
+    aritynS (@T1 x0) (fun x1 =>
+    arityn0))).
 
 Definition paco2(gf : rel2 T0 T1 -> rel2 T0 T1)(r: rel2 T0 T1) : rel2 T0 T1 :=
   _paco (t := t) gf r.
@@ -110,7 +110,7 @@ Qed.
 Theorem paco2_fold: forall r,
   gf (upaco2 gf r) <2= paco2 gf r.
 Proof.
-  exact (_paco_fold (t := t) gf).
+  exact (_paco_fold (t := t) (upaco_spec t) gf).
 Qed.
 
 Theorem paco2_unfold: forall (MON: monotone2 gf) r,

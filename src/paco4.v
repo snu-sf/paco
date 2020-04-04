@@ -13,12 +13,12 @@ Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
 (** ** Predicates of Arity 4
 *)
 
-Notation t := (
-    arityS (@T0) (fun x0 =>
-    arityS (@T1 x0) (fun x1 =>
-    arityS (@T2 x0 x1) (fun x2 =>
-    arityS (@T3 x0 x1 x2) (fun x3 =>
-    arity0))))).
+Definition t : arityn 4 := Eval compute in (
+    aritynS (@T0) (fun x0 =>
+    aritynS (@T1 x0) (fun x1 =>
+    aritynS (@T2 x0 x1) (fun x2 =>
+    aritynS (@T3 x0 x1 x2) (fun x3 =>
+    arityn0))))).
 
 Definition paco4(gf : rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3)(r: rel4 T0 T1 T2 T3) : rel4 T0 T1 T2 T3 :=
   _paco (t := t) gf r.
@@ -114,7 +114,7 @@ Qed.
 Theorem paco4_fold: forall r,
   gf (upaco4 gf r) <4= paco4 gf r.
 Proof.
-  exact (_paco_fold (t := t) gf).
+  exact (_paco_fold (t := t) (upaco_spec t) gf).
 Qed.
 
 Theorem paco4_unfold: forall (MON: monotone4 gf) r,

@@ -14,13 +14,13 @@ Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), 
 (** ** Predicates of Arity 5
 *)
 
-Notation t := (
-    arityS (@T0) (fun x0 =>
-    arityS (@T1 x0) (fun x1 =>
-    arityS (@T2 x0 x1) (fun x2 =>
-    arityS (@T3 x0 x1 x2) (fun x3 =>
-    arityS (@T4 x0 x1 x2 x3) (fun x4 =>
-    arity0)))))).
+Definition t : arityn 5 := Eval compute in (
+    aritynS (@T0) (fun x0 =>
+    aritynS (@T1 x0) (fun x1 =>
+    aritynS (@T2 x0 x1) (fun x2 =>
+    aritynS (@T3 x0 x1 x2) (fun x3 =>
+    aritynS (@T4 x0 x1 x2 x3) (fun x4 =>
+    arityn0)))))).
 
 Definition paco5(gf : rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4)(r: rel5 T0 T1 T2 T3 T4) : rel5 T0 T1 T2 T3 T4 :=
   _paco (t := t) gf r.
@@ -116,7 +116,7 @@ Qed.
 Theorem paco5_fold: forall r,
   gf (upaco5 gf r) <5= paco5 gf r.
 Proof.
-  exact (_paco_fold (t := t) gf).
+  exact (_paco_fold (t := t) (upaco_spec t) gf).
 Qed.
 
 Theorem paco5_unfold: forall (MON: monotone5 gf) r,
