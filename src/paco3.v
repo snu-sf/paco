@@ -3,11 +3,20 @@ From Paco Require Import paconotation_internal paco_internal pacotac_internal pa
 From Paco Require Export paconotation.
 Set Implicit Arguments.
 
+Generalizable Variables T.
+
+Module Import paco3.
 Section PACO3.
 
-Variable T0 : Type.
-Variable T1 : forall (x0: @T0), Type.
-Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
+Context `{T2 : forall (x0 : T0) (x1 : T1 x0), Type}.
+
+Local Notation rel := (rel3 T0 T1 T2).
+
+Local Notation "r <= r'" := (r <3= r').
+Local Notation "r <1= r'" := (r <4= r').
+
+Local Notation "r \/ r'" := (r \3/ r').
+Local Notation "r \1/ r'" := (r \4/ r').
 
 (** ** Predicates of Arity 3
 *)
@@ -18,130 +27,145 @@ Definition t : arityn 3 := Eval compute in (
     aritynS (@T2 x0 x1) (fun x2 =>
     arityn0)))).
 
-Definition paco3(gf : rel3 T0 T1 T2 -> rel3 T0 T1 T2)(r: rel3 T0 T1 T2) : rel3 T0 T1 T2 :=
+Definition _paco (gf : rel -> rel) (r : rel) : rel :=
   _paco (t := t) gf r.
+Arguments _paco : clear implicits.
 
-Definition upaco3(gf : rel3 T0 T1 T2 -> rel3 T0 T1 T2)(r: rel3 T0 T1 T2) := paco3 gf r \3/ r.
+Inductive paco3 (gf : rel -> rel) (r: rel) x0 x1 x2 : Prop :=
+  internal_mk_paco (_ : _paco gf r x0 x1 x2).
+
+Definition upaco3(gf : rel -> rel)(r: rel) := paco3 gf r \/ r.
 Arguments paco3 : clear implicits.
 Arguments upaco3 : clear implicits.
 Hint Unfold upaco3 : core.
 
-Definition monotone3 (gf: rel3 T0 T1 T2 -> rel3 T0 T1 T2) :=
-  forall r r' (LE: r <3= r'), gf r <3= gf r'.
+Local Notation bot := bot3.
+Local Notation paco := paco3.
+Local Notation upaco := upaco3.
 
-Lemma monotone3_compose : forall (gf gf': rel3 T0 T1 T2 -> rel3 T0 T1 T2)
-      (MON1: monotone3 gf)
-      (MON2: monotone3 gf'),
-  monotone3 (compose gf gf').
+Section SpecProof.
+
+Let le (r r' : rel) : Prop := r <3= r'.
+
+Lemma spec_proof : paco_spec (rel_ := rel) le bot paco upaco.
+Proof.
+  apply (paco_proof t); do 3 red; [ constructor | destruct 1 ]; assumption.
+Qed.
+
+End SpecProof.
+
+Definition monotone (gf: rel -> rel) :=
+  forall r r' (LE: r <= r'), gf r <= gf r'.
+
+Lemma monotone_compose : forall (gf gf': rel -> rel)
+      (MON1: monotone gf)
+      (MON2: monotone gf'),
+  monotone (compose gf gf').
 Proof.
   exact (_monotone_compose (t := t)).
 Qed.
 
-Lemma monotone3_union : forall (gf gf': rel3 T0 T1 T2 -> rel3 T0 T1 T2)
-      (MON1: monotone3 gf)
-      (MON2: monotone3 gf'),
-  monotone3 (gf \4/ gf').
+Lemma monotone_union : forall (gf gf': rel -> rel)
+      (MON1: monotone gf)
+      (MON2: monotone gf'),
+  monotone (gf \1/ gf').
 Proof.
   exact (_monotone_union (t := t)).
 Qed.
 
-Lemma paco3_mon_gen : forall (gf gf': rel3 T0 T1 T2 -> rel3 T0 T1 T2)
-    (LEgf: gf <4= gf')
-    r r' (LEr: r <3= r'),
-  paco3 gf r <3= paco3 gf' r'.
+Lemma mon_gen : forall (gf gf': rel -> rel)
+    (LEgf: gf <1= gf')
+    r r' (LEr: r <= r'),
+  paco gf r <= paco gf' r'.
 Proof.
-  exact (_paco_mon_gen (t := t)).
+  exact (_paco_mon_gen spec_proof).
 Qed.
 
-Lemma paco3_mon_bot : forall (gf gf': rel3 T0 T1 T2 -> rel3 T0 T1 T2) r'
-    (LEgf: gf <4= gf'),
-  paco3 gf bot3 <3= paco3 gf' r'.
+Lemma mon_bot : forall (gf gf': rel -> rel) r'
+    (LEgf: gf <1= gf'),
+  paco gf bot <= paco gf' r'.
 Proof.
-  exact (_paco_mon_bot (t := t)).
+  exact (_paco_mon_bot spec_proof).
 Qed.
 
-Lemma upaco3_mon_gen : forall (gf gf': rel3 T0 T1 T2 -> rel3 T0 T1 T2)
-    (LEgf: gf <4= gf')
-    r r' (LEr: r <3= r'),
-  upaco3 gf r <3= upaco3 gf' r'.
+Lemma u_mon_gen : forall (gf gf': rel -> rel)
+    (LEgf: gf <1= gf')
+    r r' (LEr: r <= r'),
+  upaco gf r <= upaco gf' r'.
 Proof.
-  exact (_upaco_mon_gen (t := t)).
+  exact (_upaco_mon_gen spec_proof).
 Qed.
 
-Lemma upaco3_mon_bot : forall (gf gf': rel3 T0 T1 T2 -> rel3 T0 T1 T2) r'
-    (LEgf: gf <4= gf'),
-  upaco3 gf bot3 <3= upaco3 gf' r'.
+Lemma u_mon_bot : forall (gf gf': rel -> rel) r'
+    (LEgf: gf <1= gf'),
+  upaco gf bot <= upaco gf' r'.
 Proof.
-  exact (_upaco_mon_bot (t := t)).
+  exact (_upaco_mon_bot spec_proof).
 Qed.
 
-Section Arg3.
+Section Arg.
 
-Variable gf : rel3 T0 T1 T2 -> rel3 T0 T1 T2.
+Variable gf : rel -> rel.
 Arguments gf : clear implicits.
 
-Theorem paco3_acc: forall
-  l r (OBG: forall rr (INC: r <3= rr) (CIH: l <3= rr), l <3= paco3 gf rr),
-  l <3= paco3 gf r.
+Theorem acc: forall
+  l r (OBG: forall rr (INC: r <= rr) (CIH: l <= rr), l <= paco gf rr),
+  l <= paco gf r.
 Proof.
-  exact (_paco_acc (t := t) gf).
+  exact (_paco_acc spec_proof gf).
 Qed.
 
-Theorem paco3_mon: monotone3 (paco3 gf).
+Theorem mon: monotone (paco gf).
 Proof.
-  exact (_paco_mon (t := t) gf).
+  exact (_paco_mon spec_proof gf).
 Qed.
 
-Theorem upaco3_mon: monotone3 (upaco3 gf).
+Theorem u_mon: monotone (upaco gf).
 Proof.
-  exact (_upaco_mon (t := t) gf).
+  exact (_upaco_mon spec_proof gf).
 Qed.
 
-Theorem paco3_mult_strong: forall r,
-  paco3 gf (upaco3 gf r) <3= paco3 gf r.
+Theorem mult_strong: forall r,
+  paco gf (upaco gf r) <= paco gf r.
 Proof.
-  exact (_paco_mult_strong (t := t) gf).
+  exact (_paco_mult_strong spec_proof gf).
 Qed.
 
-Corollary paco3_mult: forall r,
-  paco3 gf (paco3 gf r) <3= paco3 gf r.
+Corollary mult: forall r,
+  paco gf (paco gf r) <= paco gf r.
 Proof.
-  exact (_paco_mult (t := t) gf).
+  exact (_paco_mult spec_proof gf).
 Qed.
 
-Theorem paco3_fold: forall r,
-  gf (upaco3 gf r) <3= paco3 gf r.
+Theorem fold: forall r,
+  gf (upaco gf r) <= paco gf r.
 Proof.
-  exact (_paco_fold (t := t) (upaco_spec t) gf).
+  exact (_paco_fold spec_proof gf).
 Qed.
 
-Theorem paco3_unfold: forall (MON: monotone3 gf) r,
-  paco3 gf r <3= gf (upaco3 gf r).
+Theorem unfold: forall (MON: monotone gf) r,
+  paco gf r <= gf (upaco gf r).
 Proof.
-  exact (_paco_unfold (t := t) gf).
+  exact (_paco_unfold spec_proof gf).
 Qed.
 
-End Arg3.
+End Arg.
 
-Arguments paco3_acc : clear implicits.
-Arguments paco3_mon : clear implicits.
-Arguments upaco3_mon : clear implicits.
-Arguments paco3_mult_strong : clear implicits.
-Arguments paco3_mult : clear implicits.
-Arguments paco3_fold : clear implicits.
-Arguments paco3_unfold : clear implicits.
-
-Global Instance paco3_inst  (gf : rel3 T0 T1 T2->_) r x0 x1 x2 : paco_class (paco3 gf r x0 x1 x2) :=
-{ pacoacc    := paco3_acc gf;
-  pacomult   := paco3_mult gf;
-  pacofold   := paco3_fold gf;
-  pacounfold := paco3_unfold gf }.
+Definition inst (gf : rel->_) r x0 x1 x2 : paco_class (paco gf r x0 x1 x2) := {|
+  pacoacc    := @acc gf;
+  pacomult   := @mult gf;
+  pacofold   := @fold gf;
+  pacounfold := @unfold gf |}.
 
 End PACO3.
+End paco3.
 
-Global Opaque paco3.
+Existing Instance inst.
 
-Hint Unfold upaco3 : core.
-Hint Resolve paco3_fold : core.
-Hint Unfold monotone3 : core.
+Notation paco3 := paco3.paco3.
+Notation upaco3 := paco3.upaco3.
+Notation monotone3 := paco3.monotone.
 
+Hint Unfold paco3.upaco3 : core.
+Hint Resolve paco3.fold : core.
+Hint Unfold paco3.monotone : core.
