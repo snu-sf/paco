@@ -101,6 +101,11 @@ Theorem paco_fold: forall r,
   gf (upaco gf r) <1= paco gf r.
 Proof. intros; do 2 econstructor; [ |eauto]; eauto. Qed.
 
+Theorem paco_fold': forall r r',
+  r' <1= upaco gf r ->
+  gf r' <1= paco gf r.
+Proof. intros; do 2 econstructor; [ eassumption |eauto]. Qed.
+
 Theorem paco_unfold: forall (MON: monotone gf) r,
   paco gf r <1= gf (upaco gf r).
 Proof. unfold monotone; intros; apply paco_observe in PR; destruct PR as []; eapply MON; eassumption. Qed.

@@ -19,8 +19,8 @@ Definition _paco (gf : rel t -> rel t) (r : rel t) : rel t :=
    They are propositionally equal if [t] is an [arityn n],
    but the one below unifies more easily with [_paco gf r \n/ r].
  *)
-Definition _upaco (gf : rel t -> rel t) (r : rel t) : rel t :=
-  union (_paco gf r) r.
+Definition _upaco paco_ (gf : rel t -> rel t) (r : rel t) : rel t :=
+  union (paco_ gf r) r.
 
 End PACO.
 
@@ -31,25 +31,49 @@ Inductive paco_spec : forall
   (le_ : rel_ -> rel_ -> Prop)
   (bot_ : rel_)
   (paco_ upaco_ : (rel_ -> rel_) -> rel_ -> rel_), Prop :=
-| upaco_refl t
+| upaco_refl (t : arity) paco_
+  (PACO_WRAP : forall gf r, le (_paco (t := t) gf r) (paco_ gf r))
+  (PACO_UNWRAP : forall gf r, le (paco_ gf r) (_paco (t := t) gf r))
+
+  (* TODO: No longer needed after paco_fold'? maybe in gpaco *)
   (UPACO_SPEC : paco_eq
-     _upaco
+     (_upaco _paco)
      (fun gf (r : rel t) => curry (upaco (uncurry_relT gf) (uncurry r)))) :
-  @paco_spec (rel t) le _bot _paco _upaco
+  @paco_spec (rel t) le _bot paco_ (_upaco paco_)
 .
 
-Lemma paco_proof {n} (t : arityn n) :
-  paco_spec (rel_ := rel t) le _bot _paco _upaco.
+Lemma paco_left t paco_ gf r r'
+  (PACO_UNWRAP : forall gf r, le (paco_ gf r) (_paco (t := t) gf r)) :
+  le (_paco (t := t) gf r) r' -> le (paco_ gf r) r'.
 Proof.
-  constructor.
-  assert (H := @curry_uncurry_ctx n).
-  specialize (H ((rel (aton t) -> rel (aton t)) * funtype (aton t) Prop)%type).
-  specialize (H (fun _ => t) Prop Prop).
-  specialize (H (fun gfr => paco (uncurry_relT (fst gfr)) (uncurry (snd gfr)))).
-  specialize (H (fun gfr u p => p \/ uncurry (snd gfr) u)).
-  apply (f_equal (fun h gf r => h (gf, r))) in H.
-  cbn in H. unfold _upaco, union, upaco, _paco.
-  apply H.
+  intros H; eapply Transitive_le; [ apply PACO_UNWRAP | eassumption ].
+Qed.
+
+Lemma paco_right t paco_ gf r r'
+  (PACO_WRAP : forall gf r, le (_paco (t := t) gf r) (paco_ gf r)) :
+  le r (_paco (t := t) gf r') -> le r (paco_ gf r').
+Proof.
+  intros H; eapply Transitive_le; [ eassumption | apply PACO_WRAP ].
+Qed.
+
+Ltac paco_wrap :=
+  repeat
+    ((apply paco_right + apply paco_left); [ assumption | ]).
+
+Lemma paco_proof {n} (t : arityn n) paco_ :
+  (forall gf r, le (_paco (t := t) gf r) (paco_ gf r)) ->
+  (forall gf r, le (paco_ gf r) (_paco (t := t) gf r)) ->
+  paco_spec (rel_ := rel t) le _bot paco_ (_upaco paco_).
+Proof.
+  constructor; try assumption. clear.
+  assert (I := @curry_uncurry_ctx n).
+  specialize (I ((rel (aton t) -> rel (aton t)) * funtype (aton t) Prop)%type).
+  specialize (I (fun _ => t) Prop Prop).
+  specialize (I (fun gfr => paco (uncurry_relT (fst gfr)) (uncurry (snd gfr)))).
+  specialize (I (fun gfr u p => p \/ uncurry (snd gfr) u)).
+  apply (f_equal (fun h gf r => h (gf, r))) in I.
+  cbn in I. unfold _upaco, union, upaco, _paco.
+  apply I.
 Qed.
 
 Context
@@ -71,7 +95,8 @@ Lemma _paco_mon_gen :
   paco_ gf r <= paco_ gf' r'.
 Proof.
   destruct SPEC.
-  intros. apply curry_le. red. apply paco_mon_gen.
+  intros. paco_wrap; apply curry_le.
+  red. apply paco_mon_gen.
   - intro; apply uncurry_relT_le; trivial.
   - apply uncurry_le; assumption.
 Qed.
@@ -95,7 +120,8 @@ Proof.
   destruct SPEC.
   symmetry in UPACO_SPEC; destruct UPACO_SPEC.
   apply curry_le, _union_monotone.
-  - red; apply paco_mon_gen.
+  - apply uncurry_le. paco_wrap. apply curry_le.
+    red; apply paco_mon_gen.
     + intros ?; apply uncurry_le, LEgf.
     + apply uncurry_le, LEr.
   - apply uncurry_le, LEr.
@@ -122,11 +148,12 @@ Theorem _paco_acc: forall (gf : rel_ -> rel_)
   l <= paco_ gf r.
 Proof.
   destruct SPEC.
-  intros. apply curry_le_r.
+  intros. paco_wrap. apply curry_le_r.
   eapply _paco_acc. intros.
   apply curry_le_r. apply curry_le_r in INC. apply curry_le_r in CIH.
   specialize (OBG _ INC CIH). unfold _paco in OBG.
   eapply Transitive_le; [ apply OBG | ].
+  paco_wrap.
   apply curry_le.
   red; apply paco_mon_gen; trivial. apply uncurry_curry.
 Qed.
@@ -135,13 +162,13 @@ Theorem _paco_mult_strong: forall gf r,
   paco_ gf (upaco_ gf r) <= paco_ gf r.
 Proof.
   destruct SPEC.
-  intros; apply curry_le.
+  intros; paco_wrap; apply curry_le.
   eapply Transitive_le_; [ | eapply _paco_mult_strong ].
   red; eapply paco_mon_gen.
   - intros x; apply uncurry_relT_le, Reflexive_le.
   - intros x; unfold _upaco, union. rewrite uncurry_curry.
     intros []; [ left | right ]; auto.
-    apply uncurry_curry; auto.
+    revert x H. apply curry_le_r, PACO_UNWRAP.
 Qed.
 
 Corollary _paco_mult: forall gf r,
@@ -153,27 +180,30 @@ Proof.
   intros;
   eapply Transitive_le; [ | eapply PMS ].
   apply PMG. apply Reflexive_le_relT.
-  apply curry_le. left. apply uncurry_curry. assumption.
+  apply curry_le_r. left. assumption.
 Qed.
 
 Theorem _paco_fold: forall gf r,
   gf (upaco_ gf r) <= paco_ gf r.
 Proof.
   destruct SPEC.
-  intros. rewrite UPACO_SPEC.
-  eapply Transitive_le; [ | eapply curry_le, _paco_fold ].
-  apply le_curry_uncurry_r.
+  intros. paco_wrap.
+  apply curry_le_r.
+  red; apply (paco_fold' (gf := uncurry_relT gf)).
+  intros x [H|H]; [ left | right; auto ].
+  revert x H; apply curry_le_r, PACO_UNWRAP.
 Qed.
 
 Theorem _paco_unfold: forall gf (MON: monotone_ gf) r,
   paco_ gf r <= gf (upaco_ gf r).
 Proof.
   unfold monotone_.
-  destruct SPEC.
-  intros. eapply Transitive_le; [ eapply curry_le, _paco_unfold, uncurry_monotone; auto | ].
+  destruct SPEC. intros.
+  eapply Transitive_le; [ apply PACO_UNWRAP | ].
+  eapply Transitive_le; [ apply curry_le, _paco_unfold, uncurry_monotone; auto | ].
   apply curry_le_l. apply uncurry_monotone; auto.
-  intros ? []; [ left | right ]; auto.
-  apply uncurry_curry; auto.
+  intros x [H|H]; [ left | right ]; auto.
+  revert x H. apply curry_le_l, PACO_WRAP.
 Qed.
 
 End PACOLEMMAS.
