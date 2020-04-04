@@ -132,21 +132,21 @@ Ltac pmonauto :=
 
 Tactic Notation "pfold_reverse_" :=
   match goal with
-  | [|- _ (upaco0 ?gf _)] => eapply (paco0_unfold (gf := gf))
-  | [|- _ (upaco1 ?gf _) _] => eapply (paco1_unfold (gf := gf))
-  | [|- _ (upaco2 ?gf _) _ _] => eapply (paco2_unfold (gf := gf))
-  | [|- _ (upaco3 ?gf _) _ _ _] => eapply (paco3_unfold (gf := gf))
-  | [|- _ (upaco4 ?gf _) _ _ _ _] => eapply (paco4_unfold (gf := gf))
-  | [|- _ (upaco5 ?gf _) _ _ _ _ _] => eapply (paco5_unfold (gf := gf))
-  | [|- _ (upaco6 ?gf _) _ _ _ _ _ _] => eapply (paco6_unfold (gf := gf))
-  | [|- _ (upaco7 ?gf _) _ _ _ _ _ _ _] => eapply (paco7_unfold (gf := gf))
-  | [|- _ (upaco8 ?gf _) _ _ _ _ _ _ _ _] => eapply (paco8_unfold (gf := gf))
-  | [|- _ (upaco9 ?gf _) _ _ _ _ _ _ _ _ _] => eapply (paco9_unfold (gf := gf))
-  | [|- _ (upaco10 ?gf _) _ _ _ _ _ _ _ _ _ _] => eapply (paco10_unfold (gf := gf))
-  | [|- _ (upaco11 ?gf _) _ _ _ _ _ _ _ _ _ _ _] => eapply (paco11_unfold (gf := gf))
-  | [|- _ (upaco12 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco12_unfold (gf := gf))
-  | [|- _ (upaco13 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco13_unfold (gf := gf))
-  | [|- _ (upaco14 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco14_unfold (gf := gf))
+  | [|- _ (upaco0 ?gf _)] => eapply (paco0.unfold (gf := gf))
+  | [|- _ (upaco1 ?gf _) _] => eapply (paco1.unfold (gf := gf))
+  | [|- _ (upaco2 ?gf _) _ _] => eapply (paco2.unfold (gf := gf))
+  | [|- _ (upaco3 ?gf _) _ _ _] => eapply (paco3.unfold (gf := gf))
+  | [|- _ (upaco4 ?gf _) _ _ _ _] => eapply (paco4.unfold (gf := gf))
+  | [|- _ (upaco5 ?gf _) _ _ _ _ _] => eapply (paco5.unfold (gf := gf))
+  | [|- _ (upaco6 ?gf _) _ _ _ _ _ _] => eapply (paco6.unfold (gf := gf))
+  | [|- _ (upaco7 ?gf _) _ _ _ _ _ _ _] => eapply (paco7.unfold (gf := gf))
+  | [|- _ (upaco8 ?gf _) _ _ _ _ _ _ _ _] => eapply (paco8.unfold (gf := gf))
+  | [|- _ (upaco9 ?gf _) _ _ _ _ _ _ _ _ _] => eapply (paco9.unfold (gf := gf))
+  | [|- _ (upaco10 ?gf _) _ _ _ _ _ _ _ _ _ _] => eapply (paco10.unfold (gf := gf))
+  | [|- _ (upaco11 ?gf _) _ _ _ _ _ _ _ _ _ _ _] => eapply (paco11.unfold (gf := gf))
+  | [|- _ (upaco12 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco12.unfold (gf := gf))
+  | [|- _ (upaco13 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco13.unfold (gf := gf))
+  | [|- _ (upaco14 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco14.unfold (gf := gf))
   end;
   eauto with paco.
 Ltac pfold_reverse := under_forall ltac:(pfold_reverse_).
@@ -158,21 +158,21 @@ Ltac pstep_reverse := pfold_reverse.
 Ltac punfold_reverse H :=
   let PP := type of H in
   match PP with
-  | _ (upaco0 ?gf _) => eapply (paco0_fold gf) in H
-  | _ (upaco1 ?gf _) _ => eapply (paco1_fold gf) in H
-  | _ (upaco2 ?gf _) _ _ => eapply (paco2_fold gf) in H
-  | _ (upaco3 ?gf _) _ _ _ => eapply (paco3_fold gf) in H
-  | _ (upaco4 ?gf _) _ _ _ _ => eapply (paco4_fold gf) in H
-  | _ (upaco5 ?gf _) _ _ _ _ _ => eapply (paco5_fold gf) in H
-  | _ (upaco6 ?gf _) _ _ _ _ _ _ => eapply (paco6_fold gf) in H
-  | _ (upaco7 ?gf _) _ _ _ _ _ _ _ => eapply (paco7_fold gf) in H
-  | _ (upaco8 ?gf _) _ _ _ _ _ _ _ _ => eapply (paco8_fold gf) in H
-  | _ (upaco9 ?gf _) _ _ _ _ _ _ _ _ _ => eapply (paco9_fold gf) in H
-  | _ (upaco10 ?gf _) _ _ _ _ _ _ _ _ _ _ => eapply (paco10_fold gf) in H
-  | _ (upaco11 ?gf _) _ _ _ _ _ _ _ _ _ _ _ => eapply (paco11_fold gf) in H
-  | _ (upaco12 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco12_fold gf) in H
-  | _ (upaco13 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco13_fold gf) in H
-  | _ (upaco14 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco14_fold gf) in H
+  | _ (upaco0 ?gf _) => eapply (paco0.fold gf) in H
+  | _ (upaco1 ?gf _) _ => eapply (paco1.fold gf) in H
+  | _ (upaco2 ?gf _) _ _ => eapply (paco2.fold gf) in H
+  | _ (upaco3 ?gf _) _ _ _ => eapply (paco3.fold gf) in H
+  | _ (upaco4 ?gf _) _ _ _ _ => eapply (paco4.fold gf) in H
+  | _ (upaco5 ?gf _) _ _ _ _ _ => eapply (paco5.fold gf) in H
+  | _ (upaco6 ?gf _) _ _ _ _ _ _ => eapply (paco6.fold gf) in H
+  | _ (upaco7 ?gf _) _ _ _ _ _ _ _ => eapply (paco7.fold gf) in H
+  | _ (upaco8 ?gf _) _ _ _ _ _ _ _ _ => eapply (paco8.fold gf) in H
+  | _ (upaco9 ?gf _) _ _ _ _ _ _ _ _ _ => eapply (paco9.fold gf) in H
+  | _ (upaco10 ?gf _) _ _ _ _ _ _ _ _ _ _ => eapply (paco10.fold gf) in H
+  | _ (upaco11 ?gf _) _ _ _ _ _ _ _ _ _ _ _ => eapply (paco11.fold gf) in H
+  | _ (upaco12 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco12.fold gf) in H
+  | _ (upaco13 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco13.fold gf) in H
+  | _ (upaco14 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco14.fold gf) in H
   end;
   eauto with paco.
 

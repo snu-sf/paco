@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 PACOSRCDIR=../src
 

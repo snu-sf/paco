@@ -60,7 +60,7 @@ Ltac paco_wrap :=
   repeat
     ((apply paco_right + apply paco_left); [ assumption | ]).
 
-Lemma paco_proof {n} (t : arityn n) paco_ :
+Lemma paco_spec_proof {n} (t : arityn n) paco_ :
   (forall gf r, le (_paco (t := t) gf r) (paco_ gf r)) ->
   (forall gf r, le (paco_ gf r) (_paco (t := t) gf r)) ->
   paco_spec (rel_ := rel t) le _bot paco_ (_upaco paco_).

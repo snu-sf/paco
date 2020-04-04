@@ -1,5 +1,6 @@
 (** * Common notations and definitions *)
 
+Delimit Scope paco_scope with paco.
 (** ** Types of dependent predicates *)
 
 Definition rel0 :=

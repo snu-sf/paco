@@ -10,6 +10,7 @@ relsize = int(sys.argv[1])
 
 print ("(** * Common notations and definitions *)")
 print ()
+print ("Delimit Scope paco_scope with paco.")
 
 print ("(** ** Types of dependent predicates *)")
 print ()
