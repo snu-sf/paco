@@ -1,6 +1,6 @@
 Require Export Program.Basics. Open Scope program_scope.
 From Paco Require Export paco_rel.
-From Paco Require Import gpaco_internal.
+From Paco Require Import paco_currying gpaco_internal.
 
 Set Implicit Arguments.
 
@@ -8,71 +8,24 @@ Section INTERNAL.
 
 Context (n : nat) {t : arityn n}.
 
+Local Open Scope paco_scope.
+
 Notation rel := (rel (aton t)).
 Notation _rel := (_rel (aton t)).
-Local Infix "<=" := le.
+Local Infix "<=" := le : paco_scope.
+Local Notation "gf <2= gf'" := (forall r, gf r <= gf' r) : paco_scope.
 
 Definition _rclo (clo: rel->rel) (r: rel) : rel :=
   curry (rclo (uncurry_relT clo) (uncurry r)).
 
 Lemma le_transport (r0 r0' : _rel) :
-  r0 <1= r0' ->
   forall r1 r1',
   _le r1 r0 ->
   _le r0' r1' ->
+  _le r0 r0' ->
   _le r1 r1'.
 Proof.
   red; auto.
-Qed.
-
-Lemma monotone_transport {gf gf' : _rel -> _rel}
-      {gf_mon : paco_internal.monotone gf}
-      {gf_mon' : paco_internal.monotone gf'} :
-  forall r0 r0',
-  gf r0 <1= gf' r0' ->
-  forall r1 r1',
-  _le r1 r0 ->
-  _le r0' r1' ->
-  _le (gf r1) (gf' r1').
-Proof.
-  red; intros.
-  eapply le_transport; [ apply H | .. | eassumption ].
-  - eapply gf_mon; assumption.
-  - eapply gf_mon'; eassumption.
-Qed.
-
-Lemma rclo_transport {clo0 clo0' : _rel -> _rel} {r0 r0' : _rel} :
-  rclo clo0 r0 <1= rclo clo0' r0' ->
-  forall clo1 clo1' r1 r1',
-  _le_relT clo1 clo0 ->
-  _le_relT clo0' clo1' ->
-  _le r1 r0 ->
-  _le r0' r1' ->
-  _le (rclo clo1 r1) (rclo clo1' r1').
-Proof.
-  red; intros.
-  eapply le_transport; [ apply H | .. | eassumption ];
-    red; eapply rclo_mon_gen; assumption.
-Qed.
-
-Lemma gpaco_transport {gf0 gf0' : _rel -> _rel} {clo0 clo0' : _rel -> _rel} {r0 r0' s0 s0' : _rel} :
-  gpaco gf0 clo0 r0 s0 <1= gpaco gf0' clo0' r0' s0' ->
-  __monotone gf0' ->
-  forall gf1 gf1' clo1 clo1' r1 r1' s1 s1',
-  __monotone gf1 ->
-  _le_relT gf1 gf0 ->
-  _le_relT gf0' gf1' ->
-  _le_relT clo1 clo0 ->
-  _le_relT clo0' clo1' ->
-  _le r1 r0 ->
-  _le r0' r1' ->
-  _le s1 s0 ->
-  _le s0' s1' ->
-  _le (gpaco gf1 clo1 r1 s1) (gpaco gf1' clo1' r1' s1').
-Proof.
-  red; intros.
-  eapply le_transport; [ apply H | .. | eassumption ].
-  all: red; apply gpaco_mon_gen; assumption.
 Qed.
 
 Lemma le_uncurry_curry_l (gf gf' : _rel) :
@@ -89,23 +42,36 @@ Ltac simpl_le etc :=
     | [ |- _le_relT _ _ ] => let r := fresh "r" in intros r
     | [ |- forall r : rel1 _, _ ] =>
       let r := fresh r in intros r
-    | _ => apply Reflexive_le_ + apply le_uncurry_curry_l + (red; apply rclo_mon_gen) + etc
+    | _ => apply Reflexive_le + apply Reflexive_le_ + apply le_uncurry_curry_l + (red; apply rclo_mon_gen) + etc
     end.
 
-Ltac finish_translate etc _L_ :=
+Ltac finish_translate _L_ :=
   lazymatch goal with
   | [ |- le _ _ ] =>
     apply (proj2 (curry_le _ _)) + apply curry_le_r;
-    try ((red; apply _L_) + apply le_transport with (1 := _L_); simpl_le etc)
+    try ((red; apply _L_) + revert _L_; apply le_transport)
   | [ |- _monotone _ ] =>
-    apply curry_monotone;
-    try (apply _L_)
+    try (apply curry_monotone, _L_);
+    revert _L_; apply __monotone_adj;
+    reflexivity +
+    let r := fresh in
+    let u := fresh in
+    intros r u; split; revert u
   end.
 
-Ltac translate_ etc X :=
+Local Definition paco_remember@{u} {A : Type@{u}} (P : A) : A := P.
+Local Definition paco_protect@{u} {A : Type@{u}} (P : A) : A := P.
+
+Ltac translate__ cotranslate etc X :=
   let _L_ := fresh "_L_" in
   pose proof X as _L_;
   repeat lazymatch goal with
+  | [ |- forall H : paco_remember _, _ ] =>
+    let H := fresh H in
+    intros H;
+    red in H;
+    let H' := fresh H in
+    assert (H' := H); revert H'
   | [ |- forall clo : rel -> rel, _ ] =>
     let clo := fresh clo in
     intros clo;
@@ -126,8 +92,32 @@ Ltac translate_ etc X :=
     apply uncurry_le in H;
     specialize (_L_ H);
     clear H
-  | _ => finish_translate etc _L_
+  | [ |- forall H : _monotone _, _ ] =>
+    let H := fresh H in
+    intros H;
+    apply uncurry_monotone in H;
+    specialize (_L_ H);
+    clear H
+  | [ |- _ -> _ ] =>
+    let H := fresh in
+    intros H;
+    let e := fresh in
+    evar (e : Prop); cut e; subst e;
+     [ clear H;
+       intros H;
+       specialize (_L_ H);
+       clear H
+     | clear _L_; revert H; change ?goal with (paco_protect goal) ]
+  | [ |- paco_protect _ ] => fail
+  | _ => finish_translate _L_
+  end;
+  match goal with
+  | [ |- _ -> _ ] => idtac
+  | [ |- paco_protect _ ] => cotranslate
+  | _ => simpl_le etc
   end.
+
+Ltac translate_ := translate__ idtac.
 
 Section A.
 
@@ -141,7 +131,7 @@ Proof.
   translate rclo_mon_gen.
 Qed.
 
-Lemma _rclo_mon clo : _monotone (_rclo clo).
+Lemma _rclo_mon : forall clo, _monotone (_rclo clo).
 Proof.
   translate rclo_mon.
 Qed.
@@ -179,23 +169,16 @@ Proof.
   apply uncurry_curry.
 Qed.
 
-Lemma __monotone_equiv (gf : rel -> rel) (gf' : _rel -> _rel) :
-  (forall r x, uncurry (gf r) x <-> gf' (uncurry r) x) ->
-  __monotone gf' ->
-  _monotone gf.
-Proof.
-  intros H MON r r' Hr.
-  apply uncurry_le.
-  intros u. rewrite 2 H.
-  apply MON.
-  apply uncurry_le, Hr.
-Qed.
-
-Section GPaco.
-
 Ltac simpl_paco :=
+  assumption +
   (red; apply gpaco_mon_gen) +
   (apply uncurry_monotone; assumption) +
+  (apply curry_le_l; apply Reflexive_le) +
+  match goal with
+  | [ |- _le _ _ ] => apply uncurry_le + apply _union_monotone
+  | [ |- le _ _ ] => apply curry_le
+  | [ H : _monotone ?gf |- le (?gf _) (?gf _) ] => apply H
+  end +
   (try (let _r := fresh "r" in intros _r);
    try (unfold uncurry_relT);
    match goal with
@@ -205,6 +188,8 @@ Ltac simpl_paco :=
        destruct (paco_sigma.eq_sym (curry_uncurry t r))
      end
    end).
+
+Section GPaco.
 
 Ltac translate' := translate_ simpl_paco.
 Ltac translate X := translate' (@X (tuple t)).
@@ -219,7 +204,7 @@ Qed.
 
 Lemma _gupaco_mon : forall gf clo, _monotone (_gupaco gf clo).
 Proof.
-  intros; eapply __monotone_equiv; [ apply _gupaco_equiv | apply gupaco_mon ].
+  intros; eapply __monotone_adj; [ apply _gupaco_equiv | apply gupaco_mon ].
 Qed.
 
 Lemma _gpaco_base : forall gf clo r rg, r <= _gpaco gf clo r rg.
@@ -247,207 +232,179 @@ Qed.
 
 End GPaco.
 
+Ltac cotranslate_end_really :=
+  repeat
+    apply Reflexive_le_ + (try red; apply gpaco_mon) + apply uncurry_curry.
+
+Ltac cotranslate_end _H_ :=
+  match type of _H_ with
+  | le _ _ =>
+    (apply curry_le in _H_ + apply curry_le_r in _H_ + apply uncurry_le in _H_);
+    revert _H_; apply le_transport;
+    cotranslate_end_really
+  | _ => idtac
+  end.
+
+(* _gpaco_cofix and _gpaco_uclo *)
+Ltac cotranslate :=
+  let _H_ := fresh "_H_" in
+  intros _H_;
+  (repeat
+  lazymatch type of _H_ with
+  | (forall r : rel, _) =>
+    let r := fresh r in
+    intros r;
+    specialize (_H_ (curry r))
+  | (le ?r ?r' -> _) =>
+    let H := fresh in
+    intros H;
+    apply curry_le_r in H;
+    specialize (_H_ H);
+    clear H
+  | _ => fail
+  end);
+  cotranslate_end _H_.
+
 Section GPacoMon.
 
-Lemma gpaco_def_mon : clo : _monotone (compose gf (rclo clo)).
-Proof using gf_mon.
-  typeclasses eauto.
+Ltac translate' := translate__ cotranslate simpl_paco.
+Ltac translate X := translate' (@X (tuple t)).
+
+Lemma _gpaco_def_mon :
+  forall gf, paco_remember (_monotone gf) ->
+  forall clo, _monotone (compose gf (_rclo clo)).
+Proof.
+  translate gpaco_def_mon.
 Qed.
 
 Hint Resolve gpaco_def_mon : paco.
 
-Lemma gpaco_gen_rclo clo r rg:
-  gpaco (rclo clo) r rg <1= gpaco clo r rg.
+Lemma _gpaco_gen_rclo : forall gf,
+  paco_remember (_monotone gf) ->
+  forall clo r rg,
+  _gpaco gf (_rclo clo) r rg <= _gpaco gf clo r rg.
 Proof.
-  intros. destruct PR. econstructor.
-  apply rclo_compose.
-  monotonic rclo_mon IN.
-  destruct 1; [|right; apply H].
-  left. monotonic paco_mon_gen H.
-  - intro; eapply gf_mon, rclo_compose.
-  - trivial.
+  translate gpaco_gen_rclo.
 Qed.
 
-Lemma gpaco_step_gen clo r rg:
-  gf (gpaco clo (rg \1/ r) (rg \1/ r)) <1= gpaco clo r rg.
+Lemma _gpaco_step_gen : forall gf, paco_remember (_monotone gf) ->
+  forall clo r rg,
+  gf (_gpaco gf clo (union rg r) (union rg r)) <= _gpaco gf clo r rg.
 Proof.
-  intros. econstructor. apply rclo_base. left.
-  apply paco_fold. monotonic gf_mon PR.
-  destruct 1. monotonic rclo_mon IN.
-  destruct 1.
-  - left. monotonic paco_mon H. destruct 1; trivial.
-  - right. trivial.
+  translate gpaco_step_gen.
 Qed.
 
-Lemma gpaco_step clo r rg:
-  gf (gpaco clo rg rg) <1= gpaco clo r rg.
+Lemma _gpaco_step : forall gf, _monotone gf ->
+  forall clo r rg,
+  gf (_gpaco gf clo rg rg) <= _gpaco gf clo r rg.
 Proof.
-  intros. apply gpaco_step_gen.
-  monotonic gf_mon PR; apply gpaco_mon; auto.
+  translate gpaco_step.
 Qed.
 
-Lemma gpaco_final clo r rg:
-  (r \1/ paco gf rg) <1= gpaco clo r rg.
+Lemma _gpaco_final : forall gf, _monotone gf -> forall clo r rg,
+  (union r (_paco gf rg)) <= _gpaco gf clo r rg.
 Proof.
-  intros. destruct PR. apply gpaco_base, H.
-  econstructor. apply rclo_base.
-  left. monotonic paco_mon_gen H.
-  - intros. monotonic gf_mon PR; apply rclo_base.
-  - auto.
+  translate gpaco_final.
 Qed.
 
-Lemma gpaco_unfold clo r rg:
-  gpaco clo r rg <1= rclo clo (gf (gupaco clo (rg \1/ r)) \1/ r).
+Definition _or (r r' : _rel) := fun u => r u \/ r' u.
+
+Ltac fold_or :=
+  repeat
+  match goal with
+  | [ |- forall x : _, ?u x -> ?v x ] => fold (_le u v)
+  | [ |- forall x : _, _ ] =>
+    let x := fresh x in intros x;
+    progress repeat
+    (let H := match goal with | [ |- ?H ] => H end in
+    match H with
+    | context _r [ fun x => ?p x \/ ?q x ] => fold (_or p q)
+    | context _r [ ?p ?x \/ ?q ?x ] => fold (_or p q x)
+    end);
+    revert x
+  | [ |- _le _ (uncurry (union _ _)) ] =>
+    eapply Transitive_le_; [ | intro; apply uncurry_curry ]
+  end.
+
+Lemma _gpaco_unfold : forall gf, paco_remember (_monotone gf) -> forall clo r rg,
+  _gpaco gf clo r rg <= _rclo clo (union (gf (_gupaco gf clo (union rg r))) r).
 Proof.
-  intros. destruct PR.
-  monotonic rclo_mon IN.
-  intros. destruct PR; cycle 1. right; apply H.
-  left. apply paco_unfold in H; [|apply gpaco_def_mon].
-  monotonic gf_mon H.
-  intros. econstructor.
-  monotonic rclo_mon PR.
-  destruct 1 as [H|H]; [| right; apply H].
-  left. monotonic paco_mon H.
-  auto.
+  translate gpaco_unfold. simpl_le ltac:(fold_or + simpl_paco).
 Qed.
 
-Lemma gpaco_cofix clo r rg 
-      l (OBG: forall rr (INC: rg <1= rr) (CIH: l <1= rr), l <1= gpaco clo r rr):
-  l <1= gpaco clo r rg.
+Lemma _gpaco_cofix : forall gf, _monotone gf -> forall clo r rg l
+  (OBG: forall rr (INC: rg <= rr) (CIH: l <= rr), l <= _gpaco gf clo r rr),
+  l <= _gpaco gf clo r rg.
 Proof.
-  assert (IN: l <1= gpaco clo r (rg \1/ l)).
-  { intros. apply OBG; [left; apply PR0 | right; apply PR0 | apply PR]. }
-  clear OBG. intros. apply IN in PR.
-  destruct PR. constructor.
-  monotonic rclo_mon IN0.
-  intros x0 H; destruct H as [H|H]; [left|right; apply H].
-  revert x0 H. pcofix_ CIH.
-  intros x SIM; apply paco_unfold in SIM; [..| apply gpaco_def_mon].
-  apply paco_fold.
-  monotonic gf_mon SIM. intros x PR.
-  apply rclo_rclo. monotonic rclo_mon PR.
-  destruct 1 as [H|H].
-  - apply rclo_base. right. apply CIH, H. 
-  - destruct H as [[] | ].
-    + apply rclo_base. right. apply Hr0. left. apply H.
-    + apply IN in H. destruct H.
-      monotonic rclo_mon IN0.
-      destruct 1.
-      * right. apply CIH. apply H.      
-      * right. apply Hr0. right. apply H.
-    + apply rclo_base. right. apply Hr0. right. apply H.
+  translate gpaco_cofix.
 Qed.
 
-Lemma gpaco_gupaco clo r rg:
-  gupaco clo (gpaco clo r rg) <1= gpaco clo r rg.
+Lemma _gpaco_gupaco : forall gf, paco_remember (_monotone gf) -> forall clo r rg,
+  _gupaco gf clo (_gpaco gf clo r rg) <= _gpaco gf clo r rg.
 Proof.
-  eapply gpaco_cofix.
-  intros; destruct PR. econstructor.
-  apply rclo_rclo. monotonic rclo_mon IN.
-  intros. destruct PR.
-  - apply rclo_base. left.
-    monotonic paco_mon H.
-    intros. left; apply CIH.
-    econstructor. apply rclo_base. right.
-    destruct PR; apply H.
-  - destruct H. monotonic rclo_mon IN.
-    intros. destruct PR; [| right; apply H].
-    left. monotonic paco_mon H.
-    intros. destruct PR as [H|H].
-    + left. apply INC, H.
-    + right. apply H.
+  translate gpaco_gupaco.
 Qed.
 
-Lemma gpaco_gpaco clo r rg:
-  gpaco clo (gpaco clo r rg) (gupaco clo (rg \1/ r)) <1= gpaco clo r rg.
+Lemma _gpaco_gpaco : forall gf, paco_remember (_monotone gf) -> forall clo r rg,
+  _gpaco gf clo (_gpaco gf clo r rg) (_gupaco gf clo (union rg r)) <=
+  _gpaco gf clo r rg.
 Proof.
-  intros. apply gpaco_unfold in PR.
-  econstructor. apply rclo_rclo. eapply rclo_mon; [| apply PR]. clear x0 PR. intros.
-  destruct PR; [|destruct H; apply IN].
-  apply rclo_base. left. apply paco_fold.
-  monotonic gf_mon H. intros.
-  enough (@gupaco clo (rg \1/ r) x0).
-  { destruct H. monotonic rclo_mon IN.
-    destruct 1; [|right; apply H].
-    left. monotonic paco_mon H. destruct 1 as [H|H]; apply H.
-  }
-  apply gpaco_gupaco. monotonic gupaco_mon PR.
-  destruct 1; [apply H|].
-  monotonic gpaco_mon H; [right|left]; apply PR.
+  translate gpaco_gpaco.
 Qed.
 
-Lemma gpaco_uclo uclo clo r rg 
-      (LEclo: uclo <2= gupaco clo) :
-  uclo (gpaco clo r rg) <1= gpaco clo r rg.
+Lemma _gpaco_uclo : forall gf, _monotone gf ->
+  forall uclo clo r rg
+         (LEclo : forall r, uclo r <= _gupaco gf clo r),
+  uclo (_gpaco gf clo r rg) <= _gpaco gf clo r rg.
 Proof.
-  intros. apply gpaco_gupaco. apply LEclo, PR.
+  translate gpaco_uclo.
 Qed.
 
-Lemma gpaco_weaken  clo r rg:
-  gpaco (gupaco clo) r rg <1= gpaco clo r rg.
+Lemma _gpaco_weaken : forall gf, paco_remember (_monotone gf) ->
+  forall clo r rg,
+  _gpaco gf (_gupaco gf clo) r rg <= _gpaco gf clo r rg.
 Proof.
-  intros. apply gpaco_unfold in PR.
-  induction PR.
-  - destruct IN; cycle 1. apply gpaco_base, H.
-    apply gpaco_step_gen. monotonic gf_mon H.
-    eapply gpaco_cofix. intros.
-    apply gpaco_unfold in PR.
-    induction PR.
-    + destruct IN; [| apply gpaco_base, H].
-      apply gpaco_step. monotonic gf_mon H.
-      intros. apply gpaco_base. apply CIH.
-      monotonic gupaco_mon PR.
-      destruct 1 as [H|H]; apply H.
-    + apply gpaco_gupaco.
-      monotonic gupaco_mon IN. apply H.
-  - apply gpaco_gupaco.
-    monotonic gupaco_mon IN. apply H.
+  translate gpaco_weaken.
 Qed.
 
 End GPacoMon.
 
-End Main.
-
-Hint Resolve gpaco_def_mon : paco.
-
 Section GeneralMonotonicity.
 
-Context {gf: rel -> rel} {gf_mon : monotone gf}.
-  
-Lemma gpaco_mon_gen (gf' clo clo': rel -> rel) r r' rg rg'
+Context {gf: rel -> rel} {gf_mon : _monotone gf}.
+
+Ltac translate' X :=
+  revert gf gf_mon;
+  translate__ cotranslate simpl_paco X.
+Ltac translate X :=
+  translate' (@X (tuple t)).
+
+Lemma _gpaco_mon_gen : forall (gf' clo clo': rel -> rel) r r' rg rg'
       (LEgf: gf <2= gf')
       (LEclo: clo <2= clo')
-      (LEr: r <1= r')
-      (LErg: rg <1= rg') :
-  @gpaco gf clo r rg <1= @gpaco gf' clo' r' rg'.
+      (LEr: r <= r')
+      (LErg: rg <= rg'),
+  _gpaco gf clo r rg <= _gpaco gf' clo' r' rg'.
 Proof.
-  intros x0 IN. eapply gpaco_mon; [apply LEr|apply LErg| ].
-  destruct IN. econstructor.
-  monotonic rclo_mon_gen IN. apply LEclo.
-  destruct 1 as [H|H]; [left|right; apply H].
-  monotonic paco_mon_gen H.
-  - intros. eapply LEgf.
-    monotonic gf_mon PR.
-    intros. monotonic rclo_mon_gen PR. apply LEclo. trivial.
-  - trivial.
+  translate gpaco_mon_gen.
 Qed.
 
-Lemma gpaco_mon_bot (gf' clo clo': rel -> rel) r' rg'
+Lemma gpaco_mon_bot : forall (gf' clo clo': rel -> rel) r' rg'
       (LEgf: gf <2= gf')
-      (LEclo: clo <2= clo'):
-  @gpaco gf clo bot1 bot1 <1= @gpaco gf' clo' r' rg'.
+      (LEclo: clo <2= clo'),
+  _gpaco gf clo _bot _bot <= _gpaco gf' clo' r' rg'.
 Proof.
-  apply gpaco_mon_gen; assumption + contradiction.
+  intros; apply _gpaco_mon_gen; assumption + apply paco_rel._bot_min.
 Qed.
 
-Lemma gupaco_mon_gen
+Lemma _gupaco_mon_gen : forall
       (gf' clo clo': rel -> rel) r r'
       (LEgf: gf <2= gf')
       (LEclo: clo <2= clo')
-      (LEr: r <1= r'):
-  @gupaco gf clo r <1= @gupaco gf' clo' r'.
+      (LEr: r <= r'),
+  _gupaco gf clo r <= _gupaco gf' clo' r'.
 Proof.
-  apply gpaco_mon_gen; assumption.
+  intros; apply _gpaco_mon_gen; assumption.
 Qed.
 
 End GeneralMonotonicity.
@@ -456,44 +413,65 @@ Section CompatibilityDef.
 
 Variable gf: rel -> rel.
 
-Structure compatible (clo: rel -> rel) : Prop :=
+Structure _compatible (clo: rel -> rel) : Prop :=
   compat_intro {
-      compat_mon: monotone clo;
+      compat_mon: _monotone clo;
       compat_compat : forall r,
-          clo (gf r) <1= gf (clo r);
+          clo (gf r) <= gf (clo r);
     }.
 
-Structure wcompatible clo : Prop :=
+Structure _wcompatible clo : Prop :=
   wcompat_intro {
-      wcompat_mon: monotone clo;
+      wcompat_mon: _monotone clo;
       wcompat_wcompat : forall r,
-          clo (gf r) <1= gf (gupaco gf clo r);
+          clo (gf r) <= gf (_gupaco gf clo r);
     }.
 
 End CompatibilityDef.
 
 Section Compatibility.
+Local Infix "\1/" := union : paco_scope.
 
-Context {gf : rel -> rel} {gf_mon: monotone gf}.
+Ltac translate' X :=
+  translate__ cotranslate simpl_paco X.
+Ltac translate X :=
+  translate' (@X (tuple t)).
 
-Local Notation compatible := (compatible gf).
-Local Notation wcompatible := (wcompatible gf).
+Lemma curry_uncurry_ctx:
+  forall (n : nat) (t : arityn n) (R S : Type)
+    (f : tuple t -> R)
+    (g : tuple t -> R -> S),
+  paco_eq
+    (
+     curry (fun u : tuple t => g u (uncurry (curry f) u)))
+    (curry (fun u : tuple t => g u (f u))).
+Admitted.
 
-Lemma rclo_dist clo
-      (MON: monotone clo)
-      (DIST: forall r1 r2, clo (r1 \1/ r2) <1= (clo r1 \1/ clo r2)):
-  forall r1 r2, rclo clo (r1 \1/ r2) <1= (rclo clo r1 \1/ rclo clo r2).
+Lemma _rclo_dist : forall clo
+      (MON: _monotone clo)
+      (DIST: forall r1 r2, clo (r1 \1/ r2) <= (clo r1 \1/ clo r2)),
+  forall r1 r2, _rclo clo (r1 \1/ r2) <= (_rclo clo r1 \1/ _rclo clo r2).
 Proof.
-  intros. induction PR.
-  + destruct IN; [left|right]; apply rclo_base, H.
-  + assert (REL: clo (rclo clo r1 \1/ rclo clo r2) x0).
-    { monotonic MON IN. apply H. }
-    apply DIST in REL. destruct REL; [left|right]; apply rclo_clo, H0.
+  translate rclo_dist. unfold uncurry_relT, union.
+  assert (I := curry_uncurry_ctx n t r1 (fun u z => z \/ r2 u)).
+  cbn in I.
+  match type of I with
+  | paco_eq _ ?x => remember x eqn:E
+  end.
+  destruct I; clear E.
+  assert (I := curry_uncurry_ctx n t r2 (fun u z => uncurry (curry r1) u \/ z)).
+  cbn in I. destruct I.
+  apply Reflexive_le_.
 Qed.
+
+Context {gf : rel -> rel} {gf_mon: _monotone gf}.
+
+Local Notation compatible := (_compatible gf).
+Local Notation wcompatible := (_wcompatible gf).
 
 Lemma rclo_compat clo
       (COM: compatible clo):
-  compatible (rclo clo).
+  compatible (_rclo clo).
 Proof.
   econstructor; [ typeclasses eauto | ].
   intros. induction PR.
