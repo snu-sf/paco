@@ -66,52 +66,38 @@ Ltac translate__ cotranslate etc X :=
   let _L_ := fresh "_L_" in
   pose proof X as _L_;
   repeat lazymatch goal with
-  | [ |- forall H : paco_remember _, _ ] =>
+  | [ |- forall H : _, _ ] =>
     let H := fresh H in
     intros H;
-    red in H;
-    let H' := fresh H in
-    assert (H' := H); revert H'
-  | [ |- forall clo : rel -> rel, _ ] =>
-    let clo := fresh clo in
-    intros clo;
-    specialize (_L_ (uncurry_relT clo))
-  | [ |- forall r : rel, _ ] =>
-    let r := fresh r in
-    intros r;
-    specialize (_L_ (uncurry r))
-  | [ |- forall H : le_relT _ _, _ ] =>
-    let H := fresh H in
-    intros H;
-    apply uncurry_relT_le_relT in H;
-    specialize (_L_ H);
-    clear H
-  | [ |- forall H : le _ _, _ ] =>
-    let H := fresh H in
-    intros H;
-    apply uncurry_le in H;
-    specialize (_L_ H);
-    clear H
-  | [ |- forall H : _monotone _, _ ] =>
-    let H := fresh H in
-    intros H;
-    apply uncurry_monotone in H;
-    specialize (_L_ H);
-    clear H
-  | [ |- _ -> _ ] =>
-    let H := fresh in
-    intros H;
-    let e := fresh in
-    evar (e : Prop); cut e; subst e;
-     [ clear H;
-       intros H;
-       specialize (_L_ H);
-       clear H
-     | clear _L_; revert H; change ?goal with (paco_protect goal) ]
+    lazymatch type of H with
+    | paco_remember _ =>
+      red in H;
+      let H' := fresh H in
+      assert (H' := H); revert H'
+    | rel -> rel =>
+      specialize (_L_ (uncurry_relT H))
+    | rel =>
+      specialize (_L_ (uncurry H))
+    | le_relT _ _ =>
+      specialize (_L_ (uncurry_relT_le_relT H)); clear H
+    | le _ _ =>
+      apply uncurry_le in H;
+      specialize (_L_ H); clear H
+    | _monotone _ =>
+      specialize (_L_ (uncurry_monotone H)); clear H
+    | _ =>
+      let e := fresh in
+      evar (e : Prop); cut e; subst e;
+      [ clear H;
+        intros H;
+        specialize (_L_ H);
+        clear H
+      | clear _L_; revert H; change ?goal with (paco_protect goal) ]
+    end
   | [ |- paco_protect _ ] => fail
   | _ => finish_translate _L_
   end;
-  match goal with
+  lazymatch goal with
   | [ |- _ -> _ ] => idtac
   | [ |- paco_protect _ ] => cotranslate
   | _ => simpl_le etc
