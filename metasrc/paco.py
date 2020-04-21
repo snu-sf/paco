@@ -70,6 +70,7 @@ Proof. destruct 1; assumption. Qed.
 Lemma spec_proof :
   let le (r r' : rel) : Prop := r <= r' in
   paco_spec (rel_ := rel) le bot paco upaco.
+(* TODO: Remove Time *)
 Proof. Time apply (paco_spec_proof t); [ exact internal_mk_paco | exact unpaco ]. Time Qed.
 
 Definition monotone (gf: rel -> rel) :=

@@ -97,6 +97,68 @@ Proof.
   apply curry_le.
 Qed.
 
+Definition _req (r r' : _rel t) : Prop :=
+  forall u, r u <-> r' u.
+
+Lemma _req_le (r r' : _rel t) :
+  _req r r' <-> (_le r r' /\ _le r' r).
+Proof. firstorder. Qed.
+
+Definition req (r r' : rel t) : Prop :=
+  _req (uncurry r) (uncurry r').
+
+Lemma Transitive_req_ x y z :
+  _req x y -> _req y z -> _req x z.
+Proof.
+  rewrite 3 _req_le.
+  intros [] []; split; eapply Transitive_le_; eassumption.
+Qed.
+
+Lemma Symmetric_req_ x y :
+  _req x y -> _req y x.
+Proof.
+  rewrite 2 _req_le. apply and_comm.
+Qed.
+
+Lemma _req_iff (r1 r1' r2 r2' : _rel t) :
+  _req r1 r2 ->
+  _req r1' r2' ->
+  _req r1 r1' <-> _req r2 r2'.
+Proof.
+  split; intros; eapply Transitive_req_;
+    eassumption + eapply Transitive_req_;
+    eassumption + apply Symmetric_req_; assumption.
+Qed.
+
+Lemma req_uncurry_curry r : _req (uncurry (curry r)) r.
+Proof.
+  split; apply uncurry_curry.
+Qed.
+
+Lemma curry_req (r r' : _rel t) :
+  req (curry r) (curry r') <-> _req r r'.
+Proof.
+  apply _req_iff; apply req_uncurry_curry.
+Qed.
+
+Lemma uncurry_req (r r' : rel t) :
+  req r r' <-> _req (uncurry r) (uncurry r').
+Proof.
+  reflexivity.
+Qed.
+
+Lemma __monotone_adj (gf : rel t -> rel t) (gf' : _rel t -> _rel t) :
+  (forall r x, uncurry (gf r) x <-> gf' (uncurry r) x) ->
+  __monotone gf' ->
+  _monotone gf.
+Proof.
+  intros H MON r r' Hr.
+  apply uncurry_le.
+  intros u. rewrite 2 H.
+  apply MON.
+  apply uncurry_le, Hr.
+Qed.
+
 Lemma uncurry_monotone (gf : rel t -> rel t)
   : _monotone gf -> __monotone (uncurry_relT gf).
 Proof.
@@ -107,8 +169,18 @@ Qed.
 Lemma curry_monotone (gf : _rel t -> _rel t)
   : __monotone gf -> _monotone (curry_relT gf).
 Proof.
-  unfold _monotone, __monotone. intros.
-  rewrite curry_relT_le. apply H. apply uncurry_le. assumption.
+  apply __monotone_adj.
+  intros r x. apply uncurry_curry.
+Qed.
+
+Lemma __monotone_req (gf gf' : _rel t -> _rel t) :
+  (forall r, _req (gf r) (gf' r)) ->
+  __monotone gf -> __monotone gf'.
+Proof.
+  intros I; unfold __monotone; intros MON r r' Hr.
+  eapply Transitive_le_; [ specialize (I r); apply _req_le in I; apply I |].
+  eapply Transitive_le_; [ | specialize (I r'); apply _req_le in I; apply I ].
+  apply MON, Hr.
 Qed.
 
 Definition union (r r' : rel t) : rel t :=
@@ -181,3 +253,12 @@ Lemma _bot_min r : _bot <= r.
 Proof. apply curry_le_l. red. contradiction. Qed.
 
 End REL.
+
+Lemma uncurry_monotone_l {n} (t : arityn n) (gf : rel t -> rel t)
+  : __monotone (uncurry_relT gf) -> _monotone gf.
+Proof.
+  unfold _monotone, __monotone. intros.
+  apply uncurry_le, H, uncurry_le in H0.
+  rewrite 2 curry_uncurry in H0.
+  assumption.
+Qed.
