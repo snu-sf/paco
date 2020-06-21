@@ -1,5 +1,5 @@
 Require Import Paco.paco.
-Require Import Program.
+Require Import Program.Tactics.
 Require Import RelationClasses.
 Require Import Morphisms.
 
