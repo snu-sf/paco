@@ -18,14 +18,12 @@ Ltac inv H := inversion H; subst; clear H.
 CoInductive stream :=
 | snil
 | scons (n: nat) (s: stream)
-| stau (s: stream)
 .
 
 Definition match_stream (s: stream) :=
   match s with
   | snil => snil
   | scons n s => scons n s
-  | stau s => stau s
   end.
 
 Lemma unfold_stream s
@@ -42,7 +40,6 @@ Definition match_concat concat (s0 s1: stream): stream :=
   match s0 with
   | snil => s1
   | scons n s0 => scons n (concat s0 s1)
-  | stau s0 => stau (concat s0 s1)
   end
 .
 
@@ -65,9 +62,8 @@ Qed.
 
 (*** Bisimulation between two streams ***)
 Inductive _sim (sim : stream -> stream -> Prop): stream -> stream -> Prop :=
-| SimRet: _sim sim snil snil
-| SimVis n sl sr (REL: sim sl sr): _sim sim (scons n sl) (scons n sr)
-| SimTau sl sr (REL: sim sl sr): _sim sim (stau sl) (stau sr)
+| SimNil: _sim sim snil snil
+| SimCons n sl sr (REL: sim sl sr): _sim sim (scons n sl) (scons n sr)
 .
 Hint Constructors _sim : core.
 
@@ -122,10 +118,6 @@ Proof.
   gcofix CIH. intros. destruct PR.
   punfold REL. inv REL.
   - rewrite ! unfold_concat. cbn. gbase. eauto.
-  - gstep.
-    rewrite ! unfold_concat. cbn.
-    econstructor; eauto.
-    unfold id in *. pclearbot. eauto with paco.
   - gstep.
     rewrite ! unfold_concat. cbn.
     econstructor; eauto.
