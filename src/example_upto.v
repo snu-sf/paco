@@ -97,6 +97,7 @@ Proof.
   inv EQ0.
   - rewrite ! unfold_concat. cbn.
     (*** We are stuck here ! ***)
+    (*** TODO: give better explanation ***)
 Abort.
 
 
