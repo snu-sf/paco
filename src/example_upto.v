@@ -64,20 +64,20 @@ Qed.
 
 
 (*** Bisimulation between two streams ***)
-Inductive simF (_simF : stream -> stream -> Prop): stream -> stream -> Prop :=
-| SimRet: simF _simF snil snil
-| SimVis n sl sr (REL: _simF sl sr): simF _simF (scons n sl) (scons n sr)
-| SimTau sl sr (REL: _simF sl sr): simF _simF (stau sl) (stau sr)
+Inductive _sim (sim : stream -> stream -> Prop): stream -> stream -> Prop :=
+| SimRet: _sim sim snil snil
+| SimVis n sl sr (REL: sim sl sr): _sim sim (scons n sl) (scons n sr)
+| SimTau sl sr (REL: sim sl sr): _sim sim (stau sl) (stau sr)
 .
-Hint Constructors simF : core.
+Hint Constructors _sim : core.
 
-Lemma simF_mon : monotone2 (simF).
+Lemma _sim_mon : monotone2 (_sim).
 Proof.
   intros x0 x1 r r' IN LE. induction IN; auto.
 Qed.
-Hint Resolve simF_mon : paco.
+Hint Resolve _sim_mon : paco.
 
-Definition sim (sl sr: stream) := paco2 (simF) bot2 sl sr.
+Definition sim (sl sr: stream) := paco2 (_sim) bot2 sl sr.
 Hint Unfold sim : core.
 
 
@@ -115,7 +115,7 @@ Hint Constructors concatC.
 Lemma concatC_spec
       simC
   :
-    concatC <3= gupaco2 (simF) (simC)
+    concatC <3= gupaco2 (_sim) (simC)
 .
 Proof.
   gcofix CIH. intros. destruct PR.
