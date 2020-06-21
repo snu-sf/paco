@@ -92,8 +92,15 @@ Proof.
   punfold EQ0. punfold EQ1.
   inv EQ0.
   - rewrite ! unfold_concat. cbn.
-    (*** We are stuck here ! ***)
-    (*** TODO: give better explanation ***)
+    eapply _sim_mon; eauto. intros. pclearbot. left. eapply paco2_mon; eauto. intros.
+    red in PR0. contradict PR0.
+  - rewrite ! unfold_concat. cbn. pclearbot.
+    econstructor; eauto. left.
+    inv EQ1.
+    + (*** We are stuck here..? ***) admit.
+    + pclearbot. pfold.
+      (*** We are stuck here..? ***) admit.
+      (*** TODO: give better explanation ***)
 Abort.
 
 
