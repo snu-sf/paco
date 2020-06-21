@@ -67,15 +67,6 @@ Proof.
   destruct (match_concat concat s0 s1) eqn:T; reflexivity.
 Qed.
 
-Lemma scons_concat
-      n s
-  :
-    (scons n s) = concat [ n ] s
-.
-Proof.
-  rewrite unfold_concat; cbn. rewrite unfold_concat; cbn. reflexivity.
-Qed.
-
 
 
 (*** Bisimulation between two streams ***)
