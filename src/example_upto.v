@@ -117,11 +117,11 @@ Lemma concatC_spec
 Proof.
   gcofix CIH. intros. destruct PR.
   punfold REL. inv REL.
-  - rewrite ! unfold_concat. cbn. gbase. eauto.
+  - rewrite ! unfold_concat. cbn. gbase. eauto. (* Note: "eauto with paco" also works *)
   - gstep.
     rewrite ! unfold_concat. cbn.
     econstructor; eauto.
-    unfold id in *. pclearbot. eauto with paco.
+    pclearbot. gbase. eauto. (* Note: "eauto with paco" also works *)
 Qed.
 
 Lemma sim_concat
