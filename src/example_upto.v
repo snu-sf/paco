@@ -106,20 +106,20 @@ Abort.
 
 
 (*** Second attempt with upto technique ***)
-Inductive concatC (R : stream -> stream -> Prop): stream -> stream -> Prop :=
-| concatC_intro
+Inductive prefixC (R : stream -> stream -> Prop): stream -> stream -> Prop :=
+| prefixC_intro
     s0 s1 t0 t1
     (REL: sim s0 t0)
     (REL: R s1 t1)
   :
-    concatC R (concat s0 s1) (concat t0 t1)
+    prefixC R (concat s0 s1) (concat t0 t1)
 .
-Hint Constructors concatC.
+Hint Constructors prefixC.
 
-Lemma concatC_spec
+Lemma prefixC_spec
       simC
   :
-    concatC <3= gupaco2 (_sim) (simC)
+    prefixC <3= gupaco2 (_sim) (simC)
 .
 Proof.
   gcofix CIH. intros. destruct PR.
@@ -139,7 +139,7 @@ Lemma sim_concat
     @sim (concat s0 s1) (concat t0 t1)
 .
 Proof.
-  intros. ginit. { eapply cpn2_wcompat; pmonauto. } guclo concatC_spec.
+  intros. ginit. { eapply cpn2_wcompat; pmonauto. } guclo prefixC_spec.
 Qed.
 
 Lemma sim_concat_proper: Proper (sim ==> sim ==> sim) concat.
