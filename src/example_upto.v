@@ -11,12 +11,6 @@ Set Implicit Arguments.
 
 (*** Tactics ***)
 Ltac inv H := inversion H; subst; clear H.
-Ltac econs := econstructor.
-Ltac ii := repeat intro.
-Ltac i := intros.
-Lemma hexploit_mp: forall P Q: Type, P -> (P -> Q) -> Q.
-Proof. intuition. Defined.
-Ltac hexploit x := eapply hexploit_mp; [eapply x|].
 
 
 
@@ -129,11 +123,11 @@ Proof.
   - rewrite ! unfold_concat. cbn. gbase. eauto.
   - gstep.
     rewrite ! unfold_concat. cbn.
-    econs; eauto.
+    econstructor; eauto.
     unfold id in *. pclearbot. eauto with paco.
   - gstep.
     rewrite ! unfold_concat. cbn.
-    econs; eauto.
+    econstructor; eauto.
     unfold id in *. pclearbot. eauto with paco.
 Qed.
 
@@ -150,5 +144,5 @@ Qed.
 
 Lemma sim_concat_proper: Proper (sim ==> sim ==> sim) concat.
 Proof.
-  ii. eapply sim_concat; eauto.
+  repeat intro. eapply sim_concat; eauto.
 Qed.
