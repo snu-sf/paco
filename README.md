@@ -6,6 +6,7 @@
 Paco is a Coq library for parametric coinduction.  For more information, please see:
 
 - Chung-Kil Hur, Georg Neis, Derek Dreyer and Viktor Vafeiadis.  [The power of parameterization in coinductive proof](https://dl.acm.org/citation.cfm?doid=2429069.2429093).  POPL 2013.
+- Yannick Zakowski, Paul He, Chung-Kil Hur and Steve Zdancewic.  [An equational theory for weak bisimulation via generalized parameterized coinduction](https://dl.acm.org/doi/10.1145/3372885.3373813).  CPP 2020.
 
 Paco also supports upto techniques using "companion".  See:
 - Damien Pous.  [Coinduction All the Way Up](https://dl.acm.org/citation.cfm?id=2934564).  LICS 2016.
