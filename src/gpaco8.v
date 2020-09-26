@@ -53,6 +53,13 @@ Proof.
   intros. apply PR0.
 Qed.
 
+Lemma rclo8_clo_base clo r:
+  clo r <8= rclo8 clo r.
+Proof.
+  intros. eapply rclo8_clo', PR.
+  intros. apply rclo8_base, PR0.
+Qed.
+
 Lemma rclo8_rclo clo r:
   rclo8 clo (rclo8 clo r) <8= rclo8 clo r.
 Proof.
@@ -139,8 +146,7 @@ Qed.
 Lemma gpaco8_clo clo r rg:
   clo r <8= gpaco8 clo r rg.
 Proof.
-  intros. apply gpaco8_rclo. eapply rclo8_clo', PR.
-  apply rclo8_base.
+  intros. apply gpaco8_rclo. eapply rclo8_clo_base, PR.
 Qed.
 
 Lemma gpaco8_gen_rclo clo r rg:
@@ -403,7 +409,7 @@ Proof.
       * eapply COM. eapply COM. apply IN. apply H.
       * intros. eapply gpaco8_gupaco. apply gf_mon.
         eapply gupaco8_mon_gen; intros; [apply PR|apply gf_mon|apply PR0| |apply PR0].
-        eapply rclo8_clo'. apply rclo8_base. apply PR0.
+        apply rclo8_clo_base, PR0.
 Qed.
 
 Lemma compat8_wcompat clo
@@ -726,8 +732,7 @@ Lemma wrespect8_companion
 Proof.
   intros. eapply wrespect8_compatible' in RES.
   eapply (@compatible'8_companion (rclo8 clo)) in RES; [apply RES|].
-  eapply rclo8_clo', PR.
-  intros. apply rclo8_base, PR0.
+  eapply rclo8_clo_base, PR.
 Qed.
 
 Lemma wrespect8_uclo

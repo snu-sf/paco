@@ -56,6 +56,13 @@ Proof.
   intros. apply PR0.
 Qed.
 
+Lemma rclo11_clo_base clo r:
+  clo r <11= rclo11 clo r.
+Proof.
+  intros. eapply rclo11_clo', PR.
+  intros. apply rclo11_base, PR0.
+Qed.
+
 Lemma rclo11_rclo clo r:
   rclo11 clo (rclo11 clo r) <11= rclo11 clo r.
 Proof.
@@ -142,8 +149,7 @@ Qed.
 Lemma gpaco11_clo clo r rg:
   clo r <11= gpaco11 clo r rg.
 Proof.
-  intros. apply gpaco11_rclo. eapply rclo11_clo', PR.
-  apply rclo11_base.
+  intros. apply gpaco11_rclo. eapply rclo11_clo_base, PR.
 Qed.
 
 Lemma gpaco11_gen_rclo clo r rg:
@@ -406,7 +412,7 @@ Proof.
       * eapply COM. eapply COM. apply IN. apply H.
       * intros. eapply gpaco11_gupaco. apply gf_mon.
         eapply gupaco11_mon_gen; intros; [apply PR|apply gf_mon|apply PR0| |apply PR0].
-        eapply rclo11_clo'. apply rclo11_base. apply PR0.
+        apply rclo11_clo_base, PR0.
 Qed.
 
 Lemma compat11_wcompat clo
@@ -729,8 +735,7 @@ Lemma wrespect11_companion
 Proof.
   intros. eapply wrespect11_compatible' in RES.
   eapply (@compatible'11_companion (rclo11 clo)) in RES; [apply RES|].
-  eapply rclo11_clo', PR.
-  intros. apply rclo11_base, PR0.
+  eapply rclo11_clo_base, PR.
 Qed.
 
 Lemma wrespect11_uclo

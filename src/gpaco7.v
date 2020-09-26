@@ -52,6 +52,13 @@ Proof.
   intros. apply PR0.
 Qed.
 
+Lemma rclo7_clo_base clo r:
+  clo r <7= rclo7 clo r.
+Proof.
+  intros. eapply rclo7_clo', PR.
+  intros. apply rclo7_base, PR0.
+Qed.
+
 Lemma rclo7_rclo clo r:
   rclo7 clo (rclo7 clo r) <7= rclo7 clo r.
 Proof.
@@ -138,8 +145,7 @@ Qed.
 Lemma gpaco7_clo clo r rg:
   clo r <7= gpaco7 clo r rg.
 Proof.
-  intros. apply gpaco7_rclo. eapply rclo7_clo', PR.
-  apply rclo7_base.
+  intros. apply gpaco7_rclo. eapply rclo7_clo_base, PR.
 Qed.
 
 Lemma gpaco7_gen_rclo clo r rg:
@@ -402,7 +408,7 @@ Proof.
       * eapply COM. eapply COM. apply IN. apply H.
       * intros. eapply gpaco7_gupaco. apply gf_mon.
         eapply gupaco7_mon_gen; intros; [apply PR|apply gf_mon|apply PR0| |apply PR0].
-        eapply rclo7_clo'. apply rclo7_base. apply PR0.
+        apply rclo7_clo_base, PR0.
 Qed.
 
 Lemma compat7_wcompat clo
@@ -725,8 +731,7 @@ Lemma wrespect7_companion
 Proof.
   intros. eapply wrespect7_compatible' in RES.
   eapply (@compatible'7_companion (rclo7 clo)) in RES; [apply RES|].
-  eapply rclo7_clo', PR.
-  intros. apply rclo7_base, PR0.
+  eapply rclo7_clo_base, PR.
 Qed.
 
 Lemma wrespect7_uclo

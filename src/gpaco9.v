@@ -54,6 +54,13 @@ Proof.
   intros. apply PR0.
 Qed.
 
+Lemma rclo9_clo_base clo r:
+  clo r <9= rclo9 clo r.
+Proof.
+  intros. eapply rclo9_clo', PR.
+  intros. apply rclo9_base, PR0.
+Qed.
+
 Lemma rclo9_rclo clo r:
   rclo9 clo (rclo9 clo r) <9= rclo9 clo r.
 Proof.
@@ -140,8 +147,7 @@ Qed.
 Lemma gpaco9_clo clo r rg:
   clo r <9= gpaco9 clo r rg.
 Proof.
-  intros. apply gpaco9_rclo. eapply rclo9_clo', PR.
-  apply rclo9_base.
+  intros. apply gpaco9_rclo. eapply rclo9_clo_base, PR.
 Qed.
 
 Lemma gpaco9_gen_rclo clo r rg:
@@ -404,7 +410,7 @@ Proof.
       * eapply COM. eapply COM. apply IN. apply H.
       * intros. eapply gpaco9_gupaco. apply gf_mon.
         eapply gupaco9_mon_gen; intros; [apply PR|apply gf_mon|apply PR0| |apply PR0].
-        eapply rclo9_clo'. apply rclo9_base. apply PR0.
+        apply rclo9_clo_base, PR0.
 Qed.
 
 Lemma compat9_wcompat clo
@@ -727,8 +733,7 @@ Lemma wrespect9_companion
 Proof.
   intros. eapply wrespect9_compatible' in RES.
   eapply (@compatible'9_companion (rclo9 clo)) in RES; [apply RES|].
-  eapply rclo9_clo', PR.
-  intros. apply rclo9_base, PR0.
+  eapply rclo9_clo_base, PR.
 Qed.
 
 Lemma wrespect9_uclo

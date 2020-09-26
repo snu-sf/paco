@@ -48,6 +48,13 @@ Proof.
   intros. apply PR0.
 Qed.
 
+Lemma rclo3_clo_base clo r:
+  clo r <3= rclo3 clo r.
+Proof.
+  intros. eapply rclo3_clo', PR.
+  intros. apply rclo3_base, PR0.
+Qed.
+
 Lemma rclo3_rclo clo r:
   rclo3 clo (rclo3 clo r) <3= rclo3 clo r.
 Proof.
@@ -134,8 +141,7 @@ Qed.
 Lemma gpaco3_clo clo r rg:
   clo r <3= gpaco3 clo r rg.
 Proof.
-  intros. apply gpaco3_rclo. eapply rclo3_clo', PR.
-  apply rclo3_base.
+  intros. apply gpaco3_rclo. eapply rclo3_clo_base, PR.
 Qed.
 
 Lemma gpaco3_gen_rclo clo r rg:
@@ -398,7 +404,7 @@ Proof.
       * eapply COM. eapply COM. apply IN. apply H.
       * intros. eapply gpaco3_gupaco. apply gf_mon.
         eapply gupaco3_mon_gen; intros; [apply PR|apply gf_mon|apply PR0| |apply PR0].
-        eapply rclo3_clo'. apply rclo3_base. apply PR0.
+        apply rclo3_clo_base, PR0.
 Qed.
 
 Lemma compat3_wcompat clo
@@ -721,8 +727,7 @@ Lemma wrespect3_companion
 Proof.
   intros. eapply wrespect3_compatible' in RES.
   eapply (@compatible'3_companion (rclo3 clo)) in RES; [apply RES|].
-  eapply rclo3_clo', PR.
-  intros. apply rclo3_base, PR0.
+  eapply rclo3_clo_base, PR.
 Qed.
 
 Lemma wrespect3_uclo

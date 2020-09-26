@@ -55,6 +55,13 @@ Proof.
   intros. apply PR0.
 Qed.
 
+Lemma rclo10_clo_base clo r:
+  clo r <10= rclo10 clo r.
+Proof.
+  intros. eapply rclo10_clo', PR.
+  intros. apply rclo10_base, PR0.
+Qed.
+
 Lemma rclo10_rclo clo r:
   rclo10 clo (rclo10 clo r) <10= rclo10 clo r.
 Proof.
@@ -141,8 +148,7 @@ Qed.
 Lemma gpaco10_clo clo r rg:
   clo r <10= gpaco10 clo r rg.
 Proof.
-  intros. apply gpaco10_rclo. eapply rclo10_clo', PR.
-  apply rclo10_base.
+  intros. apply gpaco10_rclo. eapply rclo10_clo_base, PR.
 Qed.
 
 Lemma gpaco10_gen_rclo clo r rg:
@@ -405,7 +411,7 @@ Proof.
       * eapply COM. eapply COM. apply IN. apply H.
       * intros. eapply gpaco10_gupaco. apply gf_mon.
         eapply gupaco10_mon_gen; intros; [apply PR|apply gf_mon|apply PR0| |apply PR0].
-        eapply rclo10_clo'. apply rclo10_base. apply PR0.
+        apply rclo10_clo_base, PR0.
 Qed.
 
 Lemma compat10_wcompat clo
@@ -728,8 +734,7 @@ Lemma wrespect10_companion
 Proof.
   intros. eapply wrespect10_compatible' in RES.
   eapply (@compatible'10_companion (rclo10 clo)) in RES; [apply RES|].
-  eapply rclo10_clo', PR.
-  intros. apply rclo10_base, PR0.
+  eapply rclo10_clo_base, PR.
 Qed.
 
 Lemma wrespect10_uclo

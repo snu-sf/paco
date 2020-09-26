@@ -57,6 +57,13 @@ Proof.
   intros. apply PR0.
 Qed.
 
+Lemma rclo12_clo_base clo r:
+  clo r <12= rclo12 clo r.
+Proof.
+  intros. eapply rclo12_clo', PR.
+  intros. apply rclo12_base, PR0.
+Qed.
+
 Lemma rclo12_rclo clo r:
   rclo12 clo (rclo12 clo r) <12= rclo12 clo r.
 Proof.
@@ -143,8 +150,7 @@ Qed.
 Lemma gpaco12_clo clo r rg:
   clo r <12= gpaco12 clo r rg.
 Proof.
-  intros. apply gpaco12_rclo. eapply rclo12_clo', PR.
-  apply rclo12_base.
+  intros. apply gpaco12_rclo. eapply rclo12_clo_base, PR.
 Qed.
 
 Lemma gpaco12_gen_rclo clo r rg:
@@ -407,7 +413,7 @@ Proof.
       * eapply COM. eapply COM. apply IN. apply H.
       * intros. eapply gpaco12_gupaco. apply gf_mon.
         eapply gupaco12_mon_gen; intros; [apply PR|apply gf_mon|apply PR0| |apply PR0].
-        eapply rclo12_clo'. apply rclo12_base. apply PR0.
+        apply rclo12_clo_base, PR0.
 Qed.
 
 Lemma compat12_wcompat clo
@@ -730,8 +736,7 @@ Lemma wrespect12_companion
 Proof.
   intros. eapply wrespect12_compatible' in RES.
   eapply (@compatible'12_companion (rclo12 clo)) in RES; [apply RES|].
-  eapply rclo12_clo', PR.
-  intros. apply rclo12_base, PR0.
+  eapply rclo12_clo_base, PR.
 Qed.
 
 Lemma wrespect12_uclo

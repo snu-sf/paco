@@ -50,6 +50,13 @@ Proof.
   intros. apply PR0.
 Qed.
 
+Lemma rclo5_clo_base clo r:
+  clo r <5= rclo5 clo r.
+Proof.
+  intros. eapply rclo5_clo', PR.
+  intros. apply rclo5_base, PR0.
+Qed.
+
 Lemma rclo5_rclo clo r:
   rclo5 clo (rclo5 clo r) <5= rclo5 clo r.
 Proof.
@@ -136,8 +143,7 @@ Qed.
 Lemma gpaco5_clo clo r rg:
   clo r <5= gpaco5 clo r rg.
 Proof.
-  intros. apply gpaco5_rclo. eapply rclo5_clo', PR.
-  apply rclo5_base.
+  intros. apply gpaco5_rclo. eapply rclo5_clo_base, PR.
 Qed.
 
 Lemma gpaco5_gen_rclo clo r rg:
@@ -400,7 +406,7 @@ Proof.
       * eapply COM. eapply COM. apply IN. apply H.
       * intros. eapply gpaco5_gupaco. apply gf_mon.
         eapply gupaco5_mon_gen; intros; [apply PR|apply gf_mon|apply PR0| |apply PR0].
-        eapply rclo5_clo'. apply rclo5_base. apply PR0.
+        apply rclo5_clo_base, PR0.
 Qed.
 
 Lemma compat5_wcompat clo
@@ -723,8 +729,7 @@ Lemma wrespect5_companion
 Proof.
   intros. eapply wrespect5_compatible' in RES.
   eapply (@compatible'5_companion (rclo5 clo)) in RES; [apply RES|].
-  eapply rclo5_clo', PR.
-  intros. apply rclo5_base, PR0.
+  eapply rclo5_clo_base, PR.
 Qed.
 
 Lemma wrespect5_uclo

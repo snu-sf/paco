@@ -49,6 +49,13 @@ Proof.
   intros. apply PR0.
 Qed.
 
+Lemma rclo4_clo_base clo r:
+  clo r <4= rclo4 clo r.
+Proof.
+  intros. eapply rclo4_clo', PR.
+  intros. apply rclo4_base, PR0.
+Qed.
+
 Lemma rclo4_rclo clo r:
   rclo4 clo (rclo4 clo r) <4= rclo4 clo r.
 Proof.
@@ -135,8 +142,7 @@ Qed.
 Lemma gpaco4_clo clo r rg:
   clo r <4= gpaco4 clo r rg.
 Proof.
-  intros. apply gpaco4_rclo. eapply rclo4_clo', PR.
-  apply rclo4_base.
+  intros. apply gpaco4_rclo. eapply rclo4_clo_base, PR.
 Qed.
 
 Lemma gpaco4_gen_rclo clo r rg:
@@ -399,7 +405,7 @@ Proof.
       * eapply COM. eapply COM. apply IN. apply H.
       * intros. eapply gpaco4_gupaco. apply gf_mon.
         eapply gupaco4_mon_gen; intros; [apply PR|apply gf_mon|apply PR0| |apply PR0].
-        eapply rclo4_clo'. apply rclo4_base. apply PR0.
+        apply rclo4_clo_base, PR0.
 Qed.
 
 Lemma compat4_wcompat clo
@@ -722,8 +728,7 @@ Lemma wrespect4_companion
 Proof.
   intros. eapply wrespect4_compatible' in RES.
   eapply (@compatible'4_companion (rclo4 clo)) in RES; [apply RES|].
-  eapply rclo4_clo', PR.
-  intros. apply rclo4_base, PR0.
+  eapply rclo4_clo_base, PR.
 Qed.
 
 Lemma wrespect4_uclo
