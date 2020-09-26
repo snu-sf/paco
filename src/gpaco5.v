@@ -640,6 +640,102 @@ Qed.
 
 End Companion.
 
+Section Respectful.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone5 gf.
+
+Structure wrespectful5 (clo: rel -> rel) : Prop :=
+  wrespect5_intro {
+      wrespect5_mon: monotone5 clo;
+      wrespect5_respect :
+        forall l r
+               (LE: l <5= r)
+               (GF: l <5= gf r),
+        clo l <5= gf (rclo5 clo r);
+    }.
+Hint Constructors wrespectful5.
+
+Definition gf'5 := id /6\ gf.
+
+Definition compatible'5 := compatible5 gf'5.
+
+Lemma wrespect5_compatible'
+      clo (RES: wrespectful5 clo):
+  compatible'5 (rclo5 clo).
+Proof.
+  intros. econstructor. apply rclo5_mon.
+  intros. destruct RES. split.
+  { eapply rclo5_mon. apply PR. intros. apply PR0. }
+  induction PR; intros.
+  - eapply gf_mon. apply IN.
+    intros. apply rclo5_base, PR.
+  - eapply gf_mon.
+    + eapply wrespect5_respect0; [|apply H|apply IN].
+      intros. eapply rclo5_mon; intros; [apply LE, PR|apply PR0].
+    + intros. apply rclo5_rclo, PR.
+Qed.
+
+Lemma compat5_compatible'
+      clo (COM: compatible5 gf clo):
+  compatible'5 clo.
+Proof.
+  destruct COM. econstructor; [apply compat5_mon0|].
+  intros. split.
+  - eapply compat5_mon0; intros; [apply PR| apply PR0].
+  - apply compat5_compat0.
+    eapply compat5_mon0; intros; [apply PR| apply PR0].
+Qed.
+
+Lemma compatible'5_companion
+      clo (RES: compatible'5 clo):
+  clo <6= cpn5 gf.
+Proof.
+  assert (MON: monotone5 gf'5).
+  { econstructor. apply LE, IN.
+    eapply gf_mon, LE. apply IN.
+  }
+  assert (CPN: clo <6= cpn5 gf'5).
+  { intros. econstructor. apply RES. apply PR.
+  }
+  intros. apply CPN in PR.
+  econstructor; [|apply PR].
+  econstructor; [apply cpn5_mon|]; intros.
+  assert (PR1: cpn5 gf'5 (gf r) <5= cpn5 gf'5 (gf'5 (cpn5 gf r))).
+  { intros. eapply cpn5_mon. apply PR1.
+    intros. assert (TMP: gf (cpn5 gf r) <5= (cpn5 gf r /5\ gf (cpn5 gf r))).
+    { split; [apply cpn5_step; [apply gf_mon|]|]; assumption. }
+    apply TMP.
+    eapply gf_mon. apply PR2. intros. apply cpn5_base; assumption.
+  }
+  apply PR1 in PR0. clear PR1. 
+  eapply compat5_compat with (gf:=gf'5) in PR0; [|apply cpn5_compat, MON].
+  eapply gf_mon; [apply PR0|].
+  intros. eapply cpn5_cpn; [apply MON|].
+  eapply cpn5_mon; [apply PR1|].
+  intros. econstructor; [|apply PR2].
+  apply compat5_compatible', cpn5_compat, gf_mon.
+Qed.
+
+Lemma wrespect5_companion
+      clo (RES: wrespectful5 clo):
+  clo <6= cpn5 gf.
+Proof.
+  intros. eapply wrespect5_compatible' in RES.
+  eapply (@compatible'5_companion (rclo5 clo)) in RES; [apply RES|].
+  eapply rclo5_clo', PR.
+  intros. apply rclo5_base, PR0.
+Qed.
+
+Lemma wrespect5_uclo
+      clo (RES: wrespectful5 clo):
+  clo <6= gupaco5 gf (cpn5 gf).
+Proof.
+  intros. eapply gpaco5_clo, wrespect5_companion, PR. apply RES.
+Qed.
+
+End Respectful.
+
 End GeneralizedPaco5.
 
 Hint Resolve gpaco5_def_mon : paco.
@@ -649,3 +745,4 @@ Hint Resolve gpaco5_step : paco.
 Hint Resolve gpaco5_final : paco.
 Hint Resolve rclo5_base : paco.
 Hint Constructors gpaco5 : paco.
+Hint Resolve wrespect5_uclo : paco.

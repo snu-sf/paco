@@ -12,7 +12,7 @@ Variable T0 : Type.
 Variable gf : rel1 T0 -> rel1 T0.
 Arguments gf : clear implicits.
 
-Inductive _paco (paco: rel1 T0 -> rel1 T0) ( r: rel1 T0) x0 : Prop :=
+Variant _paco (paco: rel1 T0 -> rel1 T0) ( r: rel1 T0) x0 : Prop :=
 | paco_pfold pco
     (LE : pco <1= (paco r \1/ r))
     (SIM: gf pco x0)

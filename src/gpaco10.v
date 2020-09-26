@@ -645,6 +645,102 @@ Qed.
 
 End Companion.
 
+Section Respectful.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone10 gf.
+
+Structure wrespectful10 (clo: rel -> rel) : Prop :=
+  wrespect10_intro {
+      wrespect10_mon: monotone10 clo;
+      wrespect10_respect :
+        forall l r
+               (LE: l <10= r)
+               (GF: l <10= gf r),
+        clo l <10= gf (rclo10 clo r);
+    }.
+Hint Constructors wrespectful10.
+
+Definition gf'10 := id /11\ gf.
+
+Definition compatible'10 := compatible10 gf'10.
+
+Lemma wrespect10_compatible'
+      clo (RES: wrespectful10 clo):
+  compatible'10 (rclo10 clo).
+Proof.
+  intros. econstructor. apply rclo10_mon.
+  intros. destruct RES. split.
+  { eapply rclo10_mon. apply PR. intros. apply PR0. }
+  induction PR; intros.
+  - eapply gf_mon. apply IN.
+    intros. apply rclo10_base, PR.
+  - eapply gf_mon.
+    + eapply wrespect10_respect0; [|apply H|apply IN].
+      intros. eapply rclo10_mon; intros; [apply LE, PR|apply PR0].
+    + intros. apply rclo10_rclo, PR.
+Qed.
+
+Lemma compat10_compatible'
+      clo (COM: compatible10 gf clo):
+  compatible'10 clo.
+Proof.
+  destruct COM. econstructor; [apply compat10_mon0|].
+  intros. split.
+  - eapply compat10_mon0; intros; [apply PR| apply PR0].
+  - apply compat10_compat0.
+    eapply compat10_mon0; intros; [apply PR| apply PR0].
+Qed.
+
+Lemma compatible'10_companion
+      clo (RES: compatible'10 clo):
+  clo <11= cpn10 gf.
+Proof.
+  assert (MON: monotone10 gf'10).
+  { econstructor. apply LE, IN.
+    eapply gf_mon, LE. apply IN.
+  }
+  assert (CPN: clo <11= cpn10 gf'10).
+  { intros. econstructor. apply RES. apply PR.
+  }
+  intros. apply CPN in PR.
+  econstructor; [|apply PR].
+  econstructor; [apply cpn10_mon|]; intros.
+  assert (PR1: cpn10 gf'10 (gf r) <10= cpn10 gf'10 (gf'10 (cpn10 gf r))).
+  { intros. eapply cpn10_mon. apply PR1.
+    intros. assert (TMP: gf (cpn10 gf r) <10= (cpn10 gf r /10\ gf (cpn10 gf r))).
+    { split; [apply cpn10_step; [apply gf_mon|]|]; assumption. }
+    apply TMP.
+    eapply gf_mon. apply PR2. intros. apply cpn10_base; assumption.
+  }
+  apply PR1 in PR0. clear PR1. 
+  eapply compat10_compat with (gf:=gf'10) in PR0; [|apply cpn10_compat, MON].
+  eapply gf_mon; [apply PR0|].
+  intros. eapply cpn10_cpn; [apply MON|].
+  eapply cpn10_mon; [apply PR1|].
+  intros. econstructor; [|apply PR2].
+  apply compat10_compatible', cpn10_compat, gf_mon.
+Qed.
+
+Lemma wrespect10_companion
+      clo (RES: wrespectful10 clo):
+  clo <11= cpn10 gf.
+Proof.
+  intros. eapply wrespect10_compatible' in RES.
+  eapply (@compatible'10_companion (rclo10 clo)) in RES; [apply RES|].
+  eapply rclo10_clo', PR.
+  intros. apply rclo10_base, PR0.
+Qed.
+
+Lemma wrespect10_uclo
+      clo (RES: wrespectful10 clo):
+  clo <11= gupaco10 gf (cpn10 gf).
+Proof.
+  intros. eapply gpaco10_clo, wrespect10_companion, PR. apply RES.
+Qed.
+
+End Respectful.
+
 End GeneralizedPaco10.
 
 Hint Resolve gpaco10_def_mon : paco.
@@ -654,3 +750,4 @@ Hint Resolve gpaco10_step : paco.
 Hint Resolve gpaco10_final : paco.
 Hint Resolve rclo10_base : paco.
 Hint Constructors gpaco10 : paco.
+Hint Resolve wrespect10_uclo : paco.

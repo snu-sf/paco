@@ -643,6 +643,102 @@ Qed.
 
 End Companion.
 
+Section Respectful.
+
+Variable gf: rel -> rel.
+Hypothesis gf_mon: monotone8 gf.
+
+Structure wrespectful8 (clo: rel -> rel) : Prop :=
+  wrespect8_intro {
+      wrespect8_mon: monotone8 clo;
+      wrespect8_respect :
+        forall l r
+               (LE: l <8= r)
+               (GF: l <8= gf r),
+        clo l <8= gf (rclo8 clo r);
+    }.
+Hint Constructors wrespectful8.
+
+Definition gf'8 := id /9\ gf.
+
+Definition compatible'8 := compatible8 gf'8.
+
+Lemma wrespect8_compatible'
+      clo (RES: wrespectful8 clo):
+  compatible'8 (rclo8 clo).
+Proof.
+  intros. econstructor. apply rclo8_mon.
+  intros. destruct RES. split.
+  { eapply rclo8_mon. apply PR. intros. apply PR0. }
+  induction PR; intros.
+  - eapply gf_mon. apply IN.
+    intros. apply rclo8_base, PR.
+  - eapply gf_mon.
+    + eapply wrespect8_respect0; [|apply H|apply IN].
+      intros. eapply rclo8_mon; intros; [apply LE, PR|apply PR0].
+    + intros. apply rclo8_rclo, PR.
+Qed.
+
+Lemma compat8_compatible'
+      clo (COM: compatible8 gf clo):
+  compatible'8 clo.
+Proof.
+  destruct COM. econstructor; [apply compat8_mon0|].
+  intros. split.
+  - eapply compat8_mon0; intros; [apply PR| apply PR0].
+  - apply compat8_compat0.
+    eapply compat8_mon0; intros; [apply PR| apply PR0].
+Qed.
+
+Lemma compatible'8_companion
+      clo (RES: compatible'8 clo):
+  clo <9= cpn8 gf.
+Proof.
+  assert (MON: monotone8 gf'8).
+  { econstructor. apply LE, IN.
+    eapply gf_mon, LE. apply IN.
+  }
+  assert (CPN: clo <9= cpn8 gf'8).
+  { intros. econstructor. apply RES. apply PR.
+  }
+  intros. apply CPN in PR.
+  econstructor; [|apply PR].
+  econstructor; [apply cpn8_mon|]; intros.
+  assert (PR1: cpn8 gf'8 (gf r) <8= cpn8 gf'8 (gf'8 (cpn8 gf r))).
+  { intros. eapply cpn8_mon. apply PR1.
+    intros. assert (TMP: gf (cpn8 gf r) <8= (cpn8 gf r /8\ gf (cpn8 gf r))).
+    { split; [apply cpn8_step; [apply gf_mon|]|]; assumption. }
+    apply TMP.
+    eapply gf_mon. apply PR2. intros. apply cpn8_base; assumption.
+  }
+  apply PR1 in PR0. clear PR1. 
+  eapply compat8_compat with (gf:=gf'8) in PR0; [|apply cpn8_compat, MON].
+  eapply gf_mon; [apply PR0|].
+  intros. eapply cpn8_cpn; [apply MON|].
+  eapply cpn8_mon; [apply PR1|].
+  intros. econstructor; [|apply PR2].
+  apply compat8_compatible', cpn8_compat, gf_mon.
+Qed.
+
+Lemma wrespect8_companion
+      clo (RES: wrespectful8 clo):
+  clo <9= cpn8 gf.
+Proof.
+  intros. eapply wrespect8_compatible' in RES.
+  eapply (@compatible'8_companion (rclo8 clo)) in RES; [apply RES|].
+  eapply rclo8_clo', PR.
+  intros. apply rclo8_base, PR0.
+Qed.
+
+Lemma wrespect8_uclo
+      clo (RES: wrespectful8 clo):
+  clo <9= gupaco8 gf (cpn8 gf).
+Proof.
+  intros. eapply gpaco8_clo, wrespect8_companion, PR. apply RES.
+Qed.
+
+End Respectful.
+
 End GeneralizedPaco8.
 
 Hint Resolve gpaco8_def_mon : paco.
@@ -652,3 +748,4 @@ Hint Resolve gpaco8_step : paco.
 Hint Resolve gpaco8_final : paco.
 Hint Resolve rclo8_base : paco.
 Hint Constructors gpaco8 : paco.
+Hint Resolve wrespect8_uclo : paco.
