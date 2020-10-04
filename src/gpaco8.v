@@ -665,6 +665,17 @@ Structure wrespectful8 (clo: rel -> rel) : Prop :=
     }.
 Hint Constructors wrespectful8.
 
+Structure prespectful8 (clo: rel -> rel) : Prop :=
+  prespect8_intro {
+      prespect8_mon: monotone8 clo;
+      prespect8_respect :
+        forall l r
+               (LE: l <8= r)
+               (GF: l <8= gf r),
+        clo l <8= paco8 gf (r \8/ clo r);
+    }.
+Hint Constructors prespectful8.
+
 Definition gf'8 := id /9\ gf.
 
 Definition compatible'8 := compatible8 gf'8.
@@ -683,6 +694,36 @@ Proof.
     + eapply wrespect8_respect0; [|apply H|apply IN].
       intros. eapply rclo8_mon; intros; [apply LE, PR|apply PR0].
     + intros. apply rclo8_rclo, PR.
+Qed.
+
+Lemma prespect8_compatible'
+      clo (RES: prespectful8 clo):
+  compatible'8 (fun r => upaco8 gf (r \8/ clo r)).
+Proof.
+  econstructor.
+  { red; intros. eapply upaco8_mon. apply IN.
+    intros. destruct PR.
+    - left. apply LE, H.
+    - right. eapply RES. apply H. intros. apply LE, PR. }
+
+  intros r.
+  assert (LEM: (gf'8 r \8/ clo (gf'8 r)) <8= (r \8/ clo r)).
+  { intros. destruct PR.
+    - left. apply H.
+    - right. eapply RES. apply H. intros. apply PR.
+  }
+
+  intros. destruct PR.
+  - split.
+    + left. eapply paco8_mon. apply H. apply LEM.
+    + apply paco8_unfold; [apply gf_mon|].
+      eapply paco8_mon. apply H. apply LEM.
+  - split.
+    + right. apply LEM. apply H.
+    + destruct H.
+      * eapply gf_mon. apply H. intros. right. left. apply PR.
+      * apply paco8_unfold; [apply gf_mon|].
+        eapply RES, H; intros; apply PR.
 Qed.
 
 Lemma compat8_compatible'
@@ -735,11 +776,26 @@ Proof.
   eapply rclo8_clo_base, PR.
 Qed.
 
+Lemma prespect8_companion
+      clo (RES: prespectful8 clo):
+  clo <9= cpn8 gf.
+Proof.
+  intros. eapply compatible'8_companion. apply prespect8_compatible'. apply RES.
+  right. right. apply PR.
+Qed.
+
 Lemma wrespect8_uclo
       clo (RES: wrespectful8 clo):
   clo <9= gupaco8 gf (cpn8 gf).
 Proof.
   intros. eapply gpaco8_clo, wrespect8_companion, PR. apply RES.
+Qed.
+
+Lemma prespect8_uclo
+      clo (RES: prespectful8 clo):
+  clo <9= gupaco8 gf (cpn8 gf).
+Proof.
+  intros. eapply gpaco8_clo, prespect8_companion, PR. apply RES.
 Qed.
 
 End Respectful.
@@ -754,3 +810,4 @@ Hint Resolve gpaco8_final : paco.
 Hint Resolve rclo8_base : paco.
 Hint Constructors gpaco8 : paco.
 Hint Resolve wrespect8_uclo : paco.
+Hint Resolve prespect8_uclo : paco.

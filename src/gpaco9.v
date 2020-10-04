@@ -666,6 +666,17 @@ Structure wrespectful9 (clo: rel -> rel) : Prop :=
     }.
 Hint Constructors wrespectful9.
 
+Structure prespectful9 (clo: rel -> rel) : Prop :=
+  prespect9_intro {
+      prespect9_mon: monotone9 clo;
+      prespect9_respect :
+        forall l r
+               (LE: l <9= r)
+               (GF: l <9= gf r),
+        clo l <9= paco9 gf (r \9/ clo r);
+    }.
+Hint Constructors prespectful9.
+
 Definition gf'9 := id /10\ gf.
 
 Definition compatible'9 := compatible9 gf'9.
@@ -684,6 +695,36 @@ Proof.
     + eapply wrespect9_respect0; [|apply H|apply IN].
       intros. eapply rclo9_mon; intros; [apply LE, PR|apply PR0].
     + intros. apply rclo9_rclo, PR.
+Qed.
+
+Lemma prespect9_compatible'
+      clo (RES: prespectful9 clo):
+  compatible'9 (fun r => upaco9 gf (r \9/ clo r)).
+Proof.
+  econstructor.
+  { red; intros. eapply upaco9_mon. apply IN.
+    intros. destruct PR.
+    - left. apply LE, H.
+    - right. eapply RES. apply H. intros. apply LE, PR. }
+
+  intros r.
+  assert (LEM: (gf'9 r \9/ clo (gf'9 r)) <9= (r \9/ clo r)).
+  { intros. destruct PR.
+    - left. apply H.
+    - right. eapply RES. apply H. intros. apply PR.
+  }
+
+  intros. destruct PR.
+  - split.
+    + left. eapply paco9_mon. apply H. apply LEM.
+    + apply paco9_unfold; [apply gf_mon|].
+      eapply paco9_mon. apply H. apply LEM.
+  - split.
+    + right. apply LEM. apply H.
+    + destruct H.
+      * eapply gf_mon. apply H. intros. right. left. apply PR.
+      * apply paco9_unfold; [apply gf_mon|].
+        eapply RES, H; intros; apply PR.
 Qed.
 
 Lemma compat9_compatible'
@@ -736,11 +777,26 @@ Proof.
   eapply rclo9_clo_base, PR.
 Qed.
 
+Lemma prespect9_companion
+      clo (RES: prespectful9 clo):
+  clo <10= cpn9 gf.
+Proof.
+  intros. eapply compatible'9_companion. apply prespect9_compatible'. apply RES.
+  right. right. apply PR.
+Qed.
+
 Lemma wrespect9_uclo
       clo (RES: wrespectful9 clo):
   clo <10= gupaco9 gf (cpn9 gf).
 Proof.
   intros. eapply gpaco9_clo, wrespect9_companion, PR. apply RES.
+Qed.
+
+Lemma prespect9_uclo
+      clo (RES: prespectful9 clo):
+  clo <10= gupaco9 gf (cpn9 gf).
+Proof.
+  intros. eapply gpaco9_clo, prespect9_companion, PR. apply RES.
 Qed.
 
 End Respectful.
@@ -755,3 +811,4 @@ Hint Resolve gpaco9_final : paco.
 Hint Resolve rclo9_base : paco.
 Hint Constructors gpaco9 : paco.
 Hint Resolve wrespect9_uclo : paco.
+Hint Resolve prespect9_uclo : paco.

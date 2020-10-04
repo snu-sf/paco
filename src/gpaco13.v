@@ -670,6 +670,17 @@ Structure wrespectful13 (clo: rel -> rel) : Prop :=
     }.
 Hint Constructors wrespectful13.
 
+Structure prespectful13 (clo: rel -> rel) : Prop :=
+  prespect13_intro {
+      prespect13_mon: monotone13 clo;
+      prespect13_respect :
+        forall l r
+               (LE: l <13= r)
+               (GF: l <13= gf r),
+        clo l <13= paco13 gf (r \13/ clo r);
+    }.
+Hint Constructors prespectful13.
+
 Definition gf'13 := id /14\ gf.
 
 Definition compatible'13 := compatible13 gf'13.
@@ -688,6 +699,36 @@ Proof.
     + eapply wrespect13_respect0; [|apply H|apply IN].
       intros. eapply rclo13_mon; intros; [apply LE, PR|apply PR0].
     + intros. apply rclo13_rclo, PR.
+Qed.
+
+Lemma prespect13_compatible'
+      clo (RES: prespectful13 clo):
+  compatible'13 (fun r => upaco13 gf (r \13/ clo r)).
+Proof.
+  econstructor.
+  { red; intros. eapply upaco13_mon. apply IN.
+    intros. destruct PR.
+    - left. apply LE, H.
+    - right. eapply RES. apply H. intros. apply LE, PR. }
+
+  intros r.
+  assert (LEM: (gf'13 r \13/ clo (gf'13 r)) <13= (r \13/ clo r)).
+  { intros. destruct PR.
+    - left. apply H.
+    - right. eapply RES. apply H. intros. apply PR.
+  }
+
+  intros. destruct PR.
+  - split.
+    + left. eapply paco13_mon. apply H. apply LEM.
+    + apply paco13_unfold; [apply gf_mon|].
+      eapply paco13_mon. apply H. apply LEM.
+  - split.
+    + right. apply LEM. apply H.
+    + destruct H.
+      * eapply gf_mon. apply H. intros. right. left. apply PR.
+      * apply paco13_unfold; [apply gf_mon|].
+        eapply RES, H; intros; apply PR.
 Qed.
 
 Lemma compat13_compatible'
@@ -740,11 +781,26 @@ Proof.
   eapply rclo13_clo_base, PR.
 Qed.
 
+Lemma prespect13_companion
+      clo (RES: prespectful13 clo):
+  clo <14= cpn13 gf.
+Proof.
+  intros. eapply compatible'13_companion. apply prespect13_compatible'. apply RES.
+  right. right. apply PR.
+Qed.
+
 Lemma wrespect13_uclo
       clo (RES: wrespectful13 clo):
   clo <14= gupaco13 gf (cpn13 gf).
 Proof.
   intros. eapply gpaco13_clo, wrespect13_companion, PR. apply RES.
+Qed.
+
+Lemma prespect13_uclo
+      clo (RES: prespectful13 clo):
+  clo <14= gupaco13 gf (cpn13 gf).
+Proof.
+  intros. eapply gpaco13_clo, prespect13_companion, PR. apply RES.
 Qed.
 
 End Respectful.
@@ -759,3 +815,4 @@ Hint Resolve gpaco13_final : paco.
 Hint Resolve rclo13_base : paco.
 Hint Constructors gpaco13 : paco.
 Hint Resolve wrespect13_uclo : paco.
+Hint Resolve prespect13_uclo : paco.

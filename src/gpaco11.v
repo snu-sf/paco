@@ -668,6 +668,17 @@ Structure wrespectful11 (clo: rel -> rel) : Prop :=
     }.
 Hint Constructors wrespectful11.
 
+Structure prespectful11 (clo: rel -> rel) : Prop :=
+  prespect11_intro {
+      prespect11_mon: monotone11 clo;
+      prespect11_respect :
+        forall l r
+               (LE: l <11= r)
+               (GF: l <11= gf r),
+        clo l <11= paco11 gf (r \11/ clo r);
+    }.
+Hint Constructors prespectful11.
+
 Definition gf'11 := id /12\ gf.
 
 Definition compatible'11 := compatible11 gf'11.
@@ -686,6 +697,36 @@ Proof.
     + eapply wrespect11_respect0; [|apply H|apply IN].
       intros. eapply rclo11_mon; intros; [apply LE, PR|apply PR0].
     + intros. apply rclo11_rclo, PR.
+Qed.
+
+Lemma prespect11_compatible'
+      clo (RES: prespectful11 clo):
+  compatible'11 (fun r => upaco11 gf (r \11/ clo r)).
+Proof.
+  econstructor.
+  { red; intros. eapply upaco11_mon. apply IN.
+    intros. destruct PR.
+    - left. apply LE, H.
+    - right. eapply RES. apply H. intros. apply LE, PR. }
+
+  intros r.
+  assert (LEM: (gf'11 r \11/ clo (gf'11 r)) <11= (r \11/ clo r)).
+  { intros. destruct PR.
+    - left. apply H.
+    - right. eapply RES. apply H. intros. apply PR.
+  }
+
+  intros. destruct PR.
+  - split.
+    + left. eapply paco11_mon. apply H. apply LEM.
+    + apply paco11_unfold; [apply gf_mon|].
+      eapply paco11_mon. apply H. apply LEM.
+  - split.
+    + right. apply LEM. apply H.
+    + destruct H.
+      * eapply gf_mon. apply H. intros. right. left. apply PR.
+      * apply paco11_unfold; [apply gf_mon|].
+        eapply RES, H; intros; apply PR.
 Qed.
 
 Lemma compat11_compatible'
@@ -738,11 +779,26 @@ Proof.
   eapply rclo11_clo_base, PR.
 Qed.
 
+Lemma prespect11_companion
+      clo (RES: prespectful11 clo):
+  clo <12= cpn11 gf.
+Proof.
+  intros. eapply compatible'11_companion. apply prespect11_compatible'. apply RES.
+  right. right. apply PR.
+Qed.
+
 Lemma wrespect11_uclo
       clo (RES: wrespectful11 clo):
   clo <12= gupaco11 gf (cpn11 gf).
 Proof.
   intros. eapply gpaco11_clo, wrespect11_companion, PR. apply RES.
+Qed.
+
+Lemma prespect11_uclo
+      clo (RES: prespectful11 clo):
+  clo <12= gupaco11 gf (cpn11 gf).
+Proof.
+  intros. eapply gpaco11_clo, prespect11_companion, PR. apply RES.
 Qed.
 
 End Respectful.
@@ -757,3 +813,4 @@ Hint Resolve gpaco11_final : paco.
 Hint Resolve rclo11_base : paco.
 Hint Constructors gpaco11 : paco.
 Hint Resolve wrespect11_uclo : paco.
+Hint Resolve prespect11_uclo : paco.

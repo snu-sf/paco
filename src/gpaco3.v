@@ -660,6 +660,17 @@ Structure wrespectful3 (clo: rel -> rel) : Prop :=
     }.
 Hint Constructors wrespectful3.
 
+Structure prespectful3 (clo: rel -> rel) : Prop :=
+  prespect3_intro {
+      prespect3_mon: monotone3 clo;
+      prespect3_respect :
+        forall l r
+               (LE: l <3= r)
+               (GF: l <3= gf r),
+        clo l <3= paco3 gf (r \3/ clo r);
+    }.
+Hint Constructors prespectful3.
+
 Definition gf'3 := id /4\ gf.
 
 Definition compatible'3 := compatible3 gf'3.
@@ -678,6 +689,36 @@ Proof.
     + eapply wrespect3_respect0; [|apply H|apply IN].
       intros. eapply rclo3_mon; intros; [apply LE, PR|apply PR0].
     + intros. apply rclo3_rclo, PR.
+Qed.
+
+Lemma prespect3_compatible'
+      clo (RES: prespectful3 clo):
+  compatible'3 (fun r => upaco3 gf (r \3/ clo r)).
+Proof.
+  econstructor.
+  { red; intros. eapply upaco3_mon. apply IN.
+    intros. destruct PR.
+    - left. apply LE, H.
+    - right. eapply RES. apply H. intros. apply LE, PR. }
+
+  intros r.
+  assert (LEM: (gf'3 r \3/ clo (gf'3 r)) <3= (r \3/ clo r)).
+  { intros. destruct PR.
+    - left. apply H.
+    - right. eapply RES. apply H. intros. apply PR.
+  }
+
+  intros. destruct PR.
+  - split.
+    + left. eapply paco3_mon. apply H. apply LEM.
+    + apply paco3_unfold; [apply gf_mon|].
+      eapply paco3_mon. apply H. apply LEM.
+  - split.
+    + right. apply LEM. apply H.
+    + destruct H.
+      * eapply gf_mon. apply H. intros. right. left. apply PR.
+      * apply paco3_unfold; [apply gf_mon|].
+        eapply RES, H; intros; apply PR.
 Qed.
 
 Lemma compat3_compatible'
@@ -730,11 +771,26 @@ Proof.
   eapply rclo3_clo_base, PR.
 Qed.
 
+Lemma prespect3_companion
+      clo (RES: prespectful3 clo):
+  clo <4= cpn3 gf.
+Proof.
+  intros. eapply compatible'3_companion. apply prespect3_compatible'. apply RES.
+  right. right. apply PR.
+Qed.
+
 Lemma wrespect3_uclo
       clo (RES: wrespectful3 clo):
   clo <4= gupaco3 gf (cpn3 gf).
 Proof.
   intros. eapply gpaco3_clo, wrespect3_companion, PR. apply RES.
+Qed.
+
+Lemma prespect3_uclo
+      clo (RES: prespectful3 clo):
+  clo <4= gupaco3 gf (cpn3 gf).
+Proof.
+  intros. eapply gpaco3_clo, prespect3_companion, PR. apply RES.
 Qed.
 
 End Respectful.
@@ -749,3 +805,4 @@ Hint Resolve gpaco3_final : paco.
 Hint Resolve rclo3_base : paco.
 Hint Constructors gpaco3 : paco.
 Hint Resolve wrespect3_uclo : paco.
+Hint Resolve prespect3_uclo : paco.

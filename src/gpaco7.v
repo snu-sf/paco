@@ -664,6 +664,17 @@ Structure wrespectful7 (clo: rel -> rel) : Prop :=
     }.
 Hint Constructors wrespectful7.
 
+Structure prespectful7 (clo: rel -> rel) : Prop :=
+  prespect7_intro {
+      prespect7_mon: monotone7 clo;
+      prespect7_respect :
+        forall l r
+               (LE: l <7= r)
+               (GF: l <7= gf r),
+        clo l <7= paco7 gf (r \7/ clo r);
+    }.
+Hint Constructors prespectful7.
+
 Definition gf'7 := id /8\ gf.
 
 Definition compatible'7 := compatible7 gf'7.
@@ -682,6 +693,36 @@ Proof.
     + eapply wrespect7_respect0; [|apply H|apply IN].
       intros. eapply rclo7_mon; intros; [apply LE, PR|apply PR0].
     + intros. apply rclo7_rclo, PR.
+Qed.
+
+Lemma prespect7_compatible'
+      clo (RES: prespectful7 clo):
+  compatible'7 (fun r => upaco7 gf (r \7/ clo r)).
+Proof.
+  econstructor.
+  { red; intros. eapply upaco7_mon. apply IN.
+    intros. destruct PR.
+    - left. apply LE, H.
+    - right. eapply RES. apply H. intros. apply LE, PR. }
+
+  intros r.
+  assert (LEM: (gf'7 r \7/ clo (gf'7 r)) <7= (r \7/ clo r)).
+  { intros. destruct PR.
+    - left. apply H.
+    - right. eapply RES. apply H. intros. apply PR.
+  }
+
+  intros. destruct PR.
+  - split.
+    + left. eapply paco7_mon. apply H. apply LEM.
+    + apply paco7_unfold; [apply gf_mon|].
+      eapply paco7_mon. apply H. apply LEM.
+  - split.
+    + right. apply LEM. apply H.
+    + destruct H.
+      * eapply gf_mon. apply H. intros. right. left. apply PR.
+      * apply paco7_unfold; [apply gf_mon|].
+        eapply RES, H; intros; apply PR.
 Qed.
 
 Lemma compat7_compatible'
@@ -734,11 +775,26 @@ Proof.
   eapply rclo7_clo_base, PR.
 Qed.
 
+Lemma prespect7_companion
+      clo (RES: prespectful7 clo):
+  clo <8= cpn7 gf.
+Proof.
+  intros. eapply compatible'7_companion. apply prespect7_compatible'. apply RES.
+  right. right. apply PR.
+Qed.
+
 Lemma wrespect7_uclo
       clo (RES: wrespectful7 clo):
   clo <8= gupaco7 gf (cpn7 gf).
 Proof.
   intros. eapply gpaco7_clo, wrespect7_companion, PR. apply RES.
+Qed.
+
+Lemma prespect7_uclo
+      clo (RES: prespectful7 clo):
+  clo <8= gupaco7 gf (cpn7 gf).
+Proof.
+  intros. eapply gpaco7_clo, prespect7_companion, PR. apply RES.
 Qed.
 
 End Respectful.
@@ -753,3 +809,4 @@ Hint Resolve gpaco7_final : paco.
 Hint Resolve rclo7_base : paco.
 Hint Constructors gpaco7 : paco.
 Hint Resolve wrespect7_uclo : paco.
+Hint Resolve prespect7_uclo : paco.
