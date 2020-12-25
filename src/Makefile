@@ -1,5 +1,6 @@
 COQMODULE    := Paco
-COQTHEORIES  := *.v
+COQTHEORIES  := $(wildcard *.v)
+COQTHEORIES  := $(filter-out example_upto.v, $(COQTHEORIES))
 
 .PHONY: all theories clean doc
 
