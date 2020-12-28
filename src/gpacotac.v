@@ -285,6 +285,56 @@ Tactic Notation "gcofix" ident(CIH) "with" ident(r) :=
   repeat red;
   generalize _paco_mark_cons; intros;
   match goal with
+  | [|- context[@gpaco0 ?gf]]  =>
+    paco_revert_hyp _paco_mark;
+    pcofix CIH using (@gpaco0_cofix gf) with r; [eauto with paco|]
+  | [|- context[@gpaco1 _ ?gf]]  =>
+    paco_revert_hyp _paco_mark;
+    pcofix CIH using (@gpaco1_cofix _ gf) with r; [eauto with paco|]
+  | [|- context[@gpaco2 _ _ ?gf]]  =>
+    paco_revert_hyp _paco_mark;
+    pcofix CIH using (@gpaco2_cofix _ _ gf) with r; [eauto with paco|]
+  | [|- context[@gpaco3 _ _ _ ?gf]]  =>
+    paco_revert_hyp _paco_mark;
+    pcofix CIH using (@gpaco3_cofix _ _ _ gf) with r; [eauto with paco|]
+  | [|- context[@gpaco4 _ _ _ _ ?gf]]  =>
+    paco_revert_hyp _paco_mark;
+    pcofix CIH using (@gpaco4_cofix _ _ _ _ gf) with r; [eauto with paco|]
+  | [|- context[@gpaco5 _ _ _ _ _ ?gf]]  =>
+    paco_revert_hyp _paco_mark;
+    pcofix CIH using (@gpaco5_cofix _ _ _ _ _ gf) with r; [eauto with paco|]
+  | [|- context[@gpaco6 _ _ _ _ _ _ ?gf]]  =>
+    paco_revert_hyp _paco_mark;
+    pcofix CIH using (@gpaco6_cofix _ _ _ _ _ _ gf) with r; [eauto with paco|]
+  | [|- context[@gpaco7 _ _ _ _ _ _ _ ?gf]]  =>
+    paco_revert_hyp _paco_mark;
+    pcofix CIH using (@gpaco7_cofix _ _ _ _ _ _ _ gf) with r; [eauto with paco|]
+  | [|- context[@gpaco8 _ _ _ _ _ _ _ _ ?gf]]  =>
+    paco_revert_hyp _paco_mark;
+    pcofix CIH using (@gpaco8_cofix _ _ _ _ _ _ _ _ gf) with r; [eauto with paco|]
+  | [|- context[@gpaco9 _ _ _ _ _ _ _ _ _ ?gf]]  =>
+    paco_revert_hyp _paco_mark;
+    pcofix CIH using (@gpaco9_cofix _ _ _ _ _ _ _ _ _ gf) with r; [eauto with paco|]
+  | [|- context[@gpaco10 _ _ _ _ _ _ _ _ _ _ ?gf]]  =>
+    paco_revert_hyp _paco_mark;
+    pcofix CIH using (@gpaco10_cofix _ _ _ _ _ _ _ _ _ _ gf) with r; [eauto with paco|]
+  | [|- context[@gpaco11 _ _ _ _ _ _ _ _ _ _ _ ?gf]]  =>
+    paco_revert_hyp _paco_mark;
+    pcofix CIH using (@gpaco11_cofix _ _ _ _ _ _ _ _ _ _ _ gf) with r; [eauto with paco|]
+  | [|- context[@gpaco12 _ _ _ _ _ _ _ _ _ _ _ _ ?gf]]  =>
+    paco_revert_hyp _paco_mark;
+    pcofix CIH using (@gpaco12_cofix _ _ _ _ _ _ _ _ _ _ _ _ gf) with r; [eauto with paco|]
+  | [|- context[@gpaco13 _ _ _ _ _ _ _ _ _ _ _ _ _ ?gf]]  =>
+    paco_revert_hyp _paco_mark;
+    pcofix CIH using (@gpaco13_cofix _ _ _ _ _ _ _ _ _ _ _ _ _ gf) with r; [eauto with paco|]
+  | [|- context[@gpaco14 _ _ _ _ _ _ _ _ _ _ _ _ _ _ ?gf]]  =>
+    paco_revert_hyp _paco_mark;
+    pcofix CIH using (@gpaco14_cofix _ _ _ _ _ _ _ _ _ _ _ _ _ _ gf) with r; [eauto with paco|]
+  end.
+Tactic Notation "gcofix_old" ident(CIH) "with" ident(r) :=
+  repeat red;
+  generalize _paco_mark_cons; intros;
+  match goal with
   | [|- context[gpaco0]]  =>
     paco_revert_hyp _paco_mark;
     pcofix CIH using @gpaco0_cofix with r; [eauto with paco|]
@@ -331,5 +381,5 @@ Tactic Notation "gcofix" ident(CIH) "with" ident(r) :=
     paco_revert_hyp _paco_mark;
     pcofix CIH using @gpaco14_cofix with r; [eauto with paco|]
   end.
-Tactic Notation "gcofix" ident(CIH) := gcofix CIH with r.
+Tactic Notation "gcofix" ident(CIH) := first [gcofix CIH with r | gcofix_old CIH with r].
 

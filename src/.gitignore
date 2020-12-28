@@ -1,2 +1,5 @@
 _CoqProject
 Makefile.coq
+.Makefile.coq.d
+*.vok
+*.vos

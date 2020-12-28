@@ -153,10 +153,20 @@ print ("  repeat red;")
 print ("  generalize _paco_mark_cons; intros;")
 print ("  match goal with")
 for n in range(relsize+1):
+    print ("  | [|- context[@gpaco"+str(n)+n*" _"+" ?gf]]  =>")
+    print ("    paco_revert_hyp _paco_mark;")
+    print ("    pcofix CIH using (@gpaco"+str(n)+"_cofix"+n*" _"+" gf) with r; [eauto with paco|]")
+print ("  end.")
+print ('Tactic Notation "gcofix_old" ident(CIH) "with" ident(r) :=')
+print ("  repeat red;")
+print ("  generalize _paco_mark_cons; intros;")
+print ("  match goal with")
+for n in range(relsize+1):
     print ("  | [|- context[gpaco"+str(n)+"]]  =>")
     print ("    paco_revert_hyp _paco_mark;")
     print ("    pcofix CIH using @gpaco"+str(n)+"_cofix with r; [eauto with paco|]")
 print ("  end.")
-print ('Tactic Notation "gcofix" ident(CIH) := gcofix CIH with r.')
+
+print ('Tactic Notation "gcofix" ident(CIH) := first [gcofix CIH with r | gcofix_old CIH with r].')
 print ()
 
