@@ -45,6 +45,8 @@ Definition match_concat concat (s0 s1: stream): stream :=
 
 CoFixpoint concat (s0 s1: stream): stream := match_concat concat s0 s1.
 
+Declare Scope stream_scope.
+
 Notation "x ++ y" := (concat x y) : stream_scope.
 Notation "[ ]" := snil (format "[ ]") : stream_scope.
 Notation "[ x ]" := (scons x snil) : stream_scope.
@@ -114,7 +116,7 @@ Inductive prefixC (R : stream -> stream -> Prop): stream -> stream -> Prop :=
   :
     prefixC R (concat s0 s1) (concat t0 t1)
 .
-Hint Constructors prefixC.
+Hint Constructors prefixC: core.
 
 Lemma prefixC_spec
       simC
