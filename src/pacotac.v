@@ -81,16 +81,6 @@ Ltac pclearbot :=
              | [H: context [bot2] |- _] => H
              | [H: context [bot3] |- _] => H
              | [H: context [bot4] |- _] => H
-             | [H: context [bot5] |- _] => H
-             | [H: context [bot6] |- _] => H
-             | [H: context [bot7] |- _] => H
-             | [H: context [bot8] |- _] => H
-             | [H: context [bot9] |- _] => H
-             | [H: context [bot10] |- _] => H
-             | [H: context [bot11] |- _] => H
-             | [H: context [bot12] |- _] => H
-             | [H: context [bot13] |- _] => H
-             | [H: context [bot14] |- _] => H
              end in
     let NH := fresh H in
     revert_until H;
@@ -137,16 +127,6 @@ Tactic Notation "pfold_reverse_" :=
   | [|- _ (upaco2 ?gf _) _ _] => eapply (paco2_unfold (gf := gf))
   | [|- _ (upaco3 ?gf _) _ _ _] => eapply (paco3_unfold (gf := gf))
   | [|- _ (upaco4 ?gf _) _ _ _ _] => eapply (paco4_unfold (gf := gf))
-  | [|- _ (upaco5 ?gf _) _ _ _ _ _] => eapply (paco5_unfold (gf := gf))
-  | [|- _ (upaco6 ?gf _) _ _ _ _ _ _] => eapply (paco6_unfold (gf := gf))
-  | [|- _ (upaco7 ?gf _) _ _ _ _ _ _ _] => eapply (paco7_unfold (gf := gf))
-  | [|- _ (upaco8 ?gf _) _ _ _ _ _ _ _ _] => eapply (paco8_unfold (gf := gf))
-  | [|- _ (upaco9 ?gf _) _ _ _ _ _ _ _ _ _] => eapply (paco9_unfold (gf := gf))
-  | [|- _ (upaco10 ?gf _) _ _ _ _ _ _ _ _ _ _] => eapply (paco10_unfold (gf := gf))
-  | [|- _ (upaco11 ?gf _) _ _ _ _ _ _ _ _ _ _ _] => eapply (paco11_unfold (gf := gf))
-  | [|- _ (upaco12 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco12_unfold (gf := gf))
-  | [|- _ (upaco13 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco13_unfold (gf := gf))
-  | [|- _ (upaco14 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ _] => eapply (paco14_unfold (gf := gf))
   end;
   eauto with paco.
 Ltac pfold_reverse := under_forall ltac:(pfold_reverse_).
@@ -163,16 +143,6 @@ Ltac punfold_reverse H :=
   | _ (upaco2 ?gf _) _ _ => eapply (paco2_fold gf) in H
   | _ (upaco3 ?gf _) _ _ _ => eapply (paco3_fold gf) in H
   | _ (upaco4 ?gf _) _ _ _ _ => eapply (paco4_fold gf) in H
-  | _ (upaco5 ?gf _) _ _ _ _ _ => eapply (paco5_fold gf) in H
-  | _ (upaco6 ?gf _) _ _ _ _ _ _ => eapply (paco6_fold gf) in H
-  | _ (upaco7 ?gf _) _ _ _ _ _ _ _ => eapply (paco7_fold gf) in H
-  | _ (upaco8 ?gf _) _ _ _ _ _ _ _ _ => eapply (paco8_fold gf) in H
-  | _ (upaco9 ?gf _) _ _ _ _ _ _ _ _ _ => eapply (paco9_fold gf) in H
-  | _ (upaco10 ?gf _) _ _ _ _ _ _ _ _ _ _ => eapply (paco10_fold gf) in H
-  | _ (upaco11 ?gf _) _ _ _ _ _ _ _ _ _ _ _ => eapply (paco11_fold gf) in H
-  | _ (upaco12 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco12_fold gf) in H
-  | _ (upaco13 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco13_fold gf) in H
-  | _ (upaco14 ?gf _) _ _ _ _ _ _ _ _ _ _ _ _ _ _ => eapply (paco14_fold gf) in H
   end;
   eauto with paco.
 

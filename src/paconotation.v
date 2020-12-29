@@ -26,46 +26,6 @@ Definition rel5 T0 T1 T2 T3 T4 :=
   forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3), Prop.
 Arguments rel5 : clear implicits.
 
-Definition rel6 T0 T1 T2 T3 T4 T5 :=
-  forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4), Prop.
-Arguments rel6 : clear implicits.
-
-Definition rel7 T0 T1 T2 T3 T4 T5 T6 :=
-  forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5), Prop.
-Arguments rel7 : clear implicits.
-
-Definition rel8 T0 T1 T2 T3 T4 T5 T6 T7 :=
-  forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6), Prop.
-Arguments rel8 : clear implicits.
-
-Definition rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 :=
-  forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7), Prop.
-Arguments rel9 : clear implicits.
-
-Definition rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 :=
-  forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: T9 x0 x1 x2 x3 x4 x5 x6 x7 x8), Prop.
-Arguments rel10 : clear implicits.
-
-Definition rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 :=
-  forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9), Prop.
-Arguments rel11 : clear implicits.
-
-Definition rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 :=
-  forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (x11: T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10), Prop.
-Arguments rel12 : clear implicits.
-
-Definition rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 :=
-  forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (x11: T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) (x12: T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11), Prop.
-Arguments rel13 : clear implicits.
-
-Definition rel14 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 :=
-  forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (x11: T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) (x12: T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) (x13: T13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12), Prop.
-Arguments rel14 : clear implicits.
-
-Definition rel15 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14 :=
-  forall (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (x11: T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) (x12: T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) (x13: T13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12) (x14: T14 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13), Prop.
-Arguments rel15 : clear implicits.
-
 (** ** Bottom *)
 
 Definition bot0 := False.
@@ -79,26 +39,6 @@ Definition bot3 { T0 T1 T2} (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) := False.
 Definition bot4 { T0 T1 T2 T3} (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) := False.
 
 Definition bot5 { T0 T1 T2 T3 T4} (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) := False.
-
-Definition bot6 { T0 T1 T2 T3 T4 T5} (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) := False.
-
-Definition bot7 { T0 T1 T2 T3 T4 T5 T6} (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) := False.
-
-Definition bot8 { T0 T1 T2 T3 T4 T5 T6 T7} (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) := False.
-
-Definition bot9 { T0 T1 T2 T3 T4 T5 T6 T7 T8} (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7) := False.
-
-Definition bot10 { T0 T1 T2 T3 T4 T5 T6 T7 T8 T9} (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) := False.
-
-Definition bot11 { T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10} (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) := False.
-
-Definition bot12 { T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11} (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (x11: T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) := False.
-
-Definition bot13 { T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12} (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (x11: T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) (x12: T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) := False.
-
-Definition bot14 { T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13} (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (x11: T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) (x12: T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) (x13: T13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12) := False.
-
-Definition bot15 { T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 T14} (x0: T0) (x1: T1 x0) (x2: T2 x0 x1) (x3: T3 x0 x1 x2) (x4: T4 x0 x1 x2 x3) (x5: T5 x0 x1 x2 x3 x4) (x6: T6 x0 x1 x2 x3 x4 x5) (x7: T7 x0 x1 x2 x3 x4 x5 x6) (x8: T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (x11: T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) (x12: T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) (x13: T13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12) (x14: T14 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13) := False.
 
 (** ** Less than or equal *)
 
@@ -124,46 +64,6 @@ Notation "p <4= q" :=
 
 Notation "p <5= q" :=
   (forall x0 x1 x2 x3 x4 (PR: p x0 x1 x2 x3 x4 : Prop), q x0 x1 x2 x3 x4 : Prop)
-  (at level 50, no associativity).
-
-Notation "p <6= q" :=
-  (forall x0 x1 x2 x3 x4 x5 (PR: p x0 x1 x2 x3 x4 x5 : Prop), q x0 x1 x2 x3 x4 x5 : Prop)
-  (at level 50, no associativity).
-
-Notation "p <7= q" :=
-  (forall x0 x1 x2 x3 x4 x5 x6 (PR: p x0 x1 x2 x3 x4 x5 x6 : Prop), q x0 x1 x2 x3 x4 x5 x6 : Prop)
-  (at level 50, no associativity).
-
-Notation "p <8= q" :=
-  (forall x0 x1 x2 x3 x4 x5 x6 x7 (PR: p x0 x1 x2 x3 x4 x5 x6 x7 : Prop), q x0 x1 x2 x3 x4 x5 x6 x7 : Prop)
-  (at level 50, no associativity).
-
-Notation "p <9= q" :=
-  (forall x0 x1 x2 x3 x4 x5 x6 x7 x8 (PR: p x0 x1 x2 x3 x4 x5 x6 x7 x8 : Prop), q x0 x1 x2 x3 x4 x5 x6 x7 x8 : Prop)
-  (at level 50, no associativity).
-
-Notation "p <10= q" :=
-  (forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 (PR: p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 : Prop), q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 : Prop)
-  (at level 50, no associativity).
-
-Notation "p <11= q" :=
-  (forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 (PR: p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 : Prop), q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 : Prop)
-  (at level 50, no associativity).
-
-Notation "p <12= q" :=
-  (forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 (PR: p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 : Prop), q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 : Prop)
-  (at level 50, no associativity).
-
-Notation "p <13= q" :=
-  (forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 (PR: p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 : Prop), q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 : Prop)
-  (at level 50, no associativity).
-
-Notation "p <14= q" :=
-  (forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 (PR: p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 : Prop), q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 : Prop)
-  (at level 50, no associativity).
-
-Notation "p <15= q" :=
-  (forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 (PR: p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 : Prop), q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 : Prop)
   (at level 50, no associativity).
 
 (** ** Union *)
@@ -192,46 +92,6 @@ Notation "p \5/ q" :=
   (fun x0 x1 x2 x3 x4 => p x0 x1 x2 x3 x4 \/ q x0 x1 x2 x3 x4)
   (at level 50, no associativity).
 
-Notation "p \6/ q" :=
-  (fun x0 x1 x2 x3 x4 x5 => p x0 x1 x2 x3 x4 x5 \/ q x0 x1 x2 x3 x4 x5)
-  (at level 50, no associativity).
-
-Notation "p \7/ q" :=
-  (fun x0 x1 x2 x3 x4 x5 x6 => p x0 x1 x2 x3 x4 x5 x6 \/ q x0 x1 x2 x3 x4 x5 x6)
-  (at level 50, no associativity).
-
-Notation "p \8/ q" :=
-  (fun x0 x1 x2 x3 x4 x5 x6 x7 => p x0 x1 x2 x3 x4 x5 x6 x7 \/ q x0 x1 x2 x3 x4 x5 x6 x7)
-  (at level 50, no associativity).
-
-Notation "p \9/ q" :=
-  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 \/ q x0 x1 x2 x3 x4 x5 x6 x7 x8)
-  (at level 50, no associativity).
-
-Notation "p \10/ q" :=
-  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 \/ q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
-  (at level 50, no associativity).
-
-Notation "p \11/ q" :=
-  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 \/ q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
-  (at level 50, no associativity).
-
-Notation "p \12/ q" :=
-  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 \/ q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
-  (at level 50, no associativity).
-
-Notation "p \13/ q" :=
-  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 \/ q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12)
-  (at level 50, no associativity).
-
-Notation "p \14/ q" :=
-  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 \/ q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13)
-  (at level 50, no associativity).
-
-Notation "p \15/ q" :=
-  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 \/ q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14)
-  (at level 50, no associativity).
-
 (** ** Intersection *)
 
 Notation "p /0\ q" :=
@@ -256,45 +116,5 @@ Notation "p /4\ q" :=
 
 Notation "p /5\ q" :=
   (fun x0 x1 x2 x3 x4 => p x0 x1 x2 x3 x4 /\ q x0 x1 x2 x3 x4)
-  (at level 50, no associativity).
-
-Notation "p /6\ q" :=
-  (fun x0 x1 x2 x3 x4 x5 => p x0 x1 x2 x3 x4 x5 /\ q x0 x1 x2 x3 x4 x5)
-  (at level 50, no associativity).
-
-Notation "p /7\ q" :=
-  (fun x0 x1 x2 x3 x4 x5 x6 => p x0 x1 x2 x3 x4 x5 x6 /\ q x0 x1 x2 x3 x4 x5 x6)
-  (at level 50, no associativity).
-
-Notation "p /8\ q" :=
-  (fun x0 x1 x2 x3 x4 x5 x6 x7 => p x0 x1 x2 x3 x4 x5 x6 x7 /\ q x0 x1 x2 x3 x4 x5 x6 x7)
-  (at level 50, no associativity).
-
-Notation "p /9\ q" :=
-  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 /\ q x0 x1 x2 x3 x4 x5 x6 x7 x8)
-  (at level 50, no associativity).
-
-Notation "p /10\ q" :=
-  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 /\ q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
-  (at level 50, no associativity).
-
-Notation "p /11\ q" :=
-  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 /\ q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
-  (at level 50, no associativity).
-
-Notation "p /12\ q" :=
-  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 /\ q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
-  (at level 50, no associativity).
-
-Notation "p /13\ q" :=
-  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 /\ q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12)
-  (at level 50, no associativity).
-
-Notation "p /14\ q" :=
-  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 /\ q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13)
-  (at level 50, no associativity).
-
-Notation "p /15\ q" :=
-  (fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 => p x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 /\ q x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14)
   (at level 50, no associativity).
 

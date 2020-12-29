@@ -16,6 +16,7 @@ sed "s/\\\\/\\\\\\\\/g" < $outfile > ${outfile}~; mv ${outfile}~ $outfile
 sed "s/ (proj3T0 x) (proj3T1 x) (proj3T2 x)/\"+itrstr(\" (proj\"+str(n)+\"T\", n, \" x)\")+\"/g" < $outfile > ${outfile}~; mv ${outfile}~ $outfile
 sed "s/fun x0 x1 x2 =>/\"+ifpstr(n, \"fun x0 x1 x2 =>\")+\"/g" < $outfile > ${outfile}~; mv ${outfile}~ $outfile
 sed "s/ x0 x1 x2/\"+itrstr(\" x\", n)+\"/g" < $outfile > ${outfile}~; mv ${outfile}~ $outfile
+sed "s/ (x0 x) (x1 x) (x2 x)/\"+itrstr(\" (x\", n, \" x)\")+\"/g" < $outfile > ${outfile}~; mv ${outfile}~ $outfile
 sed "s/ T0 T1 T2/\"+itrstr(\" T\", n)+\"/g" < $outfile > ${outfile}~; mv ${outfile}~ $outfile
 sed "s/3/\"+str(n)+\"/g" < $outfile > ${outfile}~; mv ${outfile}~ $outfile
 sed "s/4/\"+str(n+1)+\"/g" < $outfile > ${outfile}~; mv ${outfile}~ $outfile

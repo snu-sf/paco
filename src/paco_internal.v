@@ -72,12 +72,21 @@ Variable T0 : Type.
 Variable gf : rel1 T0 -> rel1 T0.
 Arguments gf : clear implicits.
 
-Theorem paco_acc: forall
+Theorem paco_acc_core: forall
   l r (OBG: forall rr (INC: r <1= rr) (CIH: l <1= rr), l <1= paco gf rr),
   l <1= paco gf r.
 Proof.
   intros; assert (SIM: paco gf (r \1/ l) x0) by eauto.
   clear PR; repeat (try left; do 2 paco_revert; paco_cofix_auto).
+Qed.
+
+Theorem paco_acc: forall r (X: Type) f
+  (OBG: forall rr (INC: r <1= rr) (CIH: forall (x: X), rr (f x)),
+        forall (x: X), paco gf rr (f x)),
+  forall (x: X), paco gf r (f x).
+Proof.
+  intros. eapply paco_acc_core with (l := fun y => exists x, y = f x); [|eauto].
+  intros. destruct PR. subst. eauto.
 Qed.
 
 Theorem paco_mon: monotone (paco gf).
@@ -98,11 +107,6 @@ Proof. intros; do 2 econstructor; [ |eauto]; eauto. Qed.
 Theorem paco_unfold: forall (MON: monotone gf) r,
   paco gf r <1= gf (upaco gf r).
 Proof. unfold monotone; intros; apply paco_observe in PR; destruct PR as []; eauto. Qed.
-
-Theorem _paco_acc: forall
-  l r (OBG: forall rr (INC: r <1== rr) (CIH: l <1== rr), l <1== paco gf rr),
-  l <1== paco gf r.
-Proof. unfold le1. eapply paco_acc. Qed.
 
 Theorem _paco_mon: _monotone (paco gf).
 Proof. apply monotone_eq. eapply paco_mon. Qed.
@@ -128,7 +132,7 @@ Hint Unfold monotone : core.
 Hint Resolve paco_fold : core.
 
 Arguments paco_mon_gen        [ T0 ] gf gf' r r' x PR LEgf LEr.
-Arguments paco_acc            [ T0 ] gf l r OBG x0 PR.
+Arguments paco_acc            [ T0 ] gf r X f OBG x.
 Arguments paco_mon            [ T0 ] gf x0 r r' IN LE.
 Arguments paco_mult_strong    [ T0 ] gf r x0 PR.
 Arguments paco_mult           [ T0 ] gf r x0 PR.

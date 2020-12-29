@@ -177,19 +177,6 @@ Proof.
   red; intros. eapply curry_map4, _paco_mon; apply uncurry_map4; assumption.
 Qed.
 
-Theorem _paco4_acc: forall
-  l r (OBG: forall rr (INC: r <4== rr) (CIH: l <4== rr), l <4== paco4 gf rr),
-  l <4== paco4 gf r.
-Proof.
-  intros. apply uncurry_adjoint1_4.
-  eapply _paco_acc. intros.
-  apply uncurry_adjoint1_4 in INC. apply uncurry_adjoint1_4 in CIH.
-  apply uncurry_adjoint2_4.
-  eapply le4_trans. eapply (OBG _ INC CIH).
-  apply curry_map4.
-  apply _paco_mon; try apply le1_refl; apply curry_bij1_4.
-Qed.
-
 Theorem _paco4_mult_strong: forall r,
   paco4 gf (upaco4 gf r) <4== paco4 gf r.
 Proof.
@@ -212,11 +199,17 @@ Proof.
   eapply _paco_unfold; apply monotone4_map; assumption.
 Qed.
 
-Theorem paco4_acc: forall
-  l r (OBG: forall rr (INC: r <4= rr) (CIH: l <4= rr), l <4= paco4 gf rr),
-  l <4= paco4 gf r.
+Theorem paco4_acc r
+      (X: Type) x0 x1 x2 x3
+      (OBG: forall rr (INC: r <4= rr) (CIH: forall (x: X), rr (x0 x) (x1 x) (x2 x) (x3 x)),
+            forall (x: X), paco4 gf rr (x0 x) (x1 x) (x2 x) (x3 x)):
+  forall (x: X), paco4 gf r (x0 x) (x1 x) (x2 x) (x3 x).
 Proof.
-  apply _paco4_acc.
+  eapply paco_acc.
+  intros. apply uncurry_adjoint1_4 in INC.
+  eapply paco_mon.
+  - apply (OBG (curry4 rr) INC CIH x).
+  - intros. destruct x4. assumption.
 Qed.
 
 Theorem paco4_mon: monotone4 (paco4 gf).
@@ -278,4 +271,3 @@ Global Opaque paco4.
 Hint Unfold upaco4 : core.
 Hint Resolve paco4_fold : core.
 Hint Unfold monotone4 : core.
-

@@ -175,19 +175,6 @@ Proof.
   red; intros. eapply curry_map3, _paco_mon; apply uncurry_map3; assumption.
 Qed.
 
-Theorem _paco3_acc: forall
-  l r (OBG: forall rr (INC: r <3== rr) (CIH: l <3== rr), l <3== paco3 gf rr),
-  l <3== paco3 gf r.
-Proof.
-  intros. apply uncurry_adjoint1_3.
-  eapply _paco_acc. intros.
-  apply uncurry_adjoint1_3 in INC. apply uncurry_adjoint1_3 in CIH.
-  apply uncurry_adjoint2_3.
-  eapply le3_trans. eapply (OBG _ INC CIH).
-  apply curry_map3.
-  apply _paco_mon; try apply le1_refl; apply curry_bij1_3.
-Qed.
-
 Theorem _paco3_mult_strong: forall r,
   paco3 gf (upaco3 gf r) <3== paco3 gf r.
 Proof.
@@ -210,11 +197,17 @@ Proof.
   eapply _paco_unfold; apply monotone3_map; assumption.
 Qed.
 
-Theorem paco3_acc: forall
-  l r (OBG: forall rr (INC: r <3= rr) (CIH: l <3= rr), l <3= paco3 gf rr),
-  l <3= paco3 gf r.
+Theorem paco3_acc r
+      (X: Type) x0 x1 x2
+      (OBG: forall rr (INC: r <3= rr) (CIH: forall (x: X), rr (x0 x) (x1 x) (x2 x)),
+            forall (x: X), paco3 gf rr (x0 x) (x1 x) (x2 x)):
+  forall (x: X), paco3 gf r (x0 x) (x1 x) (x2 x).
 Proof.
-  apply _paco3_acc.
+  eapply paco_acc.
+  intros. apply uncurry_adjoint1_3 in INC.
+  eapply paco_mon.
+  - apply (OBG (curry3 rr) INC CIH x).
+  - intros. destruct x3. assumption.
 Qed.
 
 Theorem paco3_mon: monotone3 (paco3 gf).
@@ -276,4 +269,3 @@ Global Opaque paco3.
 Hint Unfold upaco3 : core.
 Hint Resolve paco3_fold : core.
 Hint Unfold monotone3 : core.
-

@@ -197,7 +197,7 @@ Proof.
   left. eapply paco1_mon. apply H0.
   intros. left. apply PR0.
 Qed.
-  
+
 Lemma gpaco1_cofix clo r rg 
       l (OBG: forall rr (INC: rg <1= rr) (CIH: l <1= rr), l <1= gpaco1 clo r rr):
   l <1= gpaco1 clo r rg.
@@ -215,15 +215,15 @@ Proof.
   eapply gf_mon. apply H0. intros.
   apply rclo1_rclo. eapply rclo1_mon. apply PR.
   intros. destruct PR0.
-  - apply rclo1_base. right. apply CIH. apply H.
+  - apply rclo1_base. right. apply CIH0. apply H.
   - destruct H; [destruct H|].
-    + apply rclo1_base. right. apply CIH0. left. apply H.
+    + apply rclo1_base. right. apply CIH. left. apply H.
     + apply IN in H. destruct H.
       eapply rclo1_mon. apply IN0.
       intros. destruct PR0.
-      * right. apply CIH. apply H.      
-      * right. apply CIH0. right. apply H.
-    + apply rclo1_base. right. apply CIH0. right. apply H.
+      * right. apply CIH0. apply H.
+      * right. apply CIH. right. apply H.
+    + apply rclo1_base. right. apply CIH. right. apply H.
 Qed.
 
 Lemma gpaco1_gupaco clo r rg:
@@ -513,29 +513,29 @@ Proof.
   left. revert x0 H.
   pcofix CIH; intros.
   apply rclo1_wcompat in H0; [|apply gf_mon|apply CMP].
-  pstep. eapply gf_mon. apply H0. intros.
+  pstep. eapply gf_mon; [apply H0|]. clear x0 H0. intros.
   apply gpaco1_unfold in PR; [|apply gf_mon].
   apply rclo1_compose in PR.
   apply rclo1_dist in PR; [|apply CMP|apply DIST].
   destruct PR.
-  - right. apply CIH.
+  - right. apply CIH0.
     eapply rclo1_mon. apply H. intros.
     eapply gf_mon. apply PR. intros.
     apply gpaco1_gupaco. apply gf_mon.
     apply gpaco1_gen_rclo. apply gf_mon.
     eapply gupaco1_mon. apply PR0. intros.
-    destruct PR1; apply H1.
+    destruct PR1; apply H0.
   - assert (REL: @rclo1 clo (rclo1 clo (gf (gupaco1 gf clo ((rg \1/ r) \1/ (rg \1/ r))) \1/ (rg \1/ r))) x0).
     { eapply rclo1_mon. apply H. intros. apply gpaco1_unfold in PR. apply PR. apply gf_mon. }
     apply rclo1_rclo in REL.
     apply rclo1_dist in REL; [|apply CMP|apply DIST].
     right. destruct REL; cycle 1.
-    + apply CIH0, H1.
-    + apply CIH.
-      eapply rclo1_mon. apply H1. intros.
+    + apply CIH, H0.
+    + apply CIH0.
+      eapply rclo1_mon. apply H0. intros.
       eapply gf_mon. apply PR. intros.
       eapply gupaco1_mon. apply PR0. intros.
-      destruct PR1; apply H2.
+      destruct PR1; apply H1.
 Qed.
 
 Lemma gpaco1_dist_reverse clo r rg:
@@ -548,9 +548,9 @@ Proof.
     _punfold H0; [|apply gf_mon]. pstep.
     eapply gf_mon. apply H0. intros.
     destruct PR.
-    + apply rclo1_base. right. apply CIH, H.
+    + apply rclo1_base. right. apply CIH0, H.
     + eapply rclo1_mon. apply H. intros.
-      right. apply CIH0. apply PR.
+      right. apply CIH. apply PR.
 Qed.
 
 End Distributivity.
@@ -656,7 +656,6 @@ Structure wrespectful1 (clo: rel -> rel) : Prop :=
                (GF: l <1= gf r),
         clo l <1= gf (rclo1 clo r);
     }.
-Hint Constructors wrespectful1.
 
 Structure prespectful1 (clo: rel -> rel) : Prop :=
   prespect1_intro {
@@ -667,7 +666,6 @@ Structure prespectful1 (clo: rel -> rel) : Prop :=
                (GF: l <1= gf r),
         clo l <1= paco1 gf (r \1/ clo r);
     }.
-Hint Constructors prespectful1.
 
 Definition gf'1 := id /2\ gf.
 
