@@ -661,7 +661,6 @@ Structure wrespectful6 (clo: rel -> rel) : Prop :=
                (GF: l <6= gf r),
         clo l <6= gf (rclo6 clo r);
     }.
-Hint Constructors wrespectful6.
 
 Structure prespectful6 (clo: rel -> rel) : Prop :=
   prespect6_intro {
@@ -672,7 +671,6 @@ Structure prespectful6 (clo: rel -> rel) : Prop :=
                (GF: l <6= gf r),
         clo l <6= paco6 gf (r \6/ clo r);
     }.
-Hint Constructors prespectful6.
 
 Definition gf'6 := id /7\ gf.
 

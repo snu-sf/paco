@@ -658,7 +658,6 @@ Structure wrespectful3 (clo: rel -> rel) : Prop :=
                (GF: l <3= gf r),
         clo l <3= gf (rclo3 clo r);
     }.
-Hint Constructors wrespectful3.
 
 Structure prespectful3 (clo: rel -> rel) : Prop :=
   prespect3_intro {
@@ -669,7 +668,6 @@ Structure prespectful3 (clo: rel -> rel) : Prop :=
                (GF: l <3= gf r),
         clo l <3= paco3 gf (r \3/ clo r);
     }.
-Hint Constructors prespectful3.
 
 Definition gf'3 := id /4\ gf.
 

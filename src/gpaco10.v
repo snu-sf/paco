@@ -665,7 +665,6 @@ Structure wrespectful10 (clo: rel -> rel) : Prop :=
                (GF: l <10= gf r),
         clo l <10= gf (rclo10 clo r);
     }.
-Hint Constructors wrespectful10.
 
 Structure prespectful10 (clo: rel -> rel) : Prop :=
   prespect10_intro {
@@ -676,7 +675,6 @@ Structure prespectful10 (clo: rel -> rel) : Prop :=
                (GF: l <10= gf r),
         clo l <10= paco10 gf (r \10/ clo r);
     }.
-Hint Constructors prespectful10.
 
 Definition gf'10 := id /11\ gf.
 

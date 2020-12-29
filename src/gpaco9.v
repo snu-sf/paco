@@ -664,7 +664,6 @@ Structure wrespectful9 (clo: rel -> rel) : Prop :=
                (GF: l <9= gf r),
         clo l <9= gf (rclo9 clo r);
     }.
-Hint Constructors wrespectful9.
 
 Structure prespectful9 (clo: rel -> rel) : Prop :=
   prespect9_intro {
@@ -675,7 +674,6 @@ Structure prespectful9 (clo: rel -> rel) : Prop :=
                (GF: l <9= gf r),
         clo l <9= paco9 gf (r \9/ clo r);
     }.
-Hint Constructors prespectful9.
 
 Definition gf'9 := id /10\ gf.
 

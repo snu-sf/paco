@@ -662,7 +662,6 @@ Structure wrespectful7 (clo: rel -> rel) : Prop :=
                (GF: l <7= gf r),
         clo l <7= gf (rclo7 clo r);
     }.
-Hint Constructors wrespectful7.
 
 Structure prespectful7 (clo: rel -> rel) : Prop :=
   prespect7_intro {
@@ -673,7 +672,6 @@ Structure prespectful7 (clo: rel -> rel) : Prop :=
                (GF: l <7= gf r),
         clo l <7= paco7 gf (r \7/ clo r);
     }.
-Hint Constructors prespectful7.
 
 Definition gf'7 := id /8\ gf.
 

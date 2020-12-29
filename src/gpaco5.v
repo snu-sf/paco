@@ -660,7 +660,6 @@ Structure wrespectful5 (clo: rel -> rel) : Prop :=
                (GF: l <5= gf r),
         clo l <5= gf (rclo5 clo r);
     }.
-Hint Constructors wrespectful5.
 
 Structure prespectful5 (clo: rel -> rel) : Prop :=
   prespect5_intro {
@@ -671,7 +670,6 @@ Structure prespectful5 (clo: rel -> rel) : Prop :=
                (GF: l <5= gf r),
         clo l <5= paco5 gf (r \5/ clo r);
     }.
-Hint Constructors prespectful5.
 
 Definition gf'5 := id /6\ gf.
 

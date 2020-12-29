@@ -663,7 +663,6 @@ Structure wrespectful8 (clo: rel -> rel) : Prop :=
                (GF: l <8= gf r),
         clo l <8= gf (rclo8 clo r);
     }.
-Hint Constructors wrespectful8.
 
 Structure prespectful8 (clo: rel -> rel) : Prop :=
   prespect8_intro {
@@ -674,7 +673,6 @@ Structure prespectful8 (clo: rel -> rel) : Prop :=
                (GF: l <8= gf r),
         clo l <8= paco8 gf (r \8/ clo r);
     }.
-Hint Constructors prespectful8.
 
 Definition gf'8 := id /9\ gf.
 

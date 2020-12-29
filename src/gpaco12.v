@@ -667,7 +667,6 @@ Structure wrespectful12 (clo: rel -> rel) : Prop :=
                (GF: l <12= gf r),
         clo l <12= gf (rclo12 clo r);
     }.
-Hint Constructors wrespectful12.
 
 Structure prespectful12 (clo: rel -> rel) : Prop :=
   prespect12_intro {
@@ -678,7 +677,6 @@ Structure prespectful12 (clo: rel -> rel) : Prop :=
                (GF: l <12= gf r),
         clo l <12= paco12 gf (r \12/ clo r);
     }.
-Hint Constructors prespectful12.
 
 Definition gf'12 := id /13\ gf.
 

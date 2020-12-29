@@ -669,7 +669,6 @@ Structure wrespectful14 (clo: rel -> rel) : Prop :=
                (GF: l <14= gf r),
         clo l <14= gf (rclo14 clo r);
     }.
-Hint Constructors wrespectful14.
 
 Structure prespectful14 (clo: rel -> rel) : Prop :=
   prespect14_intro {
@@ -680,7 +679,6 @@ Structure prespectful14 (clo: rel -> rel) : Prop :=
                (GF: l <14= gf r),
         clo l <14= paco14 gf (r \14/ clo r);
     }.
-Hint Constructors prespectful14.
 
 Definition gf'14 := id /15\ gf.
 

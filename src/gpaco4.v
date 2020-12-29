@@ -659,7 +659,6 @@ Structure wrespectful4 (clo: rel -> rel) : Prop :=
                (GF: l <4= gf r),
         clo l <4= gf (rclo4 clo r);
     }.
-Hint Constructors wrespectful4.
 
 Structure prespectful4 (clo: rel -> rel) : Prop :=
   prespect4_intro {
@@ -670,7 +669,6 @@ Structure prespectful4 (clo: rel -> rel) : Prop :=
                (GF: l <4= gf r),
         clo l <4= paco4 gf (r \4/ clo r);
     }.
-Hint Constructors prespectful4.
 
 Definition gf'4 := id /5\ gf.
 
