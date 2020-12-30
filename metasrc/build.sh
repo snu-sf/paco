@@ -2,7 +2,7 @@
 
 PACOSRCDIR=../src
 
-maxsize=4
+maxsize=8
 
 rm -f $PACOSRCDIR/paco*.v
 rm -f $PACOSRCDIR/gpaco*.v

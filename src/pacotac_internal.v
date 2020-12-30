@@ -134,6 +134,14 @@ Ltac paco_get_r INC r :=
   | forall _ _ _, ?pr _ _ _ -> r _ _ _ => pr
   | forall _ _ _ _, bot4 _ _ _ _ -> r _ _ _ _ => clear INC
   | forall _ _ _ _, ?pr _ _ _ _ -> r _ _ _ _ => pr
+  | forall _ _ _ _ _, bot5 _ _ _ _ _ -> r _ _ _ _ _ => clear INC
+  | forall _ _ _ _ _, ?pr _ _ _ _ _ -> r _ _ _ _ _ => pr
+  | forall _ _ _ _ _ _, bot6 _ _ _ _ _ _ -> r _ _ _ _ _ _ => clear INC
+  | forall _ _ _ _ _ _, ?pr _ _ _ _ _ _ -> r _ _ _ _ _ _ => pr
+  | forall _ _ _ _ _ _ _, bot7 _ _ _ _ _ _ _ -> r _ _ _ _ _ _ _ => clear INC
+  | forall _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ -> r _ _ _ _ _ _ _ => pr
+  | forall _ _ _ _ _ _ _ _, bot8 _ _ _ _ _ _ _ _ -> r _ _ _ _ _ _ _ _ => clear INC
+  | forall _ _ _ _ _ _ _ _, ?pr _ _ _ _ _ _ _ _ -> r _ _ _ _ _ _ _ _ => pr
 
   | _ => idtac
   end.
@@ -148,45 +156,75 @@ Ltac paco_inc self INC r0 r :=
   first [clear INC r0; try rename r into r0|
          try (let self := fresh self in rename INC into self)].
 
-Ltac pcofix_ self rv lem pack_goal unpack_goal revert_tmp prove_self :=
+Ltac pcofix_ self rv lem make_fun apply_args pack_goal unpack_goal revert_tmp prove_self :=
   hnf;
   lazymatch goal with
   | [ |- forall x : ?X, ?P ] =>
     (* 1. build_tactics *)
     let x := fresh x in intros x;
-    let pack_goal' := (revert x; apply paco_curry_sig; pack_goal) in
+    let make_fun' pty :=
+        (try (pattern x in pty;
+              lazymatch goal with [_ := ?f _ |- _] => clear pty; pose (pty := f) end);
+         make_fun pty) in
+    let apply_args' pty with_sig :=
+        (apply_args pty with_sig;
+         try (let tmp := fresh "ptmp" in rename pty into tmp;
+              first [pose (pty := sigT tmp); with_sig |pose (pty := tmp x)]; subst tmp)) in
+    let pack_goal' pty apply_args make_fun :=
+        (let pty' := fresh "pty" in let PTY' := fresh "PTY" in
+         revert x; apply paco_curry_sig;
+         pose (pty' := pty);
+         apply_args pty' idtac;
+         make_fun pty';
+         let type_of := type of pty' in set (PTY' := type_of) in pty';
+         let tmp := fresh "ptmp" in
+         pose (tmp := pty');
+         apply_args tmp fail;
+         match goal with [|- forall _:?ty, _] => change ty with tmp; subst tmp end;
+         pack_goal pty' apply_args make_fun) in
+    
     let unpack_goal' H := (unpack_goal H; destruct H as [x H]; cbn [projT1 projT2]) in
     let revert_tmp' := (revert x; revert_tmp) in
     let prove_self' tmp_self tm := (prove_self tmp_self (existT (fun x => _) x tm)) in
-    pcofix_ self rv lem pack_goal' unpack_goal' revert_tmp' prove_self'
+    pcofix_ self rv lem make_fun' apply_args' pack_goal' unpack_goal' revert_tmp' prove_self'
   | _ =>
     let tmp_self := fresh "_pacotmp_self_" in
     let tmp_hyp := fresh "_pacotmp_hyp_" in
     let tmp_type := fresh "_pacotmp_type_" in
+    
     (* 2. pack_goal *)
-    pose proof (tmp_hyp := tt); revert tmp_hyp; pack_goal;
+    let pty := fresh "pty" in let PTY := fresh "PTY" in
+    pose (pty := unit); make_fun pty;
+    let type_of := type of pty in set (PTY := type_of) in pty;
+    pose proof (tmp_hyp := tt); revert tmp_hyp;
+    pack_goal pty apply_args make_fun;
+    unfold pty in *; clear pty PTY;
+    
     (* 3. paco_acc *)
     eapply lem; [..|
     let r := fresh rv in let INC := fresh "_pacotmp_inc_" in intros r INC tmp_self;
-    let r0 := paco_get_r INC r in paco_inc self INC r0 r; 
+    let r0 := paco_get_r INC r in paco_inc self INC r0 r;
     (* 4. unpack_goal *)
     intros tmp_hyp; unpack_goal tmp_hyp; clear tmp_hyp; revert_tmp;
     (* 5. unpack_hyp *)
     let self := fresh self in
     evar (tmp_type : Prop);
-    let type_of_tmp_self := type of tmp_self in
-    assert(tmp_hyp: tmp_type -> type_of_tmp_self);
+    let type_of := type of tmp_self in
+    assert(tmp_hyp: tmp_type -> type_of);
     [ intros self tmp_hyp; unpack_goal tmp_hyp; revert_tmp; exact self |
       clear tmp_hyp; assert (self: tmp_type); subst tmp_type;
       [ intros; prove_self tmp_self tt | clear tmp_self]]]
   end.
 
-Tactic Notation "pcofix" ident(self) "using" constr(lem) "with" ident(rv) :=
-  let pack_goal := idtac in
+Tactic Notation "pcofix" ident(CIH) "using" constr(lem) "with" ident(rv) :=
+  let make_fun _ := idtac in
+  let apply_args _ _ := idtac in
+  let pack_goal _ _ _ := idtac in
   let unpack_goal _ := idtac in
   let revert_tmp := idtac in
   let prove_self tmp_self tm := exact (tmp_self tm) in
-  pcofix_ self rv lem pack_goal unpack_goal revert_tmp prove_self.
+  pcofix_ CIH rv lem
+          make_fun apply_args pack_goal unpack_goal revert_tmp prove_self.
 
 Tactic Notation "pcofix" ident(CIH) "using" constr(lem) :=
   pcofix CIH using lem with r.

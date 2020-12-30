@@ -81,6 +81,10 @@ Ltac pclearbot :=
              | [H: context [bot2] |- _] => H
              | [H: context [bot3] |- _] => H
              | [H: context [bot4] |- _] => H
+             | [H: context [bot5] |- _] => H
+             | [H: context [bot6] |- _] => H
+             | [H: context [bot7] |- _] => H
+             | [H: context [bot8] |- _] => H
              end in
     let NH := fresh H in
     revert_until H;
@@ -127,6 +131,10 @@ Tactic Notation "pfold_reverse_" :=
   | [|- _ (upaco2 ?gf _) _ _] => eapply (paco2_unfold (gf := gf))
   | [|- _ (upaco3 ?gf _) _ _ _] => eapply (paco3_unfold (gf := gf))
   | [|- _ (upaco4 ?gf _) _ _ _ _] => eapply (paco4_unfold (gf := gf))
+  | [|- _ (upaco5 ?gf _) _ _ _ _ _] => eapply (paco5_unfold (gf := gf))
+  | [|- _ (upaco6 ?gf _) _ _ _ _ _ _] => eapply (paco6_unfold (gf := gf))
+  | [|- _ (upaco7 ?gf _) _ _ _ _ _ _ _] => eapply (paco7_unfold (gf := gf))
+  | [|- _ (upaco8 ?gf _) _ _ _ _ _ _ _ _] => eapply (paco8_unfold (gf := gf))
   end;
   eauto with paco.
 Ltac pfold_reverse := under_forall ltac:(pfold_reverse_).
@@ -143,6 +151,10 @@ Ltac punfold_reverse H :=
   | _ (upaco2 ?gf _) _ _ => eapply (paco2_fold gf) in H
   | _ (upaco3 ?gf _) _ _ _ => eapply (paco3_fold gf) in H
   | _ (upaco4 ?gf _) _ _ _ _ => eapply (paco4_fold gf) in H
+  | _ (upaco5 ?gf _) _ _ _ _ _ => eapply (paco5_fold gf) in H
+  | _ (upaco6 ?gf _) _ _ _ _ _ _ => eapply (paco6_fold gf) in H
+  | _ (upaco7 ?gf _) _ _ _ _ _ _ _ => eapply (paco7_fold gf) in H
+  | _ (upaco8 ?gf _) _ _ _ _ _ _ _ _ => eapply (paco8_fold gf) in H
   end;
   eauto with paco.
 
