@@ -679,6 +679,17 @@ Structure prespectful13 (clo: rel -> rel) : Prop :=
         clo l <13= paco13 gf (r \13/ clo r);
     }.
 
+Structure grespectful13 (clo: rel -> rel) : Prop :=
+  grespect13_intro {
+      grespect13_mon: monotone13 clo;
+      grespect13_respect :
+        forall l r
+               (LE: l <13= r)
+               (GF: l <13= gf r),
+        clo l <13= rclo13 (cpn13 gf) (gf (rclo13 (clo \14/ gupaco13 gf (cpn13 gf)) r));
+    }.
+Hint Constructors grespectful13.
+
 Definition gf'13 := id /14\ gf.
 
 Definition compatible'13 := compatible13 gf'13.
@@ -727,6 +738,38 @@ Proof.
       * eapply gf_mon. apply H. intros. right. left. apply PR.
       * apply paco13_unfold; [apply gf_mon|].
         eapply RES, H; intros; apply PR.
+Qed.
+
+Lemma grespect13_compatible'
+      clo (RES: grespectful13 clo):
+  compatible'13 (rclo13 (clo \14/ cpn13 gf)).
+Proof.
+  apply wrespect13_compatible'.
+  econstructor.
+  { red; intros. destruct IN.
+    - left. eapply RES; [apply H|]. apply LE.
+    - right. eapply cpn13_mon; [apply H|]. apply LE. }
+  intros. destruct PR.
+  - eapply RES.(grespect13_respect) in H; [|apply LE|apply GF].
+    apply (@compat13_compat gf (rclo13 (cpn13 gf))) in H.
+    2: { apply rclo13_compat; [apply gf_mon|]. apply cpn13_compat. apply gf_mon. }
+    eapply gf_mon; [apply H|].
+    intros. apply rclo13_clo. right.
+    exists (rclo13 (cpn13 gf)).
+    { apply rclo13_compat; [apply gf_mon|]. apply cpn13_compat. apply gf_mon. }
+    eapply rclo13_mon; [eapply PR|].
+    intros. eapply rclo13_mon_gen; [eapply PR0|..].
+    + intros. destruct PR1.
+      * left. apply H0.
+      * right. apply cpn13_gupaco; [apply gf_mon|apply H0].
+    + intros. apply PR1.
+  - eapply gf_mon.
+    + apply (@compat13_compat gf (rclo13 (cpn13 gf))).
+      { apply rclo13_compat; [apply gf_mon|]. apply cpn13_compat. apply gf_mon. }
+      eapply rclo13_clo_base. eapply cpn13_mon; [apply H|apply GF].
+    + intros. eapply rclo13_mon_gen; [eapply PR|..].
+      * intros. right. apply PR0.
+      * intros. apply PR0.
 Qed.
 
 Lemma compat13_compatible'
@@ -787,6 +830,15 @@ Proof.
   right. right. apply PR.
 Qed.
 
+Lemma grespect13_companion
+      clo (RES: grespectful13 clo):
+  clo <14= cpn13 gf.
+Proof.
+  intros. eapply grespect13_compatible' in RES.
+  eapply (@compatible'13_companion (rclo13 (clo \14/ cpn13 gf))); [apply RES|].
+  apply rclo13_clo_base. left. apply PR.
+Qed.
+
 Lemma wrespect13_uclo
       clo (RES: wrespectful13 clo):
   clo <14= gupaco13 gf (cpn13 gf).
@@ -799,6 +851,13 @@ Lemma prespect13_uclo
   clo <14= gupaco13 gf (cpn13 gf).
 Proof.
   intros. eapply gpaco13_clo, prespect13_companion, PR. apply RES.
+Qed.
+
+Lemma grespect13_uclo
+      clo (RES: grespectful13 clo):
+  clo <14= gupaco13 gf (cpn13 gf).
+Proof.
+  intros. eapply gpaco13_clo, grespect13_companion, PR. apply RES.
 Qed.
 
 End Respectful.

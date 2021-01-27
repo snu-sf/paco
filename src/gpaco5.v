@@ -671,6 +671,17 @@ Structure prespectful5 (clo: rel -> rel) : Prop :=
         clo l <5= paco5 gf (r \5/ clo r);
     }.
 
+Structure grespectful5 (clo: rel -> rel) : Prop :=
+  grespect5_intro {
+      grespect5_mon: monotone5 clo;
+      grespect5_respect :
+        forall l r
+               (LE: l <5= r)
+               (GF: l <5= gf r),
+        clo l <5= rclo5 (cpn5 gf) (gf (rclo5 (clo \6/ gupaco5 gf (cpn5 gf)) r));
+    }.
+Hint Constructors grespectful5.
+
 Definition gf'5 := id /6\ gf.
 
 Definition compatible'5 := compatible5 gf'5.
@@ -719,6 +730,38 @@ Proof.
       * eapply gf_mon. apply H. intros. right. left. apply PR.
       * apply paco5_unfold; [apply gf_mon|].
         eapply RES, H; intros; apply PR.
+Qed.
+
+Lemma grespect5_compatible'
+      clo (RES: grespectful5 clo):
+  compatible'5 (rclo5 (clo \6/ cpn5 gf)).
+Proof.
+  apply wrespect5_compatible'.
+  econstructor.
+  { red; intros. destruct IN.
+    - left. eapply RES; [apply H|]. apply LE.
+    - right. eapply cpn5_mon; [apply H|]. apply LE. }
+  intros. destruct PR.
+  - eapply RES.(grespect5_respect) in H; [|apply LE|apply GF].
+    apply (@compat5_compat gf (rclo5 (cpn5 gf))) in H.
+    2: { apply rclo5_compat; [apply gf_mon|]. apply cpn5_compat. apply gf_mon. }
+    eapply gf_mon; [apply H|].
+    intros. apply rclo5_clo. right.
+    exists (rclo5 (cpn5 gf)).
+    { apply rclo5_compat; [apply gf_mon|]. apply cpn5_compat. apply gf_mon. }
+    eapply rclo5_mon; [eapply PR|].
+    intros. eapply rclo5_mon_gen; [eapply PR0|..].
+    + intros. destruct PR1.
+      * left. apply H0.
+      * right. apply cpn5_gupaco; [apply gf_mon|apply H0].
+    + intros. apply PR1.
+  - eapply gf_mon.
+    + apply (@compat5_compat gf (rclo5 (cpn5 gf))).
+      { apply rclo5_compat; [apply gf_mon|]. apply cpn5_compat. apply gf_mon. }
+      eapply rclo5_clo_base. eapply cpn5_mon; [apply H|apply GF].
+    + intros. eapply rclo5_mon_gen; [eapply PR|..].
+      * intros. right. apply PR0.
+      * intros. apply PR0.
 Qed.
 
 Lemma compat5_compatible'
@@ -779,6 +822,15 @@ Proof.
   right. right. apply PR.
 Qed.
 
+Lemma grespect5_companion
+      clo (RES: grespectful5 clo):
+  clo <6= cpn5 gf.
+Proof.
+  intros. eapply grespect5_compatible' in RES.
+  eapply (@compatible'5_companion (rclo5 (clo \6/ cpn5 gf))); [apply RES|].
+  apply rclo5_clo_base. left. apply PR.
+Qed.
+
 Lemma wrespect5_uclo
       clo (RES: wrespectful5 clo):
   clo <6= gupaco5 gf (cpn5 gf).
@@ -791,6 +843,13 @@ Lemma prespect5_uclo
   clo <6= gupaco5 gf (cpn5 gf).
 Proof.
   intros. eapply gpaco5_clo, prespect5_companion, PR. apply RES.
+Qed.
+
+Lemma grespect5_uclo
+      clo (RES: grespectful5 clo):
+  clo <6= gupaco5 gf (cpn5 gf).
+Proof.
+  intros. eapply gpaco5_clo, grespect5_companion, PR. apply RES.
 Qed.
 
 End Respectful.
