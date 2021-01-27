@@ -34,70 +34,72 @@ Ltac simplJM :=
     end
   end.
 
+Tactic Notation "hrewrite_internal" constr(eqn) "at" int_or_var(occ) :=
+  first[hrewrite eqn at occ | rewrite eqn].
 Ltac hrewrite_last e H := let x := fresh "_paco_x_" in
   first [try (set (x:=e) at 17; fail 1);
     first [try (set (x:=e) at 9; fail 1);
       first [try (set (x:=e) at 5; fail 1);
         first [try (set (x:=e) at 3; fail 1);
           first [try (set (x:=e) at 2; fail 1);
-            try (hrewrite H at 1)
-          | try (hrewrite H at 2) ]
+            try (hrewrite_internal H at 1)
+          | try (hrewrite_internal H at 2) ]
         | first [try (set (x:=e) at 4; fail 1);
-            try (hrewrite H at 3)
-          | try (hrewrite H at 4) ] ]
+            try (hrewrite_internal H at 3)
+          | try (hrewrite_internal H at 4) ] ]
       | first [try (set (x:=e) at 7; fail 1);
           first [try (set (x:=e) at 6; fail 1);
-            try (hrewrite H at 5)
-          | try (hrewrite H at 6)]
+            try (hrewrite_internal H at 5)
+          | try (hrewrite_internal H at 6)]
         | first [try (set (x:=e) at 8; fail 1);
-            try (hrewrite H at 7)
-          | try (hrewrite H at 8) ] ] ]
+            try (hrewrite_internal H at 7)
+          | try (hrewrite_internal H at 8) ] ] ]
     | first [try (set (x:=e) at 13; fail 1);
         first [try (set (x:=e) at 11; fail 1);
           first [try (set (x:=e) at 10; fail 1);
-            try (hrewrite H at 9)
-          | try (hrewrite H at 10) ]
+            try (hrewrite_internal H at 9)
+          | try (hrewrite_internal H at 10) ]
         | first [try (set (x:=e) at 12; fail 1);
-            try (hrewrite H at 11)
-          | try (hrewrite H at 12) ] ]
+            try (hrewrite_internal H at 11)
+          | try (hrewrite_internal H at 12) ] ]
       | first [try (set (x:=e) at 15; fail 1);
           first [try (set (x:=e) at 14; fail 1);
-            try (hrewrite H at 13)
-          | try (hrewrite H at 14)]
+            try (hrewrite_internal H at 13)
+          | try (hrewrite_internal H at 14)]
         | first [try (set (x:=e) at 16; fail 1);
-            try (hrewrite H at 15)
-          | try (hrewrite H at 16) ] ] ] ]
+            try (hrewrite_internal H at 15)
+          | try (hrewrite_internal H at 16) ] ] ] ]
   | first [try (set (x:=e) at 25; fail 1);
       first [try (set (x:=e) at 21; fail 1);
         first [try (set (x:=e) at 19; fail 1);
           first [try (set (x:=e) at 18; fail 1);
-            try (hrewrite H at 17)
-          | try (hrewrite H at 18) ]
+            try (hrewrite_internal H at 17)
+          | try (hrewrite_internal H at 18) ]
         | first [try (set (x:=e) at 20; fail 1);
-            try (hrewrite H at 19)
-          | try (hrewrite H at 20) ] ]
+            try (hrewrite_internal H at 19)
+          | try (hrewrite_internal H at 20) ] ]
       | first [try (set (x:=e) at 23; fail 1);
           first [try (set (x:=e) at 22; fail 1);
-            try (hrewrite H at 21)
-          | try (hrewrite H at 22)]
+            try (hrewrite_internal H at 21)
+          | try (hrewrite_internal H at 22)]
         | first [try (set (x:=e) at 24; fail 1);
-            try (hrewrite H at 23)
-          | try (hrewrite H at 24) ] ] ]
+            try (hrewrite_internal H at 23)
+          | try (hrewrite_internal H at 24) ] ] ]
     | first [try (set (x:=e) at 29; fail 1);
         first [try (set (x:=e) at 27; fail 1);
           first [try (set (x:=e) at 26; fail 1);
-            try (hrewrite H at 25)
-          | try (hrewrite H at 26) ]
+            try (hrewrite_internal H at 25)
+          | try (hrewrite_internal H at 26) ]
         | first [try (set (x:=e) at 28; fail 1);
-            try (hrewrite H at 27)
-          | try (hrewrite H at 28) ] ]
+            try (hrewrite_internal H at 27)
+          | try (hrewrite_internal H at 28) ] ]
       | first [try (set (x:=e) at 31; fail 1);
           first [try (set (x:=e) at 30; fail 1);
-            try (hrewrite H at 29)
-          | try (hrewrite H at 30)]
+            try (hrewrite_internal H at 29)
+          | try (hrewrite_internal H at 30)]
         | first [try (set (x:=e) at 32; fail 1);
-            try (hrewrite H at 31)
-          | try (hrewrite H at 32) ] ] ] ] ]
+            try (hrewrite_internal H at 31)
+          | try (hrewrite_internal H at 32) ] ] ] ] ]
 .
 
 Ltac paco_generalize_hyp mark :=
