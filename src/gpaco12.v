@@ -687,7 +687,6 @@ Structure grespectful12 (clo: rel -> rel) : Prop :=
                (GF: l <12= gf r),
         clo l <12= rclo12 (cpn12 gf) (gf (rclo12 (clo \13/ gupaco12 gf (cpn12 gf)) r));
     }.
-Hint Constructors grespectful12.
 
 Definition gf'12 := id /13\ gf.
 

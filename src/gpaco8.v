@@ -683,7 +683,6 @@ Structure grespectful8 (clo: rel -> rel) : Prop :=
                (GF: l <8= gf r),
         clo l <8= rclo8 (cpn8 gf) (gf (rclo8 (clo \9/ gupaco8 gf (cpn8 gf)) r));
     }.
-Hint Constructors grespectful8.
 
 Definition gf'8 := id /9\ gf.
 

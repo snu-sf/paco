@@ -679,7 +679,6 @@ Structure grespectful4 (clo: rel -> rel) : Prop :=
                (GF: l <4= gf r),
         clo l <4= rclo4 (cpn4 gf) (gf (rclo4 (clo \5/ gupaco4 gf (cpn4 gf)) r));
     }.
-Hint Constructors grespectful4.
 
 Definition gf'4 := id /5\ gf.
 

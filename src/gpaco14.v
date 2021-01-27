@@ -689,7 +689,6 @@ Structure grespectful14 (clo: rel -> rel) : Prop :=
                (GF: l <14= gf r),
         clo l <14= rclo14 (cpn14 gf) (gf (rclo14 (clo \15/ gupaco14 gf (cpn14 gf)) r));
     }.
-Hint Constructors grespectful14.
 
 Definition gf'14 := id /15\ gf.
 

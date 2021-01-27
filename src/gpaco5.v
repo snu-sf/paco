@@ -680,7 +680,6 @@ Structure grespectful5 (clo: rel -> rel) : Prop :=
                (GF: l <5= gf r),
         clo l <5= rclo5 (cpn5 gf) (gf (rclo5 (clo \6/ gupaco5 gf (cpn5 gf)) r));
     }.
-Hint Constructors grespectful5.
 
 Definition gf'5 := id /6\ gf.
 

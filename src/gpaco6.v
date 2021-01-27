@@ -681,7 +681,6 @@ Structure grespectful6 (clo: rel -> rel) : Prop :=
                (GF: l <6= gf r),
         clo l <6= rclo6 (cpn6 gf) (gf (rclo6 (clo \7/ gupaco6 gf (cpn6 gf)) r));
     }.
-Hint Constructors grespectful6.
 
 Definition gf'6 := id /7\ gf.
 

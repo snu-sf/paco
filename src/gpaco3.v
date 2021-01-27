@@ -678,7 +678,6 @@ Structure grespectful3 (clo: rel -> rel) : Prop :=
                (GF: l <3= gf r),
         clo l <3= rclo3 (cpn3 gf) (gf (rclo3 (clo \4/ gupaco3 gf (cpn3 gf)) r));
     }.
-Hint Constructors grespectful3.
 
 Definition gf'3 := id /4\ gf.
 
