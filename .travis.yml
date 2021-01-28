@@ -33,6 +33,7 @@ install:
   - opam init -j ${NJOBS} --compiler=${COMPILER} -n -y
   - eval $(opam config env)
   - opam config var root
+  - opam update
   - opam install -y --verbose -j ${NJOBS} coq.${TEST_TARGET} && opam pin add coq ${TEST_TARGET} -y
 
 
