@@ -673,6 +673,16 @@ Structure prespectful7 (clo: rel -> rel) : Prop :=
         clo l <7= paco7 gf (r \7/ clo r);
     }.
 
+Structure grespectful7 (clo: rel -> rel) : Prop :=
+  grespect7_intro {
+      grespect7_mon: monotone7 clo;
+      grespect7_respect :
+        forall l r
+               (LE: l <7= r)
+               (GF: l <7= gf r),
+        clo l <7= rclo7 (cpn7 gf) (gf (rclo7 (clo \8/ gupaco7 gf (cpn7 gf)) r));
+    }.
+
 Definition gf'7 := id /8\ gf.
 
 Definition compatible'7 := compatible7 gf'7.
@@ -721,6 +731,38 @@ Proof.
       * eapply gf_mon. apply H. intros. right. left. apply PR.
       * apply paco7_unfold; [apply gf_mon|].
         eapply RES, H; intros; apply PR.
+Qed.
+
+Lemma grespect7_compatible'
+      clo (RES: grespectful7 clo):
+  compatible'7 (rclo7 (clo \8/ cpn7 gf)).
+Proof.
+  apply wrespect7_compatible'.
+  econstructor.
+  { red; intros. destruct IN.
+    - left. eapply RES; [apply H|]. apply LE.
+    - right. eapply cpn7_mon; [apply H|]. apply LE. }
+  intros. destruct PR.
+  - eapply RES.(grespect7_respect) in H; [|apply LE|apply GF].
+    apply (@compat7_compat gf (rclo7 (cpn7 gf))) in H.
+    2: { apply rclo7_compat; [apply gf_mon|]. apply cpn7_compat. apply gf_mon. }
+    eapply gf_mon; [apply H|].
+    intros. apply rclo7_clo. right.
+    exists (rclo7 (cpn7 gf)).
+    { apply rclo7_compat; [apply gf_mon|]. apply cpn7_compat. apply gf_mon. }
+    eapply rclo7_mon; [eapply PR|].
+    intros. eapply rclo7_mon_gen; [eapply PR0|..].
+    + intros. destruct PR1.
+      * left. apply H0.
+      * right. apply cpn7_gupaco; [apply gf_mon|apply H0].
+    + intros. apply PR1.
+  - eapply gf_mon.
+    + apply (@compat7_compat gf (rclo7 (cpn7 gf))).
+      { apply rclo7_compat; [apply gf_mon|]. apply cpn7_compat. apply gf_mon. }
+      eapply rclo7_clo_base. eapply cpn7_mon; [apply H|apply GF].
+    + intros. eapply rclo7_mon_gen; [eapply PR|..].
+      * intros. right. apply PR0.
+      * intros. apply PR0.
 Qed.
 
 Lemma compat7_compatible'
@@ -781,6 +823,15 @@ Proof.
   right. right. apply PR.
 Qed.
 
+Lemma grespect7_companion
+      clo (RES: grespectful7 clo):
+  clo <8= cpn7 gf.
+Proof.
+  intros. eapply grespect7_compatible' in RES.
+  eapply (@compatible'7_companion (rclo7 (clo \8/ cpn7 gf))); [apply RES|].
+  apply rclo7_clo_base. left. apply PR.
+Qed.
+
 Lemma wrespect7_uclo
       clo (RES: wrespectful7 clo):
   clo <8= gupaco7 gf (cpn7 gf).
@@ -793,6 +844,13 @@ Lemma prespect7_uclo
   clo <8= gupaco7 gf (cpn7 gf).
 Proof.
   intros. eapply gpaco7_clo, prespect7_companion, PR. apply RES.
+Qed.
+
+Lemma grespect7_uclo
+      clo (RES: grespectful7 clo):
+  clo <8= gupaco7 gf (cpn7 gf).
+Proof.
+  intros. eapply gpaco7_clo, grespect7_companion, PR. apply RES.
 Qed.
 
 End Respectful.

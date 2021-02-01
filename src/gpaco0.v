@@ -666,6 +666,16 @@ Structure prespectful0 (clo: rel -> rel) : Prop :=
         clo l <0= paco0 gf (r \0/ clo r);
     }.
 
+Structure grespectful0 (clo: rel -> rel) : Prop :=
+  grespect0_intro {
+      grespect0_mon: monotone0 clo;
+      grespect0_respect :
+        forall l r
+               (LE: l <0= r)
+               (GF: l <0= gf r),
+        clo l <0= rclo0 (cpn0 gf) (gf (rclo0 (clo \1/ gupaco0 gf (cpn0 gf)) r));
+    }.
+
 Definition gf'0 := id /1\ gf.
 
 Definition compatible'0 := compatible0 gf'0.
@@ -714,6 +724,38 @@ Proof.
       * eapply gf_mon. apply H. intros. right. left. apply PR.
       * apply paco0_unfold; [apply gf_mon|].
         eapply RES, H; intros; apply PR.
+Qed.
+
+Lemma grespect0_compatible'
+      clo (RES: grespectful0 clo):
+  compatible'0 (rclo0 (clo \1/ cpn0 gf)).
+Proof.
+  apply wrespect0_compatible'.
+  econstructor.
+  { red; intros. destruct IN.
+    - left. eapply RES; [apply H|]. apply LE.
+    - right. eapply cpn0_mon; [apply H|]. apply LE. }
+  intros. destruct PR.
+  - eapply RES.(grespect0_respect) in H; [|apply LE|apply GF].
+    apply (@compat0_compat gf (rclo0 (cpn0 gf))) in H.
+    2: { apply rclo0_compat; [apply gf_mon|]. apply cpn0_compat. apply gf_mon. }
+    eapply gf_mon; [apply H|].
+    intros. apply rclo0_clo. right.
+    exists (rclo0 (cpn0 gf)).
+    { apply rclo0_compat; [apply gf_mon|]. apply cpn0_compat. apply gf_mon. }
+    eapply rclo0_mon; [eapply PR|].
+    intros. eapply rclo0_mon_gen; [eapply PR0|..].
+    + intros. destruct PR1.
+      * left. apply H0.
+      * right. apply cpn0_gupaco; [apply gf_mon|apply H0].
+    + intros. apply PR1.
+  - eapply gf_mon.
+    + apply (@compat0_compat gf (rclo0 (cpn0 gf))).
+      { apply rclo0_compat; [apply gf_mon|]. apply cpn0_compat. apply gf_mon. }
+      eapply rclo0_clo_base. eapply cpn0_mon; [apply H|apply GF].
+    + intros. eapply rclo0_mon_gen; [eapply PR|..].
+      * intros. right. apply PR0.
+      * intros. apply PR0.
 Qed.
 
 Lemma compat0_compatible'
@@ -774,6 +816,15 @@ Proof.
   right. right. apply PR.
 Qed.
 
+Lemma grespect0_companion
+      clo (RES: grespectful0 clo):
+  clo <1= cpn0 gf.
+Proof.
+  intros. eapply grespect0_compatible' in RES.
+  eapply (@compatible'0_companion (rclo0 (clo \1/ cpn0 gf))); [apply RES|].
+  apply rclo0_clo_base. left. apply PR.
+Qed.
+
 Lemma wrespect0_uclo
       clo (RES: wrespectful0 clo):
   clo <1= gupaco0 gf (cpn0 gf).
@@ -786,6 +837,13 @@ Lemma prespect0_uclo
   clo <1= gupaco0 gf (cpn0 gf).
 Proof.
   intros. eapply gpaco0_clo, prespect0_companion, PR. apply RES.
+Qed.
+
+Lemma grespect0_uclo
+      clo (RES: grespectful0 clo):
+  clo <1= gupaco0 gf (cpn0 gf).
+Proof.
+  intros. eapply gpaco0_clo, grespect0_companion, PR. apply RES.
 Qed.
 
 End Respectful.

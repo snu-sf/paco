@@ -675,6 +675,16 @@ Structure prespectful9 (clo: rel -> rel) : Prop :=
         clo l <9= paco9 gf (r \9/ clo r);
     }.
 
+Structure grespectful9 (clo: rel -> rel) : Prop :=
+  grespect9_intro {
+      grespect9_mon: monotone9 clo;
+      grespect9_respect :
+        forall l r
+               (LE: l <9= r)
+               (GF: l <9= gf r),
+        clo l <9= rclo9 (cpn9 gf) (gf (rclo9 (clo \10/ gupaco9 gf (cpn9 gf)) r));
+    }.
+
 Definition gf'9 := id /10\ gf.
 
 Definition compatible'9 := compatible9 gf'9.
@@ -723,6 +733,38 @@ Proof.
       * eapply gf_mon. apply H. intros. right. left. apply PR.
       * apply paco9_unfold; [apply gf_mon|].
         eapply RES, H; intros; apply PR.
+Qed.
+
+Lemma grespect9_compatible'
+      clo (RES: grespectful9 clo):
+  compatible'9 (rclo9 (clo \10/ cpn9 gf)).
+Proof.
+  apply wrespect9_compatible'.
+  econstructor.
+  { red; intros. destruct IN.
+    - left. eapply RES; [apply H|]. apply LE.
+    - right. eapply cpn9_mon; [apply H|]. apply LE. }
+  intros. destruct PR.
+  - eapply RES.(grespect9_respect) in H; [|apply LE|apply GF].
+    apply (@compat9_compat gf (rclo9 (cpn9 gf))) in H.
+    2: { apply rclo9_compat; [apply gf_mon|]. apply cpn9_compat. apply gf_mon. }
+    eapply gf_mon; [apply H|].
+    intros. apply rclo9_clo. right.
+    exists (rclo9 (cpn9 gf)).
+    { apply rclo9_compat; [apply gf_mon|]. apply cpn9_compat. apply gf_mon. }
+    eapply rclo9_mon; [eapply PR|].
+    intros. eapply rclo9_mon_gen; [eapply PR0|..].
+    + intros. destruct PR1.
+      * left. apply H0.
+      * right. apply cpn9_gupaco; [apply gf_mon|apply H0].
+    + intros. apply PR1.
+  - eapply gf_mon.
+    + apply (@compat9_compat gf (rclo9 (cpn9 gf))).
+      { apply rclo9_compat; [apply gf_mon|]. apply cpn9_compat. apply gf_mon. }
+      eapply rclo9_clo_base. eapply cpn9_mon; [apply H|apply GF].
+    + intros. eapply rclo9_mon_gen; [eapply PR|..].
+      * intros. right. apply PR0.
+      * intros. apply PR0.
 Qed.
 
 Lemma compat9_compatible'
@@ -783,6 +825,15 @@ Proof.
   right. right. apply PR.
 Qed.
 
+Lemma grespect9_companion
+      clo (RES: grespectful9 clo):
+  clo <10= cpn9 gf.
+Proof.
+  intros. eapply grespect9_compatible' in RES.
+  eapply (@compatible'9_companion (rclo9 (clo \10/ cpn9 gf))); [apply RES|].
+  apply rclo9_clo_base. left. apply PR.
+Qed.
+
 Lemma wrespect9_uclo
       clo (RES: wrespectful9 clo):
   clo <10= gupaco9 gf (cpn9 gf).
@@ -795,6 +846,13 @@ Lemma prespect9_uclo
   clo <10= gupaco9 gf (cpn9 gf).
 Proof.
   intros. eapply gpaco9_clo, prespect9_companion, PR. apply RES.
+Qed.
+
+Lemma grespect9_uclo
+      clo (RES: grespectful9 clo):
+  clo <10= gupaco9 gf (cpn9 gf).
+Proof.
+  intros. eapply gpaco9_clo, grespect9_companion, PR. apply RES.
 Qed.
 
 End Respectful.
