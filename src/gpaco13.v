@@ -222,7 +222,7 @@ Proof.
   clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 IN0.
   intros. destruct PR; [|right; apply H].
   left. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 H.
-  pcofix CIH. intros.
+  apply paco13_acc; intros * CIH0 CIH * H0.
   _punfold H0; [..|apply gpaco13_def_mon]. pstep.
   eapply gf_mon. apply H0. intros.
   apply rclo13_rclo. eapply rclo13_mon. apply PR.
@@ -478,8 +478,8 @@ Lemma gpaco13_compat_init clo
   gpaco13 gf clo bot13 bot13 <13= paco13 gf bot13.
 Proof.
   intros. destruct PR. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 IN.
-  pcofix CIH. intros.
-  pstep. eapply gf_mon; [| right; apply CIH, rclo13_rclo, PR]. 
+  apply paco13_acc; intros * _ CIH * IN.
+  pstep. eapply gf_mon; [| right; apply CIH, rclo13_rclo, PR].
   apply compat13_compat with (gf:=gf). apply rclo13_compat. apply gf_mon. apply CMP.
   eapply rclo13_mon. apply IN.
   intros. destruct PR; [|contradiction]. _punfold H; [..|apply gpaco13_def_mon, gf_mon].
@@ -523,7 +523,7 @@ Proof.
   apply rclo13_dist in PR; [|apply CMP|apply DIST].
   destruct PR; [|right; apply H].
   left. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 H.
-  pcofix CIH; intros.
+  apply paco13_acc; intros * CIH0 CIH * H0.
   apply rclo13_wcompat in H0; [|apply gf_mon|apply CMP].
   pstep. eapply gf_mon. apply H0. intros.
   apply gpaco13_unfold in PR; [|apply gf_mon].
@@ -537,7 +537,10 @@ Proof.
     apply gpaco13_gen_rclo. apply gf_mon.
     eapply gupaco13_mon. apply PR0. intros.
     destruct PR1; apply H1.
-  - assert (REL: @rclo13 clo (rclo13 clo (gf (gupaco13 gf clo ((rg \13/ r) \13/ (rg \13/ r))) \13/ (rg \13/ r))) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12).
+  - match goal with
+    | [ |- _  ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8 ?y9 ?y10 ?y11 ?y12 ] =>
+      assert (REL: @rclo13 clo (rclo13 clo (gf (gupaco13 gf clo ((rg \13/ r) \13/ (rg \13/ r))) \13/ (rg \13/ r))) y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12)
+    end.
     { eapply rclo13_mon. apply H. intros. apply gpaco13_unfold in PR. apply PR. apply gf_mon. }
     apply rclo13_rclo in REL.
     apply rclo13_dist in REL; [|apply CMP|apply DIST].
@@ -556,7 +559,7 @@ Proof.
   intros. destruct PR; cycle 1.
   - eapply gpaco13_rclo. apply H.
   - econstructor. apply rclo13_base. left.
-    revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 H. pcofix CIH; intros.
+    revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 H. apply paco13_acc; intros * CIH0 CIH * H0.
     _punfold H0; [|apply gf_mon]. pstep.
     eapply gf_mon. apply H0. intros.
     destruct PR.

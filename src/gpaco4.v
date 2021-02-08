@@ -213,7 +213,7 @@ Proof.
   clear x0 x1 x2 x3 IN0.
   intros. destruct PR; [|right; apply H].
   left. revert x0 x1 x2 x3 H.
-  pcofix CIH. intros.
+  apply paco4_acc; intros * CIH0 CIH * H0.
   _punfold H0; [..|apply gpaco4_def_mon]. pstep.
   eapply gf_mon. apply H0. intros.
   apply rclo4_rclo. eapply rclo4_mon. apply PR.
@@ -469,8 +469,8 @@ Lemma gpaco4_compat_init clo
   gpaco4 gf clo bot4 bot4 <4= paco4 gf bot4.
 Proof.
   intros. destruct PR. revert x0 x1 x2 x3 IN.
-  pcofix CIH. intros.
-  pstep. eapply gf_mon; [| right; apply CIH, rclo4_rclo, PR]. 
+  apply paco4_acc; intros * _ CIH * IN.
+  pstep. eapply gf_mon; [| right; apply CIH, rclo4_rclo, PR].
   apply compat4_compat with (gf:=gf). apply rclo4_compat. apply gf_mon. apply CMP.
   eapply rclo4_mon. apply IN.
   intros. destruct PR; [|contradiction]. _punfold H; [..|apply gpaco4_def_mon, gf_mon].
@@ -514,7 +514,7 @@ Proof.
   apply rclo4_dist in PR; [|apply CMP|apply DIST].
   destruct PR; [|right; apply H].
   left. revert x0 x1 x2 x3 H.
-  pcofix CIH; intros.
+  apply paco4_acc; intros * CIH0 CIH * H0.
   apply rclo4_wcompat in H0; [|apply gf_mon|apply CMP].
   pstep. eapply gf_mon. apply H0. intros.
   apply gpaco4_unfold in PR; [|apply gf_mon].
@@ -528,7 +528,10 @@ Proof.
     apply gpaco4_gen_rclo. apply gf_mon.
     eapply gupaco4_mon. apply PR0. intros.
     destruct PR1; apply H1.
-  - assert (REL: @rclo4 clo (rclo4 clo (gf (gupaco4 gf clo ((rg \4/ r) \4/ (rg \4/ r))) \4/ (rg \4/ r))) x0 x1 x2 x3).
+  - match goal with
+    | [ |- _  ?y0 ?y1 ?y2 ?y3 ] =>
+      assert (REL: @rclo4 clo (rclo4 clo (gf (gupaco4 gf clo ((rg \4/ r) \4/ (rg \4/ r))) \4/ (rg \4/ r))) y0 y1 y2 y3)
+    end.
     { eapply rclo4_mon. apply H. intros. apply gpaco4_unfold in PR. apply PR. apply gf_mon. }
     apply rclo4_rclo in REL.
     apply rclo4_dist in REL; [|apply CMP|apply DIST].
@@ -547,7 +550,7 @@ Proof.
   intros. destruct PR; cycle 1.
   - eapply gpaco4_rclo. apply H.
   - econstructor. apply rclo4_base. left.
-    revert x0 x1 x2 x3 H. pcofix CIH; intros.
+    revert x0 x1 x2 x3 H. apply paco4_acc; intros * CIH0 CIH * H0.
     _punfold H0; [|apply gf_mon]. pstep.
     eapply gf_mon. apply H0. intros.
     destruct PR.

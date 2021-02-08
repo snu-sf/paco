@@ -209,7 +209,7 @@ Proof.
   clear IN0.
   intros. destruct PR; [|right; apply H].
   left. revert H.
-  pcofix CIH. intros.
+  apply paco0_acc; intros * CIH0 CIH * H0.
   _punfold H0; [..|apply gpaco0_def_mon]. pstep.
   eapply gf_mon. apply H0. intros.
   apply rclo0_rclo. eapply rclo0_mon. apply PR.
@@ -465,8 +465,8 @@ Lemma gpaco0_compat_init clo
   gpaco0 gf clo bot0 bot0 <0= paco0 gf bot0.
 Proof.
   intros. destruct PR. revert IN.
-  pcofix CIH. intros.
-  pstep. eapply gf_mon; [| right; apply CIH, rclo0_rclo, PR]. 
+  apply paco0_acc; intros * _ CIH * IN.
+  pstep. eapply gf_mon; [| right; apply CIH, rclo0_rclo, PR].
   apply compat0_compat with (gf:=gf). apply rclo0_compat. apply gf_mon. apply CMP.
   eapply rclo0_mon. apply IN.
   intros. destruct PR; [|contradiction]. _punfold H; [..|apply gpaco0_def_mon, gf_mon].
@@ -510,7 +510,7 @@ Proof.
   apply rclo0_dist in PR; [|apply CMP|apply DIST].
   destruct PR; [|right; apply H].
   left. revert H.
-  pcofix CIH; intros.
+  apply paco0_acc; intros * CIH0 CIH * H0.
   apply rclo0_wcompat in H0; [|apply gf_mon|apply CMP].
   pstep. eapply gf_mon. apply H0. intros.
   apply gpaco0_unfold in PR; [|apply gf_mon].
@@ -524,7 +524,10 @@ Proof.
     apply gpaco0_gen_rclo. apply gf_mon.
     eapply gupaco0_mon. apply PR0. intros.
     destruct PR1; apply H1.
-  - assert (REL: @rclo0 clo (rclo0 clo (gf (gupaco0 gf clo ((rg \0/ r) \0/ (rg \0/ r))) \0/ (rg \0/ r)))).
+  - match goal with
+    | [ |- _  ] =>
+      assert (REL: @rclo0 clo (rclo0 clo (gf (gupaco0 gf clo ((rg \0/ r) \0/ (rg \0/ r))) \0/ (rg \0/ r))))
+    end.
     { eapply rclo0_mon. apply H. intros. apply gpaco0_unfold in PR. apply PR. apply gf_mon. }
     apply rclo0_rclo in REL.
     apply rclo0_dist in REL; [|apply CMP|apply DIST].
@@ -543,7 +546,7 @@ Proof.
   intros. destruct PR; cycle 1.
   - eapply gpaco0_rclo. apply H.
   - econstructor. apply rclo0_base. left.
-    revert H. pcofix CIH; intros.
+    revert H. apply paco0_acc; intros * CIH0 CIH * H0.
     _punfold H0; [|apply gf_mon]. pstep.
     eapply gf_mon. apply H0. intros.
     destruct PR.
