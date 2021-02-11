@@ -13,7 +13,7 @@ Paco also supports upto techniques using "companion".  See:
 
 Minki Cho refactored the implementation to speed up the compilation time.
 
-The current version is v4.0.4, and it's compatible with Coq 8.9, 8.10, 8.11, 8.12.
+The current version is v4.0.4, and it's compatible with Coq 8.9 - 8.13.
 
 
 ## Installation
