@@ -28,6 +28,8 @@ env:
     TEST_TARGET="8.11.0"
   - COMPILER="4.10.0"
     TEST_TARGET="8.12.0"
+  - COMPILER="4.10.0"
+    TEST_TARGET="8.13.0"
 
 install:
   - opam init -j ${NJOBS} --compiler=${COMPILER} -n -y
