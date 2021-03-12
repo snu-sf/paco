@@ -92,11 +92,11 @@ Tactic Notation "hgeneralize_simpl" constr(C) "as" ident(id) :=
 *)
 
 Ltac hrewrite_with eqn tac_res :=
- (lazymatch (type of eqn) with @eq _ ?X ?Y =>
+ (lazymatch (type of eqn) with @eq ?T ?X ?Y =>
     let G := get_concl in
-      tac_res X G;
+      tac_res (X: T) G;
       hresolve_post ltac:(fun G' hx =>
-        change G'; let Heqn := fresh "_temp_" in assert (Heqn : hx = Y) by (apply eqn); rewrite Heqn; clear Heqn)
+        change G'; let Heqn := fresh "_temp_" in assert (Heqn : @eq T hx Y) by (apply eqn); rewrite Heqn; clear Heqn)
   end).
 
 Tactic Notation "hrewrite" constr(eqn) "at" int_or_var(occ) :=

@@ -231,9 +231,11 @@ Proof. intros; apply X. Defined.
 
 Ltac paco_pre1 := let X := fresh "_paco_X_" in
 generalize _paco_mark_cons; repeat intro;
-apply _paco_pre1; intro X;
+apply _paco_pre1;
 match goal with
-| |- _ ?e0 => unfold X; clear X; paco_cont1 e0
+| [|- let _ : _ ?T0 := _ in _ ?e0] => intro X; unfold X; clear X;
+paco_cont1
+ (e0: T0)
 end.
 
 Ltac paco_post_match1 INC tac1 tac2 :=
@@ -269,9 +271,12 @@ Proof. intros; apply X. Defined.
 
 Ltac paco_pre2 := let X := fresh "_paco_X_" in
 generalize _paco_mark_cons; repeat intro;
-apply _paco_pre2; intro X;
+apply _paco_pre2;
 match goal with
-| |- _ ?e0 ?e1 => unfold X; clear X; paco_cont2 e0 e1
+| [|- let _ : _ ?T0 ?T1 := _ in _ ?e0 ?e1] => intro X; unfold X; clear X;
+paco_cont2
+ (e0: T0)
+ (e1: T1 e0)
 end.
 
 Ltac paco_post_match2 INC tac1 tac2 :=
@@ -310,9 +315,13 @@ Proof. intros; apply X. Defined.
 
 Ltac paco_pre3 := let X := fresh "_paco_X_" in
 generalize _paco_mark_cons; repeat intro;
-apply _paco_pre3; intro X;
+apply _paco_pre3;
 match goal with
-| |- _ ?e0 ?e1 ?e2 => unfold X; clear X; paco_cont3 e0 e1 e2
+| [|- let _ : _ ?T0 ?T1 ?T2 := _ in _ ?e0 ?e1 ?e2] => intro X; unfold X; clear X;
+paco_cont3
+ (e0: T0)
+ (e1: T1 e0)
+ (e2: T2 e0 e1)
 end.
 
 Ltac paco_post_match3 INC tac1 tac2 :=
@@ -354,9 +363,14 @@ Proof. intros; apply X. Defined.
 
 Ltac paco_pre4 := let X := fresh "_paco_X_" in
 generalize _paco_mark_cons; repeat intro;
-apply _paco_pre4; intro X;
+apply _paco_pre4;
 match goal with
-| |- _ ?e0 ?e1 ?e2 ?e3 => unfold X; clear X; paco_cont4 e0 e1 e2 e3
+| [|- let _ : _ ?T0 ?T1 ?T2 ?T3 := _ in _ ?e0 ?e1 ?e2 ?e3] => intro X; unfold X; clear X;
+paco_cont4
+ (e0: T0)
+ (e1: T1 e0)
+ (e2: T2 e0 e1)
+ (e3: T3 e0 e1 e2)
 end.
 
 Ltac paco_post_match4 INC tac1 tac2 :=
@@ -401,9 +415,15 @@ Proof. intros; apply X. Defined.
 
 Ltac paco_pre5 := let X := fresh "_paco_X_" in
 generalize _paco_mark_cons; repeat intro;
-apply _paco_pre5; intro X;
+apply _paco_pre5;
 match goal with
-| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 => unfold X; clear X; paco_cont5 e0 e1 e2 e3 e4
+| [|- let _ : _ ?T0 ?T1 ?T2 ?T3 ?T4 := _ in _ ?e0 ?e1 ?e2 ?e3 ?e4] => intro X; unfold X; clear X;
+paco_cont5
+ (e0: T0)
+ (e1: T1 e0)
+ (e2: T2 e0 e1)
+ (e3: T3 e0 e1 e2)
+ (e4: T4 e0 e1 e2 e3)
 end.
 
 Ltac paco_post_match5 INC tac1 tac2 :=
@@ -451,9 +471,16 @@ Proof. intros; apply X. Defined.
 
 Ltac paco_pre6 := let X := fresh "_paco_X_" in
 generalize _paco_mark_cons; repeat intro;
-apply _paco_pre6; intro X;
+apply _paco_pre6;
 match goal with
-| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 => unfold X; clear X; paco_cont6 e0 e1 e2 e3 e4 e5
+| [|- let _ : _ ?T0 ?T1 ?T2 ?T3 ?T4 ?T5 := _ in _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5] => intro X; unfold X; clear X;
+paco_cont6
+ (e0: T0)
+ (e1: T1 e0)
+ (e2: T2 e0 e1)
+ (e3: T3 e0 e1 e2)
+ (e4: T4 e0 e1 e2 e3)
+ (e5: T5 e0 e1 e2 e3 e4)
 end.
 
 Ltac paco_post_match6 INC tac1 tac2 :=
@@ -504,9 +531,17 @@ Proof. intros; apply X. Defined.
 
 Ltac paco_pre7 := let X := fresh "_paco_X_" in
 generalize _paco_mark_cons; repeat intro;
-apply _paco_pre7; intro X;
+apply _paco_pre7;
 match goal with
-| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 => unfold X; clear X; paco_cont7 e0 e1 e2 e3 e4 e5 e6
+| [|- let _ : _ ?T0 ?T1 ?T2 ?T3 ?T4 ?T5 ?T6 := _ in _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6] => intro X; unfold X; clear X;
+paco_cont7
+ (e0: T0)
+ (e1: T1 e0)
+ (e2: T2 e0 e1)
+ (e3: T3 e0 e1 e2)
+ (e4: T4 e0 e1 e2 e3)
+ (e5: T5 e0 e1 e2 e3 e4)
+ (e6: T6 e0 e1 e2 e3 e4 e5)
 end.
 
 Ltac paco_post_match7 INC tac1 tac2 :=
@@ -560,9 +595,18 @@ Proof. intros; apply X. Defined.
 
 Ltac paco_pre8 := let X := fresh "_paco_X_" in
 generalize _paco_mark_cons; repeat intro;
-apply _paco_pre8; intro X;
+apply _paco_pre8;
 match goal with
-| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 => unfold X; clear X; paco_cont8 e0 e1 e2 e3 e4 e5 e6 e7
+| [|- let _ : _ ?T0 ?T1 ?T2 ?T3 ?T4 ?T5 ?T6 ?T7 := _ in _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7] => intro X; unfold X; clear X;
+paco_cont8
+ (e0: T0)
+ (e1: T1 e0)
+ (e2: T2 e0 e1)
+ (e3: T3 e0 e1 e2)
+ (e4: T4 e0 e1 e2 e3)
+ (e5: T5 e0 e1 e2 e3 e4)
+ (e6: T6 e0 e1 e2 e3 e4 e5)
+ (e7: T7 e0 e1 e2 e3 e4 e5 e6)
 end.
 
 Ltac paco_post_match8 INC tac1 tac2 :=
@@ -619,9 +663,19 @@ Proof. intros; apply X. Defined.
 
 Ltac paco_pre9 := let X := fresh "_paco_X_" in
 generalize _paco_mark_cons; repeat intro;
-apply _paco_pre9; intro X;
+apply _paco_pre9;
 match goal with
-| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 => unfold X; clear X; paco_cont9 e0 e1 e2 e3 e4 e5 e6 e7 e8
+| [|- let _ : _ ?T0 ?T1 ?T2 ?T3 ?T4 ?T5 ?T6 ?T7 ?T8 := _ in _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8] => intro X; unfold X; clear X;
+paco_cont9
+ (e0: T0)
+ (e1: T1 e0)
+ (e2: T2 e0 e1)
+ (e3: T3 e0 e1 e2)
+ (e4: T4 e0 e1 e2 e3)
+ (e5: T5 e0 e1 e2 e3 e4)
+ (e6: T6 e0 e1 e2 e3 e4 e5)
+ (e7: T7 e0 e1 e2 e3 e4 e5 e6)
+ (e8: T8 e0 e1 e2 e3 e4 e5 e6 e7)
 end.
 
 Ltac paco_post_match9 INC tac1 tac2 :=
@@ -681,9 +735,20 @@ Proof. intros; apply X. Defined.
 
 Ltac paco_pre10 := let X := fresh "_paco_X_" in
 generalize _paco_mark_cons; repeat intro;
-apply _paco_pre10; intro X;
+apply _paco_pre10;
 match goal with
-| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 => unfold X; clear X; paco_cont10 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9
+| [|- let _ : _ ?T0 ?T1 ?T2 ?T3 ?T4 ?T5 ?T6 ?T7 ?T8 ?T9 := _ in _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9] => intro X; unfold X; clear X;
+paco_cont10
+ (e0: T0)
+ (e1: T1 e0)
+ (e2: T2 e0 e1)
+ (e3: T3 e0 e1 e2)
+ (e4: T4 e0 e1 e2 e3)
+ (e5: T5 e0 e1 e2 e3 e4)
+ (e6: T6 e0 e1 e2 e3 e4 e5)
+ (e7: T7 e0 e1 e2 e3 e4 e5 e6)
+ (e8: T8 e0 e1 e2 e3 e4 e5 e6 e7)
+ (e9: T9 e0 e1 e2 e3 e4 e5 e6 e7 e8)
 end.
 
 Ltac paco_post_match10 INC tac1 tac2 :=
@@ -746,9 +811,21 @@ Proof. intros; apply X. Defined.
 
 Ltac paco_pre11 := let X := fresh "_paco_X_" in
 generalize _paco_mark_cons; repeat intro;
-apply _paco_pre11; intro X;
+apply _paco_pre11;
 match goal with
-| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 => unfold X; clear X; paco_cont11 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10
+| [|- let _ : _ ?T0 ?T1 ?T2 ?T3 ?T4 ?T5 ?T6 ?T7 ?T8 ?T9 ?T10 := _ in _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10] => intro X; unfold X; clear X;
+paco_cont11
+ (e0: T0)
+ (e1: T1 e0)
+ (e2: T2 e0 e1)
+ (e3: T3 e0 e1 e2)
+ (e4: T4 e0 e1 e2 e3)
+ (e5: T5 e0 e1 e2 e3 e4)
+ (e6: T6 e0 e1 e2 e3 e4 e5)
+ (e7: T7 e0 e1 e2 e3 e4 e5 e6)
+ (e8: T8 e0 e1 e2 e3 e4 e5 e6 e7)
+ (e9: T9 e0 e1 e2 e3 e4 e5 e6 e7 e8)
+ (e10: T10 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9)
 end.
 
 Ltac paco_post_match11 INC tac1 tac2 :=
@@ -814,9 +891,22 @@ Proof. intros; apply X. Defined.
 
 Ltac paco_pre12 := let X := fresh "_paco_X_" in
 generalize _paco_mark_cons; repeat intro;
-apply _paco_pre12; intro X;
+apply _paco_pre12;
 match goal with
-| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 => unfold X; clear X; paco_cont12 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11
+| [|- let _ : _ ?T0 ?T1 ?T2 ?T3 ?T4 ?T5 ?T6 ?T7 ?T8 ?T9 ?T10 ?T11 := _ in _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11] => intro X; unfold X; clear X;
+paco_cont12
+ (e0: T0)
+ (e1: T1 e0)
+ (e2: T2 e0 e1)
+ (e3: T3 e0 e1 e2)
+ (e4: T4 e0 e1 e2 e3)
+ (e5: T5 e0 e1 e2 e3 e4)
+ (e6: T6 e0 e1 e2 e3 e4 e5)
+ (e7: T7 e0 e1 e2 e3 e4 e5 e6)
+ (e8: T8 e0 e1 e2 e3 e4 e5 e6 e7)
+ (e9: T9 e0 e1 e2 e3 e4 e5 e6 e7 e8)
+ (e10: T10 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9)
+ (e11: T11 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10)
 end.
 
 Ltac paco_post_match12 INC tac1 tac2 :=
@@ -885,9 +975,23 @@ Proof. intros; apply X. Defined.
 
 Ltac paco_pre13 := let X := fresh "_paco_X_" in
 generalize _paco_mark_cons; repeat intro;
-apply _paco_pre13; intro X;
+apply _paco_pre13;
 match goal with
-| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 ?e12 => unfold X; clear X; paco_cont13 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12
+| [|- let _ : _ ?T0 ?T1 ?T2 ?T3 ?T4 ?T5 ?T6 ?T7 ?T8 ?T9 ?T10 ?T11 ?T12 := _ in _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 ?e12] => intro X; unfold X; clear X;
+paco_cont13
+ (e0: T0)
+ (e1: T1 e0)
+ (e2: T2 e0 e1)
+ (e3: T3 e0 e1 e2)
+ (e4: T4 e0 e1 e2 e3)
+ (e5: T5 e0 e1 e2 e3 e4)
+ (e6: T6 e0 e1 e2 e3 e4 e5)
+ (e7: T7 e0 e1 e2 e3 e4 e5 e6)
+ (e8: T8 e0 e1 e2 e3 e4 e5 e6 e7)
+ (e9: T9 e0 e1 e2 e3 e4 e5 e6 e7 e8)
+ (e10: T10 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9)
+ (e11: T11 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10)
+ (e12: T12 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11)
 end.
 
 Ltac paco_post_match13 INC tac1 tac2 :=
@@ -959,9 +1063,24 @@ Proof. intros; apply X. Defined.
 
 Ltac paco_pre14 := let X := fresh "_paco_X_" in
 generalize _paco_mark_cons; repeat intro;
-apply _paco_pre14; intro X;
+apply _paco_pre14;
 match goal with
-| |- _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 ?e12 ?e13 => unfold X; clear X; paco_cont14 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13
+| [|- let _ : _ ?T0 ?T1 ?T2 ?T3 ?T4 ?T5 ?T6 ?T7 ?T8 ?T9 ?T10 ?T11 ?T12 ?T13 := _ in _ ?e0 ?e1 ?e2 ?e3 ?e4 ?e5 ?e6 ?e7 ?e8 ?e9 ?e10 ?e11 ?e12 ?e13] => intro X; unfold X; clear X;
+paco_cont14
+ (e0: T0)
+ (e1: T1 e0)
+ (e2: T2 e0 e1)
+ (e3: T3 e0 e1 e2)
+ (e4: T4 e0 e1 e2 e3)
+ (e5: T5 e0 e1 e2 e3 e4)
+ (e6: T6 e0 e1 e2 e3 e4 e5)
+ (e7: T7 e0 e1 e2 e3 e4 e5 e6)
+ (e8: T8 e0 e1 e2 e3 e4 e5 e6 e7)
+ (e9: T9 e0 e1 e2 e3 e4 e5 e6 e7 e8)
+ (e10: T10 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9)
+ (e11: T11 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10)
+ (e12: T12 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11)
+ (e13: T13 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12)
 end.
 
 Ltac paco_post_match14 INC tac1 tac2 :=

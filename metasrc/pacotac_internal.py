@@ -249,9 +249,12 @@ for n in range (1,relsize+1):
 
     print ('Ltac paco_pre'+str(n)+' := let X := fresh "_paco_X_" in')
     print ('generalize _paco_mark_cons; repeat intro;')
-    print ('apply _paco_pre'+str(n)+'; intro X;')
+    print ('apply _paco_pre'+str(n)+';')
     print ('match goal with')
-    print ('| |- _'+itrstr(' ?e',n)+' => unfold X; clear X; paco_cont'+str(n)+itrstr(' e',n))
+    print ('| [|- let _ : _'+itrstr(' ?T',n)+' := _ in _'+itrstr(' ?e',n)+'] => intro X; unfold X; clear X;')
+    print ('paco_cont'+str(n))
+    for i in range(n):
+        print (' (e'+str(i)+': T'+str(i)+itrstr(' e',i)+')')
     print ('end.')
     print ()
 
