@@ -2,9 +2,9 @@ from __future__ import print_function
 import sys
 from pacolib import *
 
-if len(sys.argv) < 2: 
-    sys.stderr.write('\nUsage: '+sys.argv[0]+' relsize\n\n') 
-    sys.exit(1) 
+if len(sys.argv) < 2:
+    sys.stderr.write('\nUsage: '+sys.argv[0]+' relsize\n\n')
+    sys.exit(1)
 
 relsize = int(sys.argv[1])
 
@@ -227,14 +227,30 @@ print ("let CIH' := fresh CIH in try rename INC into CIH'.")
 print ()
 
 for n in range (1,relsize+1):
-    print ("(** *** Arity "+str(n)) 
+    print ("(** *** Arity "+str(n))
     print ("*)")
     print ()
+
+    print ('Lemma _paco_convert'+str(n)+': forall'+itrstr(' T',n))
+    print ('(paco'+str(n)+': forall')
+    for i in range(n):
+        print ('(y'+str(i)+': @T'+str(i)+itrstr(' y', i)+')')
+    print (', Prop)')
+    print (itrstr(' y', n))
+    print ('(CONVERT: forall')
+    for i in range(n):
+        print ('(x'+str(i)+': @T'+str(i)+itrstr(' x', i)+') (EQ'+str(i)+': _paco_id (@JMeq.JMeq (@T'+str(i)+itrstr(' x', i)+') x'+str(i)+' (@T'+str(i)+itrstr(' y', i)+') y'+str(i)+'))')
+    print (', @paco'+str(n)+itrstr(' x', n)+'),')
+    print ('@paco'+str(n)+itrstr(' y', n)+'.')
+    print ('Proof. intros. apply CONVERT; reflexivity. Qed.')
+    print ()
+
     print ("Ltac paco_cont"+str(n)+itrstr(" e",n)+" :=")
     for i in range(n):
         print ('let x'+str(i)+' := fresh "_paco_v_" in let EQ'+str(i)+' := fresh "_paco_EQ_" in')
-    for i in reversed(range(n)):
-        print ('paco_convert e'+str(i)+' x'+str(i)+' EQ'+str(i)+';')
+    print ('apply _paco_convert'+str(n)+';')
+    # for i in reversed(range(n)):
+    #     print ('paco_convert e'+str(i)+' x'+str(i)+' EQ'+str(i)+';')
     for i in range(n):
         print ('intros x'+str(i)+' EQ'+str(i)+';')
     print ('generalize'+itrstr(' (conj EQ',n-1)+' EQ'+str(n-1)+(n-1)*')'+'; clear'+itrstr(' EQ',n)+';')
@@ -314,7 +330,7 @@ for n in range(relsize+1):
 print ('  end.')
 print ()
 
-print ('Tactic Notation "pcofix" ident(CIH) "using" constr(lem) :=') 
+print ('Tactic Notation "pcofix" ident(CIH) "using" constr(lem) :=')
 print ('  pcofix CIH using lem with r.')
 print ()
 

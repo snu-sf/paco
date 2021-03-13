@@ -217,9 +217,20 @@ let CIH' := fresh CIH in try rename INC into CIH'.
 (** *** Arity 1
 *)
 
+Lemma _paco_convert1: forall T0
+(paco1: forall
+(y0: @T0)
+, Prop)
+ y0
+(CONVERT: forall
+(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
+, @paco1 x0),
+@paco1 y0.
+Proof. intros. apply CONVERT; reflexivity. Qed.
+
 Ltac paco_cont1 e0 :=
 let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
-paco_convert e0 x0 EQ0;
+apply _paco_convert1;
 intros x0 EQ0;
 generalize EQ0; clear EQ0;
 move x0 at top;
@@ -254,11 +265,23 @@ let CIH' := fresh CIH in try rename INC into CIH'.
 (** *** Arity 2
 *)
 
+Lemma _paco_convert2: forall T0 T1
+(paco2: forall
+(y0: @T0)
+(y1: @T1 y0)
+, Prop)
+ y0 y1
+(CONVERT: forall
+(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
+(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
+, @paco2 x0 x1),
+@paco2 y0 y1.
+Proof. intros. apply CONVERT; reflexivity. Qed.
+
 Ltac paco_cont2 e0 e1 :=
 let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
 let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
-paco_convert e1 x1 EQ1;
-paco_convert e0 x0 EQ0;
+apply _paco_convert2;
 intros x0 EQ0;
 intros x1 EQ1;
 generalize (conj EQ0 EQ1); clear EQ0 EQ1;
@@ -295,13 +318,26 @@ let CIH' := fresh CIH in try rename INC into CIH'.
 (** *** Arity 3
 *)
 
+Lemma _paco_convert3: forall T0 T1 T2
+(paco3: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+, Prop)
+ y0 y1 y2
+(CONVERT: forall
+(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
+(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
+(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
+, @paco3 x0 x1 x2),
+@paco3 y0 y1 y2.
+Proof. intros. apply CONVERT; reflexivity. Qed.
+
 Ltac paco_cont3 e0 e1 e2 :=
 let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
 let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
 let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
-paco_convert e2 x2 EQ2;
-paco_convert e1 x1 EQ1;
-paco_convert e0 x0 EQ0;
+apply _paco_convert3;
 intros x0 EQ0;
 intros x1 EQ1;
 intros x2 EQ2;
@@ -340,15 +376,29 @@ let CIH' := fresh CIH in try rename INC into CIH'.
 (** *** Arity 4
 *)
 
+Lemma _paco_convert4: forall T0 T1 T2 T3
+(paco4: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+, Prop)
+ y0 y1 y2 y3
+(CONVERT: forall
+(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
+(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
+(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
+(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
+, @paco4 x0 x1 x2 x3),
+@paco4 y0 y1 y2 y3.
+Proof. intros. apply CONVERT; reflexivity. Qed.
+
 Ltac paco_cont4 e0 e1 e2 e3 :=
 let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
 let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
 let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
 let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
-paco_convert e3 x3 EQ3;
-paco_convert e2 x2 EQ2;
-paco_convert e1 x1 EQ1;
-paco_convert e0 x0 EQ0;
+apply _paco_convert4;
 intros x0 EQ0;
 intros x1 EQ1;
 intros x2 EQ2;
@@ -389,17 +439,32 @@ let CIH' := fresh CIH in try rename INC into CIH'.
 (** *** Arity 5
 *)
 
+Lemma _paco_convert5: forall T0 T1 T2 T3 T4
+(paco5: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+(y4: @T4 y0 y1 y2 y3)
+, Prop)
+ y0 y1 y2 y3 y4
+(CONVERT: forall
+(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
+(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
+(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
+(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
+(x4: @T4 x0 x1 x2 x3) (EQ4: _paco_id (@JMeq.JMeq (@T4 x0 x1 x2 x3) x4 (@T4 y0 y1 y2 y3) y4))
+, @paco5 x0 x1 x2 x3 x4),
+@paco5 y0 y1 y2 y3 y4.
+Proof. intros. apply CONVERT; reflexivity. Qed.
+
 Ltac paco_cont5 e0 e1 e2 e3 e4 :=
 let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
 let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
 let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
 let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
 let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
-paco_convert e4 x4 EQ4;
-paco_convert e3 x3 EQ3;
-paco_convert e2 x2 EQ2;
-paco_convert e1 x1 EQ1;
-paco_convert e0 x0 EQ0;
+apply _paco_convert5;
 intros x0 EQ0;
 intros x1 EQ1;
 intros x2 EQ2;
@@ -442,6 +507,27 @@ let CIH' := fresh CIH in try rename INC into CIH'.
 (** *** Arity 6
 *)
 
+Lemma _paco_convert6: forall T0 T1 T2 T3 T4 T5
+(paco6: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+(y4: @T4 y0 y1 y2 y3)
+(y5: @T5 y0 y1 y2 y3 y4)
+, Prop)
+ y0 y1 y2 y3 y4 y5
+(CONVERT: forall
+(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
+(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
+(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
+(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
+(x4: @T4 x0 x1 x2 x3) (EQ4: _paco_id (@JMeq.JMeq (@T4 x0 x1 x2 x3) x4 (@T4 y0 y1 y2 y3) y4))
+(x5: @T5 x0 x1 x2 x3 x4) (EQ5: _paco_id (@JMeq.JMeq (@T5 x0 x1 x2 x3 x4) x5 (@T5 y0 y1 y2 y3 y4) y5))
+, @paco6 x0 x1 x2 x3 x4 x5),
+@paco6 y0 y1 y2 y3 y4 y5.
+Proof. intros. apply CONVERT; reflexivity. Qed.
+
 Ltac paco_cont6 e0 e1 e2 e3 e4 e5 :=
 let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
 let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
@@ -449,12 +535,7 @@ let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
 let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
 let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
 let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
-paco_convert e5 x5 EQ5;
-paco_convert e4 x4 EQ4;
-paco_convert e3 x3 EQ3;
-paco_convert e2 x2 EQ2;
-paco_convert e1 x1 EQ1;
-paco_convert e0 x0 EQ0;
+apply _paco_convert6;
 intros x0 EQ0;
 intros x1 EQ1;
 intros x2 EQ2;
@@ -499,6 +580,29 @@ let CIH' := fresh CIH in try rename INC into CIH'.
 (** *** Arity 7
 *)
 
+Lemma _paco_convert7: forall T0 T1 T2 T3 T4 T5 T6
+(paco7: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+(y4: @T4 y0 y1 y2 y3)
+(y5: @T5 y0 y1 y2 y3 y4)
+(y6: @T6 y0 y1 y2 y3 y4 y5)
+, Prop)
+ y0 y1 y2 y3 y4 y5 y6
+(CONVERT: forall
+(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
+(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
+(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
+(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
+(x4: @T4 x0 x1 x2 x3) (EQ4: _paco_id (@JMeq.JMeq (@T4 x0 x1 x2 x3) x4 (@T4 y0 y1 y2 y3) y4))
+(x5: @T5 x0 x1 x2 x3 x4) (EQ5: _paco_id (@JMeq.JMeq (@T5 x0 x1 x2 x3 x4) x5 (@T5 y0 y1 y2 y3 y4) y5))
+(x6: @T6 x0 x1 x2 x3 x4 x5) (EQ6: _paco_id (@JMeq.JMeq (@T6 x0 x1 x2 x3 x4 x5) x6 (@T6 y0 y1 y2 y3 y4 y5) y6))
+, @paco7 x0 x1 x2 x3 x4 x5 x6),
+@paco7 y0 y1 y2 y3 y4 y5 y6.
+Proof. intros. apply CONVERT; reflexivity. Qed.
+
 Ltac paco_cont7 e0 e1 e2 e3 e4 e5 e6 :=
 let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
 let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
@@ -507,13 +611,7 @@ let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
 let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
 let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
 let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
-paco_convert e6 x6 EQ6;
-paco_convert e5 x5 EQ5;
-paco_convert e4 x4 EQ4;
-paco_convert e3 x3 EQ3;
-paco_convert e2 x2 EQ2;
-paco_convert e1 x1 EQ1;
-paco_convert e0 x0 EQ0;
+apply _paco_convert7;
 intros x0 EQ0;
 intros x1 EQ1;
 intros x2 EQ2;
@@ -560,6 +658,31 @@ let CIH' := fresh CIH in try rename INC into CIH'.
 (** *** Arity 8
 *)
 
+Lemma _paco_convert8: forall T0 T1 T2 T3 T4 T5 T6 T7
+(paco8: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+(y4: @T4 y0 y1 y2 y3)
+(y5: @T5 y0 y1 y2 y3 y4)
+(y6: @T6 y0 y1 y2 y3 y4 y5)
+(y7: @T7 y0 y1 y2 y3 y4 y5 y6)
+, Prop)
+ y0 y1 y2 y3 y4 y5 y6 y7
+(CONVERT: forall
+(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
+(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
+(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
+(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
+(x4: @T4 x0 x1 x2 x3) (EQ4: _paco_id (@JMeq.JMeq (@T4 x0 x1 x2 x3) x4 (@T4 y0 y1 y2 y3) y4))
+(x5: @T5 x0 x1 x2 x3 x4) (EQ5: _paco_id (@JMeq.JMeq (@T5 x0 x1 x2 x3 x4) x5 (@T5 y0 y1 y2 y3 y4) y5))
+(x6: @T6 x0 x1 x2 x3 x4 x5) (EQ6: _paco_id (@JMeq.JMeq (@T6 x0 x1 x2 x3 x4 x5) x6 (@T6 y0 y1 y2 y3 y4 y5) y6))
+(x7: @T7 x0 x1 x2 x3 x4 x5 x6) (EQ7: _paco_id (@JMeq.JMeq (@T7 x0 x1 x2 x3 x4 x5 x6) x7 (@T7 y0 y1 y2 y3 y4 y5 y6) y7))
+, @paco8 x0 x1 x2 x3 x4 x5 x6 x7),
+@paco8 y0 y1 y2 y3 y4 y5 y6 y7.
+Proof. intros. apply CONVERT; reflexivity. Qed.
+
 Ltac paco_cont8 e0 e1 e2 e3 e4 e5 e6 e7 :=
 let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
 let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
@@ -569,14 +692,7 @@ let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
 let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
 let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
 let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
-paco_convert e7 x7 EQ7;
-paco_convert e6 x6 EQ6;
-paco_convert e5 x5 EQ5;
-paco_convert e4 x4 EQ4;
-paco_convert e3 x3 EQ3;
-paco_convert e2 x2 EQ2;
-paco_convert e1 x1 EQ1;
-paco_convert e0 x0 EQ0;
+apply _paco_convert8;
 intros x0 EQ0;
 intros x1 EQ1;
 intros x2 EQ2;
@@ -625,6 +741,33 @@ let CIH' := fresh CIH in try rename INC into CIH'.
 (** *** Arity 9
 *)
 
+Lemma _paco_convert9: forall T0 T1 T2 T3 T4 T5 T6 T7 T8
+(paco9: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+(y4: @T4 y0 y1 y2 y3)
+(y5: @T5 y0 y1 y2 y3 y4)
+(y6: @T6 y0 y1 y2 y3 y4 y5)
+(y7: @T7 y0 y1 y2 y3 y4 y5 y6)
+(y8: @T8 y0 y1 y2 y3 y4 y5 y6 y7)
+, Prop)
+ y0 y1 y2 y3 y4 y5 y6 y7 y8
+(CONVERT: forall
+(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
+(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
+(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
+(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
+(x4: @T4 x0 x1 x2 x3) (EQ4: _paco_id (@JMeq.JMeq (@T4 x0 x1 x2 x3) x4 (@T4 y0 y1 y2 y3) y4))
+(x5: @T5 x0 x1 x2 x3 x4) (EQ5: _paco_id (@JMeq.JMeq (@T5 x0 x1 x2 x3 x4) x5 (@T5 y0 y1 y2 y3 y4) y5))
+(x6: @T6 x0 x1 x2 x3 x4 x5) (EQ6: _paco_id (@JMeq.JMeq (@T6 x0 x1 x2 x3 x4 x5) x6 (@T6 y0 y1 y2 y3 y4 y5) y6))
+(x7: @T7 x0 x1 x2 x3 x4 x5 x6) (EQ7: _paco_id (@JMeq.JMeq (@T7 x0 x1 x2 x3 x4 x5 x6) x7 (@T7 y0 y1 y2 y3 y4 y5 y6) y7))
+(x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (EQ8: _paco_id (@JMeq.JMeq (@T8 x0 x1 x2 x3 x4 x5 x6 x7) x8 (@T8 y0 y1 y2 y3 y4 y5 y6 y7) y8))
+, @paco9 x0 x1 x2 x3 x4 x5 x6 x7 x8),
+@paco9 y0 y1 y2 y3 y4 y5 y6 y7 y8.
+Proof. intros. apply CONVERT; reflexivity. Qed.
+
 Ltac paco_cont9 e0 e1 e2 e3 e4 e5 e6 e7 e8 :=
 let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
 let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
@@ -635,15 +778,7 @@ let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
 let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
 let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
 let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
-paco_convert e8 x8 EQ8;
-paco_convert e7 x7 EQ7;
-paco_convert e6 x6 EQ6;
-paco_convert e5 x5 EQ5;
-paco_convert e4 x4 EQ4;
-paco_convert e3 x3 EQ3;
-paco_convert e2 x2 EQ2;
-paco_convert e1 x1 EQ1;
-paco_convert e0 x0 EQ0;
+apply _paco_convert9;
 intros x0 EQ0;
 intros x1 EQ1;
 intros x2 EQ2;
@@ -694,6 +829,35 @@ let CIH' := fresh CIH in try rename INC into CIH'.
 (** *** Arity 10
 *)
 
+Lemma _paco_convert10: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9
+(paco10: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+(y4: @T4 y0 y1 y2 y3)
+(y5: @T5 y0 y1 y2 y3 y4)
+(y6: @T6 y0 y1 y2 y3 y4 y5)
+(y7: @T7 y0 y1 y2 y3 y4 y5 y6)
+(y8: @T8 y0 y1 y2 y3 y4 y5 y6 y7)
+(y9: @T9 y0 y1 y2 y3 y4 y5 y6 y7 y8)
+, Prop)
+ y0 y1 y2 y3 y4 y5 y6 y7 y8 y9
+(CONVERT: forall
+(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
+(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
+(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
+(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
+(x4: @T4 x0 x1 x2 x3) (EQ4: _paco_id (@JMeq.JMeq (@T4 x0 x1 x2 x3) x4 (@T4 y0 y1 y2 y3) y4))
+(x5: @T5 x0 x1 x2 x3 x4) (EQ5: _paco_id (@JMeq.JMeq (@T5 x0 x1 x2 x3 x4) x5 (@T5 y0 y1 y2 y3 y4) y5))
+(x6: @T6 x0 x1 x2 x3 x4 x5) (EQ6: _paco_id (@JMeq.JMeq (@T6 x0 x1 x2 x3 x4 x5) x6 (@T6 y0 y1 y2 y3 y4 y5) y6))
+(x7: @T7 x0 x1 x2 x3 x4 x5 x6) (EQ7: _paco_id (@JMeq.JMeq (@T7 x0 x1 x2 x3 x4 x5 x6) x7 (@T7 y0 y1 y2 y3 y4 y5 y6) y7))
+(x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (EQ8: _paco_id (@JMeq.JMeq (@T8 x0 x1 x2 x3 x4 x5 x6 x7) x8 (@T8 y0 y1 y2 y3 y4 y5 y6 y7) y8))
+(x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (EQ9: _paco_id (@JMeq.JMeq (@T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) x9 (@T9 y0 y1 y2 y3 y4 y5 y6 y7 y8) y9))
+, @paco10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9),
+@paco10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9.
+Proof. intros. apply CONVERT; reflexivity. Qed.
+
 Ltac paco_cont10 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 :=
 let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
 let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
@@ -705,16 +869,7 @@ let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
 let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
 let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
 let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
-paco_convert e9 x9 EQ9;
-paco_convert e8 x8 EQ8;
-paco_convert e7 x7 EQ7;
-paco_convert e6 x6 EQ6;
-paco_convert e5 x5 EQ5;
-paco_convert e4 x4 EQ4;
-paco_convert e3 x3 EQ3;
-paco_convert e2 x2 EQ2;
-paco_convert e1 x1 EQ1;
-paco_convert e0 x0 EQ0;
+apply _paco_convert10;
 intros x0 EQ0;
 intros x1 EQ1;
 intros x2 EQ2;
@@ -767,6 +922,37 @@ let CIH' := fresh CIH in try rename INC into CIH'.
 (** *** Arity 11
 *)
 
+Lemma _paco_convert11: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10
+(paco11: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+(y4: @T4 y0 y1 y2 y3)
+(y5: @T5 y0 y1 y2 y3 y4)
+(y6: @T6 y0 y1 y2 y3 y4 y5)
+(y7: @T7 y0 y1 y2 y3 y4 y5 y6)
+(y8: @T8 y0 y1 y2 y3 y4 y5 y6 y7)
+(y9: @T9 y0 y1 y2 y3 y4 y5 y6 y7 y8)
+(y10: @T10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9)
+, Prop)
+ y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10
+(CONVERT: forall
+(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
+(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
+(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
+(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
+(x4: @T4 x0 x1 x2 x3) (EQ4: _paco_id (@JMeq.JMeq (@T4 x0 x1 x2 x3) x4 (@T4 y0 y1 y2 y3) y4))
+(x5: @T5 x0 x1 x2 x3 x4) (EQ5: _paco_id (@JMeq.JMeq (@T5 x0 x1 x2 x3 x4) x5 (@T5 y0 y1 y2 y3 y4) y5))
+(x6: @T6 x0 x1 x2 x3 x4 x5) (EQ6: _paco_id (@JMeq.JMeq (@T6 x0 x1 x2 x3 x4 x5) x6 (@T6 y0 y1 y2 y3 y4 y5) y6))
+(x7: @T7 x0 x1 x2 x3 x4 x5 x6) (EQ7: _paco_id (@JMeq.JMeq (@T7 x0 x1 x2 x3 x4 x5 x6) x7 (@T7 y0 y1 y2 y3 y4 y5 y6) y7))
+(x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (EQ8: _paco_id (@JMeq.JMeq (@T8 x0 x1 x2 x3 x4 x5 x6 x7) x8 (@T8 y0 y1 y2 y3 y4 y5 y6 y7) y8))
+(x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (EQ9: _paco_id (@JMeq.JMeq (@T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) x9 (@T9 y0 y1 y2 y3 y4 y5 y6 y7 y8) y9))
+(x10: @T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (EQ10: _paco_id (@JMeq.JMeq (@T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) x10 (@T10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9) y10))
+, @paco11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10),
+@paco11 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10.
+Proof. intros. apply CONVERT; reflexivity. Qed.
+
 Ltac paco_cont11 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 :=
 let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
 let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
@@ -779,17 +965,7 @@ let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
 let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
 let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
 let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
-paco_convert e10 x10 EQ10;
-paco_convert e9 x9 EQ9;
-paco_convert e8 x8 EQ8;
-paco_convert e7 x7 EQ7;
-paco_convert e6 x6 EQ6;
-paco_convert e5 x5 EQ5;
-paco_convert e4 x4 EQ4;
-paco_convert e3 x3 EQ3;
-paco_convert e2 x2 EQ2;
-paco_convert e1 x1 EQ1;
-paco_convert e0 x0 EQ0;
+apply _paco_convert11;
 intros x0 EQ0;
 intros x1 EQ1;
 intros x2 EQ2;
@@ -844,6 +1020,39 @@ let CIH' := fresh CIH in try rename INC into CIH'.
 (** *** Arity 12
 *)
 
+Lemma _paco_convert12: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11
+(paco12: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+(y4: @T4 y0 y1 y2 y3)
+(y5: @T5 y0 y1 y2 y3 y4)
+(y6: @T6 y0 y1 y2 y3 y4 y5)
+(y7: @T7 y0 y1 y2 y3 y4 y5 y6)
+(y8: @T8 y0 y1 y2 y3 y4 y5 y6 y7)
+(y9: @T9 y0 y1 y2 y3 y4 y5 y6 y7 y8)
+(y10: @T10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9)
+(y11: @T11 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10)
+, Prop)
+ y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11
+(CONVERT: forall
+(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
+(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
+(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
+(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
+(x4: @T4 x0 x1 x2 x3) (EQ4: _paco_id (@JMeq.JMeq (@T4 x0 x1 x2 x3) x4 (@T4 y0 y1 y2 y3) y4))
+(x5: @T5 x0 x1 x2 x3 x4) (EQ5: _paco_id (@JMeq.JMeq (@T5 x0 x1 x2 x3 x4) x5 (@T5 y0 y1 y2 y3 y4) y5))
+(x6: @T6 x0 x1 x2 x3 x4 x5) (EQ6: _paco_id (@JMeq.JMeq (@T6 x0 x1 x2 x3 x4 x5) x6 (@T6 y0 y1 y2 y3 y4 y5) y6))
+(x7: @T7 x0 x1 x2 x3 x4 x5 x6) (EQ7: _paco_id (@JMeq.JMeq (@T7 x0 x1 x2 x3 x4 x5 x6) x7 (@T7 y0 y1 y2 y3 y4 y5 y6) y7))
+(x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (EQ8: _paco_id (@JMeq.JMeq (@T8 x0 x1 x2 x3 x4 x5 x6 x7) x8 (@T8 y0 y1 y2 y3 y4 y5 y6 y7) y8))
+(x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (EQ9: _paco_id (@JMeq.JMeq (@T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) x9 (@T9 y0 y1 y2 y3 y4 y5 y6 y7 y8) y9))
+(x10: @T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (EQ10: _paco_id (@JMeq.JMeq (@T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) x10 (@T10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9) y10))
+(x11: @T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) (EQ11: _paco_id (@JMeq.JMeq (@T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) x11 (@T11 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10) y11))
+, @paco12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11),
+@paco12 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11.
+Proof. intros. apply CONVERT; reflexivity. Qed.
+
 Ltac paco_cont12 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 :=
 let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
 let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
@@ -857,18 +1066,7 @@ let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
 let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
 let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
 let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
-paco_convert e11 x11 EQ11;
-paco_convert e10 x10 EQ10;
-paco_convert e9 x9 EQ9;
-paco_convert e8 x8 EQ8;
-paco_convert e7 x7 EQ7;
-paco_convert e6 x6 EQ6;
-paco_convert e5 x5 EQ5;
-paco_convert e4 x4 EQ4;
-paco_convert e3 x3 EQ3;
-paco_convert e2 x2 EQ2;
-paco_convert e1 x1 EQ1;
-paco_convert e0 x0 EQ0;
+apply _paco_convert12;
 intros x0 EQ0;
 intros x1 EQ1;
 intros x2 EQ2;
@@ -925,6 +1123,41 @@ let CIH' := fresh CIH in try rename INC into CIH'.
 (** *** Arity 13
 *)
 
+Lemma _paco_convert13: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12
+(paco13: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+(y4: @T4 y0 y1 y2 y3)
+(y5: @T5 y0 y1 y2 y3 y4)
+(y6: @T6 y0 y1 y2 y3 y4 y5)
+(y7: @T7 y0 y1 y2 y3 y4 y5 y6)
+(y8: @T8 y0 y1 y2 y3 y4 y5 y6 y7)
+(y9: @T9 y0 y1 y2 y3 y4 y5 y6 y7 y8)
+(y10: @T10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9)
+(y11: @T11 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10)
+(y12: @T12 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11)
+, Prop)
+ y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12
+(CONVERT: forall
+(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
+(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
+(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
+(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
+(x4: @T4 x0 x1 x2 x3) (EQ4: _paco_id (@JMeq.JMeq (@T4 x0 x1 x2 x3) x4 (@T4 y0 y1 y2 y3) y4))
+(x5: @T5 x0 x1 x2 x3 x4) (EQ5: _paco_id (@JMeq.JMeq (@T5 x0 x1 x2 x3 x4) x5 (@T5 y0 y1 y2 y3 y4) y5))
+(x6: @T6 x0 x1 x2 x3 x4 x5) (EQ6: _paco_id (@JMeq.JMeq (@T6 x0 x1 x2 x3 x4 x5) x6 (@T6 y0 y1 y2 y3 y4 y5) y6))
+(x7: @T7 x0 x1 x2 x3 x4 x5 x6) (EQ7: _paco_id (@JMeq.JMeq (@T7 x0 x1 x2 x3 x4 x5 x6) x7 (@T7 y0 y1 y2 y3 y4 y5 y6) y7))
+(x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (EQ8: _paco_id (@JMeq.JMeq (@T8 x0 x1 x2 x3 x4 x5 x6 x7) x8 (@T8 y0 y1 y2 y3 y4 y5 y6 y7) y8))
+(x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (EQ9: _paco_id (@JMeq.JMeq (@T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) x9 (@T9 y0 y1 y2 y3 y4 y5 y6 y7 y8) y9))
+(x10: @T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (EQ10: _paco_id (@JMeq.JMeq (@T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) x10 (@T10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9) y10))
+(x11: @T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) (EQ11: _paco_id (@JMeq.JMeq (@T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) x11 (@T11 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10) y11))
+(x12: @T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) (EQ12: _paco_id (@JMeq.JMeq (@T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) x12 (@T12 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11) y12))
+, @paco13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12),
+@paco13 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12.
+Proof. intros. apply CONVERT; reflexivity. Qed.
+
 Ltac paco_cont13 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 :=
 let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
 let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
@@ -939,19 +1172,7 @@ let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
 let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
 let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
 let x12 := fresh "_paco_v_" in let EQ12 := fresh "_paco_EQ_" in
-paco_convert e12 x12 EQ12;
-paco_convert e11 x11 EQ11;
-paco_convert e10 x10 EQ10;
-paco_convert e9 x9 EQ9;
-paco_convert e8 x8 EQ8;
-paco_convert e7 x7 EQ7;
-paco_convert e6 x6 EQ6;
-paco_convert e5 x5 EQ5;
-paco_convert e4 x4 EQ4;
-paco_convert e3 x3 EQ3;
-paco_convert e2 x2 EQ2;
-paco_convert e1 x1 EQ1;
-paco_convert e0 x0 EQ0;
+apply _paco_convert13;
 intros x0 EQ0;
 intros x1 EQ1;
 intros x2 EQ2;
@@ -1010,6 +1231,43 @@ let CIH' := fresh CIH in try rename INC into CIH'.
 (** *** Arity 14
 *)
 
+Lemma _paco_convert14: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13
+(paco14: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+(y4: @T4 y0 y1 y2 y3)
+(y5: @T5 y0 y1 y2 y3 y4)
+(y6: @T6 y0 y1 y2 y3 y4 y5)
+(y7: @T7 y0 y1 y2 y3 y4 y5 y6)
+(y8: @T8 y0 y1 y2 y3 y4 y5 y6 y7)
+(y9: @T9 y0 y1 y2 y3 y4 y5 y6 y7 y8)
+(y10: @T10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9)
+(y11: @T11 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10)
+(y12: @T12 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11)
+(y13: @T13 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12)
+, Prop)
+ y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12 y13
+(CONVERT: forall
+(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
+(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
+(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
+(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
+(x4: @T4 x0 x1 x2 x3) (EQ4: _paco_id (@JMeq.JMeq (@T4 x0 x1 x2 x3) x4 (@T4 y0 y1 y2 y3) y4))
+(x5: @T5 x0 x1 x2 x3 x4) (EQ5: _paco_id (@JMeq.JMeq (@T5 x0 x1 x2 x3 x4) x5 (@T5 y0 y1 y2 y3 y4) y5))
+(x6: @T6 x0 x1 x2 x3 x4 x5) (EQ6: _paco_id (@JMeq.JMeq (@T6 x0 x1 x2 x3 x4 x5) x6 (@T6 y0 y1 y2 y3 y4 y5) y6))
+(x7: @T7 x0 x1 x2 x3 x4 x5 x6) (EQ7: _paco_id (@JMeq.JMeq (@T7 x0 x1 x2 x3 x4 x5 x6) x7 (@T7 y0 y1 y2 y3 y4 y5 y6) y7))
+(x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (EQ8: _paco_id (@JMeq.JMeq (@T8 x0 x1 x2 x3 x4 x5 x6 x7) x8 (@T8 y0 y1 y2 y3 y4 y5 y6 y7) y8))
+(x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (EQ9: _paco_id (@JMeq.JMeq (@T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) x9 (@T9 y0 y1 y2 y3 y4 y5 y6 y7 y8) y9))
+(x10: @T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (EQ10: _paco_id (@JMeq.JMeq (@T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) x10 (@T10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9) y10))
+(x11: @T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) (EQ11: _paco_id (@JMeq.JMeq (@T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) x11 (@T11 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10) y11))
+(x12: @T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) (EQ12: _paco_id (@JMeq.JMeq (@T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) x12 (@T12 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11) y12))
+(x13: @T13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12) (EQ13: _paco_id (@JMeq.JMeq (@T13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12) x13 (@T13 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12) y13))
+, @paco14 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13),
+@paco14 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12 y13.
+Proof. intros. apply CONVERT; reflexivity. Qed.
+
 Ltac paco_cont14 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 :=
 let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
 let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
@@ -1025,20 +1283,7 @@ let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
 let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
 let x12 := fresh "_paco_v_" in let EQ12 := fresh "_paco_EQ_" in
 let x13 := fresh "_paco_v_" in let EQ13 := fresh "_paco_EQ_" in
-paco_convert e13 x13 EQ13;
-paco_convert e12 x12 EQ12;
-paco_convert e11 x11 EQ11;
-paco_convert e10 x10 EQ10;
-paco_convert e9 x9 EQ9;
-paco_convert e8 x8 EQ8;
-paco_convert e7 x7 EQ7;
-paco_convert e6 x6 EQ6;
-paco_convert e5 x5 EQ5;
-paco_convert e4 x4 EQ4;
-paco_convert e3 x3 EQ3;
-paco_convert e2 x2 EQ2;
-paco_convert e1 x1 EQ1;
-paco_convert e0 x0 EQ0;
+apply _paco_convert14;
 intros x0 EQ0;
 intros x1 EQ1;
 intros x2 EQ2;
