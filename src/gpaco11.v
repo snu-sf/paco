@@ -220,7 +220,7 @@ Proof.
   clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 IN0.
   intros. destruct PR; [|right; apply H].
   left. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 H.
-  apply paco11_acc; intros * CIH0 CIH * H0.
+  pcofix CIH. intros.
   _punfold H0; [..|apply gpaco11_def_mon]. pstep.
   eapply gf_mon. apply H0. intros.
   apply rclo11_rclo. eapply rclo11_mon. apply PR.
@@ -476,8 +476,8 @@ Lemma gpaco11_compat_init clo
   gpaco11 gf clo bot11 bot11 <11= paco11 gf bot11.
 Proof.
   intros. destruct PR. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 IN.
-  apply paco11_acc; intros * _ CIH * IN.
-  pstep. eapply gf_mon; [| right; apply CIH, rclo11_rclo, PR].
+  pcofix CIH. intros.
+  pstep. eapply gf_mon; [| right; apply CIH, rclo11_rclo, PR]. 
   apply compat11_compat with (gf:=gf). apply rclo11_compat. apply gf_mon. apply CMP.
   eapply rclo11_mon. apply IN.
   intros. destruct PR; [|contradiction]. _punfold H; [..|apply gpaco11_def_mon, gf_mon].
@@ -521,7 +521,7 @@ Proof.
   apply rclo11_dist in PR; [|apply CMP|apply DIST].
   destruct PR; [|right; apply H].
   left. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 H.
-  apply paco11_acc; intros * CIH0 CIH * H0.
+  pcofix CIH; intros.
   apply rclo11_wcompat in H0; [|apply gf_mon|apply CMP].
   pstep. eapply gf_mon. apply H0. intros.
   apply gpaco11_unfold in PR; [|apply gf_mon].
@@ -535,10 +535,7 @@ Proof.
     apply gpaco11_gen_rclo. apply gf_mon.
     eapply gupaco11_mon. apply PR0. intros.
     destruct PR1; apply H1.
-  - match goal with
-    | [ |- _  ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8 ?y9 ?y10 ] =>
-      assert (REL: @rclo11 clo (rclo11 clo (gf (gupaco11 gf clo ((rg \11/ r) \11/ (rg \11/ r))) \11/ (rg \11/ r))) y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10)
-    end.
+  - assert (REL: @rclo11 clo (rclo11 clo (gf (gupaco11 gf clo ((rg \11/ r) \11/ (rg \11/ r))) \11/ (rg \11/ r))) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10).
     { eapply rclo11_mon. apply H. intros. apply gpaco11_unfold in PR. apply PR. apply gf_mon. }
     apply rclo11_rclo in REL.
     apply rclo11_dist in REL; [|apply CMP|apply DIST].
@@ -557,7 +554,7 @@ Proof.
   intros. destruct PR; cycle 1.
   - eapply gpaco11_rclo. apply H.
   - econstructor. apply rclo11_base. left.
-    revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 H. apply paco11_acc; intros * CIH0 CIH * H0.
+    revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 H. pcofix CIH; intros.
     _punfold H0; [|apply gf_mon]. pstep.
     eapply gf_mon. apply H0. intros.
     destruct PR.

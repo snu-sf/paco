@@ -217,7 +217,7 @@ Proof.
   clear x0 x1 x2 x3 x4 x5 x6 x7 IN0.
   intros. destruct PR; [|right; apply H].
   left. revert x0 x1 x2 x3 x4 x5 x6 x7 H.
-  apply paco8_acc; intros * CIH0 CIH * H0.
+  pcofix CIH. intros.
   _punfold H0; [..|apply gpaco8_def_mon]. pstep.
   eapply gf_mon. apply H0. intros.
   apply rclo8_rclo. eapply rclo8_mon. apply PR.
@@ -473,8 +473,8 @@ Lemma gpaco8_compat_init clo
   gpaco8 gf clo bot8 bot8 <8= paco8 gf bot8.
 Proof.
   intros. destruct PR. revert x0 x1 x2 x3 x4 x5 x6 x7 IN.
-  apply paco8_acc; intros * _ CIH * IN.
-  pstep. eapply gf_mon; [| right; apply CIH, rclo8_rclo, PR].
+  pcofix CIH. intros.
+  pstep. eapply gf_mon; [| right; apply CIH, rclo8_rclo, PR]. 
   apply compat8_compat with (gf:=gf). apply rclo8_compat. apply gf_mon. apply CMP.
   eapply rclo8_mon. apply IN.
   intros. destruct PR; [|contradiction]. _punfold H; [..|apply gpaco8_def_mon, gf_mon].
@@ -518,7 +518,7 @@ Proof.
   apply rclo8_dist in PR; [|apply CMP|apply DIST].
   destruct PR; [|right; apply H].
   left. revert x0 x1 x2 x3 x4 x5 x6 x7 H.
-  apply paco8_acc; intros * CIH0 CIH * H0.
+  pcofix CIH; intros.
   apply rclo8_wcompat in H0; [|apply gf_mon|apply CMP].
   pstep. eapply gf_mon. apply H0. intros.
   apply gpaco8_unfold in PR; [|apply gf_mon].
@@ -532,10 +532,7 @@ Proof.
     apply gpaco8_gen_rclo. apply gf_mon.
     eapply gupaco8_mon. apply PR0. intros.
     destruct PR1; apply H1.
-  - match goal with
-    | [ |- _  ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ] =>
-      assert (REL: @rclo8 clo (rclo8 clo (gf (gupaco8 gf clo ((rg \8/ r) \8/ (rg \8/ r))) \8/ (rg \8/ r))) y0 y1 y2 y3 y4 y5 y6 y7)
-    end.
+  - assert (REL: @rclo8 clo (rclo8 clo (gf (gupaco8 gf clo ((rg \8/ r) \8/ (rg \8/ r))) \8/ (rg \8/ r))) x0 x1 x2 x3 x4 x5 x6 x7).
     { eapply rclo8_mon. apply H. intros. apply gpaco8_unfold in PR. apply PR. apply gf_mon. }
     apply rclo8_rclo in REL.
     apply rclo8_dist in REL; [|apply CMP|apply DIST].
@@ -554,7 +551,7 @@ Proof.
   intros. destruct PR; cycle 1.
   - eapply gpaco8_rclo. apply H.
   - econstructor. apply rclo8_base. left.
-    revert x0 x1 x2 x3 x4 x5 x6 x7 H. apply paco8_acc; intros * CIH0 CIH * H0.
+    revert x0 x1 x2 x3 x4 x5 x6 x7 H. pcofix CIH; intros.
     _punfold H0; [|apply gf_mon]. pstep.
     eapply gf_mon. apply H0. intros.
     destruct PR.
