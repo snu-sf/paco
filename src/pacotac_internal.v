@@ -166,13 +166,7 @@ Ltac paco_simp_hyp CIH :=
     simplJM; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
-    first [
-      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       try (apply paco_eq_JMeq; reflexivity);
-       first [eassumption|apply _paco_foo_cons]); fail
-    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       eauto using paco_eq_JMeq, _paco_foo_cons)]);
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp CIH :=
@@ -1399,11 +1393,30 @@ Lemma _paco_convert1: forall T0
 @paco1 y0.
 Proof. intros. apply CONVERT; reflexivity. Qed.
 
+Lemma _paco_convert_rev1: forall T0
+(paco1: forall
+(y0: @T0)
+, Prop)
+ y0
+ x0
+(EQ: _paco_id (@exist1T T0 x0 = @exist1T T0 y0))
+(PACO: @paco1 y0),
+@paco1 x0.
+Proof. intros.
+apply (@f_equal (@sig1T T0) _ (fun x => @paco1
+ x.(proj1T0)
+)) in EQ. simpl in EQ. rewrite EQ. apply PACO.
+Qed.
+
+Ltac paco_convert_rev1 := match goal with
+| [H: _paco_id (@exist1T _ _ _ _ ?x0 = @exist1T _ _ _ _ ?y0) |- _] =>
+eapply _paco_convert_rev1; [eapply H; clear H|..]; clear x0 H
+end.
+
 Ltac paco_cont1 e0 :=
-let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
+let x0 := fresh "_paco_v_" in
 apply _paco_convert1;
-intros x0 EQ0;
-generalize EQ0; clear EQ0;
+intros x0;
 move x0 at top;
 paco_generalize_hyp _paco_mark; revert x0.
 
@@ -1428,9 +1441,35 @@ match goal with [H: ?x |- _] => match x with
 | _ => tac1 cr
 end end.
 
+Ltac paco_simp_hyp1 CIH :=
+  let EP := fresh "_paco_EP_" in
+  let FP := fresh "_paco_FF_" in
+  let TP := fresh "_paco_TP_" in
+  let XP := fresh "_paco_XP_" in
+  let PP := type of CIH in
+  evar (EP: Prop);
+  assert (TP: False -> PP) by (
+    intros FP; generalize _paco_mark_cons;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev1; paco_revert_hyp _paco_mark;
+    let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
+  clear TP;
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  unfold EP in *; clear EP CIH; rename XP into CIH.
+
+Ltac paco_post_simp1 CIH :=
+  let CIH := fresh CIH in
+  intro CIH; paco_simp_hyp1 CIH;
+  first [try(match goal with [ |- context[_paco_id] ] => fail 2 | [ |- context[_paco_foo] ] => fail 2 end) |
+    let TMP := fresh "_paco_TMP_" in
+    generalize _paco_mark_cons; intro TMP;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev1; paco_revert_hyp _paco_mark
+  ].
+
 Tactic Notation "paco_post1" ident(CIH) "with" ident(nr) :=
 let INC := fresh "_paco_inc_" in
-paco_post_match1 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+paco_post_match1 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp1 CIH;
 let CIH' := fresh CIH in try rename INC into CIH'.
 
 (** *** Arity 2
@@ -1449,13 +1488,33 @@ Lemma _paco_convert2: forall T0 T1
 @paco2 y0 y1.
 Proof. intros. apply CONVERT; reflexivity. Qed.
 
+Lemma _paco_convert_rev2: forall T0 T1
+(paco2: forall
+(y0: @T0)
+(y1: @T1 y0)
+, Prop)
+ y0 y1
+ x0 x1
+(EQ: _paco_id (@exist2T T0 T1 x0 x1 = @exist2T T0 T1 y0 y1))
+(PACO: @paco2 y0 y1),
+@paco2 x0 x1.
+Proof. intros.
+apply (@f_equal (@sig2T T0 T1) _ (fun x => @paco2
+ x.(proj2T0)
+ x.(proj2T1)
+)) in EQ. simpl in EQ. rewrite EQ. apply PACO.
+Qed.
+
+Ltac paco_convert_rev2 := match goal with
+| [H: _paco_id (@exist2T _ _ _ _ ?x0 ?x1 = @exist2T _ _ _ _ ?y0 ?y1) |- _] =>
+eapply _paco_convert_rev2; [eapply H; clear H|..]; clear x0 x1 H
+end.
+
 Ltac paco_cont2 e0 e1 :=
-let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
-let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
+let x0 := fresh "_paco_v_" in
+let x1 := fresh "_paco_v_" in
 apply _paco_convert2;
-intros x0 EQ0;
-intros x1 EQ1;
-generalize (conj EQ0 EQ1); clear EQ0 EQ1;
+intros x0 x1;
 move x0 at top; move x1 at top;
 paco_generalize_hyp _paco_mark; revert x0 x1.
 
@@ -1481,9 +1540,35 @@ match goal with [H: ?x |- _] => match x with
 | _ => tac1 cr
 end end.
 
+Ltac paco_simp_hyp2 CIH :=
+  let EP := fresh "_paco_EP_" in
+  let FP := fresh "_paco_FF_" in
+  let TP := fresh "_paco_TP_" in
+  let XP := fresh "_paco_XP_" in
+  let PP := type of CIH in
+  evar (EP: Prop);
+  assert (TP: False -> PP) by (
+    intros FP; generalize _paco_mark_cons;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev2; paco_revert_hyp _paco_mark;
+    let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
+  clear TP;
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  unfold EP in *; clear EP CIH; rename XP into CIH.
+
+Ltac paco_post_simp2 CIH :=
+  let CIH := fresh CIH in
+  intro CIH; paco_simp_hyp2 CIH;
+  first [try(match goal with [ |- context[_paco_id] ] => fail 2 | [ |- context[_paco_foo] ] => fail 2 end) |
+    let TMP := fresh "_paco_TMP_" in
+    generalize _paco_mark_cons; intro TMP;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev2; paco_revert_hyp _paco_mark
+  ].
+
 Tactic Notation "paco_post2" ident(CIH) "with" ident(nr) :=
 let INC := fresh "_paco_inc_" in
-paco_post_match2 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+paco_post_match2 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp2 CIH;
 let CIH' := fresh CIH in try rename INC into CIH'.
 
 (** *** Arity 3
@@ -1504,15 +1589,36 @@ Lemma _paco_convert3: forall T0 T1 T2
 @paco3 y0 y1 y2.
 Proof. intros. apply CONVERT; reflexivity. Qed.
 
+Lemma _paco_convert_rev3: forall T0 T1 T2
+(paco3: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+, Prop)
+ y0 y1 y2
+ x0 x1 x2
+(EQ: _paco_id (@exist3T T0 T1 T2 x0 x1 x2 = @exist3T T0 T1 T2 y0 y1 y2))
+(PACO: @paco3 y0 y1 y2),
+@paco3 x0 x1 x2.
+Proof. intros.
+apply (@f_equal (@sig3T T0 T1 T2) _ (fun x => @paco3
+ x.(proj3T0)
+ x.(proj3T1)
+ x.(proj3T2)
+)) in EQ. simpl in EQ. rewrite EQ. apply PACO.
+Qed.
+
+Ltac paco_convert_rev3 := match goal with
+| [H: _paco_id (@exist3T _ _ _ _ ?x0 ?x1 ?x2 = @exist3T _ _ _ _ ?y0 ?y1 ?y2) |- _] =>
+eapply _paco_convert_rev3; [eapply H; clear H|..]; clear x0 x1 x2 H
+end.
+
 Ltac paco_cont3 e0 e1 e2 :=
-let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
-let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
-let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
+let x0 := fresh "_paco_v_" in
+let x1 := fresh "_paco_v_" in
+let x2 := fresh "_paco_v_" in
 apply _paco_convert3;
-intros x0 EQ0;
-intros x1 EQ1;
-intros x2 EQ2;
-generalize (conj EQ0 (conj EQ1 EQ2)); clear EQ0 EQ1 EQ2;
+intros x0 x1 x2;
 move x0 at top; move x1 at top; move x2 at top;
 paco_generalize_hyp _paco_mark; revert x0 x1 x2.
 
@@ -1539,9 +1645,35 @@ match goal with [H: ?x |- _] => match x with
 | _ => tac1 cr
 end end.
 
+Ltac paco_simp_hyp3 CIH :=
+  let EP := fresh "_paco_EP_" in
+  let FP := fresh "_paco_FF_" in
+  let TP := fresh "_paco_TP_" in
+  let XP := fresh "_paco_XP_" in
+  let PP := type of CIH in
+  evar (EP: Prop);
+  assert (TP: False -> PP) by (
+    intros FP; generalize _paco_mark_cons;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev3; paco_revert_hyp _paco_mark;
+    let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
+  clear TP;
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  unfold EP in *; clear EP CIH; rename XP into CIH.
+
+Ltac paco_post_simp3 CIH :=
+  let CIH := fresh CIH in
+  intro CIH; paco_simp_hyp3 CIH;
+  first [try(match goal with [ |- context[_paco_id] ] => fail 2 | [ |- context[_paco_foo] ] => fail 2 end) |
+    let TMP := fresh "_paco_TMP_" in
+    generalize _paco_mark_cons; intro TMP;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev3; paco_revert_hyp _paco_mark
+  ].
+
 Tactic Notation "paco_post3" ident(CIH) "with" ident(nr) :=
 let INC := fresh "_paco_inc_" in
-paco_post_match3 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+paco_post_match3 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp3 CIH;
 let CIH' := fresh CIH in try rename INC into CIH'.
 
 (** *** Arity 4
@@ -1564,17 +1696,39 @@ Lemma _paco_convert4: forall T0 T1 T2 T3
 @paco4 y0 y1 y2 y3.
 Proof. intros. apply CONVERT; reflexivity. Qed.
 
+Lemma _paco_convert_rev4: forall T0 T1 T2 T3
+(paco4: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+, Prop)
+ y0 y1 y2 y3
+ x0 x1 x2 x3
+(EQ: _paco_id (@exist4T T0 T1 T2 T3 x0 x1 x2 x3 = @exist4T T0 T1 T2 T3 y0 y1 y2 y3))
+(PACO: @paco4 y0 y1 y2 y3),
+@paco4 x0 x1 x2 x3.
+Proof. intros.
+apply (@f_equal (@sig4T T0 T1 T2 T3) _ (fun x => @paco4
+ x.(proj4T0)
+ x.(proj4T1)
+ x.(proj4T2)
+ x.(proj4T3)
+)) in EQ. simpl in EQ. rewrite EQ. apply PACO.
+Qed.
+
+Ltac paco_convert_rev4 := match goal with
+| [H: _paco_id (@exist4T _ _ _ _ ?x0 ?x1 ?x2 ?x3 = @exist4T _ _ _ _ ?y0 ?y1 ?y2 ?y3) |- _] =>
+eapply _paco_convert_rev4; [eapply H; clear H|..]; clear x0 x1 x2 x3 H
+end.
+
 Ltac paco_cont4 e0 e1 e2 e3 :=
-let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
-let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
-let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
-let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
+let x0 := fresh "_paco_v_" in
+let x1 := fresh "_paco_v_" in
+let x2 := fresh "_paco_v_" in
+let x3 := fresh "_paco_v_" in
 apply _paco_convert4;
-intros x0 EQ0;
-intros x1 EQ1;
-intros x2 EQ2;
-intros x3 EQ3;
-generalize (conj EQ0 (conj EQ1 (conj EQ2 EQ3))); clear EQ0 EQ1 EQ2 EQ3;
+intros x0 x1 x2 x3;
 move x0 at top; move x1 at top; move x2 at top; move x3 at top;
 paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3.
 
@@ -1602,9 +1756,35 @@ match goal with [H: ?x |- _] => match x with
 | _ => tac1 cr
 end end.
 
+Ltac paco_simp_hyp4 CIH :=
+  let EP := fresh "_paco_EP_" in
+  let FP := fresh "_paco_FF_" in
+  let TP := fresh "_paco_TP_" in
+  let XP := fresh "_paco_XP_" in
+  let PP := type of CIH in
+  evar (EP: Prop);
+  assert (TP: False -> PP) by (
+    intros FP; generalize _paco_mark_cons;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev4; paco_revert_hyp _paco_mark;
+    let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
+  clear TP;
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  unfold EP in *; clear EP CIH; rename XP into CIH.
+
+Ltac paco_post_simp4 CIH :=
+  let CIH := fresh CIH in
+  intro CIH; paco_simp_hyp4 CIH;
+  first [try(match goal with [ |- context[_paco_id] ] => fail 2 | [ |- context[_paco_foo] ] => fail 2 end) |
+    let TMP := fresh "_paco_TMP_" in
+    generalize _paco_mark_cons; intro TMP;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev4; paco_revert_hyp _paco_mark
+  ].
+
 Tactic Notation "paco_post4" ident(CIH) "with" ident(nr) :=
 let INC := fresh "_paco_inc_" in
-paco_post_match4 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+paco_post_match4 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp4 CIH;
 let CIH' := fresh CIH in try rename INC into CIH'.
 
 (** *** Arity 5
@@ -1629,19 +1809,42 @@ Lemma _paco_convert5: forall T0 T1 T2 T3 T4
 @paco5 y0 y1 y2 y3 y4.
 Proof. intros. apply CONVERT; reflexivity. Qed.
 
+Lemma _paco_convert_rev5: forall T0 T1 T2 T3 T4
+(paco5: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+(y4: @T4 y0 y1 y2 y3)
+, Prop)
+ y0 y1 y2 y3 y4
+ x0 x1 x2 x3 x4
+(EQ: _paco_id (@exist5T T0 T1 T2 T3 T4 x0 x1 x2 x3 x4 = @exist5T T0 T1 T2 T3 T4 y0 y1 y2 y3 y4))
+(PACO: @paco5 y0 y1 y2 y3 y4),
+@paco5 x0 x1 x2 x3 x4.
+Proof. intros.
+apply (@f_equal (@sig5T T0 T1 T2 T3 T4) _ (fun x => @paco5
+ x.(proj5T0)
+ x.(proj5T1)
+ x.(proj5T2)
+ x.(proj5T3)
+ x.(proj5T4)
+)) in EQ. simpl in EQ. rewrite EQ. apply PACO.
+Qed.
+
+Ltac paco_convert_rev5 := match goal with
+| [H: _paco_id (@exist5T _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 = @exist5T _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4) |- _] =>
+eapply _paco_convert_rev5; [eapply H; clear H|..]; clear x0 x1 x2 x3 x4 H
+end.
+
 Ltac paco_cont5 e0 e1 e2 e3 e4 :=
-let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
-let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
-let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
-let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
-let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
+let x0 := fresh "_paco_v_" in
+let x1 := fresh "_paco_v_" in
+let x2 := fresh "_paco_v_" in
+let x3 := fresh "_paco_v_" in
+let x4 := fresh "_paco_v_" in
 apply _paco_convert5;
-intros x0 EQ0;
-intros x1 EQ1;
-intros x2 EQ2;
-intros x3 EQ3;
-intros x4 EQ4;
-generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 EQ4)))); clear EQ0 EQ1 EQ2 EQ3 EQ4;
+intros x0 x1 x2 x3 x4;
 move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top;
 paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4.
 
@@ -1670,9 +1873,35 @@ match goal with [H: ?x |- _] => match x with
 | _ => tac1 cr
 end end.
 
+Ltac paco_simp_hyp5 CIH :=
+  let EP := fresh "_paco_EP_" in
+  let FP := fresh "_paco_FF_" in
+  let TP := fresh "_paco_TP_" in
+  let XP := fresh "_paco_XP_" in
+  let PP := type of CIH in
+  evar (EP: Prop);
+  assert (TP: False -> PP) by (
+    intros FP; generalize _paco_mark_cons;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev5; paco_revert_hyp _paco_mark;
+    let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
+  clear TP;
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  unfold EP in *; clear EP CIH; rename XP into CIH.
+
+Ltac paco_post_simp5 CIH :=
+  let CIH := fresh CIH in
+  intro CIH; paco_simp_hyp5 CIH;
+  first [try(match goal with [ |- context[_paco_id] ] => fail 2 | [ |- context[_paco_foo] ] => fail 2 end) |
+    let TMP := fresh "_paco_TMP_" in
+    generalize _paco_mark_cons; intro TMP;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev5; paco_revert_hyp _paco_mark
+  ].
+
 Tactic Notation "paco_post5" ident(CIH) "with" ident(nr) :=
 let INC := fresh "_paco_inc_" in
-paco_post_match5 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+paco_post_match5 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp5 CIH;
 let CIH' := fresh CIH in try rename INC into CIH'.
 
 (** *** Arity 6
@@ -1699,21 +1928,45 @@ Lemma _paco_convert6: forall T0 T1 T2 T3 T4 T5
 @paco6 y0 y1 y2 y3 y4 y5.
 Proof. intros. apply CONVERT; reflexivity. Qed.
 
+Lemma _paco_convert_rev6: forall T0 T1 T2 T3 T4 T5
+(paco6: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+(y4: @T4 y0 y1 y2 y3)
+(y5: @T5 y0 y1 y2 y3 y4)
+, Prop)
+ y0 y1 y2 y3 y4 y5
+ x0 x1 x2 x3 x4 x5
+(EQ: _paco_id (@exist6T T0 T1 T2 T3 T4 T5 x0 x1 x2 x3 x4 x5 = @exist6T T0 T1 T2 T3 T4 T5 y0 y1 y2 y3 y4 y5))
+(PACO: @paco6 y0 y1 y2 y3 y4 y5),
+@paco6 x0 x1 x2 x3 x4 x5.
+Proof. intros.
+apply (@f_equal (@sig6T T0 T1 T2 T3 T4 T5) _ (fun x => @paco6
+ x.(proj6T0)
+ x.(proj6T1)
+ x.(proj6T2)
+ x.(proj6T3)
+ x.(proj6T4)
+ x.(proj6T5)
+)) in EQ. simpl in EQ. rewrite EQ. apply PACO.
+Qed.
+
+Ltac paco_convert_rev6 := match goal with
+| [H: _paco_id (@exist6T _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 = @exist6T _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5) |- _] =>
+eapply _paco_convert_rev6; [eapply H; clear H|..]; clear x0 x1 x2 x3 x4 x5 H
+end.
+
 Ltac paco_cont6 e0 e1 e2 e3 e4 e5 :=
-let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
-let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
-let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
-let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
-let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
-let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
+let x0 := fresh "_paco_v_" in
+let x1 := fresh "_paco_v_" in
+let x2 := fresh "_paco_v_" in
+let x3 := fresh "_paco_v_" in
+let x4 := fresh "_paco_v_" in
+let x5 := fresh "_paco_v_" in
 apply _paco_convert6;
-intros x0 EQ0;
-intros x1 EQ1;
-intros x2 EQ2;
-intros x3 EQ3;
-intros x4 EQ4;
-intros x5 EQ5;
-generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 EQ5))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5;
+intros x0 x1 x2 x3 x4 x5;
 move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top;
 paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5.
 
@@ -1743,9 +1996,35 @@ match goal with [H: ?x |- _] => match x with
 | _ => tac1 cr
 end end.
 
+Ltac paco_simp_hyp6 CIH :=
+  let EP := fresh "_paco_EP_" in
+  let FP := fresh "_paco_FF_" in
+  let TP := fresh "_paco_TP_" in
+  let XP := fresh "_paco_XP_" in
+  let PP := type of CIH in
+  evar (EP: Prop);
+  assert (TP: False -> PP) by (
+    intros FP; generalize _paco_mark_cons;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev6; paco_revert_hyp _paco_mark;
+    let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
+  clear TP;
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  unfold EP in *; clear EP CIH; rename XP into CIH.
+
+Ltac paco_post_simp6 CIH :=
+  let CIH := fresh CIH in
+  intro CIH; paco_simp_hyp6 CIH;
+  first [try(match goal with [ |- context[_paco_id] ] => fail 2 | [ |- context[_paco_foo] ] => fail 2 end) |
+    let TMP := fresh "_paco_TMP_" in
+    generalize _paco_mark_cons; intro TMP;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev6; paco_revert_hyp _paco_mark
+  ].
+
 Tactic Notation "paco_post6" ident(CIH) "with" ident(nr) :=
 let INC := fresh "_paco_inc_" in
-paco_post_match6 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+paco_post_match6 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp6 CIH;
 let CIH' := fresh CIH in try rename INC into CIH'.
 
 (** *** Arity 7
@@ -1774,23 +2053,48 @@ Lemma _paco_convert7: forall T0 T1 T2 T3 T4 T5 T6
 @paco7 y0 y1 y2 y3 y4 y5 y6.
 Proof. intros. apply CONVERT; reflexivity. Qed.
 
+Lemma _paco_convert_rev7: forall T0 T1 T2 T3 T4 T5 T6
+(paco7: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+(y4: @T4 y0 y1 y2 y3)
+(y5: @T5 y0 y1 y2 y3 y4)
+(y6: @T6 y0 y1 y2 y3 y4 y5)
+, Prop)
+ y0 y1 y2 y3 y4 y5 y6
+ x0 x1 x2 x3 x4 x5 x6
+(EQ: _paco_id (@exist7T T0 T1 T2 T3 T4 T5 T6 x0 x1 x2 x3 x4 x5 x6 = @exist7T T0 T1 T2 T3 T4 T5 T6 y0 y1 y2 y3 y4 y5 y6))
+(PACO: @paco7 y0 y1 y2 y3 y4 y5 y6),
+@paco7 x0 x1 x2 x3 x4 x5 x6.
+Proof. intros.
+apply (@f_equal (@sig7T T0 T1 T2 T3 T4 T5 T6) _ (fun x => @paco7
+ x.(proj7T0)
+ x.(proj7T1)
+ x.(proj7T2)
+ x.(proj7T3)
+ x.(proj7T4)
+ x.(proj7T5)
+ x.(proj7T6)
+)) in EQ. simpl in EQ. rewrite EQ. apply PACO.
+Qed.
+
+Ltac paco_convert_rev7 := match goal with
+| [H: _paco_id (@exist7T _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 = @exist7T _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6) |- _] =>
+eapply _paco_convert_rev7; [eapply H; clear H|..]; clear x0 x1 x2 x3 x4 x5 x6 H
+end.
+
 Ltac paco_cont7 e0 e1 e2 e3 e4 e5 e6 :=
-let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
-let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
-let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
-let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
-let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
-let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
-let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
+let x0 := fresh "_paco_v_" in
+let x1 := fresh "_paco_v_" in
+let x2 := fresh "_paco_v_" in
+let x3 := fresh "_paco_v_" in
+let x4 := fresh "_paco_v_" in
+let x5 := fresh "_paco_v_" in
+let x6 := fresh "_paco_v_" in
 apply _paco_convert7;
-intros x0 EQ0;
-intros x1 EQ1;
-intros x2 EQ2;
-intros x3 EQ3;
-intros x4 EQ4;
-intros x5 EQ5;
-intros x6 EQ6;
-generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 EQ6)))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6;
+intros x0 x1 x2 x3 x4 x5 x6;
 move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top;
 paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6.
 
@@ -1821,9 +2125,35 @@ match goal with [H: ?x |- _] => match x with
 | _ => tac1 cr
 end end.
 
+Ltac paco_simp_hyp7 CIH :=
+  let EP := fresh "_paco_EP_" in
+  let FP := fresh "_paco_FF_" in
+  let TP := fresh "_paco_TP_" in
+  let XP := fresh "_paco_XP_" in
+  let PP := type of CIH in
+  evar (EP: Prop);
+  assert (TP: False -> PP) by (
+    intros FP; generalize _paco_mark_cons;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev7; paco_revert_hyp _paco_mark;
+    let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
+  clear TP;
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  unfold EP in *; clear EP CIH; rename XP into CIH.
+
+Ltac paco_post_simp7 CIH :=
+  let CIH := fresh CIH in
+  intro CIH; paco_simp_hyp7 CIH;
+  first [try(match goal with [ |- context[_paco_id] ] => fail 2 | [ |- context[_paco_foo] ] => fail 2 end) |
+    let TMP := fresh "_paco_TMP_" in
+    generalize _paco_mark_cons; intro TMP;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev7; paco_revert_hyp _paco_mark
+  ].
+
 Tactic Notation "paco_post7" ident(CIH) "with" ident(nr) :=
 let INC := fresh "_paco_inc_" in
-paco_post_match7 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+paco_post_match7 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp7 CIH;
 let CIH' := fresh CIH in try rename INC into CIH'.
 
 (** *** Arity 8
@@ -1854,25 +2184,51 @@ Lemma _paco_convert8: forall T0 T1 T2 T3 T4 T5 T6 T7
 @paco8 y0 y1 y2 y3 y4 y5 y6 y7.
 Proof. intros. apply CONVERT; reflexivity. Qed.
 
+Lemma _paco_convert_rev8: forall T0 T1 T2 T3 T4 T5 T6 T7
+(paco8: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+(y4: @T4 y0 y1 y2 y3)
+(y5: @T5 y0 y1 y2 y3 y4)
+(y6: @T6 y0 y1 y2 y3 y4 y5)
+(y7: @T7 y0 y1 y2 y3 y4 y5 y6)
+, Prop)
+ y0 y1 y2 y3 y4 y5 y6 y7
+ x0 x1 x2 x3 x4 x5 x6 x7
+(EQ: _paco_id (@exist8T T0 T1 T2 T3 T4 T5 T6 T7 x0 x1 x2 x3 x4 x5 x6 x7 = @exist8T T0 T1 T2 T3 T4 T5 T6 T7 y0 y1 y2 y3 y4 y5 y6 y7))
+(PACO: @paco8 y0 y1 y2 y3 y4 y5 y6 y7),
+@paco8 x0 x1 x2 x3 x4 x5 x6 x7.
+Proof. intros.
+apply (@f_equal (@sig8T T0 T1 T2 T3 T4 T5 T6 T7) _ (fun x => @paco8
+ x.(proj8T0)
+ x.(proj8T1)
+ x.(proj8T2)
+ x.(proj8T3)
+ x.(proj8T4)
+ x.(proj8T5)
+ x.(proj8T6)
+ x.(proj8T7)
+)) in EQ. simpl in EQ. rewrite EQ. apply PACO.
+Qed.
+
+Ltac paco_convert_rev8 := match goal with
+| [H: _paco_id (@exist8T _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 = @exist8T _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7) |- _] =>
+eapply _paco_convert_rev8; [eapply H; clear H|..]; clear x0 x1 x2 x3 x4 x5 x6 x7 H
+end.
+
 Ltac paco_cont8 e0 e1 e2 e3 e4 e5 e6 e7 :=
-let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
-let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
-let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
-let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
-let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
-let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
-let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
-let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
+let x0 := fresh "_paco_v_" in
+let x1 := fresh "_paco_v_" in
+let x2 := fresh "_paco_v_" in
+let x3 := fresh "_paco_v_" in
+let x4 := fresh "_paco_v_" in
+let x5 := fresh "_paco_v_" in
+let x6 := fresh "_paco_v_" in
+let x7 := fresh "_paco_v_" in
 apply _paco_convert8;
-intros x0 EQ0;
-intros x1 EQ1;
-intros x2 EQ2;
-intros x3 EQ3;
-intros x4 EQ4;
-intros x5 EQ5;
-intros x6 EQ6;
-intros x7 EQ7;
-generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 EQ7))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7;
+intros x0 x1 x2 x3 x4 x5 x6 x7;
 move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top;
 paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7.
 
@@ -1904,9 +2260,35 @@ match goal with [H: ?x |- _] => match x with
 | _ => tac1 cr
 end end.
 
+Ltac paco_simp_hyp8 CIH :=
+  let EP := fresh "_paco_EP_" in
+  let FP := fresh "_paco_FF_" in
+  let TP := fresh "_paco_TP_" in
+  let XP := fresh "_paco_XP_" in
+  let PP := type of CIH in
+  evar (EP: Prop);
+  assert (TP: False -> PP) by (
+    intros FP; generalize _paco_mark_cons;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev8; paco_revert_hyp _paco_mark;
+    let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
+  clear TP;
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  unfold EP in *; clear EP CIH; rename XP into CIH.
+
+Ltac paco_post_simp8 CIH :=
+  let CIH := fresh CIH in
+  intro CIH; paco_simp_hyp8 CIH;
+  first [try(match goal with [ |- context[_paco_id] ] => fail 2 | [ |- context[_paco_foo] ] => fail 2 end) |
+    let TMP := fresh "_paco_TMP_" in
+    generalize _paco_mark_cons; intro TMP;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev8; paco_revert_hyp _paco_mark
+  ].
+
 Tactic Notation "paco_post8" ident(CIH) "with" ident(nr) :=
 let INC := fresh "_paco_inc_" in
-paco_post_match8 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+paco_post_match8 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp8 CIH;
 let CIH' := fresh CIH in try rename INC into CIH'.
 
 (** *** Arity 9
@@ -1939,27 +2321,54 @@ Lemma _paco_convert9: forall T0 T1 T2 T3 T4 T5 T6 T7 T8
 @paco9 y0 y1 y2 y3 y4 y5 y6 y7 y8.
 Proof. intros. apply CONVERT; reflexivity. Qed.
 
+Lemma _paco_convert_rev9: forall T0 T1 T2 T3 T4 T5 T6 T7 T8
+(paco9: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+(y4: @T4 y0 y1 y2 y3)
+(y5: @T5 y0 y1 y2 y3 y4)
+(y6: @T6 y0 y1 y2 y3 y4 y5)
+(y7: @T7 y0 y1 y2 y3 y4 y5 y6)
+(y8: @T8 y0 y1 y2 y3 y4 y5 y6 y7)
+, Prop)
+ y0 y1 y2 y3 y4 y5 y6 y7 y8
+ x0 x1 x2 x3 x4 x5 x6 x7 x8
+(EQ: _paco_id (@exist9T T0 T1 T2 T3 T4 T5 T6 T7 T8 x0 x1 x2 x3 x4 x5 x6 x7 x8 = @exist9T T0 T1 T2 T3 T4 T5 T6 T7 T8 y0 y1 y2 y3 y4 y5 y6 y7 y8))
+(PACO: @paco9 y0 y1 y2 y3 y4 y5 y6 y7 y8),
+@paco9 x0 x1 x2 x3 x4 x5 x6 x7 x8.
+Proof. intros.
+apply (@f_equal (@sig9T T0 T1 T2 T3 T4 T5 T6 T7 T8) _ (fun x => @paco9
+ x.(proj9T0)
+ x.(proj9T1)
+ x.(proj9T2)
+ x.(proj9T3)
+ x.(proj9T4)
+ x.(proj9T5)
+ x.(proj9T6)
+ x.(proj9T7)
+ x.(proj9T8)
+)) in EQ. simpl in EQ. rewrite EQ. apply PACO.
+Qed.
+
+Ltac paco_convert_rev9 := match goal with
+| [H: _paco_id (@exist9T _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 = @exist9T _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8) |- _] =>
+eapply _paco_convert_rev9; [eapply H; clear H|..]; clear x0 x1 x2 x3 x4 x5 x6 x7 x8 H
+end.
+
 Ltac paco_cont9 e0 e1 e2 e3 e4 e5 e6 e7 e8 :=
-let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
-let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
-let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
-let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
-let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
-let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
-let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
-let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
-let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
+let x0 := fresh "_paco_v_" in
+let x1 := fresh "_paco_v_" in
+let x2 := fresh "_paco_v_" in
+let x3 := fresh "_paco_v_" in
+let x4 := fresh "_paco_v_" in
+let x5 := fresh "_paco_v_" in
+let x6 := fresh "_paco_v_" in
+let x7 := fresh "_paco_v_" in
+let x8 := fresh "_paco_v_" in
 apply _paco_convert9;
-intros x0 EQ0;
-intros x1 EQ1;
-intros x2 EQ2;
-intros x3 EQ3;
-intros x4 EQ4;
-intros x5 EQ5;
-intros x6 EQ6;
-intros x7 EQ7;
-intros x8 EQ8;
-generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 EQ8)))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8;
+intros x0 x1 x2 x3 x4 x5 x6 x7 x8;
 move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top;
 paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8.
 
@@ -1992,9 +2401,35 @@ match goal with [H: ?x |- _] => match x with
 | _ => tac1 cr
 end end.
 
+Ltac paco_simp_hyp9 CIH :=
+  let EP := fresh "_paco_EP_" in
+  let FP := fresh "_paco_FF_" in
+  let TP := fresh "_paco_TP_" in
+  let XP := fresh "_paco_XP_" in
+  let PP := type of CIH in
+  evar (EP: Prop);
+  assert (TP: False -> PP) by (
+    intros FP; generalize _paco_mark_cons;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev9; paco_revert_hyp _paco_mark;
+    let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
+  clear TP;
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  unfold EP in *; clear EP CIH; rename XP into CIH.
+
+Ltac paco_post_simp9 CIH :=
+  let CIH := fresh CIH in
+  intro CIH; paco_simp_hyp9 CIH;
+  first [try(match goal with [ |- context[_paco_id] ] => fail 2 | [ |- context[_paco_foo] ] => fail 2 end) |
+    let TMP := fresh "_paco_TMP_" in
+    generalize _paco_mark_cons; intro TMP;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev9; paco_revert_hyp _paco_mark
+  ].
+
 Tactic Notation "paco_post9" ident(CIH) "with" ident(nr) :=
 let INC := fresh "_paco_inc_" in
-paco_post_match9 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+paco_post_match9 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp9 CIH;
 let CIH' := fresh CIH in try rename INC into CIH'.
 
 (** *** Arity 10
@@ -2029,29 +2464,57 @@ Lemma _paco_convert10: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9
 @paco10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9.
 Proof. intros. apply CONVERT; reflexivity. Qed.
 
+Lemma _paco_convert_rev10: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9
+(paco10: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+(y4: @T4 y0 y1 y2 y3)
+(y5: @T5 y0 y1 y2 y3 y4)
+(y6: @T6 y0 y1 y2 y3 y4 y5)
+(y7: @T7 y0 y1 y2 y3 y4 y5 y6)
+(y8: @T8 y0 y1 y2 y3 y4 y5 y6 y7)
+(y9: @T9 y0 y1 y2 y3 y4 y5 y6 y7 y8)
+, Prop)
+ y0 y1 y2 y3 y4 y5 y6 y7 y8 y9
+ x0 x1 x2 x3 x4 x5 x6 x7 x8 x9
+(EQ: _paco_id (@exist10T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 = @exist10T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9))
+(PACO: @paco10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9),
+@paco10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9.
+Proof. intros.
+apply (@f_equal (@sig10T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9) _ (fun x => @paco10
+ x.(proj10T0)
+ x.(proj10T1)
+ x.(proj10T2)
+ x.(proj10T3)
+ x.(proj10T4)
+ x.(proj10T5)
+ x.(proj10T6)
+ x.(proj10T7)
+ x.(proj10T8)
+ x.(proj10T9)
+)) in EQ. simpl in EQ. rewrite EQ. apply PACO.
+Qed.
+
+Ltac paco_convert_rev10 := match goal with
+| [H: _paco_id (@exist10T _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 ?x9 = @exist10T _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8 ?y9) |- _] =>
+eapply _paco_convert_rev10; [eapply H; clear H|..]; clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 H
+end.
+
 Ltac paco_cont10 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 :=
-let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
-let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
-let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
-let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
-let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
-let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
-let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
-let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
-let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
-let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
+let x0 := fresh "_paco_v_" in
+let x1 := fresh "_paco_v_" in
+let x2 := fresh "_paco_v_" in
+let x3 := fresh "_paco_v_" in
+let x4 := fresh "_paco_v_" in
+let x5 := fresh "_paco_v_" in
+let x6 := fresh "_paco_v_" in
+let x7 := fresh "_paco_v_" in
+let x8 := fresh "_paco_v_" in
+let x9 := fresh "_paco_v_" in
 apply _paco_convert10;
-intros x0 EQ0;
-intros x1 EQ1;
-intros x2 EQ2;
-intros x3 EQ3;
-intros x4 EQ4;
-intros x5 EQ5;
-intros x6 EQ6;
-intros x7 EQ7;
-intros x8 EQ8;
-intros x9 EQ9;
-generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 EQ9))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9;
+intros x0 x1 x2 x3 x4 x5 x6 x7 x8 x9;
 move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top;
 paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9.
 
@@ -2085,9 +2548,35 @@ match goal with [H: ?x |- _] => match x with
 | _ => tac1 cr
 end end.
 
+Ltac paco_simp_hyp10 CIH :=
+  let EP := fresh "_paco_EP_" in
+  let FP := fresh "_paco_FF_" in
+  let TP := fresh "_paco_TP_" in
+  let XP := fresh "_paco_XP_" in
+  let PP := type of CIH in
+  evar (EP: Prop);
+  assert (TP: False -> PP) by (
+    intros FP; generalize _paco_mark_cons;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev10; paco_revert_hyp _paco_mark;
+    let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
+  clear TP;
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  unfold EP in *; clear EP CIH; rename XP into CIH.
+
+Ltac paco_post_simp10 CIH :=
+  let CIH := fresh CIH in
+  intro CIH; paco_simp_hyp10 CIH;
+  first [try(match goal with [ |- context[_paco_id] ] => fail 2 | [ |- context[_paco_foo] ] => fail 2 end) |
+    let TMP := fresh "_paco_TMP_" in
+    generalize _paco_mark_cons; intro TMP;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev10; paco_revert_hyp _paco_mark
+  ].
+
 Tactic Notation "paco_post10" ident(CIH) "with" ident(nr) :=
 let INC := fresh "_paco_inc_" in
-paco_post_match10 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+paco_post_match10 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp10 CIH;
 let CIH' := fresh CIH in try rename INC into CIH'.
 
 (** *** Arity 11
@@ -2124,31 +2613,60 @@ Lemma _paco_convert11: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10
 @paco11 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10.
 Proof. intros. apply CONVERT; reflexivity. Qed.
 
+Lemma _paco_convert_rev11: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10
+(paco11: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+(y4: @T4 y0 y1 y2 y3)
+(y5: @T5 y0 y1 y2 y3 y4)
+(y6: @T6 y0 y1 y2 y3 y4 y5)
+(y7: @T7 y0 y1 y2 y3 y4 y5 y6)
+(y8: @T8 y0 y1 y2 y3 y4 y5 y6 y7)
+(y9: @T9 y0 y1 y2 y3 y4 y5 y6 y7 y8)
+(y10: @T10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9)
+, Prop)
+ y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10
+ x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10
+(EQ: _paco_id (@exist11T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 = @exist11T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10))
+(PACO: @paco11 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10),
+@paco11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10.
+Proof. intros.
+apply (@f_equal (@sig11T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) _ (fun x => @paco11
+ x.(proj11T0)
+ x.(proj11T1)
+ x.(proj11T2)
+ x.(proj11T3)
+ x.(proj11T4)
+ x.(proj11T5)
+ x.(proj11T6)
+ x.(proj11T7)
+ x.(proj11T8)
+ x.(proj11T9)
+ x.(proj11T10)
+)) in EQ. simpl in EQ. rewrite EQ. apply PACO.
+Qed.
+
+Ltac paco_convert_rev11 := match goal with
+| [H: _paco_id (@exist11T _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 ?x9 ?x10 = @exist11T _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8 ?y9 ?y10) |- _] =>
+eapply _paco_convert_rev11; [eapply H; clear H|..]; clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 H
+end.
+
 Ltac paco_cont11 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 :=
-let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
-let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
-let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
-let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
-let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
-let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
-let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
-let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
-let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
-let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
-let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
+let x0 := fresh "_paco_v_" in
+let x1 := fresh "_paco_v_" in
+let x2 := fresh "_paco_v_" in
+let x3 := fresh "_paco_v_" in
+let x4 := fresh "_paco_v_" in
+let x5 := fresh "_paco_v_" in
+let x6 := fresh "_paco_v_" in
+let x7 := fresh "_paco_v_" in
+let x8 := fresh "_paco_v_" in
+let x9 := fresh "_paco_v_" in
+let x10 := fresh "_paco_v_" in
 apply _paco_convert11;
-intros x0 EQ0;
-intros x1 EQ1;
-intros x2 EQ2;
-intros x3 EQ3;
-intros x4 EQ4;
-intros x5 EQ5;
-intros x6 EQ6;
-intros x7 EQ7;
-intros x8 EQ8;
-intros x9 EQ9;
-intros x10 EQ10;
-generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 (conj EQ9 EQ10)))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9 EQ10;
+intros x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10;
 move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top; move x10 at top;
 paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10.
 
@@ -2183,9 +2701,35 @@ match goal with [H: ?x |- _] => match x with
 | _ => tac1 cr
 end end.
 
+Ltac paco_simp_hyp11 CIH :=
+  let EP := fresh "_paco_EP_" in
+  let FP := fresh "_paco_FF_" in
+  let TP := fresh "_paco_TP_" in
+  let XP := fresh "_paco_XP_" in
+  let PP := type of CIH in
+  evar (EP: Prop);
+  assert (TP: False -> PP) by (
+    intros FP; generalize _paco_mark_cons;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev11; paco_revert_hyp _paco_mark;
+    let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
+  clear TP;
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  unfold EP in *; clear EP CIH; rename XP into CIH.
+
+Ltac paco_post_simp11 CIH :=
+  let CIH := fresh CIH in
+  intro CIH; paco_simp_hyp11 CIH;
+  first [try(match goal with [ |- context[_paco_id] ] => fail 2 | [ |- context[_paco_foo] ] => fail 2 end) |
+    let TMP := fresh "_paco_TMP_" in
+    generalize _paco_mark_cons; intro TMP;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev11; paco_revert_hyp _paco_mark
+  ].
+
 Tactic Notation "paco_post11" ident(CIH) "with" ident(nr) :=
 let INC := fresh "_paco_inc_" in
-paco_post_match11 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+paco_post_match11 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp11 CIH;
 let CIH' := fresh CIH in try rename INC into CIH'.
 
 (** *** Arity 12
@@ -2224,33 +2768,63 @@ Lemma _paco_convert12: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11
 @paco12 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11.
 Proof. intros. apply CONVERT; reflexivity. Qed.
 
+Lemma _paco_convert_rev12: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11
+(paco12: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+(y4: @T4 y0 y1 y2 y3)
+(y5: @T5 y0 y1 y2 y3 y4)
+(y6: @T6 y0 y1 y2 y3 y4 y5)
+(y7: @T7 y0 y1 y2 y3 y4 y5 y6)
+(y8: @T8 y0 y1 y2 y3 y4 y5 y6 y7)
+(y9: @T9 y0 y1 y2 y3 y4 y5 y6 y7 y8)
+(y10: @T10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9)
+(y11: @T11 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10)
+, Prop)
+ y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11
+ x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11
+(EQ: _paco_id (@exist12T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 = @exist12T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11))
+(PACO: @paco12 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11),
+@paco12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11.
+Proof. intros.
+apply (@f_equal (@sig12T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) _ (fun x => @paco12
+ x.(proj12T0)
+ x.(proj12T1)
+ x.(proj12T2)
+ x.(proj12T3)
+ x.(proj12T4)
+ x.(proj12T5)
+ x.(proj12T6)
+ x.(proj12T7)
+ x.(proj12T8)
+ x.(proj12T9)
+ x.(proj12T10)
+ x.(proj12T11)
+)) in EQ. simpl in EQ. rewrite EQ. apply PACO.
+Qed.
+
+Ltac paco_convert_rev12 := match goal with
+| [H: _paco_id (@exist12T _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 ?x9 ?x10 ?x11 = @exist12T _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8 ?y9 ?y10 ?y11) |- _] =>
+eapply _paco_convert_rev12; [eapply H; clear H|..]; clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 H
+end.
+
 Ltac paco_cont12 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 :=
-let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
-let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
-let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
-let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
-let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
-let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
-let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
-let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
-let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
-let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
-let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
-let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
+let x0 := fresh "_paco_v_" in
+let x1 := fresh "_paco_v_" in
+let x2 := fresh "_paco_v_" in
+let x3 := fresh "_paco_v_" in
+let x4 := fresh "_paco_v_" in
+let x5 := fresh "_paco_v_" in
+let x6 := fresh "_paco_v_" in
+let x7 := fresh "_paco_v_" in
+let x8 := fresh "_paco_v_" in
+let x9 := fresh "_paco_v_" in
+let x10 := fresh "_paco_v_" in
+let x11 := fresh "_paco_v_" in
 apply _paco_convert12;
-intros x0 EQ0;
-intros x1 EQ1;
-intros x2 EQ2;
-intros x3 EQ3;
-intros x4 EQ4;
-intros x5 EQ5;
-intros x6 EQ6;
-intros x7 EQ7;
-intros x8 EQ8;
-intros x9 EQ9;
-intros x10 EQ10;
-intros x11 EQ11;
-generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 (conj EQ9 (conj EQ10 EQ11))))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9 EQ10 EQ11;
+intros x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11;
 move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top; move x10 at top; move x11 at top;
 paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11.
 
@@ -2286,9 +2860,35 @@ match goal with [H: ?x |- _] => match x with
 | _ => tac1 cr
 end end.
 
+Ltac paco_simp_hyp12 CIH :=
+  let EP := fresh "_paco_EP_" in
+  let FP := fresh "_paco_FF_" in
+  let TP := fresh "_paco_TP_" in
+  let XP := fresh "_paco_XP_" in
+  let PP := type of CIH in
+  evar (EP: Prop);
+  assert (TP: False -> PP) by (
+    intros FP; generalize _paco_mark_cons;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev12; paco_revert_hyp _paco_mark;
+    let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
+  clear TP;
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  unfold EP in *; clear EP CIH; rename XP into CIH.
+
+Ltac paco_post_simp12 CIH :=
+  let CIH := fresh CIH in
+  intro CIH; paco_simp_hyp12 CIH;
+  first [try(match goal with [ |- context[_paco_id] ] => fail 2 | [ |- context[_paco_foo] ] => fail 2 end) |
+    let TMP := fresh "_paco_TMP_" in
+    generalize _paco_mark_cons; intro TMP;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev12; paco_revert_hyp _paco_mark
+  ].
+
 Tactic Notation "paco_post12" ident(CIH) "with" ident(nr) :=
 let INC := fresh "_paco_inc_" in
-paco_post_match12 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+paco_post_match12 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp12 CIH;
 let CIH' := fresh CIH in try rename INC into CIH'.
 
 (** *** Arity 13
@@ -2329,35 +2929,66 @@ Lemma _paco_convert13: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12
 @paco13 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12.
 Proof. intros. apply CONVERT; reflexivity. Qed.
 
+Lemma _paco_convert_rev13: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12
+(paco13: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+(y4: @T4 y0 y1 y2 y3)
+(y5: @T5 y0 y1 y2 y3 y4)
+(y6: @T6 y0 y1 y2 y3 y4 y5)
+(y7: @T7 y0 y1 y2 y3 y4 y5 y6)
+(y8: @T8 y0 y1 y2 y3 y4 y5 y6 y7)
+(y9: @T9 y0 y1 y2 y3 y4 y5 y6 y7 y8)
+(y10: @T10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9)
+(y11: @T11 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10)
+(y12: @T12 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11)
+, Prop)
+ y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12
+ x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12
+(EQ: _paco_id (@exist13T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 = @exist13T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12))
+(PACO: @paco13 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12),
+@paco13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12.
+Proof. intros.
+apply (@f_equal (@sig13T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) _ (fun x => @paco13
+ x.(proj13T0)
+ x.(proj13T1)
+ x.(proj13T2)
+ x.(proj13T3)
+ x.(proj13T4)
+ x.(proj13T5)
+ x.(proj13T6)
+ x.(proj13T7)
+ x.(proj13T8)
+ x.(proj13T9)
+ x.(proj13T10)
+ x.(proj13T11)
+ x.(proj13T12)
+)) in EQ. simpl in EQ. rewrite EQ. apply PACO.
+Qed.
+
+Ltac paco_convert_rev13 := match goal with
+| [H: _paco_id (@exist13T _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 ?x9 ?x10 ?x11 ?x12 = @exist13T _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8 ?y9 ?y10 ?y11 ?y12) |- _] =>
+eapply _paco_convert_rev13; [eapply H; clear H|..]; clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 H
+end.
+
 Ltac paco_cont13 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 :=
-let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
-let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
-let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
-let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
-let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
-let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
-let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
-let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
-let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
-let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
-let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
-let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
-let x12 := fresh "_paco_v_" in let EQ12 := fresh "_paco_EQ_" in
+let x0 := fresh "_paco_v_" in
+let x1 := fresh "_paco_v_" in
+let x2 := fresh "_paco_v_" in
+let x3 := fresh "_paco_v_" in
+let x4 := fresh "_paco_v_" in
+let x5 := fresh "_paco_v_" in
+let x6 := fresh "_paco_v_" in
+let x7 := fresh "_paco_v_" in
+let x8 := fresh "_paco_v_" in
+let x9 := fresh "_paco_v_" in
+let x10 := fresh "_paco_v_" in
+let x11 := fresh "_paco_v_" in
+let x12 := fresh "_paco_v_" in
 apply _paco_convert13;
-intros x0 EQ0;
-intros x1 EQ1;
-intros x2 EQ2;
-intros x3 EQ3;
-intros x4 EQ4;
-intros x5 EQ5;
-intros x6 EQ6;
-intros x7 EQ7;
-intros x8 EQ8;
-intros x9 EQ9;
-intros x10 EQ10;
-intros x11 EQ11;
-intros x12 EQ12;
-generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 (conj EQ9 (conj EQ10 (conj EQ11 EQ12)))))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9 EQ10 EQ11 EQ12;
+intros x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12;
 move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top; move x10 at top; move x11 at top; move x12 at top;
 paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12.
 
@@ -2394,9 +3025,35 @@ match goal with [H: ?x |- _] => match x with
 | _ => tac1 cr
 end end.
 
+Ltac paco_simp_hyp13 CIH :=
+  let EP := fresh "_paco_EP_" in
+  let FP := fresh "_paco_FF_" in
+  let TP := fresh "_paco_TP_" in
+  let XP := fresh "_paco_XP_" in
+  let PP := type of CIH in
+  evar (EP: Prop);
+  assert (TP: False -> PP) by (
+    intros FP; generalize _paco_mark_cons;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev13; paco_revert_hyp _paco_mark;
+    let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
+  clear TP;
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  unfold EP in *; clear EP CIH; rename XP into CIH.
+
+Ltac paco_post_simp13 CIH :=
+  let CIH := fresh CIH in
+  intro CIH; paco_simp_hyp13 CIH;
+  first [try(match goal with [ |- context[_paco_id] ] => fail 2 | [ |- context[_paco_foo] ] => fail 2 end) |
+    let TMP := fresh "_paco_TMP_" in
+    generalize _paco_mark_cons; intro TMP;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev13; paco_revert_hyp _paco_mark
+  ].
+
 Tactic Notation "paco_post13" ident(CIH) "with" ident(nr) :=
 let INC := fresh "_paco_inc_" in
-paco_post_match13 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+paco_post_match13 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp13 CIH;
 let CIH' := fresh CIH in try rename INC into CIH'.
 
 (** *** Arity 14
@@ -2439,37 +3096,69 @@ Lemma _paco_convert14: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13
 @paco14 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12 y13.
 Proof. intros. apply CONVERT; reflexivity. Qed.
 
+Lemma _paco_convert_rev14: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13
+(paco14: forall
+(y0: @T0)
+(y1: @T1 y0)
+(y2: @T2 y0 y1)
+(y3: @T3 y0 y1 y2)
+(y4: @T4 y0 y1 y2 y3)
+(y5: @T5 y0 y1 y2 y3 y4)
+(y6: @T6 y0 y1 y2 y3 y4 y5)
+(y7: @T7 y0 y1 y2 y3 y4 y5 y6)
+(y8: @T8 y0 y1 y2 y3 y4 y5 y6 y7)
+(y9: @T9 y0 y1 y2 y3 y4 y5 y6 y7 y8)
+(y10: @T10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9)
+(y11: @T11 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10)
+(y12: @T12 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11)
+(y13: @T13 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12)
+, Prop)
+ y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12 y13
+ x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13
+(EQ: _paco_id (@exist14T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 = @exist14T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12 y13))
+(PACO: @paco14 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12 y13),
+@paco14 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13.
+Proof. intros.
+apply (@f_equal (@sig14T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13) _ (fun x => @paco14
+ x.(proj14T0)
+ x.(proj14T1)
+ x.(proj14T2)
+ x.(proj14T3)
+ x.(proj14T4)
+ x.(proj14T5)
+ x.(proj14T6)
+ x.(proj14T7)
+ x.(proj14T8)
+ x.(proj14T9)
+ x.(proj14T10)
+ x.(proj14T11)
+ x.(proj14T12)
+ x.(proj14T13)
+)) in EQ. simpl in EQ. rewrite EQ. apply PACO.
+Qed.
+
+Ltac paco_convert_rev14 := match goal with
+| [H: _paco_id (@exist14T _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 ?x9 ?x10 ?x11 ?x12 ?x13 = @exist14T _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8 ?y9 ?y10 ?y11 ?y12 ?y13) |- _] =>
+eapply _paco_convert_rev14; [eapply H; clear H|..]; clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 H
+end.
+
 Ltac paco_cont14 e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 :=
-let x0 := fresh "_paco_v_" in let EQ0 := fresh "_paco_EQ_" in
-let x1 := fresh "_paco_v_" in let EQ1 := fresh "_paco_EQ_" in
-let x2 := fresh "_paco_v_" in let EQ2 := fresh "_paco_EQ_" in
-let x3 := fresh "_paco_v_" in let EQ3 := fresh "_paco_EQ_" in
-let x4 := fresh "_paco_v_" in let EQ4 := fresh "_paco_EQ_" in
-let x5 := fresh "_paco_v_" in let EQ5 := fresh "_paco_EQ_" in
-let x6 := fresh "_paco_v_" in let EQ6 := fresh "_paco_EQ_" in
-let x7 := fresh "_paco_v_" in let EQ7 := fresh "_paco_EQ_" in
-let x8 := fresh "_paco_v_" in let EQ8 := fresh "_paco_EQ_" in
-let x9 := fresh "_paco_v_" in let EQ9 := fresh "_paco_EQ_" in
-let x10 := fresh "_paco_v_" in let EQ10 := fresh "_paco_EQ_" in
-let x11 := fresh "_paco_v_" in let EQ11 := fresh "_paco_EQ_" in
-let x12 := fresh "_paco_v_" in let EQ12 := fresh "_paco_EQ_" in
-let x13 := fresh "_paco_v_" in let EQ13 := fresh "_paco_EQ_" in
+let x0 := fresh "_paco_v_" in
+let x1 := fresh "_paco_v_" in
+let x2 := fresh "_paco_v_" in
+let x3 := fresh "_paco_v_" in
+let x4 := fresh "_paco_v_" in
+let x5 := fresh "_paco_v_" in
+let x6 := fresh "_paco_v_" in
+let x7 := fresh "_paco_v_" in
+let x8 := fresh "_paco_v_" in
+let x9 := fresh "_paco_v_" in
+let x10 := fresh "_paco_v_" in
+let x11 := fresh "_paco_v_" in
+let x12 := fresh "_paco_v_" in
+let x13 := fresh "_paco_v_" in
 apply _paco_convert14;
-intros x0 EQ0;
-intros x1 EQ1;
-intros x2 EQ2;
-intros x3 EQ3;
-intros x4 EQ4;
-intros x5 EQ5;
-intros x6 EQ6;
-intros x7 EQ7;
-intros x8 EQ8;
-intros x9 EQ9;
-intros x10 EQ10;
-intros x11 EQ11;
-intros x12 EQ12;
-intros x13 EQ13;
-generalize (conj EQ0 (conj EQ1 (conj EQ2 (conj EQ3 (conj EQ4 (conj EQ5 (conj EQ6 (conj EQ7 (conj EQ8 (conj EQ9 (conj EQ10 (conj EQ11 (conj EQ12 EQ13))))))))))))); clear EQ0 EQ1 EQ2 EQ3 EQ4 EQ5 EQ6 EQ7 EQ8 EQ9 EQ10 EQ11 EQ12 EQ13;
+intros x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13;
 move x0 at top; move x1 at top; move x2 at top; move x3 at top; move x4 at top; move x5 at top; move x6 at top; move x7 at top; move x8 at top; move x9 at top; move x10 at top; move x11 at top; move x12 at top; move x13 at top;
 paco_generalize_hyp _paco_mark; revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13.
 
@@ -2507,9 +3196,35 @@ match goal with [H: ?x |- _] => match x with
 | _ => tac1 cr
 end end.
 
+Ltac paco_simp_hyp14 CIH :=
+  let EP := fresh "_paco_EP_" in
+  let FP := fresh "_paco_FF_" in
+  let TP := fresh "_paco_TP_" in
+  let XP := fresh "_paco_XP_" in
+  let PP := type of CIH in
+  evar (EP: Prop);
+  assert (TP: False -> PP) by (
+    intros FP; generalize _paco_mark_cons;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev14; paco_revert_hyp _paco_mark;
+    let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
+  clear TP;
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  unfold EP in *; clear EP CIH; rename XP into CIH.
+
+Ltac paco_post_simp14 CIH :=
+  let CIH := fresh CIH in
+  intro CIH; paco_simp_hyp14 CIH;
+  first [try(match goal with [ |- context[_paco_id] ] => fail 2 | [ |- context[_paco_foo] ] => fail 2 end) |
+    let TMP := fresh "_paco_TMP_" in
+    generalize _paco_mark_cons; intro TMP;
+    repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
+    paco_convert_rev14; paco_revert_hyp _paco_mark
+  ].
+
 Tactic Notation "paco_post14" ident(CIH) "with" ident(nr) :=
 let INC := fresh "_paco_inc_" in
-paco_post_match14 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp CIH;
+paco_post_match14 INC ltac:(paco_ren_r nr) paco_ren_pr; paco_post_simp14 CIH;
 let CIH' := fresh CIH in try rename INC into CIH'.
 
 (** ** External interface *)
