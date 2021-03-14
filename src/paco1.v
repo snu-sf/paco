@@ -7,72 +7,11 @@ Section PACO1.
 
 Variable T0 : Type.
 
-(** ** Signatures *)
-
-Record sig1T  :=
-  exist1T {
-      proj1T0: @T0;
-    }.
-Definition uncurry1  (R: rel1 T0): rel1 sig1T :=
-  fun x => R (proj1T0 x).
-Definition curry1  (R: rel1 sig1T): rel1 T0 :=
-  fun x0 => R (@exist1T x0).
-
-Lemma uncurry_map1 r0 r1 (LE : r0 <1== r1) : uncurry1 r0 <1== uncurry1 r1.
-Proof. intros [] H. apply LE. apply H. Qed.
-
-Lemma uncurry_map_rev1 r0 r1 (LE: uncurry1 r0 <1== uncurry1 r1) : r0 <1== r1.
-Proof.
-  red; intros. apply (LE (@exist1T x0) PR).
-Qed.
-
-Lemma curry_map1 r0 r1 (LE: r0 <1== r1) : curry1 r0 <1== curry1 r1.
-Proof. 
-  red; intros. apply (LE (@exist1T x0) PR).
-Qed.
-
-Lemma curry_map_rev1 r0 r1 (LE: curry1 r0 <1== curry1 r1) : r0 <1== r1.
-Proof. 
-  intros [] H. apply LE. apply H.
-Qed.
-
-Lemma uncurry_bij1_1 r : curry1 (uncurry1 r) <1== r.
-Proof. unfold le1. intros. apply PR. Qed.
-
-Lemma uncurry_bij2_1 r : r <1== curry1 (uncurry1 r).
-Proof. unfold le1. intros. apply PR. Qed.
-
-Lemma curry_bij1_1 r : uncurry1 (curry1 r) <1== r.
-Proof. intros [] H. apply H. Qed.
-
-Lemma curry_bij2_1 r : r <1== uncurry1 (curry1 r).
-Proof. intros [] H. apply H. Qed.
-
-Lemma uncurry_adjoint1_1 r0 r1 (LE: uncurry1 r0 <1== r1) : r0 <1== curry1 r1.
-Proof.
-  apply uncurry_map_rev1. eapply le1_trans; [apply LE|]. apply curry_bij2_1.
-Qed.
-
-Lemma uncurry_adjoint2_1 r0 r1 (LE: r0 <1== curry1 r1) : uncurry1 r0 <1== r1.
-Proof.
-  apply curry_map_rev1. eapply le1_trans; [|apply LE]. apply uncurry_bij2_1.
-Qed.
-
-Lemma curry_adjoint1_1 r0 r1 (LE: curry1 r0 <1== r1) : r0 <1== uncurry1 r1.
-Proof.
-  apply curry_map_rev1. eapply le1_trans; [apply LE|]. apply uncurry_bij2_1.
-Qed.
-
-Lemma curry_adjoint2_1 r0 r1 (LE: r0 <1== uncurry1 r1) : curry1 r0 <1== r1.
-Proof.
-  apply uncurry_map_rev1. eapply le1_trans; [|apply LE]. apply curry_bij1_1.
-Qed.
-
 (** ** Predicates of Arity 1
 *)
 
 Definition paco1(gf : rel1 T0 -> rel1 T0)(r: rel1 T0) : rel1 T0 :=
-  curry1 (paco (fun R0 => uncurry1 (gf (curry1 R0))) (uncurry1 r)).
+  @curry1 T0 (paco (fun R0 => @uncurry1 T0 (gf (@curry1 T0 R0))) (@uncurry1 T0 r)).
 
 Definition upaco1(gf : rel1 T0 -> rel1 T0)(r: rel1 T0) := paco1 gf r \1/ r.
 Arguments paco1 : clear implicits.
@@ -91,7 +30,7 @@ Proof. unfold monotone1, _monotone1, le1. split; intros; eapply H; eassumption. 
 
 Lemma monotone1_map (gf: rel1 T0 -> rel1 T0)
       (MON: _monotone1 gf) :
-  _monotone (fun R0 => uncurry1 (gf (curry1 R0))).
+  _monotone (fun R0 => @uncurry1 T0 (gf (@curry1 T0 R0))).
 Proof.
   red; intros. apply uncurry_map1. apply MON; apply curry_map1; assumption.
 Qed.

@@ -9,74 +9,11 @@ Variable T0 : Type.
 Variable T1 : forall (x0: @T0), Type.
 Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
 
-(** ** Signatures *)
-
-Record sig3T  :=
-  exist3T {
-      proj3T0: @T0;
-      proj3T1: @T1 proj3T0;
-      proj3T2: @T2 proj3T0 proj3T1;
-    }.
-Definition uncurry3  (R: rel3 T0 T1 T2): rel1 sig3T :=
-  fun x => R (proj3T0 x) (proj3T1 x) (proj3T2 x).
-Definition curry3  (R: rel1 sig3T): rel3 T0 T1 T2 :=
-  fun x0 x1 x2 => R (@exist3T x0 x1 x2).
-
-Lemma uncurry_map3 r0 r1 (LE : r0 <3== r1) : uncurry3 r0 <1== uncurry3 r1.
-Proof. intros [] H. apply LE. apply H. Qed.
-
-Lemma uncurry_map_rev3 r0 r1 (LE: uncurry3 r0 <1== uncurry3 r1) : r0 <3== r1.
-Proof.
-  red; intros. apply (LE (@exist3T x0 x1 x2) PR).
-Qed.
-
-Lemma curry_map3 r0 r1 (LE: r0 <1== r1) : curry3 r0 <3== curry3 r1.
-Proof. 
-  red; intros. apply (LE (@exist3T x0 x1 x2) PR).
-Qed.
-
-Lemma curry_map_rev3 r0 r1 (LE: curry3 r0 <3== curry3 r1) : r0 <1== r1.
-Proof. 
-  intros [] H. apply LE. apply H.
-Qed.
-
-Lemma uncurry_bij1_3 r : curry3 (uncurry3 r) <3== r.
-Proof. unfold le3. intros. apply PR. Qed.
-
-Lemma uncurry_bij2_3 r : r <3== curry3 (uncurry3 r).
-Proof. unfold le3. intros. apply PR. Qed.
-
-Lemma curry_bij1_3 r : uncurry3 (curry3 r) <1== r.
-Proof. intros [] H. apply H. Qed.
-
-Lemma curry_bij2_3 r : r <1== uncurry3 (curry3 r).
-Proof. intros [] H. apply H. Qed.
-
-Lemma uncurry_adjoint1_3 r0 r1 (LE: uncurry3 r0 <1== r1) : r0 <3== curry3 r1.
-Proof.
-  apply uncurry_map_rev3. eapply le1_trans; [apply LE|]. apply curry_bij2_3.
-Qed.
-
-Lemma uncurry_adjoint2_3 r0 r1 (LE: r0 <3== curry3 r1) : uncurry3 r0 <1== r1.
-Proof.
-  apply curry_map_rev3. eapply le3_trans; [|apply LE]. apply uncurry_bij2_3.
-Qed.
-
-Lemma curry_adjoint1_3 r0 r1 (LE: curry3 r0 <3== r1) : r0 <1== uncurry3 r1.
-Proof.
-  apply curry_map_rev3. eapply le3_trans; [apply LE|]. apply uncurry_bij2_3.
-Qed.
-
-Lemma curry_adjoint2_3 r0 r1 (LE: r0 <1== uncurry3 r1) : curry3 r0 <3== r1.
-Proof.
-  apply uncurry_map_rev3. eapply le1_trans; [|apply LE]. apply curry_bij1_3.
-Qed.
-
 (** ** Predicates of Arity 3
 *)
 
 Definition paco3(gf : rel3 T0 T1 T2 -> rel3 T0 T1 T2)(r: rel3 T0 T1 T2) : rel3 T0 T1 T2 :=
-  curry3 (paco (fun R0 => uncurry3 (gf (curry3 R0))) (uncurry3 r)).
+  @curry3 T0 T1 T2 (paco (fun R0 => @uncurry3 T0 T1 T2 (gf (@curry3 T0 T1 T2 R0))) (@uncurry3 T0 T1 T2 r)).
 
 Definition upaco3(gf : rel3 T0 T1 T2 -> rel3 T0 T1 T2)(r: rel3 T0 T1 T2) := paco3 gf r \3/ r.
 Arguments paco3 : clear implicits.
@@ -95,7 +32,7 @@ Proof. unfold monotone3, _monotone3, le3. split; intros; eapply H; eassumption. 
 
 Lemma monotone3_map (gf: rel3 T0 T1 T2 -> rel3 T0 T1 T2)
       (MON: _monotone3 gf) :
-  _monotone (fun R0 => uncurry3 (gf (curry3 R0))).
+  _monotone (fun R0 => @uncurry3 T0 T1 T2 (gf (@curry3 T0 T1 T2 R0))).
 Proof.
   red; intros. apply uncurry_map3. apply MON; apply curry_map3; assumption.
 Qed.

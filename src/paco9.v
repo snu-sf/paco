@@ -15,80 +15,11 @@ Variable T6 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (
 Variable T7 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5), Type.
 Variable T8 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6), Type.
 
-(** ** Signatures *)
-
-Record sig9T  :=
-  exist9T {
-      proj9T0: @T0;
-      proj9T1: @T1 proj9T0;
-      proj9T2: @T2 proj9T0 proj9T1;
-      proj9T3: @T3 proj9T0 proj9T1 proj9T2;
-      proj9T4: @T4 proj9T0 proj9T1 proj9T2 proj9T3;
-      proj9T5: @T5 proj9T0 proj9T1 proj9T2 proj9T3 proj9T4;
-      proj9T6: @T6 proj9T0 proj9T1 proj9T2 proj9T3 proj9T4 proj9T5;
-      proj9T7: @T7 proj9T0 proj9T1 proj9T2 proj9T3 proj9T4 proj9T5 proj9T6;
-      proj9T8: @T8 proj9T0 proj9T1 proj9T2 proj9T3 proj9T4 proj9T5 proj9T6 proj9T7;
-    }.
-Definition uncurry9  (R: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8): rel1 sig9T :=
-  fun x => R (proj9T0 x) (proj9T1 x) (proj9T2 x) (proj9T3 x) (proj9T4 x) (proj9T5 x) (proj9T6 x) (proj9T7 x) (proj9T8 x).
-Definition curry9  (R: rel1 sig9T): rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 :=
-  fun x0 x1 x2 x3 x4 x5 x6 x7 x8 => R (@exist9T x0 x1 x2 x3 x4 x5 x6 x7 x8).
-
-Lemma uncurry_map9 r0 r1 (LE : r0 <9== r1) : uncurry9 r0 <1== uncurry9 r1.
-Proof. intros [] H. apply LE. apply H. Qed.
-
-Lemma uncurry_map_rev9 r0 r1 (LE: uncurry9 r0 <1== uncurry9 r1) : r0 <9== r1.
-Proof.
-  red; intros. apply (LE (@exist9T x0 x1 x2 x3 x4 x5 x6 x7 x8) PR).
-Qed.
-
-Lemma curry_map9 r0 r1 (LE: r0 <1== r1) : curry9 r0 <9== curry9 r1.
-Proof. 
-  red; intros. apply (LE (@exist9T x0 x1 x2 x3 x4 x5 x6 x7 x8) PR).
-Qed.
-
-Lemma curry_map_rev9 r0 r1 (LE: curry9 r0 <9== curry9 r1) : r0 <1== r1.
-Proof. 
-  intros [] H. apply LE. apply H.
-Qed.
-
-Lemma uncurry_bij1_9 r : curry9 (uncurry9 r) <9== r.
-Proof. unfold le9. intros. apply PR. Qed.
-
-Lemma uncurry_bij2_9 r : r <9== curry9 (uncurry9 r).
-Proof. unfold le9. intros. apply PR. Qed.
-
-Lemma curry_bij1_9 r : uncurry9 (curry9 r) <1== r.
-Proof. intros [] H. apply H. Qed.
-
-Lemma curry_bij2_9 r : r <1== uncurry9 (curry9 r).
-Proof. intros [] H. apply H. Qed.
-
-Lemma uncurry_adjoint1_9 r0 r1 (LE: uncurry9 r0 <1== r1) : r0 <9== curry9 r1.
-Proof.
-  apply uncurry_map_rev9. eapply le1_trans; [apply LE|]. apply curry_bij2_9.
-Qed.
-
-Lemma uncurry_adjoint2_9 r0 r1 (LE: r0 <9== curry9 r1) : uncurry9 r0 <1== r1.
-Proof.
-  apply curry_map_rev9. eapply le9_trans; [|apply LE]. apply uncurry_bij2_9.
-Qed.
-
-Lemma curry_adjoint1_9 r0 r1 (LE: curry9 r0 <9== r1) : r0 <1== uncurry9 r1.
-Proof.
-  apply curry_map_rev9. eapply le9_trans; [apply LE|]. apply uncurry_bij2_9.
-Qed.
-
-Lemma curry_adjoint2_9 r0 r1 (LE: r0 <1== uncurry9 r1) : curry9 r0 <9== r1.
-Proof.
-  apply uncurry_map_rev9. eapply le1_trans; [|apply LE]. apply curry_bij1_9.
-Qed.
-
 (** ** Predicates of Arity 9
 *)
 
 Definition paco9(gf : rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8)(r: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8) : rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 :=
-  curry9 (paco (fun R0 => uncurry9 (gf (curry9 R0))) (uncurry9 r)).
+  @curry9 T0 T1 T2 T3 T4 T5 T6 T7 T8 (paco (fun R0 => @uncurry9 T0 T1 T2 T3 T4 T5 T6 T7 T8 (gf (@curry9 T0 T1 T2 T3 T4 T5 T6 T7 T8 R0))) (@uncurry9 T0 T1 T2 T3 T4 T5 T6 T7 T8 r)).
 
 Definition upaco9(gf : rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8)(r: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8) := paco9 gf r \9/ r.
 Arguments paco9 : clear implicits.
@@ -107,7 +38,7 @@ Proof. unfold monotone9, _monotone9, le9. split; intros; eapply H; eassumption. 
 
 Lemma monotone9_map (gf: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8)
       (MON: _monotone9 gf) :
-  _monotone (fun R0 => uncurry9 (gf (curry9 R0))).
+  _monotone (fun R0 => @uncurry9 T0 T1 T2 T3 T4 T5 T6 T7 T8 (gf (@curry9 T0 T1 T2 T3 T4 T5 T6 T7 T8 R0))).
 Proof.
   red; intros. apply uncurry_map9. apply MON; apply curry_map9; assumption.
 Qed.

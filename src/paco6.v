@@ -12,77 +12,11 @@ Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
 Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), Type.
 Variable T5 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3), Type.
 
-(** ** Signatures *)
-
-Record sig6T  :=
-  exist6T {
-      proj6T0: @T0;
-      proj6T1: @T1 proj6T0;
-      proj6T2: @T2 proj6T0 proj6T1;
-      proj6T3: @T3 proj6T0 proj6T1 proj6T2;
-      proj6T4: @T4 proj6T0 proj6T1 proj6T2 proj6T3;
-      proj6T5: @T5 proj6T0 proj6T1 proj6T2 proj6T3 proj6T4;
-    }.
-Definition uncurry6  (R: rel6 T0 T1 T2 T3 T4 T5): rel1 sig6T :=
-  fun x => R (proj6T0 x) (proj6T1 x) (proj6T2 x) (proj6T3 x) (proj6T4 x) (proj6T5 x).
-Definition curry6  (R: rel1 sig6T): rel6 T0 T1 T2 T3 T4 T5 :=
-  fun x0 x1 x2 x3 x4 x5 => R (@exist6T x0 x1 x2 x3 x4 x5).
-
-Lemma uncurry_map6 r0 r1 (LE : r0 <6== r1) : uncurry6 r0 <1== uncurry6 r1.
-Proof. intros [] H. apply LE. apply H. Qed.
-
-Lemma uncurry_map_rev6 r0 r1 (LE: uncurry6 r0 <1== uncurry6 r1) : r0 <6== r1.
-Proof.
-  red; intros. apply (LE (@exist6T x0 x1 x2 x3 x4 x5) PR).
-Qed.
-
-Lemma curry_map6 r0 r1 (LE: r0 <1== r1) : curry6 r0 <6== curry6 r1.
-Proof. 
-  red; intros. apply (LE (@exist6T x0 x1 x2 x3 x4 x5) PR).
-Qed.
-
-Lemma curry_map_rev6 r0 r1 (LE: curry6 r0 <6== curry6 r1) : r0 <1== r1.
-Proof. 
-  intros [] H. apply LE. apply H.
-Qed.
-
-Lemma uncurry_bij1_6 r : curry6 (uncurry6 r) <6== r.
-Proof. unfold le6. intros. apply PR. Qed.
-
-Lemma uncurry_bij2_6 r : r <6== curry6 (uncurry6 r).
-Proof. unfold le6. intros. apply PR. Qed.
-
-Lemma curry_bij1_6 r : uncurry6 (curry6 r) <1== r.
-Proof. intros [] H. apply H. Qed.
-
-Lemma curry_bij2_6 r : r <1== uncurry6 (curry6 r).
-Proof. intros [] H. apply H. Qed.
-
-Lemma uncurry_adjoint1_6 r0 r1 (LE: uncurry6 r0 <1== r1) : r0 <6== curry6 r1.
-Proof.
-  apply uncurry_map_rev6. eapply le1_trans; [apply LE|]. apply curry_bij2_6.
-Qed.
-
-Lemma uncurry_adjoint2_6 r0 r1 (LE: r0 <6== curry6 r1) : uncurry6 r0 <1== r1.
-Proof.
-  apply curry_map_rev6. eapply le6_trans; [|apply LE]. apply uncurry_bij2_6.
-Qed.
-
-Lemma curry_adjoint1_6 r0 r1 (LE: curry6 r0 <6== r1) : r0 <1== uncurry6 r1.
-Proof.
-  apply curry_map_rev6. eapply le6_trans; [apply LE|]. apply uncurry_bij2_6.
-Qed.
-
-Lemma curry_adjoint2_6 r0 r1 (LE: r0 <1== uncurry6 r1) : curry6 r0 <6== r1.
-Proof.
-  apply uncurry_map_rev6. eapply le1_trans; [|apply LE]. apply curry_bij1_6.
-Qed.
-
 (** ** Predicates of Arity 6
 *)
 
 Definition paco6(gf : rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5)(r: rel6 T0 T1 T2 T3 T4 T5) : rel6 T0 T1 T2 T3 T4 T5 :=
-  curry6 (paco (fun R0 => uncurry6 (gf (curry6 R0))) (uncurry6 r)).
+  @curry6 T0 T1 T2 T3 T4 T5 (paco (fun R0 => @uncurry6 T0 T1 T2 T3 T4 T5 (gf (@curry6 T0 T1 T2 T3 T4 T5 R0))) (@uncurry6 T0 T1 T2 T3 T4 T5 r)).
 
 Definition upaco6(gf : rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5)(r: rel6 T0 T1 T2 T3 T4 T5) := paco6 gf r \6/ r.
 Arguments paco6 : clear implicits.
@@ -101,7 +35,7 @@ Proof. unfold monotone6, _monotone6, le6. split; intros; eapply H; eassumption. 
 
 Lemma monotone6_map (gf: rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5)
       (MON: _monotone6 gf) :
-  _monotone (fun R0 => uncurry6 (gf (curry6 R0))).
+  _monotone (fun R0 => @uncurry6 T0 T1 T2 T3 T4 T5 (gf (@curry6 T0 T1 T2 T3 T4 T5 R0))).
 Proof.
   red; intros. apply uncurry_map6. apply MON; apply curry_map6; assumption.
 Qed.

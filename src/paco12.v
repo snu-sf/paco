@@ -18,83 +18,11 @@ Variable T9 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (
 Variable T10 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6) (x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8), Type.
 Variable T11 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6) (x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: @T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9), Type.
 
-(** ** Signatures *)
-
-Record sig12T  :=
-  exist12T {
-      proj12T0: @T0;
-      proj12T1: @T1 proj12T0;
-      proj12T2: @T2 proj12T0 proj12T1;
-      proj12T3: @T3 proj12T0 proj12T1 proj12T2;
-      proj12T4: @T4 proj12T0 proj12T1 proj12T2 proj12T3;
-      proj12T5: @T5 proj12T0 proj12T1 proj12T2 proj12T3 proj12T4;
-      proj12T6: @T6 proj12T0 proj12T1 proj12T2 proj12T3 proj12T4 proj12T5;
-      proj12T7: @T7 proj12T0 proj12T1 proj12T2 proj12T3 proj12T4 proj12T5 proj12T6;
-      proj12T8: @T8 proj12T0 proj12T1 proj12T2 proj12T3 proj12T4 proj12T5 proj12T6 proj12T7;
-      proj12T9: @T9 proj12T0 proj12T1 proj12T2 proj12T3 proj12T4 proj12T5 proj12T6 proj12T7 proj12T8;
-      proj12T10: @T10 proj12T0 proj12T1 proj12T2 proj12T3 proj12T4 proj12T5 proj12T6 proj12T7 proj12T8 proj12T9;
-      proj12T11: @T11 proj12T0 proj12T1 proj12T2 proj12T3 proj12T4 proj12T5 proj12T6 proj12T7 proj12T8 proj12T9 proj12T10;
-    }.
-Definition uncurry12  (R: rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11): rel1 sig12T :=
-  fun x => R (proj12T0 x) (proj12T1 x) (proj12T2 x) (proj12T3 x) (proj12T4 x) (proj12T5 x) (proj12T6 x) (proj12T7 x) (proj12T8 x) (proj12T9 x) (proj12T10 x) (proj12T11 x).
-Definition curry12  (R: rel1 sig12T): rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 :=
-  fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 => R (@exist12T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11).
-
-Lemma uncurry_map12 r0 r1 (LE : r0 <12== r1) : uncurry12 r0 <1== uncurry12 r1.
-Proof. intros [] H. apply LE. apply H. Qed.
-
-Lemma uncurry_map_rev12 r0 r1 (LE: uncurry12 r0 <1== uncurry12 r1) : r0 <12== r1.
-Proof.
-  red; intros. apply (LE (@exist12T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) PR).
-Qed.
-
-Lemma curry_map12 r0 r1 (LE: r0 <1== r1) : curry12 r0 <12== curry12 r1.
-Proof. 
-  red; intros. apply (LE (@exist12T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) PR).
-Qed.
-
-Lemma curry_map_rev12 r0 r1 (LE: curry12 r0 <12== curry12 r1) : r0 <1== r1.
-Proof. 
-  intros [] H. apply LE. apply H.
-Qed.
-
-Lemma uncurry_bij1_12 r : curry12 (uncurry12 r) <12== r.
-Proof. unfold le12. intros. apply PR. Qed.
-
-Lemma uncurry_bij2_12 r : r <12== curry12 (uncurry12 r).
-Proof. unfold le12. intros. apply PR. Qed.
-
-Lemma curry_bij1_12 r : uncurry12 (curry12 r) <1== r.
-Proof. intros [] H. apply H. Qed.
-
-Lemma curry_bij2_12 r : r <1== uncurry12 (curry12 r).
-Proof. intros [] H. apply H. Qed.
-
-Lemma uncurry_adjoint1_12 r0 r1 (LE: uncurry12 r0 <1== r1) : r0 <12== curry12 r1.
-Proof.
-  apply uncurry_map_rev12. eapply le1_trans; [apply LE|]. apply curry_bij2_12.
-Qed.
-
-Lemma uncurry_adjoint2_12 r0 r1 (LE: r0 <12== curry12 r1) : uncurry12 r0 <1== r1.
-Proof.
-  apply curry_map_rev12. eapply le12_trans; [|apply LE]. apply uncurry_bij2_12.
-Qed.
-
-Lemma curry_adjoint1_12 r0 r1 (LE: curry12 r0 <12== r1) : r0 <1== uncurry12 r1.
-Proof.
-  apply curry_map_rev12. eapply le12_trans; [apply LE|]. apply uncurry_bij2_12.
-Qed.
-
-Lemma curry_adjoint2_12 r0 r1 (LE: r0 <1== uncurry12 r1) : curry12 r0 <12== r1.
-Proof.
-  apply uncurry_map_rev12. eapply le1_trans; [|apply LE]. apply curry_bij1_12.
-Qed.
-
 (** ** Predicates of Arity 12
 *)
 
 Definition paco12(gf : rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11)(r: rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) : rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 :=
-  curry12 (paco (fun R0 => uncurry12 (gf (curry12 R0))) (uncurry12 r)).
+  @curry12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 (paco (fun R0 => @uncurry12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 (gf (@curry12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 R0))) (@uncurry12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 r)).
 
 Definition upaco12(gf : rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11)(r: rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) := paco12 gf r \12/ r.
 Arguments paco12 : clear implicits.
@@ -113,7 +41,7 @@ Proof. unfold monotone12, _monotone12, le12. split; intros; eapply H; eassumptio
 
 Lemma monotone12_map (gf: rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11)
       (MON: _monotone12 gf) :
-  _monotone (fun R0 => uncurry12 (gf (curry12 R0))).
+  _monotone (fun R0 => @uncurry12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 (gf (@curry12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 R0))).
 Proof.
   red; intros. apply uncurry_map12. apply MON; apply curry_map12; assumption.
 Qed.
