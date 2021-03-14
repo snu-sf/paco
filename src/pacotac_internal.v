@@ -166,7 +166,13 @@ Ltac paco_simp_hyp CIH :=
     simplJM; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
+    first [
+      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       try (reflexivity);
+       first [eassumption|apply _paco_foo_cons]); fail
+    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       (try unfold _paco_id); eauto using _paco_foo_cons)]);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp CIH :=
@@ -1388,7 +1394,8 @@ Lemma _paco_convert1: forall T0
 , Prop)
  y0
 (CONVERT: forall
-(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
+(x0: @T0)
+(EQ: _paco_id (@exist1T T0 x0 = @exist1T T0 y0))
 , @paco1 x0),
 @paco1 y0.
 Proof. intros. apply CONVERT; reflexivity. Qed.
@@ -1409,7 +1416,7 @@ apply (@f_equal (@sig1T T0) _ (fun x => @paco1
 Qed.
 
 Ltac paco_convert_rev1 := match goal with
-| [H: _paco_id (@exist1T _ _ _ _ ?x0 = @exist1T _ _ _ _ ?y0) |- _] =>
+| [H: _paco_id (@exist1T _ ?x0 = @exist1T _ ?y0) |- _] =>
 eapply _paco_convert_rev1; [eapply H; clear H|..]; clear x0 H
 end.
 
@@ -1454,7 +1461,13 @@ Ltac paco_simp_hyp1 CIH :=
     paco_convert_rev1; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
+    first [
+      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       try (reflexivity);
+       first [eassumption|apply _paco_foo_cons]); fail
+    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       (try unfold _paco_id); eauto using _paco_foo_cons)]);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp1 CIH :=
@@ -1482,8 +1495,9 @@ Lemma _paco_convert2: forall T0 T1
 , Prop)
  y0 y1
 (CONVERT: forall
-(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
-(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
+(x0: @T0)
+(x1: @T1 x0)
+(EQ: _paco_id (@exist2T T0 T1 x0 x1 = @exist2T T0 T1 y0 y1))
 , @paco2 x0 x1),
 @paco2 y0 y1.
 Proof. intros. apply CONVERT; reflexivity. Qed.
@@ -1506,7 +1520,7 @@ apply (@f_equal (@sig2T T0 T1) _ (fun x => @paco2
 Qed.
 
 Ltac paco_convert_rev2 := match goal with
-| [H: _paco_id (@exist2T _ _ _ _ ?x0 ?x1 = @exist2T _ _ _ _ ?y0 ?y1) |- _] =>
+| [H: _paco_id (@exist2T _ _ ?x0 ?x1 = @exist2T _ _ ?y0 ?y1) |- _] =>
 eapply _paco_convert_rev2; [eapply H; clear H|..]; clear x0 x1 H
 end.
 
@@ -1553,7 +1567,13 @@ Ltac paco_simp_hyp2 CIH :=
     paco_convert_rev2; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
+    first [
+      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       try (reflexivity);
+       first [eassumption|apply _paco_foo_cons]); fail
+    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       (try unfold _paco_id); eauto using _paco_foo_cons)]);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp2 CIH :=
@@ -1582,9 +1602,10 @@ Lemma _paco_convert3: forall T0 T1 T2
 , Prop)
  y0 y1 y2
 (CONVERT: forall
-(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
-(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
-(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
+(x0: @T0)
+(x1: @T1 x0)
+(x2: @T2 x0 x1)
+(EQ: _paco_id (@exist3T T0 T1 T2 x0 x1 x2 = @exist3T T0 T1 T2 y0 y1 y2))
 , @paco3 x0 x1 x2),
 @paco3 y0 y1 y2.
 Proof. intros. apply CONVERT; reflexivity. Qed.
@@ -1609,7 +1630,7 @@ apply (@f_equal (@sig3T T0 T1 T2) _ (fun x => @paco3
 Qed.
 
 Ltac paco_convert_rev3 := match goal with
-| [H: _paco_id (@exist3T _ _ _ _ ?x0 ?x1 ?x2 = @exist3T _ _ _ _ ?y0 ?y1 ?y2) |- _] =>
+| [H: _paco_id (@exist3T _ _ _ ?x0 ?x1 ?x2 = @exist3T _ _ _ ?y0 ?y1 ?y2) |- _] =>
 eapply _paco_convert_rev3; [eapply H; clear H|..]; clear x0 x1 x2 H
 end.
 
@@ -1658,7 +1679,13 @@ Ltac paco_simp_hyp3 CIH :=
     paco_convert_rev3; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
+    first [
+      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       try (reflexivity);
+       first [eassumption|apply _paco_foo_cons]); fail
+    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       (try unfold _paco_id); eauto using _paco_foo_cons)]);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp3 CIH :=
@@ -1688,10 +1715,11 @@ Lemma _paco_convert4: forall T0 T1 T2 T3
 , Prop)
  y0 y1 y2 y3
 (CONVERT: forall
-(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
-(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
-(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
-(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
+(x0: @T0)
+(x1: @T1 x0)
+(x2: @T2 x0 x1)
+(x3: @T3 x0 x1 x2)
+(EQ: _paco_id (@exist4T T0 T1 T2 T3 x0 x1 x2 x3 = @exist4T T0 T1 T2 T3 y0 y1 y2 y3))
 , @paco4 x0 x1 x2 x3),
 @paco4 y0 y1 y2 y3.
 Proof. intros. apply CONVERT; reflexivity. Qed.
@@ -1769,7 +1797,13 @@ Ltac paco_simp_hyp4 CIH :=
     paco_convert_rev4; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
+    first [
+      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       try (reflexivity);
+       first [eassumption|apply _paco_foo_cons]); fail
+    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       (try unfold _paco_id); eauto using _paco_foo_cons)]);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp4 CIH :=
@@ -1800,11 +1834,12 @@ Lemma _paco_convert5: forall T0 T1 T2 T3 T4
 , Prop)
  y0 y1 y2 y3 y4
 (CONVERT: forall
-(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
-(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
-(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
-(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
-(x4: @T4 x0 x1 x2 x3) (EQ4: _paco_id (@JMeq.JMeq (@T4 x0 x1 x2 x3) x4 (@T4 y0 y1 y2 y3) y4))
+(x0: @T0)
+(x1: @T1 x0)
+(x2: @T2 x0 x1)
+(x3: @T3 x0 x1 x2)
+(x4: @T4 x0 x1 x2 x3)
+(EQ: _paco_id (@exist5T T0 T1 T2 T3 T4 x0 x1 x2 x3 x4 = @exist5T T0 T1 T2 T3 T4 y0 y1 y2 y3 y4))
 , @paco5 x0 x1 x2 x3 x4),
 @paco5 y0 y1 y2 y3 y4.
 Proof. intros. apply CONVERT; reflexivity. Qed.
@@ -1833,7 +1868,7 @@ apply (@f_equal (@sig5T T0 T1 T2 T3 T4) _ (fun x => @paco5
 Qed.
 
 Ltac paco_convert_rev5 := match goal with
-| [H: _paco_id (@exist5T _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 = @exist5T _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4) |- _] =>
+| [H: _paco_id (@exist5T _ _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 = @exist5T _ _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4) |- _] =>
 eapply _paco_convert_rev5; [eapply H; clear H|..]; clear x0 x1 x2 x3 x4 H
 end.
 
@@ -1886,7 +1921,13 @@ Ltac paco_simp_hyp5 CIH :=
     paco_convert_rev5; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
+    first [
+      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       try (reflexivity);
+       first [eassumption|apply _paco_foo_cons]); fail
+    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       (try unfold _paco_id); eauto using _paco_foo_cons)]);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp5 CIH :=
@@ -1918,12 +1959,13 @@ Lemma _paco_convert6: forall T0 T1 T2 T3 T4 T5
 , Prop)
  y0 y1 y2 y3 y4 y5
 (CONVERT: forall
-(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
-(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
-(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
-(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
-(x4: @T4 x0 x1 x2 x3) (EQ4: _paco_id (@JMeq.JMeq (@T4 x0 x1 x2 x3) x4 (@T4 y0 y1 y2 y3) y4))
-(x5: @T5 x0 x1 x2 x3 x4) (EQ5: _paco_id (@JMeq.JMeq (@T5 x0 x1 x2 x3 x4) x5 (@T5 y0 y1 y2 y3 y4) y5))
+(x0: @T0)
+(x1: @T1 x0)
+(x2: @T2 x0 x1)
+(x3: @T3 x0 x1 x2)
+(x4: @T4 x0 x1 x2 x3)
+(x5: @T5 x0 x1 x2 x3 x4)
+(EQ: _paco_id (@exist6T T0 T1 T2 T3 T4 T5 x0 x1 x2 x3 x4 x5 = @exist6T T0 T1 T2 T3 T4 T5 y0 y1 y2 y3 y4 y5))
 , @paco6 x0 x1 x2 x3 x4 x5),
 @paco6 y0 y1 y2 y3 y4 y5.
 Proof. intros. apply CONVERT; reflexivity. Qed.
@@ -1954,7 +1996,7 @@ apply (@f_equal (@sig6T T0 T1 T2 T3 T4 T5) _ (fun x => @paco6
 Qed.
 
 Ltac paco_convert_rev6 := match goal with
-| [H: _paco_id (@exist6T _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 = @exist6T _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5) |- _] =>
+| [H: _paco_id (@exist6T _ _ _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 = @exist6T _ _ _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5) |- _] =>
 eapply _paco_convert_rev6; [eapply H; clear H|..]; clear x0 x1 x2 x3 x4 x5 H
 end.
 
@@ -2009,7 +2051,13 @@ Ltac paco_simp_hyp6 CIH :=
     paco_convert_rev6; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
+    first [
+      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       try (reflexivity);
+       first [eassumption|apply _paco_foo_cons]); fail
+    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       (try unfold _paco_id); eauto using _paco_foo_cons)]);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp6 CIH :=
@@ -2042,13 +2090,14 @@ Lemma _paco_convert7: forall T0 T1 T2 T3 T4 T5 T6
 , Prop)
  y0 y1 y2 y3 y4 y5 y6
 (CONVERT: forall
-(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
-(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
-(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
-(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
-(x4: @T4 x0 x1 x2 x3) (EQ4: _paco_id (@JMeq.JMeq (@T4 x0 x1 x2 x3) x4 (@T4 y0 y1 y2 y3) y4))
-(x5: @T5 x0 x1 x2 x3 x4) (EQ5: _paco_id (@JMeq.JMeq (@T5 x0 x1 x2 x3 x4) x5 (@T5 y0 y1 y2 y3 y4) y5))
-(x6: @T6 x0 x1 x2 x3 x4 x5) (EQ6: _paco_id (@JMeq.JMeq (@T6 x0 x1 x2 x3 x4 x5) x6 (@T6 y0 y1 y2 y3 y4 y5) y6))
+(x0: @T0)
+(x1: @T1 x0)
+(x2: @T2 x0 x1)
+(x3: @T3 x0 x1 x2)
+(x4: @T4 x0 x1 x2 x3)
+(x5: @T5 x0 x1 x2 x3 x4)
+(x6: @T6 x0 x1 x2 x3 x4 x5)
+(EQ: _paco_id (@exist7T T0 T1 T2 T3 T4 T5 T6 x0 x1 x2 x3 x4 x5 x6 = @exist7T T0 T1 T2 T3 T4 T5 T6 y0 y1 y2 y3 y4 y5 y6))
 , @paco7 x0 x1 x2 x3 x4 x5 x6),
 @paco7 y0 y1 y2 y3 y4 y5 y6.
 Proof. intros. apply CONVERT; reflexivity. Qed.
@@ -2081,7 +2130,7 @@ apply (@f_equal (@sig7T T0 T1 T2 T3 T4 T5 T6) _ (fun x => @paco7
 Qed.
 
 Ltac paco_convert_rev7 := match goal with
-| [H: _paco_id (@exist7T _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 = @exist7T _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6) |- _] =>
+| [H: _paco_id (@exist7T _ _ _ _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 = @exist7T _ _ _ _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6) |- _] =>
 eapply _paco_convert_rev7; [eapply H; clear H|..]; clear x0 x1 x2 x3 x4 x5 x6 H
 end.
 
@@ -2138,7 +2187,13 @@ Ltac paco_simp_hyp7 CIH :=
     paco_convert_rev7; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
+    first [
+      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       try (reflexivity);
+       first [eassumption|apply _paco_foo_cons]); fail
+    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       (try unfold _paco_id); eauto using _paco_foo_cons)]);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp7 CIH :=
@@ -2172,14 +2227,15 @@ Lemma _paco_convert8: forall T0 T1 T2 T3 T4 T5 T6 T7
 , Prop)
  y0 y1 y2 y3 y4 y5 y6 y7
 (CONVERT: forall
-(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
-(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
-(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
-(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
-(x4: @T4 x0 x1 x2 x3) (EQ4: _paco_id (@JMeq.JMeq (@T4 x0 x1 x2 x3) x4 (@T4 y0 y1 y2 y3) y4))
-(x5: @T5 x0 x1 x2 x3 x4) (EQ5: _paco_id (@JMeq.JMeq (@T5 x0 x1 x2 x3 x4) x5 (@T5 y0 y1 y2 y3 y4) y5))
-(x6: @T6 x0 x1 x2 x3 x4 x5) (EQ6: _paco_id (@JMeq.JMeq (@T6 x0 x1 x2 x3 x4 x5) x6 (@T6 y0 y1 y2 y3 y4 y5) y6))
-(x7: @T7 x0 x1 x2 x3 x4 x5 x6) (EQ7: _paco_id (@JMeq.JMeq (@T7 x0 x1 x2 x3 x4 x5 x6) x7 (@T7 y0 y1 y2 y3 y4 y5 y6) y7))
+(x0: @T0)
+(x1: @T1 x0)
+(x2: @T2 x0 x1)
+(x3: @T3 x0 x1 x2)
+(x4: @T4 x0 x1 x2 x3)
+(x5: @T5 x0 x1 x2 x3 x4)
+(x6: @T6 x0 x1 x2 x3 x4 x5)
+(x7: @T7 x0 x1 x2 x3 x4 x5 x6)
+(EQ: _paco_id (@exist8T T0 T1 T2 T3 T4 T5 T6 T7 x0 x1 x2 x3 x4 x5 x6 x7 = @exist8T T0 T1 T2 T3 T4 T5 T6 T7 y0 y1 y2 y3 y4 y5 y6 y7))
 , @paco8 x0 x1 x2 x3 x4 x5 x6 x7),
 @paco8 y0 y1 y2 y3 y4 y5 y6 y7.
 Proof. intros. apply CONVERT; reflexivity. Qed.
@@ -2214,7 +2270,7 @@ apply (@f_equal (@sig8T T0 T1 T2 T3 T4 T5 T6 T7) _ (fun x => @paco8
 Qed.
 
 Ltac paco_convert_rev8 := match goal with
-| [H: _paco_id (@exist8T _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 = @exist8T _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7) |- _] =>
+| [H: _paco_id (@exist8T _ _ _ _ _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 = @exist8T _ _ _ _ _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7) |- _] =>
 eapply _paco_convert_rev8; [eapply H; clear H|..]; clear x0 x1 x2 x3 x4 x5 x6 x7 H
 end.
 
@@ -2273,7 +2329,13 @@ Ltac paco_simp_hyp8 CIH :=
     paco_convert_rev8; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
+    first [
+      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       try (reflexivity);
+       first [eassumption|apply _paco_foo_cons]); fail
+    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       (try unfold _paco_id); eauto using _paco_foo_cons)]);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp8 CIH :=
@@ -2308,15 +2370,16 @@ Lemma _paco_convert9: forall T0 T1 T2 T3 T4 T5 T6 T7 T8
 , Prop)
  y0 y1 y2 y3 y4 y5 y6 y7 y8
 (CONVERT: forall
-(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
-(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
-(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
-(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
-(x4: @T4 x0 x1 x2 x3) (EQ4: _paco_id (@JMeq.JMeq (@T4 x0 x1 x2 x3) x4 (@T4 y0 y1 y2 y3) y4))
-(x5: @T5 x0 x1 x2 x3 x4) (EQ5: _paco_id (@JMeq.JMeq (@T5 x0 x1 x2 x3 x4) x5 (@T5 y0 y1 y2 y3 y4) y5))
-(x6: @T6 x0 x1 x2 x3 x4 x5) (EQ6: _paco_id (@JMeq.JMeq (@T6 x0 x1 x2 x3 x4 x5) x6 (@T6 y0 y1 y2 y3 y4 y5) y6))
-(x7: @T7 x0 x1 x2 x3 x4 x5 x6) (EQ7: _paco_id (@JMeq.JMeq (@T7 x0 x1 x2 x3 x4 x5 x6) x7 (@T7 y0 y1 y2 y3 y4 y5 y6) y7))
-(x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (EQ8: _paco_id (@JMeq.JMeq (@T8 x0 x1 x2 x3 x4 x5 x6 x7) x8 (@T8 y0 y1 y2 y3 y4 y5 y6 y7) y8))
+(x0: @T0)
+(x1: @T1 x0)
+(x2: @T2 x0 x1)
+(x3: @T3 x0 x1 x2)
+(x4: @T4 x0 x1 x2 x3)
+(x5: @T5 x0 x1 x2 x3 x4)
+(x6: @T6 x0 x1 x2 x3 x4 x5)
+(x7: @T7 x0 x1 x2 x3 x4 x5 x6)
+(x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7)
+(EQ: _paco_id (@exist9T T0 T1 T2 T3 T4 T5 T6 T7 T8 x0 x1 x2 x3 x4 x5 x6 x7 x8 = @exist9T T0 T1 T2 T3 T4 T5 T6 T7 T8 y0 y1 y2 y3 y4 y5 y6 y7 y8))
 , @paco9 x0 x1 x2 x3 x4 x5 x6 x7 x8),
 @paco9 y0 y1 y2 y3 y4 y5 y6 y7 y8.
 Proof. intros. apply CONVERT; reflexivity. Qed.
@@ -2353,7 +2416,7 @@ apply (@f_equal (@sig9T T0 T1 T2 T3 T4 T5 T6 T7 T8) _ (fun x => @paco9
 Qed.
 
 Ltac paco_convert_rev9 := match goal with
-| [H: _paco_id (@exist9T _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 = @exist9T _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8) |- _] =>
+| [H: _paco_id (@exist9T _ _ _ _ _ _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 = @exist9T _ _ _ _ _ _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8) |- _] =>
 eapply _paco_convert_rev9; [eapply H; clear H|..]; clear x0 x1 x2 x3 x4 x5 x6 x7 x8 H
 end.
 
@@ -2414,7 +2477,13 @@ Ltac paco_simp_hyp9 CIH :=
     paco_convert_rev9; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
+    first [
+      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       try (reflexivity);
+       first [eassumption|apply _paco_foo_cons]); fail
+    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       (try unfold _paco_id); eauto using _paco_foo_cons)]);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp9 CIH :=
@@ -2450,16 +2519,17 @@ Lemma _paco_convert10: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9
 , Prop)
  y0 y1 y2 y3 y4 y5 y6 y7 y8 y9
 (CONVERT: forall
-(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
-(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
-(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
-(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
-(x4: @T4 x0 x1 x2 x3) (EQ4: _paco_id (@JMeq.JMeq (@T4 x0 x1 x2 x3) x4 (@T4 y0 y1 y2 y3) y4))
-(x5: @T5 x0 x1 x2 x3 x4) (EQ5: _paco_id (@JMeq.JMeq (@T5 x0 x1 x2 x3 x4) x5 (@T5 y0 y1 y2 y3 y4) y5))
-(x6: @T6 x0 x1 x2 x3 x4 x5) (EQ6: _paco_id (@JMeq.JMeq (@T6 x0 x1 x2 x3 x4 x5) x6 (@T6 y0 y1 y2 y3 y4 y5) y6))
-(x7: @T7 x0 x1 x2 x3 x4 x5 x6) (EQ7: _paco_id (@JMeq.JMeq (@T7 x0 x1 x2 x3 x4 x5 x6) x7 (@T7 y0 y1 y2 y3 y4 y5 y6) y7))
-(x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (EQ8: _paco_id (@JMeq.JMeq (@T8 x0 x1 x2 x3 x4 x5 x6 x7) x8 (@T8 y0 y1 y2 y3 y4 y5 y6 y7) y8))
-(x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (EQ9: _paco_id (@JMeq.JMeq (@T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) x9 (@T9 y0 y1 y2 y3 y4 y5 y6 y7 y8) y9))
+(x0: @T0)
+(x1: @T1 x0)
+(x2: @T2 x0 x1)
+(x3: @T3 x0 x1 x2)
+(x4: @T4 x0 x1 x2 x3)
+(x5: @T5 x0 x1 x2 x3 x4)
+(x6: @T6 x0 x1 x2 x3 x4 x5)
+(x7: @T7 x0 x1 x2 x3 x4 x5 x6)
+(x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7)
+(x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8)
+(EQ: _paco_id (@exist10T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 = @exist10T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9))
 , @paco10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9),
 @paco10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9.
 Proof. intros. apply CONVERT; reflexivity. Qed.
@@ -2498,7 +2568,7 @@ apply (@f_equal (@sig10T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9) _ (fun x => @paco10
 Qed.
 
 Ltac paco_convert_rev10 := match goal with
-| [H: _paco_id (@exist10T _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 ?x9 = @exist10T _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8 ?y9) |- _] =>
+| [H: _paco_id (@exist10T _ _ _ _ _ _ _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 ?x9 = @exist10T _ _ _ _ _ _ _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8 ?y9) |- _] =>
 eapply _paco_convert_rev10; [eapply H; clear H|..]; clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 H
 end.
 
@@ -2561,7 +2631,13 @@ Ltac paco_simp_hyp10 CIH :=
     paco_convert_rev10; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
+    first [
+      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       try (reflexivity);
+       first [eassumption|apply _paco_foo_cons]); fail
+    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       (try unfold _paco_id); eauto using _paco_foo_cons)]);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp10 CIH :=
@@ -2598,17 +2674,18 @@ Lemma _paco_convert11: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10
 , Prop)
  y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10
 (CONVERT: forall
-(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
-(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
-(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
-(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
-(x4: @T4 x0 x1 x2 x3) (EQ4: _paco_id (@JMeq.JMeq (@T4 x0 x1 x2 x3) x4 (@T4 y0 y1 y2 y3) y4))
-(x5: @T5 x0 x1 x2 x3 x4) (EQ5: _paco_id (@JMeq.JMeq (@T5 x0 x1 x2 x3 x4) x5 (@T5 y0 y1 y2 y3 y4) y5))
-(x6: @T6 x0 x1 x2 x3 x4 x5) (EQ6: _paco_id (@JMeq.JMeq (@T6 x0 x1 x2 x3 x4 x5) x6 (@T6 y0 y1 y2 y3 y4 y5) y6))
-(x7: @T7 x0 x1 x2 x3 x4 x5 x6) (EQ7: _paco_id (@JMeq.JMeq (@T7 x0 x1 x2 x3 x4 x5 x6) x7 (@T7 y0 y1 y2 y3 y4 y5 y6) y7))
-(x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (EQ8: _paco_id (@JMeq.JMeq (@T8 x0 x1 x2 x3 x4 x5 x6 x7) x8 (@T8 y0 y1 y2 y3 y4 y5 y6 y7) y8))
-(x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (EQ9: _paco_id (@JMeq.JMeq (@T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) x9 (@T9 y0 y1 y2 y3 y4 y5 y6 y7 y8) y9))
-(x10: @T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (EQ10: _paco_id (@JMeq.JMeq (@T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) x10 (@T10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9) y10))
+(x0: @T0)
+(x1: @T1 x0)
+(x2: @T2 x0 x1)
+(x3: @T3 x0 x1 x2)
+(x4: @T4 x0 x1 x2 x3)
+(x5: @T5 x0 x1 x2 x3 x4)
+(x6: @T6 x0 x1 x2 x3 x4 x5)
+(x7: @T7 x0 x1 x2 x3 x4 x5 x6)
+(x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7)
+(x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8)
+(x10: @T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
+(EQ: _paco_id (@exist11T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 = @exist11T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10))
 , @paco11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10),
 @paco11 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10.
 Proof. intros. apply CONVERT; reflexivity. Qed.
@@ -2649,7 +2726,7 @@ apply (@f_equal (@sig11T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) _ (fun x => @paco11
 Qed.
 
 Ltac paco_convert_rev11 := match goal with
-| [H: _paco_id (@exist11T _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 ?x9 ?x10 = @exist11T _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8 ?y9 ?y10) |- _] =>
+| [H: _paco_id (@exist11T _ _ _ _ _ _ _ _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 ?x9 ?x10 = @exist11T _ _ _ _ _ _ _ _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8 ?y9 ?y10) |- _] =>
 eapply _paco_convert_rev11; [eapply H; clear H|..]; clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 H
 end.
 
@@ -2714,7 +2791,13 @@ Ltac paco_simp_hyp11 CIH :=
     paco_convert_rev11; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
+    first [
+      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       try (reflexivity);
+       first [eassumption|apply _paco_foo_cons]); fail
+    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       (try unfold _paco_id); eauto using _paco_foo_cons)]);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp11 CIH :=
@@ -2752,18 +2835,19 @@ Lemma _paco_convert12: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11
 , Prop)
  y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11
 (CONVERT: forall
-(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
-(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
-(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
-(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
-(x4: @T4 x0 x1 x2 x3) (EQ4: _paco_id (@JMeq.JMeq (@T4 x0 x1 x2 x3) x4 (@T4 y0 y1 y2 y3) y4))
-(x5: @T5 x0 x1 x2 x3 x4) (EQ5: _paco_id (@JMeq.JMeq (@T5 x0 x1 x2 x3 x4) x5 (@T5 y0 y1 y2 y3 y4) y5))
-(x6: @T6 x0 x1 x2 x3 x4 x5) (EQ6: _paco_id (@JMeq.JMeq (@T6 x0 x1 x2 x3 x4 x5) x6 (@T6 y0 y1 y2 y3 y4 y5) y6))
-(x7: @T7 x0 x1 x2 x3 x4 x5 x6) (EQ7: _paco_id (@JMeq.JMeq (@T7 x0 x1 x2 x3 x4 x5 x6) x7 (@T7 y0 y1 y2 y3 y4 y5 y6) y7))
-(x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (EQ8: _paco_id (@JMeq.JMeq (@T8 x0 x1 x2 x3 x4 x5 x6 x7) x8 (@T8 y0 y1 y2 y3 y4 y5 y6 y7) y8))
-(x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (EQ9: _paco_id (@JMeq.JMeq (@T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) x9 (@T9 y0 y1 y2 y3 y4 y5 y6 y7 y8) y9))
-(x10: @T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (EQ10: _paco_id (@JMeq.JMeq (@T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) x10 (@T10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9) y10))
-(x11: @T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) (EQ11: _paco_id (@JMeq.JMeq (@T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) x11 (@T11 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10) y11))
+(x0: @T0)
+(x1: @T1 x0)
+(x2: @T2 x0 x1)
+(x3: @T3 x0 x1 x2)
+(x4: @T4 x0 x1 x2 x3)
+(x5: @T5 x0 x1 x2 x3 x4)
+(x6: @T6 x0 x1 x2 x3 x4 x5)
+(x7: @T7 x0 x1 x2 x3 x4 x5 x6)
+(x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7)
+(x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8)
+(x10: @T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
+(x11: @T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
+(EQ: _paco_id (@exist12T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 = @exist12T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11))
 , @paco12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11),
 @paco12 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11.
 Proof. intros. apply CONVERT; reflexivity. Qed.
@@ -2806,7 +2890,7 @@ apply (@f_equal (@sig12T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) _ (fun x => @pac
 Qed.
 
 Ltac paco_convert_rev12 := match goal with
-| [H: _paco_id (@exist12T _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 ?x9 ?x10 ?x11 = @exist12T _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8 ?y9 ?y10 ?y11) |- _] =>
+| [H: _paco_id (@exist12T _ _ _ _ _ _ _ _ _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 ?x9 ?x10 ?x11 = @exist12T _ _ _ _ _ _ _ _ _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8 ?y9 ?y10 ?y11) |- _] =>
 eapply _paco_convert_rev12; [eapply H; clear H|..]; clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 H
 end.
 
@@ -2873,7 +2957,13 @@ Ltac paco_simp_hyp12 CIH :=
     paco_convert_rev12; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
+    first [
+      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       try (reflexivity);
+       first [eassumption|apply _paco_foo_cons]); fail
+    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       (try unfold _paco_id); eauto using _paco_foo_cons)]);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp12 CIH :=
@@ -2912,19 +3002,20 @@ Lemma _paco_convert13: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12
 , Prop)
  y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12
 (CONVERT: forall
-(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
-(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
-(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
-(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
-(x4: @T4 x0 x1 x2 x3) (EQ4: _paco_id (@JMeq.JMeq (@T4 x0 x1 x2 x3) x4 (@T4 y0 y1 y2 y3) y4))
-(x5: @T5 x0 x1 x2 x3 x4) (EQ5: _paco_id (@JMeq.JMeq (@T5 x0 x1 x2 x3 x4) x5 (@T5 y0 y1 y2 y3 y4) y5))
-(x6: @T6 x0 x1 x2 x3 x4 x5) (EQ6: _paco_id (@JMeq.JMeq (@T6 x0 x1 x2 x3 x4 x5) x6 (@T6 y0 y1 y2 y3 y4 y5) y6))
-(x7: @T7 x0 x1 x2 x3 x4 x5 x6) (EQ7: _paco_id (@JMeq.JMeq (@T7 x0 x1 x2 x3 x4 x5 x6) x7 (@T7 y0 y1 y2 y3 y4 y5 y6) y7))
-(x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (EQ8: _paco_id (@JMeq.JMeq (@T8 x0 x1 x2 x3 x4 x5 x6 x7) x8 (@T8 y0 y1 y2 y3 y4 y5 y6 y7) y8))
-(x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (EQ9: _paco_id (@JMeq.JMeq (@T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) x9 (@T9 y0 y1 y2 y3 y4 y5 y6 y7 y8) y9))
-(x10: @T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (EQ10: _paco_id (@JMeq.JMeq (@T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) x10 (@T10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9) y10))
-(x11: @T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) (EQ11: _paco_id (@JMeq.JMeq (@T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) x11 (@T11 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10) y11))
-(x12: @T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) (EQ12: _paco_id (@JMeq.JMeq (@T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) x12 (@T12 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11) y12))
+(x0: @T0)
+(x1: @T1 x0)
+(x2: @T2 x0 x1)
+(x3: @T3 x0 x1 x2)
+(x4: @T4 x0 x1 x2 x3)
+(x5: @T5 x0 x1 x2 x3 x4)
+(x6: @T6 x0 x1 x2 x3 x4 x5)
+(x7: @T7 x0 x1 x2 x3 x4 x5 x6)
+(x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7)
+(x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8)
+(x10: @T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
+(x11: @T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
+(x12: @T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
+(EQ: _paco_id (@exist13T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 = @exist13T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12))
 , @paco13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12),
 @paco13 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12.
 Proof. intros. apply CONVERT; reflexivity. Qed.
@@ -2969,7 +3060,7 @@ apply (@f_equal (@sig13T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) _ (fun x => 
 Qed.
 
 Ltac paco_convert_rev13 := match goal with
-| [H: _paco_id (@exist13T _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 ?x9 ?x10 ?x11 ?x12 = @exist13T _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8 ?y9 ?y10 ?y11 ?y12) |- _] =>
+| [H: _paco_id (@exist13T _ _ _ _ _ _ _ _ _ _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 ?x9 ?x10 ?x11 ?x12 = @exist13T _ _ _ _ _ _ _ _ _ _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8 ?y9 ?y10 ?y11 ?y12) |- _] =>
 eapply _paco_convert_rev13; [eapply H; clear H|..]; clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 H
 end.
 
@@ -3038,7 +3129,13 @@ Ltac paco_simp_hyp13 CIH :=
     paco_convert_rev13; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
+    first [
+      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       try (reflexivity);
+       first [eassumption|apply _paco_foo_cons]); fail
+    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       (try unfold _paco_id); eauto using _paco_foo_cons)]);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp13 CIH :=
@@ -3078,20 +3175,21 @@ Lemma _paco_convert14: forall T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13
 , Prop)
  y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12 y13
 (CONVERT: forall
-(x0: @T0) (EQ0: _paco_id (@JMeq.JMeq (@T0) x0 (@T0) y0))
-(x1: @T1 x0) (EQ1: _paco_id (@JMeq.JMeq (@T1 x0) x1 (@T1 y0) y1))
-(x2: @T2 x0 x1) (EQ2: _paco_id (@JMeq.JMeq (@T2 x0 x1) x2 (@T2 y0 y1) y2))
-(x3: @T3 x0 x1 x2) (EQ3: _paco_id (@JMeq.JMeq (@T3 x0 x1 x2) x3 (@T3 y0 y1 y2) y3))
-(x4: @T4 x0 x1 x2 x3) (EQ4: _paco_id (@JMeq.JMeq (@T4 x0 x1 x2 x3) x4 (@T4 y0 y1 y2 y3) y4))
-(x5: @T5 x0 x1 x2 x3 x4) (EQ5: _paco_id (@JMeq.JMeq (@T5 x0 x1 x2 x3 x4) x5 (@T5 y0 y1 y2 y3 y4) y5))
-(x6: @T6 x0 x1 x2 x3 x4 x5) (EQ6: _paco_id (@JMeq.JMeq (@T6 x0 x1 x2 x3 x4 x5) x6 (@T6 y0 y1 y2 y3 y4 y5) y6))
-(x7: @T7 x0 x1 x2 x3 x4 x5 x6) (EQ7: _paco_id (@JMeq.JMeq (@T7 x0 x1 x2 x3 x4 x5 x6) x7 (@T7 y0 y1 y2 y3 y4 y5 y6) y7))
-(x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (EQ8: _paco_id (@JMeq.JMeq (@T8 x0 x1 x2 x3 x4 x5 x6 x7) x8 (@T8 y0 y1 y2 y3 y4 y5 y6 y7) y8))
-(x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (EQ9: _paco_id (@JMeq.JMeq (@T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) x9 (@T9 y0 y1 y2 y3 y4 y5 y6 y7 y8) y9))
-(x10: @T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (EQ10: _paco_id (@JMeq.JMeq (@T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) x10 (@T10 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9) y10))
-(x11: @T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) (EQ11: _paco_id (@JMeq.JMeq (@T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) x11 (@T11 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10) y11))
-(x12: @T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) (EQ12: _paco_id (@JMeq.JMeq (@T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) x12 (@T12 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11) y12))
-(x13: @T13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12) (EQ13: _paco_id (@JMeq.JMeq (@T13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12) x13 (@T13 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12) y13))
+(x0: @T0)
+(x1: @T1 x0)
+(x2: @T2 x0 x1)
+(x3: @T3 x0 x1 x2)
+(x4: @T4 x0 x1 x2 x3)
+(x5: @T5 x0 x1 x2 x3 x4)
+(x6: @T6 x0 x1 x2 x3 x4 x5)
+(x7: @T7 x0 x1 x2 x3 x4 x5 x6)
+(x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7)
+(x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8)
+(x10: @T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
+(x11: @T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10)
+(x12: @T12 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11)
+(x13: @T13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12)
+(EQ: _paco_id (@exist14T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 = @exist14T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12 y13))
 , @paco14 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13),
 @paco14 y0 y1 y2 y3 y4 y5 y6 y7 y8 y9 y10 y11 y12 y13.
 Proof. intros. apply CONVERT; reflexivity. Qed.
@@ -3138,7 +3236,7 @@ apply (@f_equal (@sig14T T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 T13) _ (fun x
 Qed.
 
 Ltac paco_convert_rev14 := match goal with
-| [H: _paco_id (@exist14T _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 ?x9 ?x10 ?x11 ?x12 ?x13 = @exist14T _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8 ?y9 ?y10 ?y11 ?y12 ?y13) |- _] =>
+| [H: _paco_id (@exist14T _ _ _ _ _ _ _ _ _ _ _ _ _ _ ?x0 ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 ?x9 ?x10 ?x11 ?x12 ?x13 = @exist14T _ _ _ _ _ _ _ _ _ _ _ _ _ _ ?y0 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8 ?y9 ?y10 ?y11 ?y12 ?y13) |- _] =>
 eapply _paco_convert_rev14; [eapply H; clear H|..]; clear x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 H
 end.
 
@@ -3209,7 +3307,13 @@ Ltac paco_simp_hyp14 CIH :=
     paco_convert_rev14; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH; repeat eexists );
+  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
+    first [
+      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       try (reflexivity);
+       first [eassumption|apply _paco_foo_cons]); fail
+    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
+       (try unfold _paco_id); eauto using _paco_foo_cons)]);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp14 CIH :=
