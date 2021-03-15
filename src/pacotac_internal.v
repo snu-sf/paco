@@ -1,4 +1,3 @@
-Require Import JMeq.
 From Paco Require Import hpattern.
 From Paco Require Export paconotation_internal paconotation.
 Set Implicit Arguments.
@@ -21,88 +20,6 @@ Inductive _paco_foo := _paco_foo_cons.
 
 Definition _paco_id {A} (a : A) : A := a.
 
-Lemma paco_eq_JMeq: forall A (a b: A), a = b -> _paco_id (JMeq a b).
-Proof. intros; subst; apply JMeq_refl. Defined.
-
-Lemma paco_JMeq_eq: forall (A : Type) (x y : A), _paco_id (JMeq x y) -> _paco_id (x = y).
-Proof. intros; apply JMeq_eq; auto. Defined.
-
-Ltac simplJM :=
-  repeat match goal with [H: ?x |- _] =>
-    match x with
-    | _paco_id (JMeq _ _) => apply paco_JMeq_eq in H
-    | _paco_id (?a = _) => unfold _paco_id in H; subst a
-    end
-  end.
-
-Tactic Notation "hrewrite_internal" constr(eqn) "at" int_or_var(occ) :=
-  first[hrewrite eqn at occ | rewrite eqn].
-Ltac hrewrite_last e H := let x := fresh "_paco_x_" in
-  first [try (set (x:=e) at 17; fail 1);
-    first [try (set (x:=e) at 9; fail 1);
-      first [try (set (x:=e) at 5; fail 1);
-        first [try (set (x:=e) at 3; fail 1);
-          first [try (set (x:=e) at 2; fail 1);
-            try (hrewrite_internal H at 1)
-          | try (hrewrite_internal H at 2) ]
-        | first [try (set (x:=e) at 4; fail 1);
-            try (hrewrite_internal H at 3)
-          | try (hrewrite_internal H at 4) ] ]
-      | first [try (set (x:=e) at 7; fail 1);
-          first [try (set (x:=e) at 6; fail 1);
-            try (hrewrite_internal H at 5)
-          | try (hrewrite_internal H at 6)]
-        | first [try (set (x:=e) at 8; fail 1);
-            try (hrewrite_internal H at 7)
-          | try (hrewrite_internal H at 8) ] ] ]
-    | first [try (set (x:=e) at 13; fail 1);
-        first [try (set (x:=e) at 11; fail 1);
-          first [try (set (x:=e) at 10; fail 1);
-            try (hrewrite_internal H at 9)
-          | try (hrewrite_internal H at 10) ]
-        | first [try (set (x:=e) at 12; fail 1);
-            try (hrewrite_internal H at 11)
-          | try (hrewrite_internal H at 12) ] ]
-      | first [try (set (x:=e) at 15; fail 1);
-          first [try (set (x:=e) at 14; fail 1);
-            try (hrewrite_internal H at 13)
-          | try (hrewrite_internal H at 14)]
-        | first [try (set (x:=e) at 16; fail 1);
-            try (hrewrite_internal H at 15)
-          | try (hrewrite_internal H at 16) ] ] ] ]
-  | first [try (set (x:=e) at 25; fail 1);
-      first [try (set (x:=e) at 21; fail 1);
-        first [try (set (x:=e) at 19; fail 1);
-          first [try (set (x:=e) at 18; fail 1);
-            try (hrewrite_internal H at 17)
-          | try (hrewrite_internal H at 18) ]
-        | first [try (set (x:=e) at 20; fail 1);
-            try (hrewrite_internal H at 19)
-          | try (hrewrite_internal H at 20) ] ]
-      | first [try (set (x:=e) at 23; fail 1);
-          first [try (set (x:=e) at 22; fail 1);
-            try (hrewrite_internal H at 21)
-          | try (hrewrite_internal H at 22)]
-        | first [try (set (x:=e) at 24; fail 1);
-            try (hrewrite_internal H at 23)
-          | try (hrewrite_internal H at 24) ] ] ]
-    | first [try (set (x:=e) at 29; fail 1);
-        first [try (set (x:=e) at 27; fail 1);
-          first [try (set (x:=e) at 26; fail 1);
-            try (hrewrite_internal H at 25)
-          | try (hrewrite_internal H at 26) ]
-        | first [try (set (x:=e) at 28; fail 1);
-            try (hrewrite_internal H at 27)
-          | try (hrewrite_internal H at 28) ] ]
-      | first [try (set (x:=e) at 31; fail 1);
-          first [try (set (x:=e) at 30; fail 1);
-            try (hrewrite_internal H at 29)
-          | try (hrewrite_internal H at 30)]
-        | first [try (set (x:=e) at 32; fail 1);
-            try (hrewrite_internal H at 31)
-          | try (hrewrite_internal H at 32) ] ] ] ] ]
-.
-
 Ltac paco_generalize_hyp mark :=
   let y := fresh "_paco_rel_" in
   match goal with
@@ -119,10 +36,6 @@ Ltac paco_generalize_hyp mark :=
       end; clear x y; paco_generalize_hyp mark
     end
   end.
-
-Ltac paco_convert e x EQ :=
-  generalize (eq_refl e); generalize e at 2; intros x EQ;
-  hrewrite_last e EQ; apply eq_sym, paco_eq_JMeq in EQ; revert x EQ.
 
 Ltac paco_destruct_hyp mark :=
   match goal with
@@ -163,7 +76,7 @@ Ltac paco_simp_hyp CIH :=
   assert (TP: False -> PP) by (
     intros FP; generalize _paco_mark_cons;
     repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
-    simplJM; paco_revert_hyp _paco_mark;
+    paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
   assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
@@ -182,7 +95,7 @@ Ltac paco_post_simp CIH :=
     let TMP := fresh "_paco_TMP_" in
     generalize _paco_mark_cons; intro TMP;
     repeat intro; paco_rename_last; paco_destruct_hyp _paco_mark;
-    simplJM; paco_revert_hyp _paco_mark
+    paco_revert_hyp _paco_mark
   ].
 
 Ltac paco_ren_r nr cr :=
