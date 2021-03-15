@@ -6,71 +6,11 @@ Set Implicit Arguments.
 Section PACO0.
 
 
-(** ** Signatures *)
-
-Record sig0T  :=
-  exist0T {
-    }.
-Definition uncurry0  (R: rel0): rel1 sig0T :=
-  fun x => R.
-Definition curry0  (R: rel1 sig0T): rel0 :=
-   R (@exist0T).
-
-Lemma uncurry_map0 r0 r1 (LE : r0 <0== r1) : uncurry0 r0 <1== uncurry0 r1.
-Proof. intros [] H. apply LE. apply H. Qed.
-
-Lemma uncurry_map_rev0 r0 r1 (LE: uncurry0 r0 <1== uncurry0 r1) : r0 <0== r1.
-Proof.
-  red; intros. apply (LE (@exist0T) PR).
-Qed.
-
-Lemma curry_map0 r0 r1 (LE: r0 <1== r1) : curry0 r0 <0== curry0 r1.
-Proof. 
-  red; intros. apply (LE (@exist0T) PR).
-Qed.
-
-Lemma curry_map_rev0 r0 r1 (LE: curry0 r0 <0== curry0 r1) : r0 <1== r1.
-Proof. 
-  intros [] H. apply LE. apply H.
-Qed.
-
-Lemma uncurry_bij1_0 r : curry0 (uncurry0 r) <0== r.
-Proof. unfold le0. intros. apply PR. Qed.
-
-Lemma uncurry_bij2_0 r : r <0== curry0 (uncurry0 r).
-Proof. unfold le0. intros. apply PR. Qed.
-
-Lemma curry_bij1_0 r : uncurry0 (curry0 r) <1== r.
-Proof. intros [] H. apply H. Qed.
-
-Lemma curry_bij2_0 r : r <1== uncurry0 (curry0 r).
-Proof. intros [] H. apply H. Qed.
-
-Lemma uncurry_adjoint1_0 r0 r1 (LE: uncurry0 r0 <1== r1) : r0 <0== curry0 r1.
-Proof.
-  apply uncurry_map_rev0. eapply le1_trans; [apply LE|]. apply curry_bij2_0.
-Qed.
-
-Lemma uncurry_adjoint2_0 r0 r1 (LE: r0 <0== curry0 r1) : uncurry0 r0 <1== r1.
-Proof.
-  apply curry_map_rev0. eapply le0_trans; [|apply LE]. apply uncurry_bij2_0.
-Qed.
-
-Lemma curry_adjoint1_0 r0 r1 (LE: curry0 r0 <0== r1) : r0 <1== uncurry0 r1.
-Proof.
-  apply curry_map_rev0. eapply le0_trans; [apply LE|]. apply uncurry_bij2_0.
-Qed.
-
-Lemma curry_adjoint2_0 r0 r1 (LE: r0 <1== uncurry0 r1) : curry0 r0 <0== r1.
-Proof.
-  apply uncurry_map_rev0. eapply le1_trans; [|apply LE]. apply curry_bij1_0.
-Qed.
-
 (** ** Predicates of Arity 0
 *)
 
 Definition paco0(gf : rel0 -> rel0)(r: rel0) : rel0 :=
-  curry0 (paco (fun R0 => uncurry0 (gf (curry0 R0))) (uncurry0 r)).
+  @curry0 (paco (fun R0 => @uncurry0 (gf (@curry0 R0))) (@uncurry0 r)).
 
 Definition upaco0(gf : rel0 -> rel0)(r: rel0) := paco0 gf r \0/ r.
 Arguments paco0 : clear implicits.
@@ -89,7 +29,7 @@ Proof. unfold monotone0, _monotone0, le0. split; intros; eapply H; eassumption. 
 
 Lemma monotone0_map (gf: rel0 -> rel0)
       (MON: _monotone0 gf) :
-  _monotone (fun R0 => uncurry0 (gf (curry0 R0))).
+  _monotone (fun R0 => @uncurry0 (gf (@curry0 R0))).
 Proof.
   red; intros. apply uncurry_map0. apply MON; apply curry_map0; assumption.
 Qed.

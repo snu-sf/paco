@@ -19,84 +19,11 @@ Variable T10 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) 
 Variable T11 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6) (x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: @T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9), Type.
 Variable T12 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4) (x6: @T6 x0 x1 x2 x3 x4 x5) (x7: @T7 x0 x1 x2 x3 x4 x5 x6) (x8: @T8 x0 x1 x2 x3 x4 x5 x6 x7) (x9: @T9 x0 x1 x2 x3 x4 x5 x6 x7 x8) (x10: @T10 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (x11: @T11 x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10), Type.
 
-(** ** Signatures *)
-
-Record sig13T  :=
-  exist13T {
-      proj13T0: @T0;
-      proj13T1: @T1 proj13T0;
-      proj13T2: @T2 proj13T0 proj13T1;
-      proj13T3: @T3 proj13T0 proj13T1 proj13T2;
-      proj13T4: @T4 proj13T0 proj13T1 proj13T2 proj13T3;
-      proj13T5: @T5 proj13T0 proj13T1 proj13T2 proj13T3 proj13T4;
-      proj13T6: @T6 proj13T0 proj13T1 proj13T2 proj13T3 proj13T4 proj13T5;
-      proj13T7: @T7 proj13T0 proj13T1 proj13T2 proj13T3 proj13T4 proj13T5 proj13T6;
-      proj13T8: @T8 proj13T0 proj13T1 proj13T2 proj13T3 proj13T4 proj13T5 proj13T6 proj13T7;
-      proj13T9: @T9 proj13T0 proj13T1 proj13T2 proj13T3 proj13T4 proj13T5 proj13T6 proj13T7 proj13T8;
-      proj13T10: @T10 proj13T0 proj13T1 proj13T2 proj13T3 proj13T4 proj13T5 proj13T6 proj13T7 proj13T8 proj13T9;
-      proj13T11: @T11 proj13T0 proj13T1 proj13T2 proj13T3 proj13T4 proj13T5 proj13T6 proj13T7 proj13T8 proj13T9 proj13T10;
-      proj13T12: @T12 proj13T0 proj13T1 proj13T2 proj13T3 proj13T4 proj13T5 proj13T6 proj13T7 proj13T8 proj13T9 proj13T10 proj13T11;
-    }.
-Definition uncurry13  (R: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12): rel1 sig13T :=
-  fun x => R (proj13T0 x) (proj13T1 x) (proj13T2 x) (proj13T3 x) (proj13T4 x) (proj13T5 x) (proj13T6 x) (proj13T7 x) (proj13T8 x) (proj13T9 x) (proj13T10 x) (proj13T11 x) (proj13T12 x).
-Definition curry13  (R: rel1 sig13T): rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 :=
-  fun x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 => R (@exist13T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12).
-
-Lemma uncurry_map13 r0 r1 (LE : r0 <13== r1) : uncurry13 r0 <1== uncurry13 r1.
-Proof. intros [] H. apply LE. apply H. Qed.
-
-Lemma uncurry_map_rev13 r0 r1 (LE: uncurry13 r0 <1== uncurry13 r1) : r0 <13== r1.
-Proof.
-  red; intros. apply (LE (@exist13T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12) PR).
-Qed.
-
-Lemma curry_map13 r0 r1 (LE: r0 <1== r1) : curry13 r0 <13== curry13 r1.
-Proof. 
-  red; intros. apply (LE (@exist13T x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12) PR).
-Qed.
-
-Lemma curry_map_rev13 r0 r1 (LE: curry13 r0 <13== curry13 r1) : r0 <1== r1.
-Proof. 
-  intros [] H. apply LE. apply H.
-Qed.
-
-Lemma uncurry_bij1_13 r : curry13 (uncurry13 r) <13== r.
-Proof. unfold le13. intros. apply PR. Qed.
-
-Lemma uncurry_bij2_13 r : r <13== curry13 (uncurry13 r).
-Proof. unfold le13. intros. apply PR. Qed.
-
-Lemma curry_bij1_13 r : uncurry13 (curry13 r) <1== r.
-Proof. intros [] H. apply H. Qed.
-
-Lemma curry_bij2_13 r : r <1== uncurry13 (curry13 r).
-Proof. intros [] H. apply H. Qed.
-
-Lemma uncurry_adjoint1_13 r0 r1 (LE: uncurry13 r0 <1== r1) : r0 <13== curry13 r1.
-Proof.
-  apply uncurry_map_rev13. eapply le1_trans; [apply LE|]. apply curry_bij2_13.
-Qed.
-
-Lemma uncurry_adjoint2_13 r0 r1 (LE: r0 <13== curry13 r1) : uncurry13 r0 <1== r1.
-Proof.
-  apply curry_map_rev13. eapply le13_trans; [|apply LE]. apply uncurry_bij2_13.
-Qed.
-
-Lemma curry_adjoint1_13 r0 r1 (LE: curry13 r0 <13== r1) : r0 <1== uncurry13 r1.
-Proof.
-  apply curry_map_rev13. eapply le13_trans; [apply LE|]. apply uncurry_bij2_13.
-Qed.
-
-Lemma curry_adjoint2_13 r0 r1 (LE: r0 <1== uncurry13 r1) : curry13 r0 <13== r1.
-Proof.
-  apply uncurry_map_rev13. eapply le1_trans; [|apply LE]. apply curry_bij1_13.
-Qed.
-
 (** ** Predicates of Arity 13
 *)
 
 Definition paco13(gf : rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12)(r: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) : rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 :=
-  curry13 (paco (fun R0 => uncurry13 (gf (curry13 R0))) (uncurry13 r)).
+  @curry13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 (paco (fun R0 => @uncurry13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 (gf (@curry13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 R0))) (@uncurry13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 r)).
 
 Definition upaco13(gf : rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12)(r: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) := paco13 gf r \13/ r.
 Arguments paco13 : clear implicits.
@@ -115,7 +42,7 @@ Proof. unfold monotone13, _monotone13, le13. split; intros; eapply H; eassumptio
 
 Lemma monotone13_map (gf: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12)
       (MON: _monotone13 gf) :
-  _monotone (fun R0 => uncurry13 (gf (curry13 R0))).
+  _monotone (fun R0 => @uncurry13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 (gf (@curry13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 R0))).
 Proof.
   red; intros. apply uncurry_map13. apply MON; apply curry_map13; assumption.
 Qed.

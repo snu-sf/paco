@@ -11,76 +11,11 @@ Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
 Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
 Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), Type.
 
-(** ** Signatures *)
-
-Record sig5T  :=
-  exist5T {
-      proj5T0: @T0;
-      proj5T1: @T1 proj5T0;
-      proj5T2: @T2 proj5T0 proj5T1;
-      proj5T3: @T3 proj5T0 proj5T1 proj5T2;
-      proj5T4: @T4 proj5T0 proj5T1 proj5T2 proj5T3;
-    }.
-Definition uncurry5  (R: rel5 T0 T1 T2 T3 T4): rel1 sig5T :=
-  fun x => R (proj5T0 x) (proj5T1 x) (proj5T2 x) (proj5T3 x) (proj5T4 x).
-Definition curry5  (R: rel1 sig5T): rel5 T0 T1 T2 T3 T4 :=
-  fun x0 x1 x2 x3 x4 => R (@exist5T x0 x1 x2 x3 x4).
-
-Lemma uncurry_map5 r0 r1 (LE : r0 <5== r1) : uncurry5 r0 <1== uncurry5 r1.
-Proof. intros [] H. apply LE. apply H. Qed.
-
-Lemma uncurry_map_rev5 r0 r1 (LE: uncurry5 r0 <1== uncurry5 r1) : r0 <5== r1.
-Proof.
-  red; intros. apply (LE (@exist5T x0 x1 x2 x3 x4) PR).
-Qed.
-
-Lemma curry_map5 r0 r1 (LE: r0 <1== r1) : curry5 r0 <5== curry5 r1.
-Proof. 
-  red; intros. apply (LE (@exist5T x0 x1 x2 x3 x4) PR).
-Qed.
-
-Lemma curry_map_rev5 r0 r1 (LE: curry5 r0 <5== curry5 r1) : r0 <1== r1.
-Proof. 
-  intros [] H. apply LE. apply H.
-Qed.
-
-Lemma uncurry_bij1_5 r : curry5 (uncurry5 r) <5== r.
-Proof. unfold le5. intros. apply PR. Qed.
-
-Lemma uncurry_bij2_5 r : r <5== curry5 (uncurry5 r).
-Proof. unfold le5. intros. apply PR. Qed.
-
-Lemma curry_bij1_5 r : uncurry5 (curry5 r) <1== r.
-Proof. intros [] H. apply H. Qed.
-
-Lemma curry_bij2_5 r : r <1== uncurry5 (curry5 r).
-Proof. intros [] H. apply H. Qed.
-
-Lemma uncurry_adjoint1_5 r0 r1 (LE: uncurry5 r0 <1== r1) : r0 <5== curry5 r1.
-Proof.
-  apply uncurry_map_rev5. eapply le1_trans; [apply LE|]. apply curry_bij2_5.
-Qed.
-
-Lemma uncurry_adjoint2_5 r0 r1 (LE: r0 <5== curry5 r1) : uncurry5 r0 <1== r1.
-Proof.
-  apply curry_map_rev5. eapply le5_trans; [|apply LE]. apply uncurry_bij2_5.
-Qed.
-
-Lemma curry_adjoint1_5 r0 r1 (LE: curry5 r0 <5== r1) : r0 <1== uncurry5 r1.
-Proof.
-  apply curry_map_rev5. eapply le5_trans; [apply LE|]. apply uncurry_bij2_5.
-Qed.
-
-Lemma curry_adjoint2_5 r0 r1 (LE: r0 <1== uncurry5 r1) : curry5 r0 <5== r1.
-Proof.
-  apply uncurry_map_rev5. eapply le1_trans; [|apply LE]. apply curry_bij1_5.
-Qed.
-
 (** ** Predicates of Arity 5
 *)
 
 Definition paco5(gf : rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4)(r: rel5 T0 T1 T2 T3 T4) : rel5 T0 T1 T2 T3 T4 :=
-  curry5 (paco (fun R0 => uncurry5 (gf (curry5 R0))) (uncurry5 r)).
+  @curry5 T0 T1 T2 T3 T4 (paco (fun R0 => @uncurry5 T0 T1 T2 T3 T4 (gf (@curry5 T0 T1 T2 T3 T4 R0))) (@uncurry5 T0 T1 T2 T3 T4 r)).
 
 Definition upaco5(gf : rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4)(r: rel5 T0 T1 T2 T3 T4) := paco5 gf r \5/ r.
 Arguments paco5 : clear implicits.
@@ -99,7 +34,7 @@ Proof. unfold monotone5, _monotone5, le5. split; intros; eapply H; eassumption. 
 
 Lemma monotone5_map (gf: rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4)
       (MON: _monotone5 gf) :
-  _monotone (fun R0 => uncurry5 (gf (curry5 R0))).
+  _monotone (fun R0 => @uncurry5 T0 T1 T2 T3 T4 (gf (@curry5 T0 T1 T2 T3 T4 R0))).
 Proof.
   red; intros. apply uncurry_map5. apply MON; apply curry_map5; assumption.
 Qed.

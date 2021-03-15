@@ -10,75 +10,11 @@ Variable T1 : forall (x0: @T0), Type.
 Variable T2 : forall (x0: @T0) (x1: @T1 x0), Type.
 Variable T3 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1), Type.
 
-(** ** Signatures *)
-
-Record sig4T  :=
-  exist4T {
-      proj4T0: @T0;
-      proj4T1: @T1 proj4T0;
-      proj4T2: @T2 proj4T0 proj4T1;
-      proj4T3: @T3 proj4T0 proj4T1 proj4T2;
-    }.
-Definition uncurry4  (R: rel4 T0 T1 T2 T3): rel1 sig4T :=
-  fun x => R (proj4T0 x) (proj4T1 x) (proj4T2 x) (proj4T3 x).
-Definition curry4  (R: rel1 sig4T): rel4 T0 T1 T2 T3 :=
-  fun x0 x1 x2 x3 => R (@exist4T x0 x1 x2 x3).
-
-Lemma uncurry_map4 r0 r1 (LE : r0 <4== r1) : uncurry4 r0 <1== uncurry4 r1.
-Proof. intros [] H. apply LE. apply H. Qed.
-
-Lemma uncurry_map_rev4 r0 r1 (LE: uncurry4 r0 <1== uncurry4 r1) : r0 <4== r1.
-Proof.
-  red; intros. apply (LE (@exist4T x0 x1 x2 x3) PR).
-Qed.
-
-Lemma curry_map4 r0 r1 (LE: r0 <1== r1) : curry4 r0 <4== curry4 r1.
-Proof. 
-  red; intros. apply (LE (@exist4T x0 x1 x2 x3) PR).
-Qed.
-
-Lemma curry_map_rev4 r0 r1 (LE: curry4 r0 <4== curry4 r1) : r0 <1== r1.
-Proof. 
-  intros [] H. apply LE. apply H.
-Qed.
-
-Lemma uncurry_bij1_4 r : curry4 (uncurry4 r) <4== r.
-Proof. unfold le4. intros. apply PR. Qed.
-
-Lemma uncurry_bij2_4 r : r <4== curry4 (uncurry4 r).
-Proof. unfold le4. intros. apply PR. Qed.
-
-Lemma curry_bij1_4 r : uncurry4 (curry4 r) <1== r.
-Proof. intros [] H. apply H. Qed.
-
-Lemma curry_bij2_4 r : r <1== uncurry4 (curry4 r).
-Proof. intros [] H. apply H. Qed.
-
-Lemma uncurry_adjoint1_4 r0 r1 (LE: uncurry4 r0 <1== r1) : r0 <4== curry4 r1.
-Proof.
-  apply uncurry_map_rev4. eapply le1_trans; [apply LE|]. apply curry_bij2_4.
-Qed.
-
-Lemma uncurry_adjoint2_4 r0 r1 (LE: r0 <4== curry4 r1) : uncurry4 r0 <1== r1.
-Proof.
-  apply curry_map_rev4. eapply le4_trans; [|apply LE]. apply uncurry_bij2_4.
-Qed.
-
-Lemma curry_adjoint1_4 r0 r1 (LE: curry4 r0 <4== r1) : r0 <1== uncurry4 r1.
-Proof.
-  apply curry_map_rev4. eapply le4_trans; [apply LE|]. apply uncurry_bij2_4.
-Qed.
-
-Lemma curry_adjoint2_4 r0 r1 (LE: r0 <1== uncurry4 r1) : curry4 r0 <4== r1.
-Proof.
-  apply uncurry_map_rev4. eapply le1_trans; [|apply LE]. apply curry_bij1_4.
-Qed.
-
 (** ** Predicates of Arity 4
 *)
 
 Definition paco4(gf : rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3)(r: rel4 T0 T1 T2 T3) : rel4 T0 T1 T2 T3 :=
-  curry4 (paco (fun R0 => uncurry4 (gf (curry4 R0))) (uncurry4 r)).
+  @curry4 T0 T1 T2 T3 (paco (fun R0 => @uncurry4 T0 T1 T2 T3 (gf (@curry4 T0 T1 T2 T3 R0))) (@uncurry4 T0 T1 T2 T3 r)).
 
 Definition upaco4(gf : rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3)(r: rel4 T0 T1 T2 T3) := paco4 gf r \4/ r.
 Arguments paco4 : clear implicits.
@@ -97,7 +33,7 @@ Proof. unfold monotone4, _monotone4, le4. split; intros; eapply H; eassumption. 
 
 Lemma monotone4_map (gf: rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3)
       (MON: _monotone4 gf) :
-  _monotone (fun R0 => uncurry4 (gf (curry4 R0))).
+  _monotone (fun R0 => @uncurry4 T0 T1 T2 T3 (gf (@curry4 T0 T1 T2 T3 R0))).
 Proof.
   red; intros. apply uncurry_map4. apply MON; apply curry_map4; assumption.
 Qed.

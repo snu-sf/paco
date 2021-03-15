@@ -13,78 +13,11 @@ Variable T4 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2), 
 Variable T5 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3), Type.
 Variable T6 : forall (x0: @T0) (x1: @T1 x0) (x2: @T2 x0 x1) (x3: @T3 x0 x1 x2) (x4: @T4 x0 x1 x2 x3) (x5: @T5 x0 x1 x2 x3 x4), Type.
 
-(** ** Signatures *)
-
-Record sig7T  :=
-  exist7T {
-      proj7T0: @T0;
-      proj7T1: @T1 proj7T0;
-      proj7T2: @T2 proj7T0 proj7T1;
-      proj7T3: @T3 proj7T0 proj7T1 proj7T2;
-      proj7T4: @T4 proj7T0 proj7T1 proj7T2 proj7T3;
-      proj7T5: @T5 proj7T0 proj7T1 proj7T2 proj7T3 proj7T4;
-      proj7T6: @T6 proj7T0 proj7T1 proj7T2 proj7T3 proj7T4 proj7T5;
-    }.
-Definition uncurry7  (R: rel7 T0 T1 T2 T3 T4 T5 T6): rel1 sig7T :=
-  fun x => R (proj7T0 x) (proj7T1 x) (proj7T2 x) (proj7T3 x) (proj7T4 x) (proj7T5 x) (proj7T6 x).
-Definition curry7  (R: rel1 sig7T): rel7 T0 T1 T2 T3 T4 T5 T6 :=
-  fun x0 x1 x2 x3 x4 x5 x6 => R (@exist7T x0 x1 x2 x3 x4 x5 x6).
-
-Lemma uncurry_map7 r0 r1 (LE : r0 <7== r1) : uncurry7 r0 <1== uncurry7 r1.
-Proof. intros [] H. apply LE. apply H. Qed.
-
-Lemma uncurry_map_rev7 r0 r1 (LE: uncurry7 r0 <1== uncurry7 r1) : r0 <7== r1.
-Proof.
-  red; intros. apply (LE (@exist7T x0 x1 x2 x3 x4 x5 x6) PR).
-Qed.
-
-Lemma curry_map7 r0 r1 (LE: r0 <1== r1) : curry7 r0 <7== curry7 r1.
-Proof. 
-  red; intros. apply (LE (@exist7T x0 x1 x2 x3 x4 x5 x6) PR).
-Qed.
-
-Lemma curry_map_rev7 r0 r1 (LE: curry7 r0 <7== curry7 r1) : r0 <1== r1.
-Proof. 
-  intros [] H. apply LE. apply H.
-Qed.
-
-Lemma uncurry_bij1_7 r : curry7 (uncurry7 r) <7== r.
-Proof. unfold le7. intros. apply PR. Qed.
-
-Lemma uncurry_bij2_7 r : r <7== curry7 (uncurry7 r).
-Proof. unfold le7. intros. apply PR. Qed.
-
-Lemma curry_bij1_7 r : uncurry7 (curry7 r) <1== r.
-Proof. intros [] H. apply H. Qed.
-
-Lemma curry_bij2_7 r : r <1== uncurry7 (curry7 r).
-Proof. intros [] H. apply H. Qed.
-
-Lemma uncurry_adjoint1_7 r0 r1 (LE: uncurry7 r0 <1== r1) : r0 <7== curry7 r1.
-Proof.
-  apply uncurry_map_rev7. eapply le1_trans; [apply LE|]. apply curry_bij2_7.
-Qed.
-
-Lemma uncurry_adjoint2_7 r0 r1 (LE: r0 <7== curry7 r1) : uncurry7 r0 <1== r1.
-Proof.
-  apply curry_map_rev7. eapply le7_trans; [|apply LE]. apply uncurry_bij2_7.
-Qed.
-
-Lemma curry_adjoint1_7 r0 r1 (LE: curry7 r0 <7== r1) : r0 <1== uncurry7 r1.
-Proof.
-  apply curry_map_rev7. eapply le7_trans; [apply LE|]. apply uncurry_bij2_7.
-Qed.
-
-Lemma curry_adjoint2_7 r0 r1 (LE: r0 <1== uncurry7 r1) : curry7 r0 <7== r1.
-Proof.
-  apply uncurry_map_rev7. eapply le1_trans; [|apply LE]. apply curry_bij1_7.
-Qed.
-
 (** ** Predicates of Arity 7
 *)
 
 Definition paco7(gf : rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6)(r: rel7 T0 T1 T2 T3 T4 T5 T6) : rel7 T0 T1 T2 T3 T4 T5 T6 :=
-  curry7 (paco (fun R0 => uncurry7 (gf (curry7 R0))) (uncurry7 r)).
+  @curry7 T0 T1 T2 T3 T4 T5 T6 (paco (fun R0 => @uncurry7 T0 T1 T2 T3 T4 T5 T6 (gf (@curry7 T0 T1 T2 T3 T4 T5 T6 R0))) (@uncurry7 T0 T1 T2 T3 T4 T5 T6 r)).
 
 Definition upaco7(gf : rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6)(r: rel7 T0 T1 T2 T3 T4 T5 T6) := paco7 gf r \7/ r.
 Arguments paco7 : clear implicits.
@@ -103,7 +36,7 @@ Proof. unfold monotone7, _monotone7, le7. split; intros; eapply H; eassumption. 
 
 Lemma monotone7_map (gf: rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6)
       (MON: _monotone7 gf) :
-  _monotone (fun R0 => uncurry7 (gf (curry7 R0))).
+  _monotone (fun R0 => @uncurry7 T0 T1 T2 T3 T4 T5 T6 (gf (@curry7 T0 T1 T2 T3 T4 T5 T6 R0))).
 Proof.
   red; intros. apply uncurry_map7. apply MON; apply curry_map7; assumption.
 Qed.
