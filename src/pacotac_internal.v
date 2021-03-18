@@ -1377,7 +1377,7 @@ Ltac paco_simp_hyp1 CIH :=
   assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
     first [
       (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       try (reflexivity);
+       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
        first [eassumption|apply _paco_foo_cons]); fail
     | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
        (try unfold _paco_id); eauto using _paco_foo_cons)]);
@@ -1483,7 +1483,7 @@ Ltac paco_simp_hyp2 CIH :=
   assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
     first [
       (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       try (reflexivity);
+       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
        first [eassumption|apply _paco_foo_cons]); fail
     | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
        (try unfold _paco_id); eauto using _paco_foo_cons)]);
@@ -1595,7 +1595,7 @@ Ltac paco_simp_hyp3 CIH :=
   assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
     first [
       (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       try (reflexivity);
+       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
        first [eassumption|apply _paco_foo_cons]); fail
     | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
        (try unfold _paco_id); eauto using _paco_foo_cons)]);
@@ -1713,7 +1713,7 @@ Ltac paco_simp_hyp4 CIH :=
   assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
     first [
       (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       try (reflexivity);
+       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
        first [eassumption|apply _paco_foo_cons]); fail
     | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
        (try unfold _paco_id); eauto using _paco_foo_cons)]);
@@ -1837,7 +1837,7 @@ Ltac paco_simp_hyp5 CIH :=
   assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
     first [
       (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       try (reflexivity);
+       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
        first [eassumption|apply _paco_foo_cons]); fail
     | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
        (try unfold _paco_id); eauto using _paco_foo_cons)]);
@@ -1967,7 +1967,7 @@ Ltac paco_simp_hyp6 CIH :=
   assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
     first [
       (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       try (reflexivity);
+       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
        first [eassumption|apply _paco_foo_cons]); fail
     | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
        (try unfold _paco_id); eauto using _paco_foo_cons)]);
@@ -2103,7 +2103,7 @@ Ltac paco_simp_hyp7 CIH :=
   assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
     first [
       (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       try (reflexivity);
+       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
        first [eassumption|apply _paco_foo_cons]); fail
     | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
        (try unfold _paco_id); eauto using _paco_foo_cons)]);
@@ -2245,7 +2245,7 @@ Ltac paco_simp_hyp8 CIH :=
   assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
     first [
       (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       try (reflexivity);
+       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
        first [eassumption|apply _paco_foo_cons]); fail
     | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
        (try unfold _paco_id); eauto using _paco_foo_cons)]);
@@ -2393,7 +2393,7 @@ Ltac paco_simp_hyp9 CIH :=
   assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
     first [
       (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       try (reflexivity);
+       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
        first [eassumption|apply _paco_foo_cons]); fail
     | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
        (try unfold _paco_id); eauto using _paco_foo_cons)]);
@@ -2547,7 +2547,7 @@ Ltac paco_simp_hyp10 CIH :=
   assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
     first [
       (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       try (reflexivity);
+       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
        first [eassumption|apply _paco_foo_cons]); fail
     | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
        (try unfold _paco_id); eauto using _paco_foo_cons)]);
@@ -2707,7 +2707,7 @@ Ltac paco_simp_hyp11 CIH :=
   assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
     first [
       (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       try (reflexivity);
+       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
        first [eassumption|apply _paco_foo_cons]); fail
     | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
        (try unfold _paco_id); eauto using _paco_foo_cons)]);
@@ -2873,7 +2873,7 @@ Ltac paco_simp_hyp12 CIH :=
   assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
     first [
       (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       try (reflexivity);
+       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
        first [eassumption|apply _paco_foo_cons]); fail
     | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
        (try unfold _paco_id); eauto using _paco_foo_cons)]);
@@ -3045,7 +3045,7 @@ Ltac paco_simp_hyp13 CIH :=
   assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
     first [
       (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       try (reflexivity);
+       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
        first [eassumption|apply _paco_foo_cons]); fail
     | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
        (try unfold _paco_id); eauto using _paco_foo_cons)]);
@@ -3223,7 +3223,7 @@ Ltac paco_simp_hyp14 CIH :=
   assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
     first [
       (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       try (reflexivity);
+       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
        first [eassumption|apply _paco_foo_cons]); fail
     | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
        (try unfold _paco_id); eauto using _paco_foo_cons)]);

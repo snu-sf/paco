@@ -309,7 +309,7 @@ for n in range (1,relsize+1):
     print ('  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;')
     print ('    first [')
     print ('      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;')
-    print ('       try (reflexivity);')
+    print ('       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];')
     print ('       first [eassumption|apply _paco_foo_cons]); fail')
     print ('    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;')
     print ('       (try unfold _paco_id); eauto using _paco_foo_cons)]);')
