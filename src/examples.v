@@ -4,7 +4,7 @@
 (** printing -> $\rightarrow$ #&rarr;# *)
 (** printing /\ $\land$ #&and;# *)
 
-Require Import ZArith List String Omega.
+Require Import ZArith List String.
 Require Import Paco.paco.
 Import ListNotations.
 
