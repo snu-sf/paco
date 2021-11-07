@@ -13,4 +13,7 @@ tutorial.html:
 open: tutorial.html
 	xdg-open tutorial.html
 
+clean:
+	rm *.css *.js *.rst *.html
+
 # end

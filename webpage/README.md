@@ -3,11 +3,14 @@
 ``` sh
 ./dependencies.sh
 ```
-
-for `coq-serapi` via `opam` and `alectryon` via `pip`. 
+For `coq-serapi` via `opam` and `alectryon` via `pip`. 
 
 ``` sh
 make open
 ```
-
 Will run the file generation and (assumes linux) `xdg-open` the `tutorial.html` interactive webpage with proof state in hover-over and click. 
+
+``` sh
+make clean
+```
+Will `rm` all web-related files.
