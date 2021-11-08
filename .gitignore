@@ -11,3 +11,7 @@ _CoqProject
 *.pyc
 \#*\#
 *~
+*.html
+*.css
+*.js
+*.rst
