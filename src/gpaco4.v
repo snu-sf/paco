@@ -91,7 +91,7 @@ Proof.
   eapply monotone4_compose. apply gf_mon. apply rclo4_mon.
 Qed.
 
-Hint Resolve gpaco4_def_mon : paco.
+#[local] Hint Resolve gpaco4_def_mon : paco.
 
 Lemma gpaco4_mon clo r r' rg rg' x0 x1 x2 x3
       (IN: @gpaco4 clo r rg x0 x1 x2 x3)
@@ -298,7 +298,7 @@ Qed.
 
 End Main.
 
-Hint Resolve gpaco4_def_mon : paco.
+#[local] Hint Resolve gpaco4_def_mon : paco.
 
 Section GeneralMonotonicity.
 
@@ -854,12 +854,12 @@ End Respectful.
 
 End GeneralizedPaco4.
 
-Hint Resolve gpaco4_def_mon : paco.
-Hint Unfold gupaco4 : paco.
-Hint Resolve gpaco4_base : paco.
-Hint Resolve gpaco4_step : paco.
-Hint Resolve gpaco4_final : paco.
-Hint Resolve rclo4_base : paco.
-Hint Constructors gpaco4 : paco.
-Hint Resolve wrespect4_uclo : paco.
-Hint Resolve prespect4_uclo : paco.
+#[export] Hint Resolve gpaco4_def_mon : paco.
+#[export] Hint Unfold gupaco4 : paco.
+#[export] Hint Resolve gpaco4_base : paco.
+#[export] Hint Resolve gpaco4_step : paco.
+#[export] Hint Resolve gpaco4_final : paco.
+#[export] Hint Resolve rclo4_base : paco.
+#[export] Hint Constructors gpaco4 : paco.
+#[export] Hint Resolve wrespect4_uclo : paco.
+#[export] Hint Resolve prespect4_uclo : paco.

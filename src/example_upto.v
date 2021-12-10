@@ -67,16 +67,16 @@ Inductive _sim (sim : stream -> stream -> Prop): stream -> stream -> Prop :=
 | SimNil: _sim sim snil snil
 | SimCons n sl sr (REL: sim sl sr): _sim sim (scons n sl) (scons n sr)
 .
-Hint Constructors _sim : core.
+#[export] Hint Constructors _sim : core.
 
 Lemma _sim_mon : monotone2 (_sim).
 Proof.
   intros x0 x1 r r' IN LE. induction IN; auto.
 Qed.
-Hint Resolve _sim_mon : paco.
+#[export] Hint Resolve _sim_mon : paco.
 
 Definition sim (sl sr: stream) := paco2 (_sim) bot2 sl sr.
-Hint Unfold sim : core.
+#[export] Hint Unfold sim : core.
 
 
 
@@ -116,7 +116,7 @@ Inductive prefixC (R : stream -> stream -> Prop): stream -> stream -> Prop :=
   :
     prefixC R (concat s0 s1) (concat t0 t1)
 .
-Hint Constructors prefixC: core.
+#[export] Hint Constructors prefixC: core.
 
 Lemma prefixC_spec
       simC

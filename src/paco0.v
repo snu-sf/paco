@@ -15,7 +15,7 @@ Definition paco0(gf : rel0 -> rel0)(r: rel0) : rel0 :=
 Definition upaco0(gf : rel0 -> rel0)(r: rel0) := paco0 gf r \0/ r.
 Arguments paco0 : clear implicits.
 Arguments upaco0 : clear implicits.
-Hint Unfold upaco0 : core.
+#[local] Hint Unfold upaco0 : core.
 
 Definition monotone0 (gf: rel0 -> rel0) :=
   forall r r' (IN: gf r) (LE: r <0= r'), gf r'.
@@ -207,7 +207,7 @@ End PACO0.
 
 Global Opaque paco0.
 
-Hint Unfold upaco0 : core.
-Hint Resolve paco0_fold : core.
-Hint Unfold monotone0 : core.
+#[export] Hint Unfold upaco0 : core.
+#[export] Hint Resolve paco0_fold : core.
+#[export] Hint Unfold monotone0 : core.
 

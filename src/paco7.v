@@ -22,7 +22,7 @@ Definition paco7(gf : rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6)(r:
 Definition upaco7(gf : rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6)(r: rel7 T0 T1 T2 T3 T4 T5 T6) := paco7 gf r \7/ r.
 Arguments paco7 : clear implicits.
 Arguments upaco7 : clear implicits.
-Hint Unfold upaco7 : core.
+#[local] Hint Unfold upaco7 : core.
 
 Definition monotone7 (gf: rel7 T0 T1 T2 T3 T4 T5 T6 -> rel7 T0 T1 T2 T3 T4 T5 T6) :=
   forall x0 x1 x2 x3 x4 x5 x6 r r' (IN: gf r x0 x1 x2 x3 x4 x5 x6) (LE: r <7= r'), gf r' x0 x1 x2 x3 x4 x5 x6.
@@ -214,7 +214,7 @@ End PACO7.
 
 Global Opaque paco7.
 
-Hint Unfold upaco7 : core.
-Hint Resolve paco7_fold : core.
-Hint Unfold monotone7 : core.
+#[export] Hint Unfold upaco7 : core.
+#[export] Hint Resolve paco7_fold : core.
+#[export] Hint Unfold monotone7 : core.
 

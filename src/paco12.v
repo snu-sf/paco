@@ -27,7 +27,7 @@ Definition paco12(gf : rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T
 Definition upaco12(gf : rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11)(r: rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) := paco12 gf r \12/ r.
 Arguments paco12 : clear implicits.
 Arguments upaco12 : clear implicits.
-Hint Unfold upaco12 : core.
+#[local] Hint Unfold upaco12 : core.
 
 Definition monotone12 (gf: rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 -> rel12 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11) :=
   forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 r r' (IN: gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11) (LE: r <12= r'), gf r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11.
@@ -219,7 +219,7 @@ End PACO12.
 
 Global Opaque paco12.
 
-Hint Unfold upaco12 : core.
-Hint Resolve paco12_fold : core.
-Hint Unfold monotone12 : core.
+#[export] Hint Unfold upaco12 : core.
+#[export] Hint Resolve paco12_fold : core.
+#[export] Hint Unfold monotone12 : core.
 

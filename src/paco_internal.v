@@ -26,7 +26,7 @@ End Arg1_def.
 
 Arguments paco [ T0 ] gf r x0.
 Arguments upaco [ T0 ] gf r x0.
-Hint Unfold upaco : core.
+#[export] Hint Unfold upaco : core.
 
 (* Less than or equal - internal use only *)
 Notation "p <_paco_1= q" :=
@@ -124,8 +124,8 @@ Qed.
 
 End Arg1.
 
-Hint Unfold monotone : core.
-Hint Resolve paco_fold : core.
+#[export] Hint Unfold monotone : core.
+#[export] Hint Resolve paco_fold : core.
 
 Arguments paco_mon_gen        [ T0 ] gf gf' r r' x PR LEgf LEr.
 Arguments paco_acc            [ T0 ] gf l r OBG x0 PR.

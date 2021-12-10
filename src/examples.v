@@ -43,17 +43,17 @@ Inductive seq_step (seq : stream nat -> stream nat -> Prop) : stream nat -> stre
 | seq_cons_z_l : forall s1 s2, seq_step seq s1 s2 -> seq_step seq (scons 0 s1) s2
 | seq_cons_z_r : forall s1 s2, seq_step seq s1 s2 -> seq_step seq s1 (scons 0 s2)
 .
-Hint Constructors seq_step : core.
+#[export] Hint Constructors seq_step : core.
 
 Lemma seq_step_mono : monotone2 seq_step.
 Proof.
   unfold monotone2. intros x0 x1 r r' IN LE.
   induction IN; eauto.
 Qed.
-Hint Resolve seq_step_mono : paco.
+#[export] Hint Resolve seq_step_mono : paco.
 
 Definition seq (s t : stream nat) := paco2 seq_step bot2 s t .
-Hint Unfold seq : core.
+#[export] Hint Unfold seq : core.
 
 Lemma seq_step_refl : forall (R:stream nat -> stream nat -> Prop),
     (forall d, R d d) -> forall d, seq_step R d d.
@@ -86,39 +86,39 @@ Inductive zeros_star (P: stream nat -> Prop) : stream nat -> Prop :=
 | zs_base t (BASE: P t): zeros_star P t
 | zs_step t (LZ: zeros_star P t): zeros_star P (scons 0 t)
 .
-Hint Constructors zeros_star : core.
+#[export] Hint Constructors zeros_star : core.
 
 Lemma zeros_star_mono : monotone1 zeros_star.
 Proof.
   red. intros. induction IN; eauto.
 Qed.
-Hint Resolve zeros_star_mono : core.
+#[export] Hint Resolve zeros_star_mono : core.
 
 Inductive zeros_one (P: stream nat -> Prop) : stream nat -> Prop :=
 | zo_step t (BASE: P t): zeros_one P (scons 0 t)
 .
-Hint Constructors zeros_one : core.
+#[export] Hint Constructors zeros_one : core.
 
 Lemma zeros_one_mono : monotone1 zeros_one.
 Proof.
   pmonauto.
 Qed.
-Hint Resolve zeros_one_mono : paco.
+#[export] Hint Resolve zeros_one_mono : paco.
 
 Definition infzeros := paco1 zeros_one bot1.
-Hint Unfold infzeros : core.
+#[export] Hint Unfold infzeros : core.
 
 Inductive nonzero: stream nat -> Prop :=
 | nz_nil: nonzero snil
 | nz_cons n s (NZ: n <> 0): nonzero (scons n s)
 .
-Hint Constructors nonzero : core.
+#[export] Hint Constructors nonzero : core.
 
 Inductive gseq_cons_or_nil (gseq: stream nat -> stream nat -> Prop) : stream nat -> stream nat -> Prop :=
 | gseq_nil : gseq_cons_or_nil gseq snil snil
 | gseq_cons s1 s2 n (R: gseq s1 s2) (NZ: n <> 0) : gseq_cons_or_nil gseq (scons n s1) (scons n s2)
 .
-Hint Constructors gseq_cons_or_nil : core.
+#[export] Hint Constructors gseq_cons_or_nil : core.
 
 Inductive gseq_step (gseq: stream nat -> stream nat -> Prop) : stream nat -> stream nat -> Prop :=
 | gseq_inf s1 s2 (IZ1: infzeros s1) (IZ2: infzeros s2) : gseq_step gseq s1 s2
@@ -128,7 +128,7 @@ Inductive gseq_step (gseq: stream nat -> stream nat -> Prop) : stream nat -> str
      (R: gseq_cons_or_nil gseq s1 s2)
   : gseq_step gseq t1 t2
 .
-Hint Constructors gseq_step : core.
+#[export] Hint Constructors gseq_step : core.
 
 Lemma gseq_step_mono : monotone2 gseq_step.
 Proof.
@@ -137,10 +137,10 @@ Proof.
   eapply gseq_fin; eauto.
   destruct R; eauto.
 Qed.
-Hint Resolve gseq_step_mono : paco.
+#[export] Hint Resolve gseq_step_mono : paco.
 
 Definition gseq (s t : stream nat) := paco2 gseq_step bot2 s t .
-Hint Unfold gseq : core.
+#[export] Hint Unfold gseq : core.
 
 Lemma nonzero_not_infzeros: forall s
     (ZST: zeros_star nonzero s)

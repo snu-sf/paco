@@ -16,7 +16,7 @@ Definition paco1(gf : rel1 T0 -> rel1 T0)(r: rel1 T0) : rel1 T0 :=
 Definition upaco1(gf : rel1 T0 -> rel1 T0)(r: rel1 T0) := paco1 gf r \1/ r.
 Arguments paco1 : clear implicits.
 Arguments upaco1 : clear implicits.
-Hint Unfold upaco1 : core.
+#[local] Hint Unfold upaco1 : core.
 
 Definition monotone1 (gf: rel1 T0 -> rel1 T0) :=
   forall x0 r r' (IN: gf r x0) (LE: r <1= r'), gf r' x0.
@@ -208,7 +208,7 @@ End PACO1.
 
 Global Opaque paco1.
 
-Hint Unfold upaco1 : core.
-Hint Resolve paco1_fold : core.
-Hint Unfold monotone1 : core.
+#[export] Hint Unfold upaco1 : core.
+#[export] Hint Resolve paco1_fold : core.
+#[export] Hint Unfold monotone1 : core.
 

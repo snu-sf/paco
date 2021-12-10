@@ -19,7 +19,7 @@ Definition paco4(gf : rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3)(r: rel4 T0 T1 T2 T3)
 Definition upaco4(gf : rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3)(r: rel4 T0 T1 T2 T3) := paco4 gf r \4/ r.
 Arguments paco4 : clear implicits.
 Arguments upaco4 : clear implicits.
-Hint Unfold upaco4 : core.
+#[local] Hint Unfold upaco4 : core.
 
 Definition monotone4 (gf: rel4 T0 T1 T2 T3 -> rel4 T0 T1 T2 T3) :=
   forall x0 x1 x2 x3 r r' (IN: gf r x0 x1 x2 x3) (LE: r <4= r'), gf r' x0 x1 x2 x3.
@@ -211,7 +211,7 @@ End PACO4.
 
 Global Opaque paco4.
 
-Hint Unfold upaco4 : core.
-Hint Resolve paco4_fold : core.
-Hint Unfold monotone4 : core.
+#[export] Hint Unfold upaco4 : core.
+#[export] Hint Resolve paco4_fold : core.
+#[export] Hint Unfold monotone4 : core.
 

@@ -23,7 +23,7 @@ Definition paco8(gf : rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 
 Definition upaco8(gf : rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7)(r: rel8 T0 T1 T2 T3 T4 T5 T6 T7) := paco8 gf r \8/ r.
 Arguments paco8 : clear implicits.
 Arguments upaco8 : clear implicits.
-Hint Unfold upaco8 : core.
+#[local] Hint Unfold upaco8 : core.
 
 Definition monotone8 (gf: rel8 T0 T1 T2 T3 T4 T5 T6 T7 -> rel8 T0 T1 T2 T3 T4 T5 T6 T7) :=
   forall x0 x1 x2 x3 x4 x5 x6 x7 r r' (IN: gf r x0 x1 x2 x3 x4 x5 x6 x7) (LE: r <8= r'), gf r' x0 x1 x2 x3 x4 x5 x6 x7.
@@ -215,7 +215,7 @@ End PACO8.
 
 Global Opaque paco8.
 
-Hint Unfold upaco8 : core.
-Hint Resolve paco8_fold : core.
-Hint Unfold monotone8 : core.
+#[export] Hint Unfold upaco8 : core.
+#[export] Hint Resolve paco8_fold : core.
+#[export] Hint Unfold monotone8 : core.
 

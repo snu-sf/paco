@@ -21,7 +21,7 @@ Definition paco6(gf : rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5)(r: rel6 
 Definition upaco6(gf : rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5)(r: rel6 T0 T1 T2 T3 T4 T5) := paco6 gf r \6/ r.
 Arguments paco6 : clear implicits.
 Arguments upaco6 : clear implicits.
-Hint Unfold upaco6 : core.
+#[local] Hint Unfold upaco6 : core.
 
 Definition monotone6 (gf: rel6 T0 T1 T2 T3 T4 T5 -> rel6 T0 T1 T2 T3 T4 T5) :=
   forall x0 x1 x2 x3 x4 x5 r r' (IN: gf r x0 x1 x2 x3 x4 x5) (LE: r <6= r'), gf r' x0 x1 x2 x3 x4 x5.
@@ -213,7 +213,7 @@ End PACO6.
 
 Global Opaque paco6.
 
-Hint Unfold upaco6 : core.
-Hint Resolve paco6_fold : core.
-Hint Unfold monotone6 : core.
+#[export] Hint Unfold upaco6 : core.
+#[export] Hint Resolve paco6_fold : core.
+#[export] Hint Unfold monotone6 : core.
 

@@ -26,7 +26,7 @@ Definition paco11(gf : rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2
 Definition upaco11(gf : rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10)(r: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) := paco11 gf r \11/ r.
 Arguments paco11 : clear implicits.
 Arguments upaco11 : clear implicits.
-Hint Unfold upaco11 : core.
+#[local] Hint Unfold upaco11 : core.
 
 Definition monotone11 (gf: rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 -> rel11 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10) :=
   forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 r r' (IN: gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10) (LE: r <11= r'), gf r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10.
@@ -218,7 +218,7 @@ End PACO11.
 
 Global Opaque paco11.
 
-Hint Unfold upaco11 : core.
-Hint Resolve paco11_fold : core.
-Hint Unfold monotone11 : core.
+#[export] Hint Unfold upaco11 : core.
+#[export] Hint Resolve paco11_fold : core.
+#[export] Hint Unfold monotone11 : core.
 

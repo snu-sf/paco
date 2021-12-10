@@ -94,7 +94,7 @@ Proof.
   eapply monotone7_compose. apply gf_mon. apply rclo7_mon.
 Qed.
 
-Hint Resolve gpaco7_def_mon : paco.
+#[local] Hint Resolve gpaco7_def_mon : paco.
 
 Lemma gpaco7_mon clo r r' rg rg' x0 x1 x2 x3 x4 x5 x6
       (IN: @gpaco7 clo r rg x0 x1 x2 x3 x4 x5 x6)
@@ -301,7 +301,7 @@ Qed.
 
 End Main.
 
-Hint Resolve gpaco7_def_mon : paco.
+#[local] Hint Resolve gpaco7_def_mon : paco.
 
 Section GeneralMonotonicity.
 
@@ -857,12 +857,12 @@ End Respectful.
 
 End GeneralizedPaco7.
 
-Hint Resolve gpaco7_def_mon : paco.
-Hint Unfold gupaco7 : paco.
-Hint Resolve gpaco7_base : paco.
-Hint Resolve gpaco7_step : paco.
-Hint Resolve gpaco7_final : paco.
-Hint Resolve rclo7_base : paco.
-Hint Constructors gpaco7 : paco.
-Hint Resolve wrespect7_uclo : paco.
-Hint Resolve prespect7_uclo : paco.
+#[export] Hint Resolve gpaco7_def_mon : paco.
+#[export] Hint Unfold gupaco7 : paco.
+#[export] Hint Resolve gpaco7_base : paco.
+#[export] Hint Resolve gpaco7_step : paco.
+#[export] Hint Resolve gpaco7_final : paco.
+#[export] Hint Resolve rclo7_base : paco.
+#[export] Hint Constructors gpaco7 : paco.
+#[export] Hint Resolve wrespect7_uclo : paco.
+#[export] Hint Resolve prespect7_uclo : paco.

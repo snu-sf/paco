@@ -20,7 +20,7 @@ Definition paco5(gf : rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4)(r: rel5 T0 T1 
 Definition upaco5(gf : rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4)(r: rel5 T0 T1 T2 T3 T4) := paco5 gf r \5/ r.
 Arguments paco5 : clear implicits.
 Arguments upaco5 : clear implicits.
-Hint Unfold upaco5 : core.
+#[local] Hint Unfold upaco5 : core.
 
 Definition monotone5 (gf: rel5 T0 T1 T2 T3 T4 -> rel5 T0 T1 T2 T3 T4) :=
   forall x0 x1 x2 x3 x4 r r' (IN: gf r x0 x1 x2 x3 x4) (LE: r <5= r'), gf r' x0 x1 x2 x3 x4.
@@ -212,7 +212,7 @@ End PACO5.
 
 Global Opaque paco5.
 
-Hint Unfold upaco5 : core.
-Hint Resolve paco5_fold : core.
-Hint Unfold monotone5 : core.
+#[export] Hint Unfold upaco5 : core.
+#[export] Hint Resolve paco5_fold : core.
+#[export] Hint Unfold monotone5 : core.
 

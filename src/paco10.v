@@ -25,7 +25,7 @@ Definition paco10(gf : rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 
 Definition upaco10(gf : rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9)(r: rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9) := paco10 gf r \10/ r.
 Arguments paco10 : clear implicits.
 Arguments upaco10 : clear implicits.
-Hint Unfold upaco10 : core.
+#[local] Hint Unfold upaco10 : core.
 
 Definition monotone10 (gf: rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 -> rel10 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9) :=
   forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 r r' (IN: gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9) (LE: r <10= r'), gf r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9.
@@ -217,7 +217,7 @@ End PACO10.
 
 Global Opaque paco10.
 
-Hint Unfold upaco10 : core.
-Hint Resolve paco10_fold : core.
-Hint Unfold monotone10 : core.
+#[export] Hint Unfold upaco10 : core.
+#[export] Hint Resolve paco10_fold : core.
+#[export] Hint Unfold monotone10 : core.
 

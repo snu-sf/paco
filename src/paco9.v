@@ -24,7 +24,7 @@ Definition paco9(gf : rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 
 Definition upaco9(gf : rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8)(r: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8) := paco9 gf r \9/ r.
 Arguments paco9 : clear implicits.
 Arguments upaco9 : clear implicits.
-Hint Unfold upaco9 : core.
+#[local] Hint Unfold upaco9 : core.
 
 Definition monotone9 (gf: rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8 -> rel9 T0 T1 T2 T3 T4 T5 T6 T7 T8) :=
   forall x0 x1 x2 x3 x4 x5 x6 x7 x8 r r' (IN: gf r x0 x1 x2 x3 x4 x5 x6 x7 x8) (LE: r <9= r'), gf r' x0 x1 x2 x3 x4 x5 x6 x7 x8.
@@ -216,7 +216,7 @@ End PACO9.
 
 Global Opaque paco9.
 
-Hint Unfold upaco9 : core.
-Hint Resolve paco9_fold : core.
-Hint Unfold monotone9 : core.
+#[export] Hint Unfold upaco9 : core.
+#[export] Hint Resolve paco9_fold : core.
+#[export] Hint Unfold monotone9 : core.
 

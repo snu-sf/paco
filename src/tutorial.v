@@ -130,7 +130,7 @@ CoFixpoint map f s : stream :=
 
 Inductive seq_gen seq : stream -> stream -> Prop :=
   | _seq_gen : forall n s1 s2 (R : seq s1 s2 : Prop), seq_gen seq (cons n s1) (cons n s2).
-Hint Constructors seq_gen : core.
+#[export] Hint Constructors seq_gen : core.
 
 
 
@@ -198,9 +198,9 @@ Qed.
 *)
 
 Definition seq' s1 s2 := paco2 seq_gen bot2 s1 s2.
-Hint Unfold seq' : core.
+#[export] Hint Unfold seq' : core.
 Lemma seq_gen_mon: monotone2 seq_gen. Proof. pmonauto. Qed.
-Hint Resolve seq_gen_mon : paco.
+#[export] Hint Resolve seq_gen_mon : paco.
 
 Theorem example' : forall n, seq' (enumerate n) (cons n (map S (enumerate n))).
 Proof.
@@ -436,7 +436,7 @@ with       zwei : inftree := node 2 eins zwei.
 Inductive teq_gen teq : inftree -> inftree -> Prop :=
   | _teq_gen : forall n t1l t1r t2l t2r (Rl : teq t1l t2l : Prop) (Rr : teq t1r t2r),
                  teq_gen teq (node n t1l t1r) (node n t2l t2r).
-Hint Constructors teq_gen : core.
+#[export] Hint Constructors teq_gen : core.
 
 CoInductive teq t1 t2 : Prop :=
   | teq_fold (IN : teq_gen teq t1 t2).
@@ -493,9 +493,9 @@ Qed.
 *)
 
 Definition teq' t1 t2 := paco2 teq_gen bot2 t1 t2.
-Hint Unfold teq' : core.
+#[export] Hint Unfold teq' : core.
 Lemma teq_gen_mon: monotone2 teq_gen. Proof. pmonauto. Qed.
-Hint Resolve teq_gen_mon : paco.
+#[export] Hint Resolve teq_gen_mon : paco.
 
 Theorem teq'_one : teq' one eins.
 Proof.
@@ -719,14 +719,14 @@ Inductive eqonetwo_gen eqonetwo : inftree+inftree -> Prop :=
   | eqonetwo_right: forall tl tr (EQL: eqonetwo (inl tl) : Prop) (EQR: eqonetwo (inr tr) : Prop),
       eqonetwo_gen eqonetwo (inr (node 2 tl tr))
 .
-Hint Constructors eqonetwo_gen : core.
+#[export] Hint Constructors eqonetwo_gen : core.
 
 Definition eqone' t := paco1 eqonetwo_gen bot1 (inl t).
 Definition eqtwo' t := paco1 eqonetwo_gen bot1 (inr t).
-Hint Unfold eqone' eqtwo' : core.
+#[export] Hint Unfold eqone' eqtwo' : core.
 Lemma eqonetwo_gen_mon: monotone1 eqonetwo_gen.
 Proof. pmonauto. Qed.
-Hint Resolve eqonetwo_gen_mon : paco.
+#[export] Hint Resolve eqonetwo_gen_mon : paco.
 
 Lemma eqone'_eins: eqone' eins.
 Proof.

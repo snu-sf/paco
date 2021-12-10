@@ -18,7 +18,7 @@ Definition paco3(gf : rel3 T0 T1 T2 -> rel3 T0 T1 T2)(r: rel3 T0 T1 T2) : rel3 T
 Definition upaco3(gf : rel3 T0 T1 T2 -> rel3 T0 T1 T2)(r: rel3 T0 T1 T2) := paco3 gf r \3/ r.
 Arguments paco3 : clear implicits.
 Arguments upaco3 : clear implicits.
-Hint Unfold upaco3 : core.
+#[local] Hint Unfold upaco3 : core.
 
 Definition monotone3 (gf: rel3 T0 T1 T2 -> rel3 T0 T1 T2) :=
   forall x0 x1 x2 r r' (IN: gf r x0 x1 x2) (LE: r <3= r'), gf r' x0 x1 x2.
@@ -210,7 +210,7 @@ End PACO3.
 
 Global Opaque paco3.
 
-Hint Unfold upaco3 : core.
-Hint Resolve paco3_fold : core.
-Hint Unfold monotone3 : core.
+#[export] Hint Unfold upaco3 : core.
+#[export] Hint Resolve paco3_fold : core.
+#[export] Hint Unfold monotone3 : core.
 

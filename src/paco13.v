@@ -28,7 +28,7 @@ Definition paco13(gf : rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 
 Definition upaco13(gf : rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12)(r: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) := paco13 gf r \13/ r.
 Arguments paco13 : clear implicits.
 Arguments upaco13 : clear implicits.
-Hint Unfold upaco13 : core.
+#[local] Hint Unfold upaco13 : core.
 
 Definition monotone13 (gf: rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12 -> rel13 T0 T1 T2 T3 T4 T5 T6 T7 T8 T9 T10 T11 T12) :=
   forall x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 r r' (IN: gf r x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12) (LE: r <13= r'), gf r' x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12.
@@ -220,7 +220,7 @@ End PACO13.
 
 Global Opaque paco13.
 
-Hint Unfold upaco13 : core.
-Hint Resolve paco13_fold : core.
-Hint Unfold monotone13 : core.
+#[export] Hint Unfold upaco13 : core.
+#[export] Hint Resolve paco13_fold : core.
+#[export] Hint Unfold monotone13 : core.
 
