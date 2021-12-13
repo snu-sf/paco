@@ -13,7 +13,7 @@ Paco also supports upto techniques using "companion".  See:
 
 Minki Cho refactored the implementation to speed up the compilation time.
 
-The current version is v4.1.1, and it's compatible with Coq 8.9 - 8.13.
+The current version is v4.1.2, and it's compatible with Coq 8.11 - 8.14.
 
 
 ## Installation
@@ -25,7 +25,7 @@ opam install coq-paco
 
 # from source
 cd src; make; make install          # for library files
-cd src; make doc; make install-doc  # for documentation
+cd webpage; make                    # for documentation
 ```
 
 ## Examples
