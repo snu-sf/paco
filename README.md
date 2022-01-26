@@ -1,6 +1,6 @@
 # Paco: Coq library for Parametric Coinduction
 
-[![Build Status](https://travis-ci.com/snu-sf/paco.svg?branch=master)](https://travis-ci.org/snu-sf/paco)
+[![Build Status](https://travis-ci.com/snu-sf/paco.svg?branch=master)](https://app.travis-ci.com/github/snu-sf/paco)
 [![License](https://img.shields.io/badge/license-BSD3-blue.svg)](https://github.com/snu-sf/paco)
 
 Paco is a Coq library for parametric coinduction.  For more information, please see:
@@ -13,7 +13,7 @@ Paco also supports upto techniques using "companion".  See:
 
 Minki Cho refactored the implementation to speed up the compilation time.
 
-The current version is v4.1.2, and it's compatible with Coq 8.11 - 8.14.
+The current version is v4.1.2, and it's compatible with Coq 8.13 - 8.15.
 
 
 ## Installation
