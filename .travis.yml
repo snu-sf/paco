@@ -1,6 +1,8 @@
 dist: trusty
 sudo: required
-language: c
+language: generic
+before_cache:
+  - rm -rf $HOME/.opam/log
 cache:
   apt: true
   directories:
@@ -24,11 +26,11 @@ env:
   - TEST_TARGET="dev"
 
 install:
-  - opam init -j ${NJOBS} -n -y -c ${COMPILER}
+  - opam init -n -y -c ${COMPILER}
   - eval $(opam config env)
   - opam config var root
   - opam repo add coq-core-dev https://coq.inria.fr/opam/core-dev || true
-  - opam install -y --verbose -j ${NJOBS} coq.${TEST_TARGET} && opam pin add coq ${TEST_TARGET} -y
+  - opam install -y --verbose -j ${NJOBS} coq.${TEST_TARGET}
 
 script:
   - eval $(opam config env)
