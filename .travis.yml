@@ -23,6 +23,7 @@ env:
   matrix:
   - TEST_TARGET="8.14.1"
   - TEST_TARGET="8.15.0"
+  - TEST_TARGET="8.16.0"
   - TEST_TARGET="dev"
 
 install:
