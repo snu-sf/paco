@@ -1,4 +1,3 @@
-From Paco Require Import hpattern.
 From Paco Require Export paconotation_internal paconotation.
 Set Implicit Arguments.
 
@@ -13,6 +12,8 @@ Set Implicit Arguments.
 *)
 
 (** ** Internal tactics *)
+
+Ltac get_concl := lazymatch goal with [ |- ?G ] => G end.
 
 Inductive _paco_mark := _paco_mark_cons.
 

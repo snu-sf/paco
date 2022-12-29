@@ -8,7 +8,6 @@ if len(sys.argv) < 2:
 
 relsize = int(sys.argv[1])
 
-print ('From Paco Require Import hpattern.')
 print ('From Paco Require Export paconotation_internal paconotation.')
 print ('Set Implicit Arguments.')
 print ()
@@ -23,6 +22,8 @@ print ('    works for predicates of arity up to 14.')
 print ('*)')
 print ()
 print ('(** ** Internal tactics *)')
+print ()
+print ('Ltac get_concl := lazymatch goal with [ |- ?G ] => G end.')
 print ()
 print ('Inductive _paco_mark := _paco_mark_cons.')
 print ()
