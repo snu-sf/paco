@@ -147,7 +147,7 @@ Proof.
 Qed.
 
 Theorem paco2_acc: forall
-  l r (OBG: forall rr (INC: r <2= rr) (CIH: l <2= rr), l <2= paco2 gf rr),
+  l r (OBG: forall rr (INC: forall _x_0 _x_1 (PR: r _x_0 _x_1 : Prop), rr _x_0 _x_1 : Prop) (CIH: forall _x_0 _x_1 (PR: l _x_0 _x_1 : Prop), rr _x_0 _x_1 : Prop), forall _x_0 _x_1 (PR: l _x_0 _x_1 : Prop), paco2 gf rr _x_0 _x_1 : Prop),
   l <2= paco2 gf r.
 Proof.
   apply _paco2_acc.

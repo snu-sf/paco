@@ -523,7 +523,7 @@ Proof.
   left. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 H.
   pcofix CIH; intros.
   apply rclo11_wcompat in H0; [|apply gf_mon|apply CMP].
-  pstep. eapply gf_mon. apply H0. intros.
+  pstep. eapply gf_mon. apply H0. clear  x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 H0. intros.
   apply gpaco11_unfold in PR; [|apply gf_mon].
   apply rclo11_compose in PR.
   apply rclo11_dist in PR; [|apply CMP|apply DIST].
@@ -534,18 +534,18 @@ Proof.
     apply gpaco11_gupaco. apply gf_mon.
     apply gpaco11_gen_rclo. apply gf_mon.
     eapply gupaco11_mon. apply PR0. intros.
-    destruct PR1; apply H1.
+    destruct PR1; apply H0.
   - assert (REL: @rclo11 clo (rclo11 clo (gf (gupaco11 gf clo ((rg \11/ r) \11/ (rg \11/ r))) \11/ (rg \11/ r))) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10).
     { eapply rclo11_mon. apply H. intros. apply gpaco11_unfold in PR. apply PR. apply gf_mon. }
     apply rclo11_rclo in REL.
     apply rclo11_dist in REL; [|apply CMP|apply DIST].
     right. destruct REL; cycle 1.
-    + apply CIH0, H1.
+    + apply CIH0, H0.
     + apply CIH.
-      eapply rclo11_mon. apply H1. intros.
+      eapply rclo11_mon. apply H0. intros.
       eapply gf_mon. apply PR. intros.
       eapply gupaco11_mon. apply PR0. intros.
-      destruct PR1; apply H2.
+      destruct PR1; apply H1.
 Qed.
 
 Lemma gpaco11_dist_reverse clo r rg:

@@ -152,7 +152,7 @@ Proof.
 Qed.
 
 Theorem paco7_acc: forall
-  l r (OBG: forall rr (INC: r <7= rr) (CIH: l <7= rr), l <7= paco7 gf rr),
+  l r (OBG: forall rr (INC: forall _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 (PR: r _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 : Prop), rr _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 : Prop) (CIH: forall _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 (PR: l _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 : Prop), rr _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 : Prop), forall _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 (PR: l _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 : Prop), paco7 gf rr _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 : Prop),
   l <7= paco7 gf r.
 Proof.
   apply _paco7_acc.

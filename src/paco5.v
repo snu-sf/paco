@@ -150,7 +150,7 @@ Proof.
 Qed.
 
 Theorem paco5_acc: forall
-  l r (OBG: forall rr (INC: r <5= rr) (CIH: l <5= rr), l <5= paco5 gf rr),
+  l r (OBG: forall rr (INC: forall _x_0 _x_1 _x_2 _x_3 _x_4 (PR: r _x_0 _x_1 _x_2 _x_3 _x_4 : Prop), rr _x_0 _x_1 _x_2 _x_3 _x_4 : Prop) (CIH: forall _x_0 _x_1 _x_2 _x_3 _x_4 (PR: l _x_0 _x_1 _x_2 _x_3 _x_4 : Prop), rr _x_0 _x_1 _x_2 _x_3 _x_4 : Prop), forall _x_0 _x_1 _x_2 _x_3 _x_4 (PR: l _x_0 _x_1 _x_2 _x_3 _x_4 : Prop), paco5 gf rr _x_0 _x_1 _x_2 _x_3 _x_4 : Prop),
   l <5= paco5 gf r.
 Proof.
   apply _paco5_acc.

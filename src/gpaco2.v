@@ -514,7 +514,7 @@ Proof.
   left. revert x0 x1 H.
   pcofix CIH; intros.
   apply rclo2_wcompat in H0; [|apply gf_mon|apply CMP].
-  pstep. eapply gf_mon. apply H0. intros.
+  pstep. eapply gf_mon. apply H0. clear  x0 x1 H0. intros.
   apply gpaco2_unfold in PR; [|apply gf_mon].
   apply rclo2_compose in PR.
   apply rclo2_dist in PR; [|apply CMP|apply DIST].
@@ -525,18 +525,18 @@ Proof.
     apply gpaco2_gupaco. apply gf_mon.
     apply gpaco2_gen_rclo. apply gf_mon.
     eapply gupaco2_mon. apply PR0. intros.
-    destruct PR1; apply H1.
+    destruct PR1; apply H0.
   - assert (REL: @rclo2 clo (rclo2 clo (gf (gupaco2 gf clo ((rg \2/ r) \2/ (rg \2/ r))) \2/ (rg \2/ r))) x0 x1).
     { eapply rclo2_mon. apply H. intros. apply gpaco2_unfold in PR. apply PR. apply gf_mon. }
     apply rclo2_rclo in REL.
     apply rclo2_dist in REL; [|apply CMP|apply DIST].
     right. destruct REL; cycle 1.
-    + apply CIH0, H1.
+    + apply CIH0, H0.
     + apply CIH.
-      eapply rclo2_mon. apply H1. intros.
+      eapply rclo2_mon. apply H0. intros.
       eapply gf_mon. apply PR. intros.
       eapply gupaco2_mon. apply PR0. intros.
-      destruct PR1; apply H2.
+      destruct PR1; apply H1.
 Qed.
 
 Lemma gpaco2_dist_reverse clo r rg:

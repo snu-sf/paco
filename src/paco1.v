@@ -146,7 +146,7 @@ Proof.
 Qed.
 
 Theorem paco1_acc: forall
-  l r (OBG: forall rr (INC: r <1= rr) (CIH: l <1= rr), l <1= paco1 gf rr),
+  l r (OBG: forall rr (INC: forall _x_0 (PR: r _x_0 : Prop), rr _x_0 : Prop) (CIH: forall _x_0 (PR: l _x_0 : Prop), rr _x_0 : Prop), forall _x_0 (PR: l _x_0 : Prop), paco1 gf rr _x_0 : Prop),
   l <1= paco1 gf r.
 Proof.
   apply _paco1_acc.

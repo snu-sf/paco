@@ -151,7 +151,7 @@ Proof.
 Qed.
 
 Theorem paco6_acc: forall
-  l r (OBG: forall rr (INC: r <6= rr) (CIH: l <6= rr), l <6= paco6 gf rr),
+  l r (OBG: forall rr (INC: forall _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 (PR: r _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 : Prop), rr _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 : Prop) (CIH: forall _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 (PR: l _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 : Prop), rr _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 : Prop), forall _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 (PR: l _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 : Prop), paco6 gf rr _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 : Prop),
   l <6= paco6 gf r.
 Proof.
   apply _paco6_acc.

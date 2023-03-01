@@ -155,7 +155,7 @@ Proof.
 Qed.
 
 Theorem paco10_acc: forall
-  l r (OBG: forall rr (INC: r <10= rr) (CIH: l <10= rr), l <10= paco10 gf rr),
+  l r (OBG: forall rr (INC: forall _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 (PR: r _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 : Prop), rr _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 : Prop) (CIH: forall _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 (PR: l _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 : Prop), rr _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 : Prop), forall _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 (PR: l _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 : Prop), paco10 gf rr _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 : Prop),
   l <10= paco10 gf r.
 Proof.
   apply _paco10_acc.

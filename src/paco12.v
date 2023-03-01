@@ -157,7 +157,7 @@ Proof.
 Qed.
 
 Theorem paco12_acc: forall
-  l r (OBG: forall rr (INC: r <12= rr) (CIH: l <12= rr), l <12= paco12 gf rr),
+  l r (OBG: forall rr (INC: forall _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 _x_10 _x_11 (PR: r _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 _x_10 _x_11 : Prop), rr _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 _x_10 _x_11 : Prop) (CIH: forall _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 _x_10 _x_11 (PR: l _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 _x_10 _x_11 : Prop), rr _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 _x_10 _x_11 : Prop), forall _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 _x_10 _x_11 (PR: l _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 _x_10 _x_11 : Prop), paco12 gf rr _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 _x_10 _x_11 : Prop),
   l <12= paco12 gf r.
 Proof.
   apply _paco12_acc.

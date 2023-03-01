@@ -525,7 +525,7 @@ Proof.
   left. revert x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 H.
   pcofix CIH; intros.
   apply rclo13_wcompat in H0; [|apply gf_mon|apply CMP].
-  pstep. eapply gf_mon. apply H0. intros.
+  pstep. eapply gf_mon. apply H0. clear  x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 H0. intros.
   apply gpaco13_unfold in PR; [|apply gf_mon].
   apply rclo13_compose in PR.
   apply rclo13_dist in PR; [|apply CMP|apply DIST].
@@ -536,18 +536,18 @@ Proof.
     apply gpaco13_gupaco. apply gf_mon.
     apply gpaco13_gen_rclo. apply gf_mon.
     eapply gupaco13_mon. apply PR0. intros.
-    destruct PR1; apply H1.
+    destruct PR1; apply H0.
   - assert (REL: @rclo13 clo (rclo13 clo (gf (gupaco13 gf clo ((rg \13/ r) \13/ (rg \13/ r))) \13/ (rg \13/ r))) x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12).
     { eapply rclo13_mon. apply H. intros. apply gpaco13_unfold in PR. apply PR. apply gf_mon. }
     apply rclo13_rclo in REL.
     apply rclo13_dist in REL; [|apply CMP|apply DIST].
     right. destruct REL; cycle 1.
-    + apply CIH0, H1.
+    + apply CIH0, H0.
     + apply CIH.
-      eapply rclo13_mon. apply H1. intros.
+      eapply rclo13_mon. apply H0. intros.
       eapply gf_mon. apply PR. intros.
       eapply gupaco13_mon. apply PR0. intros.
-      destruct PR1; apply H2.
+      destruct PR1; apply H1.
 Qed.
 
 Lemma gpaco13_dist_reverse clo r rg:

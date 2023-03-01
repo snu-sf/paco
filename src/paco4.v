@@ -149,7 +149,7 @@ Proof.
 Qed.
 
 Theorem paco4_acc: forall
-  l r (OBG: forall rr (INC: r <4= rr) (CIH: l <4= rr), l <4= paco4 gf rr),
+  l r (OBG: forall rr (INC: forall _x_0 _x_1 _x_2 _x_3 (PR: r _x_0 _x_1 _x_2 _x_3 : Prop), rr _x_0 _x_1 _x_2 _x_3 : Prop) (CIH: forall _x_0 _x_1 _x_2 _x_3 (PR: l _x_0 _x_1 _x_2 _x_3 : Prop), rr _x_0 _x_1 _x_2 _x_3 : Prop), forall _x_0 _x_1 _x_2 _x_3 (PR: l _x_0 _x_1 _x_2 _x_3 : Prop), paco4 gf rr _x_0 _x_1 _x_2 _x_3 : Prop),
   l <4= paco4 gf r.
 Proof.
   apply _paco4_acc.

@@ -153,7 +153,7 @@ Proof.
 Qed.
 
 Theorem paco8_acc: forall
-  l r (OBG: forall rr (INC: r <8= rr) (CIH: l <8= rr), l <8= paco8 gf rr),
+  l r (OBG: forall rr (INC: forall _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 (PR: r _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 : Prop), rr _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 : Prop) (CIH: forall _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 (PR: l _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 : Prop), rr _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 : Prop), forall _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 (PR: l _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 : Prop), paco8 gf rr _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 : Prop),
   l <8= paco8 gf r.
 Proof.
   apply _paco8_acc.

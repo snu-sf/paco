@@ -159,7 +159,7 @@ Proof.
 Qed.
 
 Theorem paco14_acc: forall
-  l r (OBG: forall rr (INC: r <14= rr) (CIH: l <14= rr), l <14= paco14 gf rr),
+  l r (OBG: forall rr (INC: forall _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 _x_10 _x_11 _x_12 _x_13 (PR: r _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 _x_10 _x_11 _x_12 _x_13 : Prop), rr _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 _x_10 _x_11 _x_12 _x_13 : Prop) (CIH: forall _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 _x_10 _x_11 _x_12 _x_13 (PR: l _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 _x_10 _x_11 _x_12 _x_13 : Prop), rr _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 _x_10 _x_11 _x_12 _x_13 : Prop), forall _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 _x_10 _x_11 _x_12 _x_13 (PR: l _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 _x_10 _x_11 _x_12 _x_13 : Prop), paco14 gf rr _x_0 _x_1 _x_2 _x_3 _x_4 _x_5 _x_6 _x_7 _x_8 _x_9 _x_10 _x_11 _x_12 _x_13 : Prop),
   l <14= paco14 gf r.
 Proof.
   apply _paco14_acc.

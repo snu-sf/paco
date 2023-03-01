@@ -148,7 +148,7 @@ Proof.
 Qed.
 
 Theorem paco3_acc: forall
-  l r (OBG: forall rr (INC: r <3= rr) (CIH: l <3= rr), l <3= paco3 gf rr),
+  l r (OBG: forall rr (INC: forall _x_0 _x_1 _x_2 (PR: r _x_0 _x_1 _x_2 : Prop), rr _x_0 _x_1 _x_2 : Prop) (CIH: forall _x_0 _x_1 _x_2 (PR: l _x_0 _x_1 _x_2 : Prop), rr _x_0 _x_1 _x_2 : Prop), forall _x_0 _x_1 _x_2 (PR: l _x_0 _x_1 _x_2 : Prop), paco3 gf rr _x_0 _x_1 _x_2 : Prop),
   l <3= paco3 gf r.
 Proof.
   apply _paco3_acc.
