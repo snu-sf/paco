@@ -80,13 +80,12 @@ Ltac paco_simp_hyp CIH :=
     paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
-    first [
-      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       try (reflexivity);
-       first [eassumption|apply _paco_foo_cons]); fail
-    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       (try unfold _paco_id); eauto using _paco_foo_cons)]);
+  assert (XP: EP)
+    by (unfold EP; clear -CIH; generalize _paco_mark_cons; repeat intro; apply CIH; paco_revert_hyp _paco_mark;
+        repeat (let x := fresh "x" in intro x; generalize _paco_mark_cons; intros;
+                first [exists x|split; [exists x; apply _paco_foo_cons|]];
+                paco_revert_hyp _paco_mark);
+        unfold _paco_id; reflexivity);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp CIH :=
@@ -1375,13 +1374,12 @@ Ltac paco_simp_hyp1 CIH :=
     paco_convert_rev1; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
-    first [
-      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
-       first [eassumption|apply _paco_foo_cons]); fail
-    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       (try unfold _paco_id); eauto using _paco_foo_cons)]);
+  assert (XP: EP)
+    by (unfold EP; clear -CIH; generalize _paco_mark_cons; repeat intro; apply CIH; paco_revert_hyp _paco_mark;
+        repeat (let x := fresh "x" in intro x; generalize _paco_mark_cons; intros;
+                first [exists x|split; [exists x; apply _paco_foo_cons|]];
+                paco_revert_hyp _paco_mark);
+        unfold _paco_id; reflexivity);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp1 CIH :=
@@ -1481,13 +1479,12 @@ Ltac paco_simp_hyp2 CIH :=
     paco_convert_rev2; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
-    first [
-      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
-       first [eassumption|apply _paco_foo_cons]); fail
-    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       (try unfold _paco_id); eauto using _paco_foo_cons)]);
+  assert (XP: EP)
+    by (unfold EP; clear -CIH; generalize _paco_mark_cons; repeat intro; apply CIH; paco_revert_hyp _paco_mark;
+        repeat (let x := fresh "x" in intro x; generalize _paco_mark_cons; intros;
+                first [exists x|split; [exists x; apply _paco_foo_cons|]];
+                paco_revert_hyp _paco_mark);
+        unfold _paco_id; reflexivity);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp2 CIH :=
@@ -1593,13 +1590,12 @@ Ltac paco_simp_hyp3 CIH :=
     paco_convert_rev3; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
-    first [
-      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
-       first [eassumption|apply _paco_foo_cons]); fail
-    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       (try unfold _paco_id); eauto using _paco_foo_cons)]);
+  assert (XP: EP)
+    by (unfold EP; clear -CIH; generalize _paco_mark_cons; repeat intro; apply CIH; paco_revert_hyp _paco_mark;
+        repeat (let x := fresh "x" in intro x; generalize _paco_mark_cons; intros;
+                first [exists x|split; [exists x; apply _paco_foo_cons|]];
+                paco_revert_hyp _paco_mark);
+        unfold _paco_id; reflexivity);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp3 CIH :=
@@ -1711,13 +1707,12 @@ Ltac paco_simp_hyp4 CIH :=
     paco_convert_rev4; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
-    first [
-      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
-       first [eassumption|apply _paco_foo_cons]); fail
-    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       (try unfold _paco_id); eauto using _paco_foo_cons)]);
+  assert (XP: EP)
+    by (unfold EP; clear -CIH; generalize _paco_mark_cons; repeat intro; apply CIH; paco_revert_hyp _paco_mark;
+        repeat (let x := fresh "x" in intro x; generalize _paco_mark_cons; intros;
+                first [exists x|split; [exists x; apply _paco_foo_cons|]];
+                paco_revert_hyp _paco_mark);
+        unfold _paco_id; reflexivity);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp4 CIH :=
@@ -1835,13 +1830,12 @@ Ltac paco_simp_hyp5 CIH :=
     paco_convert_rev5; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
-    first [
-      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
-       first [eassumption|apply _paco_foo_cons]); fail
-    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       (try unfold _paco_id); eauto using _paco_foo_cons)]);
+  assert (XP: EP)
+    by (unfold EP; clear -CIH; generalize _paco_mark_cons; repeat intro; apply CIH; paco_revert_hyp _paco_mark;
+        repeat (let x := fresh "x" in intro x; generalize _paco_mark_cons; intros;
+                first [exists x|split; [exists x; apply _paco_foo_cons|]];
+                paco_revert_hyp _paco_mark);
+        unfold _paco_id; reflexivity);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp5 CIH :=
@@ -1965,13 +1959,12 @@ Ltac paco_simp_hyp6 CIH :=
     paco_convert_rev6; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
-    first [
-      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
-       first [eassumption|apply _paco_foo_cons]); fail
-    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       (try unfold _paco_id); eauto using _paco_foo_cons)]);
+  assert (XP: EP)
+    by (unfold EP; clear -CIH; generalize _paco_mark_cons; repeat intro; apply CIH; paco_revert_hyp _paco_mark;
+        repeat (let x := fresh "x" in intro x; generalize _paco_mark_cons; intros;
+                first [exists x|split; [exists x; apply _paco_foo_cons|]];
+                paco_revert_hyp _paco_mark);
+        unfold _paco_id; reflexivity);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp6 CIH :=
@@ -2101,13 +2094,12 @@ Ltac paco_simp_hyp7 CIH :=
     paco_convert_rev7; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
-    first [
-      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
-       first [eassumption|apply _paco_foo_cons]); fail
-    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       (try unfold _paco_id); eauto using _paco_foo_cons)]);
+  assert (XP: EP)
+    by (unfold EP; clear -CIH; generalize _paco_mark_cons; repeat intro; apply CIH; paco_revert_hyp _paco_mark;
+        repeat (let x := fresh "x" in intro x; generalize _paco_mark_cons; intros;
+                first [exists x|split; [exists x; apply _paco_foo_cons|]];
+                paco_revert_hyp _paco_mark);
+        unfold _paco_id; reflexivity);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp7 CIH :=
@@ -2243,13 +2235,12 @@ Ltac paco_simp_hyp8 CIH :=
     paco_convert_rev8; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
-    first [
-      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
-       first [eassumption|apply _paco_foo_cons]); fail
-    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       (try unfold _paco_id); eauto using _paco_foo_cons)]);
+  assert (XP: EP)
+    by (unfold EP; clear -CIH; generalize _paco_mark_cons; repeat intro; apply CIH; paco_revert_hyp _paco_mark;
+        repeat (let x := fresh "x" in intro x; generalize _paco_mark_cons; intros;
+                first [exists x|split; [exists x; apply _paco_foo_cons|]];
+                paco_revert_hyp _paco_mark);
+        unfold _paco_id; reflexivity);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp8 CIH :=
@@ -2391,13 +2382,12 @@ Ltac paco_simp_hyp9 CIH :=
     paco_convert_rev9; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
-    first [
-      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
-       first [eassumption|apply _paco_foo_cons]); fail
-    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       (try unfold _paco_id); eauto using _paco_foo_cons)]);
+  assert (XP: EP)
+    by (unfold EP; clear -CIH; generalize _paco_mark_cons; repeat intro; apply CIH; paco_revert_hyp _paco_mark;
+        repeat (let x := fresh "x" in intro x; generalize _paco_mark_cons; intros;
+                first [exists x|split; [exists x; apply _paco_foo_cons|]];
+                paco_revert_hyp _paco_mark);
+        unfold _paco_id; reflexivity);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp9 CIH :=
@@ -2545,13 +2535,12 @@ Ltac paco_simp_hyp10 CIH :=
     paco_convert_rev10; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
-    first [
-      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
-       first [eassumption|apply _paco_foo_cons]); fail
-    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       (try unfold _paco_id); eauto using _paco_foo_cons)]);
+  assert (XP: EP)
+    by (unfold EP; clear -CIH; generalize _paco_mark_cons; repeat intro; apply CIH; paco_revert_hyp _paco_mark;
+        repeat (let x := fresh "x" in intro x; generalize _paco_mark_cons; intros;
+                first [exists x|split; [exists x; apply _paco_foo_cons|]];
+                paco_revert_hyp _paco_mark);
+        unfold _paco_id; reflexivity);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp10 CIH :=
@@ -2705,13 +2694,12 @@ Ltac paco_simp_hyp11 CIH :=
     paco_convert_rev11; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
-    first [
-      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
-       first [eassumption|apply _paco_foo_cons]); fail
-    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       (try unfold _paco_id); eauto using _paco_foo_cons)]);
+  assert (XP: EP)
+    by (unfold EP; clear -CIH; generalize _paco_mark_cons; repeat intro; apply CIH; paco_revert_hyp _paco_mark;
+        repeat (let x := fresh "x" in intro x; generalize _paco_mark_cons; intros;
+                first [exists x|split; [exists x; apply _paco_foo_cons|]];
+                paco_revert_hyp _paco_mark);
+        unfold _paco_id; reflexivity);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp11 CIH :=
@@ -2871,13 +2859,12 @@ Ltac paco_simp_hyp12 CIH :=
     paco_convert_rev12; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
-    first [
-      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
-       first [eassumption|apply _paco_foo_cons]); fail
-    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       (try unfold _paco_id); eauto using _paco_foo_cons)]);
+  assert (XP: EP)
+    by (unfold EP; clear -CIH; generalize _paco_mark_cons; repeat intro; apply CIH; paco_revert_hyp _paco_mark;
+        repeat (let x := fresh "x" in intro x; generalize _paco_mark_cons; intros;
+                first [exists x|split; [exists x; apply _paco_foo_cons|]];
+                paco_revert_hyp _paco_mark);
+        unfold _paco_id; reflexivity);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp12 CIH :=
@@ -3043,13 +3030,12 @@ Ltac paco_simp_hyp13 CIH :=
     paco_convert_rev13; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
-    first [
-      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
-       first [eassumption|apply _paco_foo_cons]); fail
-    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       (try unfold _paco_id); eauto using _paco_foo_cons)]);
+  assert (XP: EP)
+    by (unfold EP; clear -CIH; generalize _paco_mark_cons; repeat intro; apply CIH; paco_revert_hyp _paco_mark;
+        repeat (let x := fresh "x" in intro x; generalize _paco_mark_cons; intros;
+                first [exists x|split; [exists x; apply _paco_foo_cons|]];
+                paco_revert_hyp _paco_mark);
+        unfold _paco_id; reflexivity);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp13 CIH :=
@@ -3221,13 +3207,12 @@ Ltac paco_simp_hyp14 CIH :=
     paco_convert_rev14; paco_revert_hyp _paco_mark;
     let con := get_concl in set (TP:=con); revert EP; instantiate (1:= con); destruct FP);
   clear TP;
-  assert (XP: EP) by (unfold EP; clear -CIH; repeat intro; apply CIH;
-    first [
-      (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       [..|match goal with [|-_paco_id (?a = ?b)] => unfold _paco_id; reflexivity end];
-       first [eassumption|apply _paco_foo_cons]); fail
-    | (repeat match goal with | [ |- @ex _ _ ] => eexists | [ |- _ /\ _ ] => split end;
-       (try unfold _paco_id); eauto using _paco_foo_cons)]);
+  assert (XP: EP)
+    by (unfold EP; clear -CIH; generalize _paco_mark_cons; repeat intro; apply CIH; paco_revert_hyp _paco_mark;
+        repeat (let x := fresh "x" in intro x; generalize _paco_mark_cons; intros;
+                first [exists x|split; [exists x; apply _paco_foo_cons|]];
+                paco_revert_hyp _paco_mark);
+        unfold _paco_id; reflexivity);
   unfold EP in *; clear EP CIH; rename XP into CIH.
 
 Ltac paco_post_simp14 CIH :=
