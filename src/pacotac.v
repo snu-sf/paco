@@ -69,48 +69,24 @@ Tactic Notation "pcofix" ident(CIH) := pcofix CIH with r.
 (** ** [pclearbot] simplifies all hypotheses of the form [upaco{n} gf bot{n}] to [paco{n} gf bot{n}].
 *)
 
-Definition pclearbot_orL (P Q: Prop) := P.
-Definition pclearbot_orR (P Q: Prop) := Q.
-
 Ltac pclearbot :=
-  generalize _paco_mark_cons;
-  repeat(
-    let H := match goal with
-             | [H: context [bot0] |- _] => H
-             | [H: context [bot1] |- _] => H
-             | [H: context [bot2] |- _] => H
-             | [H: context [bot3] |- _] => H
-             | [H: context [bot4] |- _] => H
-             | [H: context [bot5] |- _] => H
-             | [H: context [bot6] |- _] => H
-             | [H: context [bot7] |- _] => H
-             | [H: context [bot8] |- _] => H
-             | [H: context [bot9] |- _] => H
-             | [H: context [bot10] |- _] => H
-             | [H: context [bot11] |- _] => H
-             | [H: context [bot12] |- _] => H
-             | [H: context [bot13] |- _] => H
-             | [H: context [bot14] |- _] => H
-             end in
-    let NH := fresh H in
-    revert_until H;
-    repeat (
-      repeat red in H;
-      match goal with [Hcrr: context f [or] |- _] =>
-        match Hcrr with H =>
-        first[(
-          let P := context f [pclearbot_orL] in
-          assert (NH: P) by (repeat intro; edestruct H ; [eassumption|repeat (match goal with [X: _ \/ _ |- _] => destruct X end); contradiction]);
-          clear H; rename NH into H; unfold pclearbot_orL in H
-        ) | (
-          let P := context f [pclearbot_orR] in
-          assert (NH: P) by (repeat intro; edestruct H ; [repeat (match goal with [X: _ \/ _ |- _] => destruct X end); contradiction|eassumption]);
-          clear H; rename NH into H; unfold pclearbot_orR in H
-        )]
-        end
-      end);
-    revert H);
-  intros; paco_revert_hyp _paco_mark.
+  repeat match goal with
+  | [H: context [bot0] |- _] => destruct H as [H|H]; [|inversion H]
+  | [H: context [bot1] |- _] => destruct H as [H|H]; [|inversion H]
+  | [H: context [bot2] |- _] => destruct H as [H|H]; [|inversion H]
+  | [H: context [bot3] |- _] => destruct H as [H|H]; [|inversion H]
+  | [H: context [bot4] |- _] => destruct H as [H|H]; [|inversion H]
+  | [H: context [bot5] |- _] => destruct H as [H|H]; [|inversion H]
+  | [H: context [bot6] |- _] => destruct H as [H|H]; [|inversion H]
+  | [H: context [bot7] |- _] => destruct H as [H|H]; [|inversion H]
+  | [H: context [bot8] |- _] => destruct H as [H|H]; [|inversion H]
+  | [H: context [bot9] |- _] => destruct H as [H|H]; [|inversion H]
+  | [H: context [bot10] |- _] => destruct H as [H|H]; [|inversion H]
+  | [H: context [bot11] |- _] => destruct H as [H|H]; [|inversion H]
+  | [H: context [bot12] |- _] => destruct H as [H|H]; [|inversion H]
+  | [H: context [bot13] |- _] => destruct H as [H|H]; [|inversion H]
+  | [H: context [bot14] |- _] => destruct H as [H|H]; [|inversion H]
+  end.
 
 (** ** [pdestruct H] and [pinversion H]
 *)

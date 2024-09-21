@@ -80,36 +80,12 @@ Tactic Notation "pcofix" ident(CIH) := pcofix CIH with r.
 (** ** [pclearbot] simplifies all hypotheses of the form [upaco{n} gf bot{n}] to [paco{n} gf bot{n}].
 *)
 
-Definition pclearbot_orL (P Q: Prop) := P.
-Definition pclearbot_orR (P Q: Prop) := Q.
-
 Ltac pclearbot :=
-  generalize _paco_mark_cons;
-  repeat(
-    let H := match goal with
+  repeat match goal with
 """,end="")
 for i in range(n+1):
-    print ("             | [H: context [bot"+str(i)+"] |- _] => H")
-print ("""             end in
-    let NH := fresh H in
-    revert_until H;
-    repeat (
-      repeat red in H;
-      match goal with [Hcrr: context f [or] |- _] =>
-        match Hcrr with H =>
-        first[(
-          let P := context f [pclearbot_orL] in
-          assert (NH: P) by (repeat intro; edestruct H ; [eassumption|repeat (match goal with [X: _ \/ _ |- _] => destruct X end); contradiction]);
-          clear H; rename NH into H; unfold pclearbot_orL in H
-        ) | (
-          let P := context f [pclearbot_orR] in
-          assert (NH: P) by (repeat intro; edestruct H ; [repeat (match goal with [X: _ \/ _ |- _] => destruct X end); contradiction|eassumption]);
-          clear H; rename NH into H; unfold pclearbot_orR in H
-        )]
-        end
-      end);
-    revert H);
-  intros; paco_revert_hyp _paco_mark.
+    print ("  | [H: context [bot"+str(i)+"] |- _] => destruct H as [H|H]; [|inversion H]")
+print ("""  end.
 
 (** ** [pdestruct H] and [pinversion H]
 *)
