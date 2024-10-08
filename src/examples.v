@@ -310,3 +310,25 @@ Lemma seq_trans : forall d1 d2 d3
 Proof.
   eauto using gseq_trans, seq_implies_gseq, gseq_implies_seq.
 Qed.
+
+(**
+  Tests for [pclearbot]
+ **)
+
+Lemma plcearbot_test1 x y
+  (H: upaco2 seq_step bot2 x y)
+  :
+  True.
+Proof.
+  pclearbot.
+  eauto.
+Qed.
+
+Lemma plcearbot_test2
+  (H: forall x y, upaco2 seq_step bot2 x y)
+  :
+  True.
+Proof.
+  pclearbot.
+  eauto.
+Qed.
