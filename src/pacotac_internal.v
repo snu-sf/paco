@@ -21,6 +21,12 @@ Inductive _paco_foo := _paco_foo_cons.
 
 Definition _paco_id {A} (a : A) : A := a.
 
+Inductive paco_ex (A : Type) (P : A -> Prop) : Prop :=
+| paco_ex_intro : forall x : A, P x -> @paco_ex A P.
+
+Inductive paco_and (A B : Prop) : Prop :=
+| paco_conj : A -> B -> @paco_and A B.
+
 Ltac paco_generalize_hyp mark :=
   let y := fresh "_paco_rel_" in
   match goal with
@@ -31,9 +37,9 @@ Ltac paco_generalize_hyp mark :=
       match type of y with
         | context[x] => revert x y;
           match goal with [|-forall x, @?f x -> _] =>
-            intros x y; generalize (ex_intro f x y)
+            intros x y; generalize (@paco_ex_intro _ f x y)
           end
-        | _ => generalize (conj (ex_intro _ x _paco_foo_cons) y)
+        | _ => generalize (@paco_conj _ _ (@paco_ex_intro _ _ x _paco_foo_cons) y)
       end; clear x y; paco_generalize_hyp mark
     end
   end.
@@ -44,8 +50,8 @@ Ltac paco_destruct_hyp mark :=
     match A with
     | mark => idtac
     | _paco_foo => clear x; paco_destruct_hyp mark
-    | exists n, ?p => let n' := fresh n in destruct x as (n', x); paco_destruct_hyp mark
-    | ?p /\ ?q => let x' := fresh x in destruct x as (x,x'); paco_destruct_hyp mark
+    | @paco_ex _ (fun n => _) => let n' := fresh n in destruct x as (n', x); paco_destruct_hyp mark
+    | @paco_and _ _ => let x' := fresh x in destruct x as (x,x'); paco_destruct_hyp mark
     end
   end.
 
