@@ -92,11 +92,11 @@ Ltac pclearbotH H :=
     match Hcrr with H =>
     first[(
       let P := context f [pclearbot_orL] in
-      assert (NH: P) by (repeat intro; edestruct H ; [eassumption|repeat (match goal with [X: _ \/ _ |- _] => destruct X end); contradiction]);
+      assert (NH: P) by (repeat intro; edestruct H ; try eassumption; repeat (match goal with [X: _ \/ _ |- _] => destruct X end); contradiction);
       clear H; rename NH into H; unfold pclearbot_orL in H
     ) | (
       let P := context f [pclearbot_orR] in
-      assert (NH: P) by (repeat intro; edestruct H ; [repeat (match goal with [X: _ \/ _ |- _] => destruct X end); contradiction|eassumption]);
+      assert (NH: P) by (repeat intro; edestruct H ; try eassumption; repeat (match goal with [X: _ \/ _ |- _] => destruct X end); contradiction);
       clear H; rename NH into H; unfold pclearbot_orR in H
     )]
     end
