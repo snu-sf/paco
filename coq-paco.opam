@@ -1,0 +1,36 @@
+# This file was generated from `meta.yml`, please do not edit manually.
+# Follow the instructions on https://github.com/coq-community/templates to regenerate.
+
+opam-version: "2.0"
+maintainer: "gil.hur@sf.snu.ac.kr"
+version: "dev"
+
+homepage: "https://github.com/snu-sf/paco"
+dev-repo: "git+https://github.com/snu-sf/paco.git"
+bug-reports: "https://github.com/snu-sf/paco/issues"
+license: "BSD-3-Clause"
+
+synopsis: "Coq library implementing parameterized coinduction"
+description: """
+"""
+
+build: [make "-C" "src" "all" "-j%{jobs}%"]
+install: [make "-C" "src" "-f" "Makefile.coq" "install"]
+depends: [
+  "coq" {(>= "8.12" & < "9.1~") | (= "dev")}
+]
+
+tags: [
+  "category:Mathematics/Logic"
+  "category:Computer Science/Programming Languages/Formal Definitions and Theory"
+  "keyword:co-induction"
+  "keyword:simulation"
+  "keyword:parameterized greatest fixed point"
+  "logpath:Paco"
+]
+authors: [
+  "Chung-Kil Hur"
+  "Georg Neis"
+  "Derek Dreyer"
+  "Viktor Vafeiadis"
+]
