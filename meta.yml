@@ -1,0 +1,61 @@
+# Usage:
+# - git clone https://github.com/coq-community/templates
+# - Install mustache (ruby-mustache on Ubuntu; cf templates/README.md for more information)
+# - templates/generate.sh .github/workflows/docker-action.yml
+---
+fullname: paco
+shortname: paco
+organization: snu-sf
+action: true
+branch: master
+
+synopsis: >-
+  Coq library implementing parameterized coinduction
+  
+authors:
+- name: Chung-Kil Hur
+  initial: true
+- name: Georg Neis
+  initial: true
+- name: Derek Dreyer
+  initial: true
+- name: Viktor Vafeiadis
+  initial: true
+
+maintainers:
+- name: Chung-Kil Hur
+  nickname: gilhur
+
+opam-file-maintainer: gil.hur@sf.snu.ac.kr
+
+opam-file-version: dev
+
+license:
+  fullname: 3-clause BSD License
+  identifier: BSD-3-Clause
+
+namespace: Paco
+
+keywords:
+- name: co-induction
+- name: simulation
+- name: parameterized greatest fixed point
+
+categories:
+- name: Mathematics/Logic
+- name: Computer Science/Programming Languages/Formal Definitions and Theory
+
+supported_coq_versions:
+  text: 8.12 or later
+  opam: '{(>= "8.12" & < "9.1~") | (= "dev")}'
+
+tested_coq_opam_versions:
+- version: dev
+- version: "8.20"
+- version: "8.19"
+- version: "8.18"
+- version: "8.12"
+
+ci_test_dependants: true
+ci_extra_dev: true
+---
