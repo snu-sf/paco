@@ -1,7 +1,10 @@
 # Paco: Coq library for Parametric Coinduction
 
-[![Build Status](https://travis-ci.com/snu-sf/paco.svg?branch=master)](https://app.travis-ci.com/github/snu-sf/paco)
+[![Docker CI][docker-action-shield]][docker-action-link]
 [![License](https://img.shields.io/badge/license-BSD3-blue.svg)](https://github.com/snu-sf/paco)
+
+[docker-action-shield]: https://github.com/coq-community/coq-ext-lib/actions/workflows/docker-action.yml/badge.svg?branch=master
+[docker-action-link]: https://github.com/coq-community/coq-ext-lib/actions/workflows/docker-action.yml
 
 Paco is a Coq library for parametric coinduction.  For more information, please see:
 
